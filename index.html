@@ -350,6 +350,24 @@ body.aiming #app canvas{cursor:crosshair}
       <button class="ubtn" id="btnStats" title="Show frame statistics (F)">FPS</button>
       <span class="flash" id="flash"></span></div>
     <div class="dhint" style="margin-top:6px">Overlays live under the 🗺 button, top right.</div>
+    <hr style="border:none;border-top:1px solid var(--rule);margin:12px 0">
+    <div style="font-size:14px;font-weight:bold;margin-bottom:6px">D&D Custom Map Mode</div>
+    <div class="drow" style="flex-direction:column;align-items:stretch;gap:6px">
+      <label style="font-size:12px;font-style:italic;color:var(--ink-soft)">1. Grayscale Heightmap Image:</label>
+      <input type="file" id="dndHeightmapFile" accept="image/*" style="font-size:12px;width:100%">
+    </div>
+    <div class="drow" style="flex-direction:column;align-items:stretch;gap:6px;margin-top:8px">
+      <label style="font-size:12px;font-style:italic;color:var(--ink-soft)">2. Settlements List (JSON):</label>
+      <textarea id="dndSettlementsText" class="uin" style="width:100%;height:100px;font-family:monospace;font-size:11px;white-space:pre;resize:vertical" spellcheck="false">[
+  {"name": "Neverwinter", "kind": "capital", "gridX": 256, "gridZ": 256},
+  {"name": "Phandalin", "kind": "village", "gridX": 290, "gridZ": 330},
+  {"name": "Waterdeep", "kind": "town", "gridX": 180, "gridZ": 120}
+]</textarea>
+    </div>
+    <div class="drow" style="margin-top:8px">
+      <button class="ubtn" id="btnLoadDnd" style="flex:1">Forge D&D Realm</button>
+      <button class="ubtn" id="btnClearDnd" style="margin-left:4px" title="Reset to standard procedural worldgen">Clear</button>
+    </div>
     <div class="dhint">drag to orbit · wheel to zoom · right-drag to pan · double-click to travel · click to inspect<br>
     by touch: one finger orbits · pinch zooms · two fingers pan · tap inspects · double-tap travels<br>
     space pause · 1–5 speed · T territories · C watch · G director · H hide the court · L labels · F fps · Esc release<br>
@@ -737,6 +755,14 @@ function slopeAt(x,z){
 
 // ----- terrain -----
 function genTerrain(){
+  if(window.CUSTOM_MAP_DATA && window.CUSTOM_MAP_DATA.H){
+    W.H = new Float32Array(window.CUSTOM_MAP_DATA.H);
+    W.hasCoast = window.CUSTOM_MAP_DATA.hasCoast !== undefined ? window.CUSTOM_MAP_DATA.hasCoast : true;
+    W.coastEdge = window.CUSTOM_MAP_DATA.coastEdge !== undefined ? window.CUSTOM_MAP_DATA.coastEdge : 0;
+    W.spine = { ax: -2000, az: -2000, bx: 2000, bz: 2000 };
+    W.climate = 0;
+    return;
+  }
   const R = W.rng.gen, P = W.noise;
   const H = new Float32Array(N*N);
   // mountain spine: a segment through the map, offset from center
@@ -924,17 +950,46 @@ function genHydrology(){
   W.waterMask = new Uint8Array(N*N);   // 1 river, 2 lake, 3 sea
   const riverCells = new Set();
   // sources: high points near the spine
-  const nSrc = ri(R, 3, 5);
-  const walks = [];
-  for(let s=0; s<nSrc; s++){
-    const t = rr(R, 0.18, 0.82);
-    const jx = rr(R,-500,500), jz = rr(R,-500,500);
-    const sx = clamp(W.spine.ax + (W.spine.bx-W.spine.ax)*t + jx, -2700, 2700);
-    const sz = clamp(W.spine.az + (W.spine.bz-W.spine.az)*t + jz, -2700, 2700);
-    const pts = riverWalk(sx, sz, riverCells);
-    if(pts.length > 30){
-      walks.push(pts);
-      pts.forEach(p=>riverCells.add(idx(p.ix,p.iz)));
+  let walks = [];
+  if (window.CUSTOM_MAP_DATA && window.CUSTOM_MAP_DATA.H) {
+    const candidates = [];
+    for(let iz=20; iz<N-20; iz+=8) {
+      for(let ix=20; ix<N-20; ix+=8) {
+        const i = idx(ix, iz);
+        candidates.push({ix, iz, h: H[i]});
+      }
+    }
+    candidates.sort((a,b)=>b.h-a.h);
+    const sources = [];
+    for(const c of candidates) {
+      if(sources.length >= 6) break;
+      if(c.h < 35) break;
+      let ok = true;
+      for(const s of sources) {
+        if(Math.hypot(c.ix-s.ix, c.iz-s.iz) < 90) { ok = false; break; }
+      }
+      if(ok) sources.push(c);
+    }
+    sources.forEach(src => {
+      const sx = gridToWorld(src.ix), sz = gridToWorld(src.iz);
+      const pts = riverWalk(sx, sz, riverCells);
+      if(pts.length > 25){
+        walks.push(pts);
+        pts.forEach(p=>riverCells.add(idx(p.ix,p.iz)));
+      }
+    });
+  } else {
+    const nSrc = ri(R, 3, 5);
+    for(let s=0; s<nSrc; s++){
+      const t = rr(R, 0.18, 0.82);
+      const jx = rr(R,-500,500), jz = rr(R,-500,500);
+      const sx = clamp(W.spine.ax + (W.spine.bx-W.spine.ax)*t + jx, -2700, 2700);
+      const sz = clamp(W.spine.az + (W.spine.bz-W.spine.az)*t + jz, -2700, 2700);
+      const pts = riverWalk(sx, sz, riverCells);
+      if(pts.length > 30){
+        walks.push(pts);
+        pts.forEach(p=>riverCells.add(idx(p.ix,p.iz)));
+      }
     }
   }
   walks.sort((a,b)=>b.length-a.length);
@@ -1045,6 +1100,41 @@ function gridSlope(ix,iz){
 
 // ----- settlements -----
 function genSettlements(){
+  if(window.CUSTOM_MAP_DATA && window.CUSTOM_MAP_DATA.settlements){
+    const sets = [];
+    const R2 = W.rng.gen;
+    window.CUSTOM_MAP_DATA.settlements.forEach(s => {
+      const x = s.gridX !== undefined ? gridToWorld(s.gridX) : (s.x !== undefined ? s.x : 0);
+      const z = s.gridZ !== undefined ? gridToWorld(s.gridZ) : (s.z !== undefined ? s.z : 0);
+      const pop = s.pop || (s.kind==='capital' ? ri(R2,2100,2900) : s.kind==='town' ? ri(R2,420,1150) : ri(R2,60,290));
+      const rad = s.kind==='capital' ? 265 : s.kind==='town' ? 120 + pop*0.055 : 42 + pop*0.09;
+      sets.push({
+        name: s.name || NAME.place(W.rng.gen, s.kind==='capital'),
+        kind: s.kind || 'village',
+        x, z, pop, R: rad, harbor: !!s.harbor,
+        fieldAng: rr(R2, 0, Math.PI),
+        entries: [], streets: [], buildings: [], y: 0
+      });
+    });
+    W.settlements = sets;
+    W.realmName = sets[0] ? sets[0].name : "Custom Realm";
+    sets.forEach(s => {
+      s.y = hAt(s.x, s.z);
+      flattenPad(s.x, s.z, s.kind==='capital'?34:s.kind==='town'?22:11, s.y);
+      if(s.kind === 'capital'){
+        let bx=s.x, bz=s.z, bh=-1;
+        for(let a=0;a<40;a++){
+          const ang = a/40*Math.PI*2, rad = s.R*0.42;
+          const px = s.x + Math.cos(ang)*rad, pz = s.z + Math.sin(ang)*rad;
+          const hh = hAt(px,pz);
+          if(hh > bh && !W.waterMask[idx(Math.round(worldToGrid(px)),Math.round(worldToGrid(pz)))]){ bh=hh; bx=px; bz=pz; }
+        }
+        s.keep = {x:bx, z:bz, y:bh};
+        flattenPad(bx, bz, 26, bh);
+      }
+    });
+    return;
+  }
   const R = W.rng.gen;
   const S = 24; // score grid step (cells)
   const cands = [];
@@ -5796,6 +5886,66 @@ function initUI(){
     const s = document.getElementById('seedIn').value.trim() || String(Math.floor(Math.random()*9000000)+1000000);
     history.replaceState(null, '', '#s='+encodeURIComponent(s));
     forgeWorld(s);
+  });
+  // D&D custom map loader
+  document.getElementById('btnLoadDnd').addEventListener('click', () => {
+    const fileEl = document.getElementById('dndHeightmapFile');
+    const jsonEl = document.getElementById('dndSettlementsText');
+    let customSets = null;
+    try {
+      customSets = JSON.parse(jsonEl.value);
+    } catch(e) {
+      alert("Invalid JSON in Settlements List: " + e.message);
+      return;
+    }
+
+    if (!fileEl.files || !fileEl.files[0]) {
+      alert("Please select a grayscale heightmap image file first.");
+      return;
+    }
+
+    const file = fileEl.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        canvas.width = N;
+        canvas.height = N;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, N, N);
+        const imgData = ctx.getImageData(0, 0, N, N);
+        const H = new Float32Array(N*N);
+        for(let i=0; i<N*N; i++) {
+          const r2 = imgData.data[i*4];
+          const g2 = imgData.data[i*4+1];
+          const b2 = imgData.data[i*4+2];
+          const pv = (r2 + g2 + b2) / 3.0;
+          H[i] = (pv - 40) * 4.0;
+        }
+        window.CUSTOM_MAP_DATA = {
+          H: H,
+          settlements: customSets,
+          hasCoast: true,
+          coastEdge: 0
+        };
+        const seedVal = document.getElementById('seedIn').value.trim() || String(Math.floor(Math.random()*9000000)+1000000);
+        forgeWorld(seedVal);
+        flash('DnD Realm Forged!');
+      };
+      img.onerror = function() {
+        alert("Failed to load image file.");
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  document.getElementById('btnClearDnd').addEventListener('click', () => {
+    window.CUSTOM_MAP_DATA = null;
+    document.getElementById('dndHeightmapFile').value = '';
+    const seedVal = document.getElementById('seedIn').value.trim() || String(Math.floor(Math.random()*9000000)+1000000);
+    forgeWorld(seedVal);
+    flash('Reset to procedural map');
   });
   document.getElementById('btnLink').addEventListener('click', async ()=>{
     const url = location.href.split('#')[0] + '#s=' + encodeURIComponent(W.seed);
