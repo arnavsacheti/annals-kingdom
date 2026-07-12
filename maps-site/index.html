@@ -375,7 +375,7 @@
     map.createPane(p[0]); map.getPane(p[0]).style.zIndex=p[1];
   });
 
-  // ---- base layers: Modern (0..5) / War (0..4) / Imperial (0..4) ----
+  // ---- base layers: all three eras carry sharpened z5 (2x LANCZOS + unsharp) ----
   // detectRetina bumps the requested URL zoom by 1 on HiDPI, so cap maxNativeZoom
   // one below the deepest on-disk zoom on retina to avoid 404 tiles at max zoom.
   var ATTR='Agrakh Nīmilkad Utheg · the Tale of the Allhammers';
@@ -387,8 +387,8 @@
   }
   var BASES={
     modern:makeBase('tiles/',5),
-    war:makeBase('tiles-war/',4),
-    imperial:makeBase('tiles-imperial/',4)
+    war:makeBase('tiles-war/',5),
+    imperial:makeBase('tiles-imperial/',5)
   };
   var curBase=BASES.modern; curBase.addTo(map);
   var eraInputs=null;

@@ -4,6 +4,11 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.6.1-alpha.1] — 2026-07-12
+- Deep-zoom quality: z5 tile level rebuilt with unsharp masking (linework and
+  lettering crisp at max zoom, no halos) and extended to the Imperial and
+  War-of-the-Patrons era maps — switching ages at full depth no longer blurs
+
 ## [0.6.0-alpha.1] — 2026-07-12
 - The Company: character cards (grounded bios, fly-able road beats, gear, review
   dispatches), hometown POIs, conjectural origin trails, company strip — each
