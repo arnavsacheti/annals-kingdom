@@ -342,6 +342,14 @@ body.aiming #app canvas{cursor:crosshair}
     <div class="drow"><label style="font-size:13px;font-style:italic;color:var(--ink-soft)">Seed</label>
       <input class="uin" id="seedIn" spellcheck="false">
       <button class="ubtn" id="btnReforge" title="Regenerate the realm from this seed">Reforge</button></div>
+    <div class="drow" style="margin-top:6px"><label style="font-size:13px;font-style:italic;color:var(--ink-soft)">Custom map</label>
+      <button class="ubtn" id="btnEpeshu" title="Forge the canon Marble City of Epēshu">Forge Epēshu</button></div>
+    <div class="drow"><label style="font-size:12px;color:var(--ink-soft)">Heightmap</label>
+      <input type="file" id="dndHeightmap" accept="image/*" style="font-size:11px;color:var(--ink-soft)"></div>
+    <textarea id="dndSettlements" spellcheck="false" placeholder='[{"name":"Epēshu","kind":"capital","gridX":168,"gridZ":236,"harbor":true}]' style="width:100%;height:60px;font-size:11px;font-family:monospace;margin-top:4px;box-sizing:border-box"></textarea>
+    <div class="drow" style="margin-top:4px"><button class="ubtn" id="btnForgeDnd" title="Forge a realm from the loaded heightmap and settlements">Forge D&amp;D realm</button>
+      <button class="ubtn" id="btnClearDnd" title="Return to procedural realms">Clear</button></div>
+    <div class="dhint">Load a grayscale heightmap (light = high ground) and paste settlement placements to forge your own world. Grid runs 0–511; anything darker than mid-grey becomes sea.</div>
     <div class="drow"><button class="ubtn" id="btnLink" title="Copy a link to this realm">Copy link</button>
       <button class="ubtn" id="btnLabels" title="Toggle place names (L)">Labels</button>
       <button class="ubtn" id="btnWatch" title="Watch mode (C) — the realm narrates itself">Watch</button>
@@ -504,12 +512,13 @@ function makePerlin(rng){
 
 // ---------- 5. names ----------
 const NAME = (()=>{
-  const on = ['Vael','Oster','Har','Wynd','Cael','Mor','Eld','Bran','Fen','Gal','Thren','Ash','Cor','Loth','Myr','Stane','Ald','Ber','Kes','Dun','Hol','Wes','Nor','Sel','Tar','Rav','Gled','Ael','Byr','Cal'];
-  const mid = ['','','','en','er','el','or','in','an','wick'];
-  const sufCap = ['mere','holt','caster','garde','haven','march'];
-  const suf = ['ford','mere','holt','wyck','dale','brook','field','moor','tor','bourne','stead','cliffe','ham','worth','by','thorpe','well','den'];
-  const riverPre = ['Silver','Grey','Swift','Still','Black','White','Elder','Cold','Reed','Stone'];
-  const riverSuf = ['water','run','flow','beck','stream'];
+  // Paternic tongue of the Wide World — the Kadars of Patrinor and their kin
+  const on = ['Cyri','Bōl','Āk','Giza','Summ','Epē','Drā','Tama','Hord','Pēsh','Sep','Herī','Ish','Pen','Māmi','Nub','Kadr','Rhur','Rōd','Mēz','Idūk','Palag','Gaur','Nāk','Tembr','Zor','Kēz','Nag','Azrī','Sār'];
+  const mid = ['','','','a','ī','ō','en','ar','os','ān'];
+  const sufCap = ['kon','khar','anor','agos','onnia','menor','ōs','ūmor'];
+  const suf = ['kon','khar','os','īs','on','or','ūz','ron','bar','gos','nor','dar','kar','ban','zīr','nār','mūz','pos','thun','ren'];
+  const riverPre = ['Red','Copper','Grey','Swan','Watch','Riving','Still','Salt','Cold','White','Reed','Deep'];
+  const riverSuf = ['water','run','fen','wash','race','flow'];
   return {
     place(r, grand){
       let n;
@@ -522,7 +531,7 @@ const NAME = (()=>{
       return n.charAt(0).toUpperCase()+n.slice(1);
     },
     river(r){ return 'The ' + pick(r,riverPre) + pick(r,riverSuf); },
-    peak(r){ return pick(r,['Mount ','High ','Old ']) + pick(r,on) + pick(r,['tor','fell','crag','horn']); },
+    peak(r){ return pick(r,['Mount ','Mārosh ','High ','Old ']) + pick(r,on) + pick(r,['tor','fell','crag','horn','mor','ael']); },
     used: new Set()
   };
 })();
@@ -737,6 +746,15 @@ function slopeAt(x,z){
 
 // ----- terrain -----
 function genTerrain(){
+  // Custom Map Mode: a supplied heightfield stands in for procedural terrain
+  if(window.CUSTOM_MAP_DATA && window.CUSTOM_MAP_DATA.H){
+    W.H = new Float32Array(window.CUSTOM_MAP_DATA.H);
+    W.hasCoast = window.CUSTOM_MAP_DATA.hasCoast !== undefined ? window.CUSTOM_MAP_DATA.hasCoast : true;
+    W.coastEdge = window.CUSTOM_MAP_DATA.coastEdge || 0;
+    W.spine = { ax:-2000, az:-2000, bx:2000, bz:2000 };
+    W.climate = window.CUSTOM_MAP_DATA.climate || 0;
+    return;
+  }
   const R = W.rng.gen, P = W.noise;
   const H = new Float32Array(N*N);
   // mountain spine: a segment through the map, offset from center
@@ -926,15 +944,33 @@ function genHydrology(){
   // sources: high points near the spine
   const nSrc = ri(R, 3, 5);
   const walks = [];
-  for(let s=0; s<nSrc; s++){
-    const t = rr(R, 0.18, 0.82);
-    const jx = rr(R,-500,500), jz = rr(R,-500,500);
-    const sx = clamp(W.spine.ax + (W.spine.bx-W.spine.ax)*t + jx, -2700, 2700);
-    const sz = clamp(W.spine.az + (W.spine.bz-W.spine.az)*t + jz, -2700, 2700);
-    const pts = riverWalk(sx, sz, riverCells);
-    if(pts.length > 30){
-      walks.push(pts);
-      pts.forEach(p=>riverCells.add(idx(p.ix,p.iz)));
+  if(window.CUSTOM_MAP_DATA && window.CUSTOM_MAP_DATA.H){
+    // custom maps have no procedural spine — draw rivers from the map's own peaks
+    const cands = [];
+    for(let iz=20; iz<N-20; iz+=8) for(let ix=20; ix<N-20; ix+=8) cands.push({ix, iz, h:H[idx(ix,iz)]});
+    cands.sort((a,b)=>b.h-a.h);
+    const sources = [];
+    for(const c of cands){
+      if(sources.length >= 6 || c.h < 35) break;
+      let ok = true;
+      for(const s of sources) if(Math.hypot(c.ix-s.ix, c.iz-s.iz) < 90){ ok=false; break; }
+      if(ok) sources.push(c);
+    }
+    for(const s of sources){
+      const pts = riverWalk(gridToWorld(s.ix), gridToWorld(s.iz), riverCells);
+      if(pts.length > 30){ walks.push(pts); pts.forEach(p=>riverCells.add(idx(p.ix,p.iz))); }
+    }
+  } else {
+    for(let s=0; s<nSrc; s++){
+      const t = rr(R, 0.18, 0.82);
+      const jx = rr(R,-500,500), jz = rr(R,-500,500);
+      const sx = clamp(W.spine.ax + (W.spine.bx-W.spine.ax)*t + jx, -2700, 2700);
+      const sz = clamp(W.spine.az + (W.spine.bz-W.spine.az)*t + jz, -2700, 2700);
+      const pts = riverWalk(sx, sz, riverCells);
+      if(pts.length > 30){
+        walks.push(pts);
+        pts.forEach(p=>riverCells.add(idx(p.ix,p.iz)));
+      }
     }
   }
   walks.sort((a,b)=>b.length-a.length);
@@ -1045,6 +1081,38 @@ function gridSlope(ix,iz){
 
 // ----- settlements -----
 function genSettlements(){
+  // Custom Map Mode: place named settlements exactly where the map data says
+  if(window.CUSTOM_MAP_DATA && window.CUSTOM_MAP_DATA.settlements){
+    const R2 = W.rng.gen;
+    const sets = window.CUSTOM_MAP_DATA.settlements.map(s => {
+      const x = s.gridX !== undefined ? gridToWorld(s.gridX) : (s.x || 0);
+      const z = s.gridZ !== undefined ? gridToWorld(s.gridZ) : (s.z || 0);
+      const pop = s.pop || (s.kind==='capital' ? ri(R2,2100,2900) : s.kind==='town' ? ri(R2,420,1150) : ri(R2,60,290));
+      const rad = s.kind==='capital' ? 265 : s.kind==='town' ? 120 + pop*0.055 : 42 + pop*0.09;
+      return { name: s.name || NAME.place(W.rng.gen, s.kind==='capital'), kind: s.kind || 'village',
+        x, z, pop, R: rad, harbor: !!s.harbor, fieldAng: rr(R2, 0, Math.PI),
+        entries:[], streets:[], buildings:[], y:0 };
+    });
+    if(!sets.length) throw new Error('custom map supplied no settlements');
+    W.settlements = sets;
+    W.realmName = window.CUSTOM_MAP_DATA.realmName || sets[0].name;
+    sets.forEach(s => {
+      s.y = hAt(s.x, s.z);
+      flattenPad(s.x, s.z, s.kind==='capital'?34:s.kind==='town'?22:11, s.y);
+      if(s.kind === 'capital'){
+        let bx=s.x, bz=s.z, bh=-1;
+        for(let a=0;a<40;a++){
+          const ang = a/40*Math.PI*2, rad = s.R*0.42;
+          const px = s.x + Math.cos(ang)*rad, pz = s.z + Math.sin(ang)*rad;
+          const hh = hAt(px,pz);
+          if(hh > bh && !W.waterMask[idx(Math.round(worldToGrid(px)),Math.round(worldToGrid(pz)))]){ bh=hh; bx=px; bz=pz; }
+        }
+        s.keep = {x:bx, z:bz, y:bh};
+        flattenPad(bx, bz, 26, bh);
+      }
+    });
+    return;
+  }
   const R = W.rng.gen;
   const S = 24; // score grid step (cells)
   const cands = [];
@@ -1638,11 +1706,13 @@ function genFlora(){
 }
 
 // ----- houses, dynasty & the founding cast -----
-const NAMES_M = ['Aldric','Berenger','Cedric','Doran','Edmund','Godfrey','Hakon','Isen','Jocelin','Leofric','Maldred','Osric','Roderic','Sigmund','Theobald','Ulric','Waldemar','Anselm','Bertram','Corwin'];
-const NAMES_F = ['Adela','Brunhild','Cateline','Duessa','Elswith','Frieda','Gisela','Helewise','Isolde','Jorunn','Livia','Maelis','Oriana','Rosamund','Sybilla','Theda','Una','Berta','Amice','Ysolt'];
+const NAMES_M = ['Palagon','Malagon','Gauron','Drāgis','Dūlgor','Arpharaz','Elgemek','Relkorīn','Sārmathīn','Idūk','Mēzor','Balakhōr','Lengor','Aran','Nāk-Zōr','Māgarān','Lazgar','Khamphek','Udrikar','Bangeph','Markar','Karan','Regimen','Daemar','Piran','Gandor','Selwin','Pebros','Ghazkhon','Harmūs'];
+const NAMES_F = ['Elgemek','Daeka','Raeka','Lara','Meldemil','Tembregan','Bernīke','Hashiger','Sanenīn','Hethel','Arbezel','Kūrila','Meldis','Tamara','Ilweth','Serida','Loria','Baranca','Ephina','Nūriel','Zabeth','Ammara','Ereshka','Phaela'];
 const TRAITS = ['bold','craven','just','cruel','shrewd','dull','pious','cynical','fertile','sickly','comely','stern','gentle','greedy','temperate','quarrelsome'];
-const CHARGES = ['stag','tower','wave','oak','wolf','comet','key','sun','moon','star','cross','chevron','ring','fish','axe','rose'];
-const SIGIL_PAIRS = [['#8c2f2f','#e8dcc0'],['#2f4d8c','#e8dcc0'],['#2f6b3a','#e8dcc0'],['#7a5c9e','#e8dcc0'],['#1f2a38','#c9a227'],['#9e6b1f','#1f2a38'],['#e8dcc0','#8c2f2f'],['#4a7a8c','#f0e6cf']];
+// the Kembar who receive worship (the Mad One is not honored, save by his cult)
+const KEMBAR = ['Thobrauk','Arbezmara','Hesphek','Doremil','Kurūgan','Bēlkar','Mālgal','Laegos'];
+const CHARGES = ['stag','tower','wave','oak','wolf','comet','key','sun','bee','raven','owl','column','moon','star','chevron','ring','fish','axe','rose','krake'];
+const SIGIL_PAIRS = [['#8c2f2f','#e8dcc0'],['#2f4d8c','#e8dcc0'],['#2f6b3a','#e8dcc0'],['#7a5c9e','#e8dcc0'],['#1f2a38','#c9a227'],['#9e6b1f','#1f2a38'],['#e8dcc0','#8c2f2f'],['#4a7a8c','#f0e6cf'],['#2f4d8c','#e6c34a'],['#e8dcc0','#4a7a8c']];
 function drawCharge(g, ch, col, s){
   g.strokeStyle = col; g.fillStyle = col; g.lineWidth = s*0.07; g.lineCap = 'round';
   const c = s/2, u = s/10;
@@ -1665,6 +1735,28 @@ function drawCharge(g, ch, col, s){
     case 'ring': g.lineWidth=s*0.12; g.arc(c,c,2.4*u,0,7); g.stroke(); break;
     case 'fish': g.moveTo(c-3.2*u,c); g.quadraticCurveTo(c,c-2.4*u,c+2.4*u,c); g.quadraticCurveTo(c,c+2.4*u,c-3.2*u,c); g.fill(); g.fillRect(c+2.2*u,c-1.2*u,1.4*u,2.4*u); break;
     case 'axe': g.fillRect(c-0.5*u,c-3*u,u,6.4*u); g.moveTo(c+0.5*u,c-3*u); g.quadraticCurveTo(c+3.4*u,c-2.4*u,c+3*u,c+0.4*u); g.lineTo(c+0.5*u,c-0.6*u); g.fill(); break;
+    case 'bee': g.arc(c,c+0.8*u,2.1*u,0,7); g.fill();
+      g.beginPath(); g.arc(c,c-2.1*u,1.15*u,0,7); g.fill();
+      g.beginPath(); g.arc(c-2.5*u,c-0.5*u,1.2*u,0,7); g.fill();
+      g.beginPath(); g.arc(c+2.5*u,c-0.5*u,1.2*u,0,7); g.fill(); break;
+    case 'raven': g.moveTo(c-3.5*u,c-2.3*u); g.lineTo(c-1.6*u,c-1.3*u);
+      g.quadraticCurveTo(c+0.6*u,c-2.3*u,c+2.3*u,c-0.3*u);
+      g.quadraticCurveTo(c+3.5*u,c+1.3*u,c+1.1*u,c+2.7*u);
+      g.quadraticCurveTo(c-0.7*u,c+1.4*u,c-1.9*u,c+0.2*u);
+      g.quadraticCurveTo(c-2.5*u,c-0.7*u,c-3.5*u,c-2.3*u); g.closePath(); g.fill(); break;
+    case 'owl': g.lineWidth=s*0.08; g.arc(c,c+0.5*u,2.7*u,0,7); g.stroke();
+      g.beginPath(); g.arc(c-1.1*u,c-0.5*u,0.85*u,0,7); g.stroke();
+      g.beginPath(); g.arc(c+1.1*u,c-0.5*u,0.85*u,0,7); g.stroke();
+      g.beginPath(); g.moveTo(c-2.7*u,c-1.9*u); g.lineTo(c-1.4*u,c-2.9*u);
+      g.moveTo(c+2.7*u,c-1.9*u); g.lineTo(c+1.4*u,c-2.9*u);
+      g.moveTo(c,c-0.1*u); g.lineTo(c,c+1.0*u); g.stroke(); break;
+    case 'column': g.fillRect(c-2.2*u,c-3.2*u,4.4*u,0.9*u);
+      g.fillRect(c-1.4*u,c-2.3*u,2.8*u,4.6*u);
+      g.fillRect(c-2.4*u,c+2.3*u,4.8*u,1.0*u); break;
+    case 'krake': g.lineWidth=s*0.10; { let a=0, r=0.35*u; g.moveTo(c,c);
+      for(let i=0;i<60;i++){ a+=0.5; r+=0.115*u; g.lineTo(c+Math.cos(a)*r, c+Math.sin(a)*r); } } g.stroke();
+      g.beginPath(); g.moveTo(c+2.5*u,c+1.1*u); g.lineTo(c+3.6*u,c+2.5*u);
+      g.moveTo(c+2.0*u,c+1.9*u); g.lineTo(c+2.7*u,c+3.3*u); g.stroke(); break;
     default: g.arc(c,c,2.4*u,0,7); g.fill(); g.fillStyle = 'rgba(0,0,0,0.25)'; g.arc(c,c,1.2*u,0,7); g.fill();
   }
 }
@@ -1722,12 +1814,14 @@ function genHouses(){
   const others = W.settlements.slice(1).sort((a,b) => b.pop - a.pop);
   const nH = Math.min(5, others.length);
   W.houses = [];
-  const beasts = ['Wolf','Stag','Raven','Boar','Heron','Falcon','Bear','Ox'];
-  const sufs = ['mark','holt','gard','mere','fell','wood'];
+  const beasts = ['Māl','Gaur','Pher','Relk','Umbad','Kadr','Bern','Tōs','Idūk','Nāk','Arpha','Sōter','Mestel','Ōkh','Zor','Bangeph'];
+  const sufs = ['az','on','ar','os','ūz','enes','im','ath'];
   const usedHN = new Set();
+  const canonHN = (window.CUSTOM_MAP_DATA && window.CUSTOM_MAP_DATA.houseNames) || null;
   for(let i=0; i<nH; i++){
     let hn, g2 = 0;
-    do { hn = pick(R,beasts) + pick(R,sufs); } while(usedHN.has(hn) && g2++ < 30);
+    if(canonHN && canonHN[i]) hn = canonHN[i];
+    else do { hn = pick(R,beasts) + pick(R,sufs); } while(usedHN.has(hn) && g2++ < 30);
     usedHN.add(hn);
     const sig = makeSigil(R);
     const h = { name: hn, colA: sig.colA, colB: sig.colB, charge: sig.charge, canvas: sig.canvas, url: sig.url,
@@ -1763,7 +1857,7 @@ function genHouses(){
     for(let k=0;k<kids;k++) makeNotable({house:hi, age: rr(R,1, Math.max(2,hAge-18)), parent: head.id});
   });
   // court flavor
-  makeNotable({house:-2, age: rr(R,42,64), role: 'High Priest'});
+  makeNotable({house:-2, age: rr(R,42,64), role: 'High Lektān'});
   makeNotable({house:-2, age: rr(R,36,58), role: 'Master of Coin'});
   makeNotable({house:-2, age: rr(R,30,55), role: 'Court Chronicler'});
 }
@@ -1817,7 +1911,7 @@ function initRenderer(){
 const SKY_VS = 'varying vec3 vDir;\nvoid main(){ vDir = position; vec4 mv = modelViewMatrix*vec4(position,1.0); gl_Position = projectionMatrix*mv; gl_Position.z = gl_Position.w; }';
 const SKY_FS = [
 'varying vec3 vDir;',
-'uniform vec3 uZen; uniform vec3 uHor; uniform vec3 uSunDir; uniform vec3 uSunCol; uniform vec3 uMoonDir; uniform vec3 uMoonTint;',
+'uniform vec3 uZen; uniform vec3 uHor; uniform vec3 uSunDir; uniform vec3 uSunCol; uniform vec3 uMoonDir; uniform vec3 uMoonTint; uniform vec3 uTamarDir;',
 'uniform float uNight; uniform float uTime;',
 'float hash3(vec3 p){ p = fract(p*0.3183 + vec3(0.11,0.17,0.23)); p *= 17.0; return fract(p.x*p.y*p.z*(p.x+p.y+p.z)); }',
 'void main(){',
@@ -1838,6 +1932,19 @@ const SKY_FS = [
 '  float star = step(0.9962, h) * uNight * clamp(e*1.9 + 0.25, 0.0, 1.0);',
 '  float tw = 0.55 + 0.45*sin(uTime*1.7 + h*90.0);',
 '  col += vec3(0.82,0.86,1.0) * star * tw * (h-0.9962)/0.0038;',
+'  // Tamar — the purple gas-giant Nīmlad forever faces, fixed in the sky',
+'  float td = dot(d, uTamarDir);',
+'  float aura = pow(max(td,0.0), 110.0);',
+'  col += vec3(0.32,0.13,0.42) * aura * 0.5;',
+'  float disc = smoothstep(0.9740, 0.9860, td);',
+'  float lat = d.y - uTamarDir.y;',
+'  float band = 0.5 + 0.5*sin(lat*44.0 + sin(uTime*0.04)*0.6);',
+'  float band2 = 0.5 + 0.5*sin(lat*19.0 - 0.7);',
+'  float band3 = 0.5 + 0.5*sin(lat*97.0 + 1.3);',
+'  vec3 tamarCol = mix(vec3(0.22,0.09,0.33), vec3(0.74,0.52,0.86), band*0.6 + band2*0.28 + band3*0.12);',
+'  float limb = smoothstep(0.9740, 0.9820, td);',
+'  tamarCol *= 0.5 + 0.5*limb;',
+'  col = mix(col, tamarCol, disc * (0.97 - 0.22*uNight));',
 '  gl_FragColor = vec4(col, 1.0);',
 '}'].join('\n');
 
@@ -1846,6 +1953,7 @@ function buildSky(){
     uZen:{value:new THREE.Color(0x5b90c3)}, uHor:{value:new THREE.Color(0xd9e0cf)},
     uSunDir:{value:new THREE.Vector3(0.3,0.8,0.2)}, uSunCol:{value:new THREE.Color(0xfff4d8)},
     uMoonDir:{value:new THREE.Vector3(-0.3,-0.5,0.2)}, uMoonTint:{value:new THREE.Color(0.92,0.94,1.0)},
+    uTamarDir:{value:new THREE.Vector3(-0.665,0.244,-0.706)},
     uNight:{value:0}, uTime:{value:0}
   };
   skyMesh = new THREE.Mesh(new THREE.SphereGeometry(60, 28, 18),
@@ -2867,7 +2975,7 @@ function updateLabels(){
    SIMULATION — Phase 2: The Wheel
    ======================================================================= */
 const GOODS = ['grain','fish','timber','ore','tools','cloth','wine'];
-const G_NAME = {grain:'grain', fish:'salt fish', timber:'timber', ore:'ore', tools:'good tools', cloth:'cloth', wine:'wine'};
+const G_NAME = {grain:'grain', fish:'salt fish', timber:'timber', ore:'copper ore', tools:'bronzework', cloth:'dyed cloth', wine:'wine'};
 const G_BASE = {grain:1, fish:1.2, timber:1.5, ore:2.2, tools:4.5, cloth:4.0, wine:5.0};
 const AGENT_GEO = {};
 
@@ -2921,13 +3029,14 @@ const T = {
   year(y){ return 'Here begins the Year '+y+'.'; },
   winter(R){ return pick(R,[
     'Winter closes the passes; the granaries are weighed and found '+(pick(R,['full enough','lighter than hoped','heavy with grain'])) + '.',
-    'The first snows came, and the roads grew quiet.']); },
+    'The first snows came, and the roads grew quiet.',
+    'The Mad One’s cold came down out of the north, and the first snows with it; the roads grew quiet.']); },
   harvest(q){
-    if(q > 1.25) return 'The harvest was bountiful beyond memory; the granaries of '+W.realmName+' groan with grain.';
+    if(q > 1.25) return 'The harvest was bountiful beyond memory; Mālgal the Shepherd was generous, and the granaries of '+W.realmName+' groan with grain.';
     if(q > 1.05) return 'A good harvest was brought in across the realm, and there was singing on the wagons.';
     if(q > 0.85) return 'The harvest was fair — no more, no less — and the reeves marked their tallies.';
     if(q > 0.7)  return 'A meagre harvest this year; the millers grind close and say little.';
-    return 'The harvest failed in the fields; men look to the granaries and pray for an open winter.';
+    return 'The harvest failed in the fields; men look to the granaries and pray to Mālgal for an open winter.';
   },
   hungerStart(s){ return 'Hunger stalks the lanes of '+s.name+'; bread is dear and tempers short.'; },
   hungerEnd(s){ return 'The want in '+s.name+' has eased; there is bread again at honest prices.'; },
@@ -2959,11 +3068,12 @@ const T = {
   prosper(s){ return s.name+' prospers; its market hums from matins to dusk.'; },
   treasury(n){ return 'The crown’s coffers passed '+fmt(n)+' gold marks; the clerks bought new ink.'; },
   flavor(R){ return pick(R,[
-    'Wolves were heard beyond the wood’s eaves, and the shepherds slept badly.',
-    'Rain lay long upon the fields, and some say it means nothing at all.',
-    'A pedlar came through selling ribbons and lies, and did fair trade in both.',
-    'An old man in the capital swears the river spoke his name. He is much discussed.',
-    'The roads were dry and the carters made good time all this month.']); }
+    'Barghests were heard beyond the wood’s eaves, and the shepherds slept badly.',
+    'The dark hour ran a breath longer today; the Lektān watched Tamar and said nothing.',
+    'A Trogmunder pedlar came up from the Home Islands selling ribbons and lies, and did fair trade in both.',
+    'An old man in the capital swears the river spoke his name in the old Paternic. He is much discussed.',
+    'The roads were dry and the carters made good time all this month, and travellers thanked Bēlkar.',
+    'Purple Tamar hung heavy over the afternoon, and the bells kept their hours by its shadow.']); }
 };
 function fmt(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
 
@@ -3004,7 +3114,7 @@ function initEconomy(){
     if(W.rates[k] === undefined) W.rates[k] = 1;
   });
   const dR = W.rng.hist;
-  W.dragon = { name: pick(dR, ['Vharagor','Cindermaw','Aszhurax','Old Ember','Gorthrax','Umbryss']),
+  W.dragon = { name: pick(dR, ['Sāshar','Lugal','Ancthrax','Gorthaxîr','Ûmbryss','Kālduthax']),
     state: 'sleeping', sleepUntil: 900, hoard: 2500, dead: false,
     lair: {x: W.peak.x, z: W.peak.z}, mesh: null, target: null, phaseStart: 0, phaseDur: 1 };
   let realmPop = 0;
@@ -3537,7 +3647,7 @@ function killNotable(n, cause, day){
       W.notables.find(k => k.alive && k.house === n.house && k.age >= 16 && k.id !== n.id);
     if(heir){ W.houses[n.house].head = heir.id; heir.role = 'head'; }
   }
-  if(['High Priest','Master of Coin','Court Chronicler'].indexOf(n.role) >= 0){
+  if(['High Lektān','Master of Coin','Court Chronicler'].indexOf(n.role) >= 0){
     makeNotable({house:-2, age: rr(W.rng.hist,35,55), role: n.role, rng: W.rng.hist});
   }
   housesDirty();
@@ -4350,8 +4460,8 @@ function raiseHouse(day){
   const cand = W.settlements.filter((s,i) => i > 0 && s.owner === -1 && s.pop > 120);
   if(!cand.length) return;
   const seat = cand.sort((a,b) => b.pop - a.pop)[0];
-  const beasts = ['Wolf','Stag','Raven','Boar','Heron','Falcon','Bear','Ox'];
-  const sufs = ['mark','holt','gard','mere','fell','wood'];
+  const beasts = ['Māl','Gaur','Pher','Relk','Umbad','Kadr','Bern','Tōs','Idūk','Nāk','Arpha','Sōter','Mestel','Ōkh','Zor','Bangeph'];
+  const sufs = ['az','on','ar','os','ūz','enes','im','ath'];
   let hn, g2 = 0;
   do { hn = pick(R,beasts) + pick(R,sufs); } while(W.houses.some(h => h.name === hn) && g2++ < 30);
   const sig = makeSigil(R);
@@ -4553,12 +4663,12 @@ function tickWeather(day){
 function startDrought(day){
   W.drought = day + ri(W.rng.hist, 50, 90);
   W.lastDrought = day;
-  chron('fate','Drought. The wells sink and the fields crack; the priests are busy and the millers grim.', W.settlements[0].x, W.settlements[0].z, 7);
+  chron('fate','Drought. The wells sink and the fields crack; Thobrauk sends no rain, the Lektān are busy, and the millers grim.', W.settlements[0].x, W.settlements[0].z, 7);
 }
 function startFlood(day){
   W.lastFlood = day; W.floodMeter = 0; W.floodF = 1; W.riverDirty = true;
   const rp = W.rivers[0] ? W.rivers[0].pts[(W.rivers[0].pts.length*0.6)|0] : W.settlements[0];
-  chron('fate','The river has burst its banks; brown water stands in the riverside lanes and the bridges groan.', rp.x, rp.z, 7);
+  chron('fate','The river has burst its banks — Thobrauk’s temper — and brown water stands in the riverside lanes; the bridges groan.', rp.x, rp.z, 7);
   W.settlements.forEach(s => {
     const gi = idx(Math.round(worldToGrid(s.x)), Math.round(worldToGrid(s.z)));
     if(W.distWater[gi]*CELL < 130){
@@ -4798,7 +4908,7 @@ function tickBandits(day){
 function earthquake(day, x, z){
   const R = W.rng.hist;
   const near = nearestSettlement(x, z).s;
-  chron('fate','The earth shook'+(near ? ' beneath '+near.name : '')+'; walls cracked, and men remembered their prayers.', x, z, 8);
+  chron('fate','The earth shook'+(near ? ' beneath '+near.name : '')+'; walls cracked, and men called on the Nine.', x, z, 8);
   W.settlements.forEach(s => {
     const d = dist2d(s.x, s.z, x, z);
     if(d > 900) return;
@@ -4822,7 +4932,7 @@ function sendComet(day){
   ensureCometMesh();
   if(W.rates.myth === 2) W.cometYear = Math.floor(day/360);
   chron('myth', pick(W.rng.hist, [
-    'A comet crosses the heavens, trailing cold fire.',
+    'A comet crosses the heavens, trailing cold fire; the star-readers murmur of Doremil.',
     'A bearded star stands in the west and will not be talked away.',
     'A new light crawls among the fixed stars, dragging its hair behind it.'
   ]) + ' ' + (W.rates.myth === 2 ? 'The wise say the rolls of fate are doubled this year.' : 'Some will say, later, that it foretold everything.'), W.settlements[0].x, W.settlements[0].z, 9);
@@ -4838,29 +4948,29 @@ function tickOmens(day){
     else if(kind === 'eclipse'){
       W.eclipseUntil = performance.now() + 20000;
       chron('myth', pick(R, [
-        'The sun was eaten at midday and given back grudgingly. The hens went to roost; the wise said nothing.',
-        'At noon a shadow crossed the sun, and for a hundred heartbeats every bell in the realm rang itself hoarse.',
-        'The sun wore black. Ploughs stopped mid-furrow, and three confessions were made that had waited years.',
-        'Day became a bruise-colored dusk. The astronomers called it natural, which convinced no one.',
-        'The sun failed, and was restored. The price of candles did not come down for a month.'
+        'The dark hour came and would not lift; Tamar swallowed the sun whole and gave it back grudgingly. The hens went to roost; the wise said nothing.',
+        'At the dark hour a blackness deeper than any in memory crossed the sun, and every bell in the realm rang itself hoarse.',
+        'The sun wore black behind Tamar. Ploughs stopped mid-furrow, and three confessions were made that had waited years.',
+        'Day became a bruise-colored dusk that outlasted the dark hour. The star-readers called it natural, which convinced no one.',
+        'The sun failed behind Tamar, and was restored. The price of candles did not come down for a month.'
       ]), W.settlements[0].x, W.settlements[0].z, 8);
       bumpUnrest(4*myth);
     } else if(kind === 'redmoon'){
       W.redMoonUntil = day + 2;
       chron('myth', pick(R, [
-        'The moon rose red as a wound. Doors were barred early, and prayers said twice.',
-        'A copper moon hung low the whole night. The dogs would not stop; neither would the rumors.',
-        'The moon came up the color of old blood. The midwives report a busy, uneasy night.',
-        'A red moon stood over the realm like a sealed letter no one wished to open.'
+        'Tamar rose the color of a wound and held it through the dark hour. Doors were barred early, and prayers said twice.',
+        'A copper cast lay over Tamar the whole night. The dogs would not stop; neither would the rumors.',
+        'Tamar came up the color of old blood. The midwives report a busy, uneasy night.',
+        'A red shadow stood over the realm like a sealed letter no one wished to open.'
       ]), null, null, 6);
       bumpUnrest(3*myth);
     } else {
       const s = pick(R, W.settlements);
       chron('myth', pick(R, [
         'A two-headed calf was born near '+s.name+'; it lived an hour and will be argued over for a generation.',
-        'It rained frogs for the length of a psalm at '+s.name+'. The priest preached on it for a month; the frogs kept their own counsel.',
+        'It rained frogs for the length of a litany at '+s.name+'. The Lektān preached on it for a month; the frogs kept their own counsel.',
         'A lamb was born near '+s.name+' with a mark like a crown. It was bought thrice, stolen twice, and eaten once.',
-        'The bees of '+s.name+' swarmed the church tower and would not be moved. The wardens call it devotion; the beekeeper calls it theft.',
+        'The bees of '+s.name+' swarmed the temple tower and would not be moved. The wardens call it devotion; the beekeeper calls it theft.',
         'A well at '+s.name+' gave sweet water where it had always given brack. First came pilgrims, then peddlers, then a toll.'
       ]), s.x, s.z, 5);
       bumpUnrest(2);
@@ -4869,7 +4979,7 @@ function tickOmens(day){
   if(myth === 2 && !W.prophet && chance(R, 0.0008)){
     const p = makeNotable({house: -2, age: rr(R,40,68), role: 'Prophet', rng: R});
     W.prophet = p.id;
-    chron('myth','A prophet walks the roads, barefoot and loud. Crowds gather. Grain does not.', W.settlements[0].x, W.settlements[0].z, 6);
+    chron('myth','A prophet walks the roads, barefoot and loud, crying the words of Doremil. Crowds gather. Grain does not.', W.settlements[0].x, W.settlements[0].z, 6);
   }
   if(W.prophet && chance(R, 0.004)){
     const p = notable(W.prophet);
@@ -4898,7 +5008,7 @@ function wakeDragon(day){
   D.state = 'outbound'; D.phaseStart = day; D.phaseDur = 1.2;
   D.target = W.settlements[0];
   ensureDragonMesh();
-  chron('myth', D.name+' is awake. Shepherds on the high pastures saw wings against the stars, and did not stay to count them.', W.peak.x, W.peak.z, 10);
+  chron('myth', D.name+' is awake — a child of Laegos, loosed upon the realm. Shepherds on the high pastures saw wings against the stars, and did not stay to count them.', W.peak.x, W.peak.z, 10);
 }
 function advanceDragon(day){
   const D = W.dragon, R = W.rng.hist, t = D.target;
@@ -5033,7 +5143,7 @@ function tickLandmarks(day){
       W.settlements.forEach(s => { if(dist2d(x,z,s.x,s.z) < s.R + 60) clear = false; });
       if(clear){
         addLandmark('shrine', x, z, 'a wayside shrine', day);
-        chron('realm','A shrine to the road-saints was raised where the ways part near '+nearestSettlement(x,z).s.name+'; carters leave pennies and take luck.', x, z, 3);
+        chron('realm','A shrine to Bēlkar the Woodwose, who keeps the roads, was raised where the ways part near '+nearestSettlement(x,z).s.name+'; carters leave pennies and take luck.', x, z, 3);
       }
     }
   }
@@ -5070,12 +5180,12 @@ function tickLandmarks(day){
       let far = true;
       W.settlements.forEach(s => { if(dist2d(x,z,s.x,s.z) < 550) far = false; });
       if(!far) continue;
-      const saint = pick(R, NAMES_M.concat(NAMES_F));
-      const nm = 'the Abbey of Saint ' + saint;
+      const kem = pick(R, KEMBAR);
+      const nm = 'the Sanctuary of ' + kem;
       const lm = addLandmark('monastery', x, z, nm, day);
       addLabelRaw(x, z, 'geo', nm, 20, null);
       clearTreesAround({x, z, clearedR: 0, R: 40}, 55);
-      chron('crown', nm+' is founded in the quiet country; the brothers brew, keep bees, and improve the road.', x, z, 6);
+      chron('crown', nm+' is founded in the quiet country; the devotees brew, keep bees, and improve the road.', x, z, 6);
       W.pol.legitimacy = clamp(W.pol.legitimacy + 4, 0, 100);
       break;
     }
@@ -5090,7 +5200,7 @@ function tickLandmarks(day){
       W.settlements.forEach(s => { if(dist2d(x,z,s.x,s.z) < 500) far = false; });
       if(!far) continue;
       addLandmark('hermitage', x, z, 'a hermitage', day);
-      chron('flavor','A hermit has taken to the old woods near '+nearestSettlement(x,z).s.name+'; he blesses travellers, and curses loudly at everything else.', x, z, 3);
+      chron('flavor','A hermit has taken to the old woods near '+nearestSettlement(x,z).s.name+'; he blesses travellers in Bēlkar’s name, and curses loudly at everything else.', x, z, 3);
       break;
     }
   }
@@ -5104,25 +5214,25 @@ function rareEvents(day){
   const roll = R();
   if(roll < 0.15 && myth){
     const s = pick(R, W.settlements);
-    chron('myth','A white hart was seen at dawn in the woods near '+s.name+', and vanished like a held breath. It is taken for a blessing.', s.x, s.z, 6);
+    chron('myth','A white elk was seen at dawn in the woods near '+s.name+', and vanished like a held breath. It is taken for a blessing of Bēlkar.', s.x, s.z, 6);
     W.pol.legitimacy = clamp(W.pol.legitimacy + 2, 0, 100);
   } else if(roll < 0.28 && myth){
     const x = rr(R,-2200,2200), z = rr(R,-2200,2200);
     if(!W.waterMask[idx(Math.round(worldToGrid(x)), Math.round(worldToGrid(z)))]){
       addLandmark('starstone', x, z, 'the fallen star', day);
       W.treasury += 400;
-      chron('myth','A star fell burning in the fields near '+nearestSettlement(x,z).s.name+'. The smiths paid gold for the iron, and the priests for the silence.', x, z, 8);
+      chron('myth','A star fell burning in the fields near '+nearestSettlement(x,z).s.name+'. The smiths paid gold for the star-iron — rarer than any bronze — and the Lektān for the silence.', x, z, 8);
     }
   } else if(roll < 0.42 && W.hasCoast){
     const hb = W.settlements.find(s => s.harbor);
     if(hb){
       hb.stores.fish += 3200;
-      chron('realm','A great whale came ashore near '+hb.name+': a season of oil and meat, and the smell of it for longer.', hb.x, hb.z, 5);
+      chron('realm','A great whale — some whispered a calf of Pon Heth — came ashore near '+hb.name+': a season of oil and meat, and the smell of it for longer.', hb.x, hb.z, 5);
     }
   } else if(roll < 0.56 && season === 3){
     const s = pick(R, W.settlements);
     s.unrest = Math.min(100, s.unrest + 8);
-    chron('fate','A wolf-winter: packs bold as tax collectors at the very gates of '+s.name+'. Shepherds sleep armed.', s.x, s.z, 5);
+    chron('fate','A wolf-winter: barghests bold as tax collectors at the very gates of '+s.name+', and the shepherds sleep armed; the old folk blame the Mad One.', s.x, s.z, 5);
   } else if(roll < 0.64 && avgProsperity() > 0.6 && W.treasury > 800){
     W.treasury -= 350;
     W.pol.legitimacy = clamp(W.pol.legitimacy + 4, 0, 100);
@@ -5647,6 +5757,8 @@ function seasonWeights(day){
   return w;
 }
 const _sunDir = new THREE.Vector3(), _moonDir = new THREE.Vector3(), _lightDir = new THREE.Vector3();
+// Tamar, the gas-giant, is fixed in the sky (Nīmlad is tidally locked to it)
+const _tamarDir = new THREE.Vector3(-0.665, 0.244, -0.706);
 let shadowsOn = true;
 function updateSkyAndLight(nowSec){
   // seasons colour the world through a slow real-time filter, so the fastest
@@ -5676,6 +5788,9 @@ function updateSkyAndLight(nowSec){
   }
   const az = lerp(0.55, Math.PI-0.55, prog) + Math.PI*0.5;
   _sunDir.set(Math.cos(sunElev)*Math.cos(az), Math.sin(sunElev), Math.cos(sunElev)*Math.sin(az));
+  // the dark hour: as the sun climbs its afternoon arc it passes behind fixed Tamar,
+  // and is eclipsed for a spell. Pure function of the sun's position — no RNG, no sim state.
+  const darkHour = smooth((_sunDir.dot(_tamarDir) - 0.955) / (0.985 - 0.955)) * clamp01(sunElev*6);
   const mEl = isDay ? -0.4 : Math.sin(Math.PI*prog)*0.72;
   const mAz = az + Math.PI*0.9;
   _moonDir.set(Math.cos(mEl)*Math.cos(mAz), Math.sin(mEl), Math.cos(mEl)*Math.sin(mAz));
@@ -5698,6 +5813,7 @@ function updateSkyAndLight(nowSec){
     if(W._flash){ if(nowSec < W._flash) wMul = 2.3; else W._flash = 0; }
   }
   if(performance.now() < (W.eclipseUntil||0)) wMul *= 0.13;
+  wMul *= (1 - 0.82*darkHour);
   const grey = clamp01(1 - Math.min(wMul,1)) * 0.72;
   SH.uDry.value += ((W.drought ? 0.85 : 0) - SH.uDry.value)*0.02;
   SH.uWet.value += (((wst==='rain'||wst==='storm') ? 0.55 : 0) - SH.uWet.value)*0.03;
@@ -5740,6 +5856,11 @@ function updateSkyAndLight(nowSec){
   WATERU.uSunCol.value.setRGB(K.sun.r, K.sun.g, K.sun.b);
   skyU.uZen.value.setRGB(lerp(K.zen.r, 0.5, grey), lerp(K.zen.g, 0.52, grey), lerp(K.zen.b, 0.55, grey));
   skyU.uHor.value.setRGB(lerp(K.hor.r, 0.62, grey), lerp(K.hor.g, 0.63, grey), lerp(K.hor.b, 0.64, grey));
+  if(darkHour > 0.001){   // the sky bruises purple as Tamar takes the sun
+    const p = darkHour * 0.72, z = skyU.uZen.value, h = skyU.uHor.value;
+    z.setRGB(lerp(z.r, 0.13, p), lerp(z.g, 0.05, p), lerp(z.b, 0.17, p));
+    h.setRGB(lerp(h.r, 0.24, p), lerp(h.g, 0.10, p), lerp(h.b, 0.28, p));
+  }
   if(W.clock.day < (W.redMoonUntil||-1)) skyU.uMoonTint.value.setRGB(1, 0.3, 0.26);
   else skyU.uMoonTint.value.setRGB(0.92, 0.94, 1.0);
   skyU.uSunDir.value.copy(_sunDir);
@@ -5794,6 +5915,53 @@ function initUI(){
   });
   document.getElementById('btnReforge').addEventListener('click', ()=>{
     const s = document.getElementById('seedIn').value.trim() || String(Math.floor(Math.random()*9000000)+1000000);
+    history.replaceState(null, '', '#s='+encodeURIComponent(s));
+    forgeWorld(s);
+  });
+  // --- Custom Map Mode: forge the canon Marble City, or a realm from your own heightmap ---
+  document.getElementById('btnEpeshu').addEventListener('click', ()=>{
+    window.CUSTOM_MAP_LOCK = false;
+    document.getElementById('seedIn').value = 'epeshu';
+    history.replaceState(null, '', '#s=epeshu');
+    forgeWorld('epeshu');
+  });
+  document.getElementById('btnForgeDnd').addEventListener('click', ()=>{
+    let settlements = null;
+    const txt = document.getElementById('dndSettlements').value.trim();
+    if(txt){ try { settlements = JSON.parse(txt); } catch(e){ flash('settlements: not valid JSON'); return; } }
+    const finish = (H)=>{
+      const data = { hasCoast:true, coastEdge:0 };
+      if(H) data.H = H;
+      if(settlements) data.settlements = settlements;
+      window.CUSTOM_MAP_DATA = data;
+      window.CUSTOM_MAP_LOCK = true;
+      const s = document.getElementById('seedIn').value.trim() || 'custom';
+      history.replaceState(null, '', '#s='+encodeURIComponent(s));
+      forgeWorld(s);
+    };
+    const file = document.getElementById('dndHeightmap').files[0];
+    if(file){
+      const img = new Image();
+      img.onload = ()=>{
+        const c = document.createElement('canvas'); c.width = N; c.height = N;
+        const g = c.getContext('2d'); g.drawImage(img, 0, 0, N, N);
+        const d = g.getImageData(0, 0, N, N).data, H = new Float32Array(N*N);
+        for(let i=0;i<N*N;i++){ const pv = (d[i*4]+d[i*4+1]+d[i*4+2])/3; H[i] = (pv - 40) * 4.0; }
+        URL.revokeObjectURL(img.src);
+        finish(H);
+      };
+      img.onerror = ()=> flash('could not read that image');
+      img.src = URL.createObjectURL(file);
+    } else if(settlements){
+      finish(null);   // place the towns on procedural terrain
+    } else {
+      flash('load a heightmap or paste settlements');
+    }
+  });
+  document.getElementById('btnClearDnd').addEventListener('click', ()=>{
+    window.CUSTOM_MAP_LOCK = false; window.CUSTOM_MAP_DATA = null;
+    const s = String(Math.floor(Math.random()*9000000)+1000000);
+    document.getElementById('seedIn').value = s;
     history.replaceState(null, '', '#s='+encodeURIComponent(s));
     forgeWorld(s);
   });
@@ -6384,7 +6552,7 @@ function runAct(name){
   else if(name === 'bless'){
     W.blessNext = true;
     W.pol.legitimacy = clamp(W.pol.legitimacy + 3, 0, 100);
-    chron('crown','The High Priest blessed the fields with great ceremony; the crown paid for the incense.', W.settlements[0].x, W.settlements[0].z, 3);
+    chron('crown','The High Lektān blessed the fields in Mālgal’s name, with great ceremony; the crown paid for the incense.', W.settlements[0].x, W.settlements[0].z, 3);
   }
   else if(name === 'dragon'){
     if(!W.rates.myth) chron('flavor','Men went up to wake the mountain and found only stone and wind.', W.peak.x, W.peak.z);
@@ -6564,6 +6732,9 @@ async function forgeWorld(seed){
   if(forging) return;
   forging = true;
   try {
+    // canon anchor: the reserved seed 'epeshu' loads the Marble City; every other seed is
+    // procedural. A map loaded through the D&D map UI sets CUSTOM_MAP_LOCK to hold its data.
+    if(!window.CUSTOM_MAP_LOCK) window.CUSTOM_MAP_DATA = (String(seed) === 'epeshu') ? buildEpeshuMapData() : null;
     const lo = document.getElementById('loading');
     lo.classList.remove('hidden'); lo.style.opacity = 1;
     document.getElementById('steps').innerHTML = '';
@@ -6802,13 +6973,56 @@ window.ANNALS = {
   seed(s){ history.replaceState(null,'','#s='+encodeURIComponent(s)); return forgeWorld(String(s)); }
 };
 
+// ---------- the canon anchor: Epēshu, the Marble City of Leponnia ----------
+// A hand-authored coastal heightfield (White Sea to the west, the Marble Gulf biting
+// eastward, hills to the north, farmland south and east) with the Kadar's real towns.
+function buildEpeshuMapData(){
+  const H = new Float32Array(N*N);
+  const vhash = (a,b)=>{ const s = Math.sin(a*127.1 + b*311.7)*43758.5453; return s - Math.floor(s); };
+  const snoise = (x,y)=>{ const x0=Math.floor(x), y0=Math.floor(y), fx=x-x0, fy=y-y0;
+    const sx=fx*fx*(3-2*fx), sy=fy*fy*(3-2*fy);
+    const n00=vhash(x0,y0), n10=vhash(x0+1,y0), n01=vhash(x0,y0+1), n11=vhash(x0+1,y0+1);
+    return (n00*(1-sx)+n10*sx)*(1-sy) + (n01*(1-sx)+n11*sx)*sy; };
+  const fbm = (x,y)=>{ let a=0,f=1,amp=0.5,t=0; for(let o=0;o<4;o++){ a+=amp*snoise(x*f,y*f); t+=amp; f*=2.03; amp*=0.5; } return a/t; };
+  for(let iz=0; iz<N; iz++){
+    for(let ix=0; ix<N; ix++){
+      const u = ix/(N-1), v = iz/(N-1);          // u: west→east, v: north→south
+      let h = (u - 0.26) * 640;                   // the land rises away from the sea
+      const hn = Math.max(0, (0.42 - v)/0.42); h += hn*hn*330;   // hills along the north
+      h += (fbm(u*5.5 + 3.0, v*5.5 + 7.0) - 0.5) * 150;          // gentle roll
+      const coastWobble = (fbm(v*7.0, 2.0) - 0.5) * 0.06;        // a coast that isn't ruler-straight
+      if(u < 0.26 + coastWobble) h = (u - (0.26 + coastWobble)) * 320 - 4;   // the White Sea
+      const gv = 1 - Math.min(Math.abs(v - 0.40) / 0.05, 1);     // the Marble Gulf, a bay
+      const gu = Math.max(0, (0.48 - u) / 0.24);                 // biting east, tapering to a tip
+      const gulf = gv * Math.min(gu, 1);
+      if(gulf > 0) h = h*(1-gulf) + (-34)*gulf;
+      h += (fbm(u*15.0 + 11.0, v*15.0 + 5.0) - 0.5) * 34;        // texture
+      H[idx(ix,iz)] = h;
+    }
+  }
+  return {
+    H, realmName: 'Epēshu', hasCoast: true, coastEdge: 0, climate: 0.04,
+    houseNames: ['Eshbrīn','Orondēs','Lektān','Mālaz','Relkonim'],
+    settlements: [
+      {name:'Epēshu',   kind:'capital', gridX:168, gridZ:236, pop:2600, harbor:true},
+      {name:'Pēshunor', kind:'town',    gridX:146, gridZ:342, pop:900,  harbor:true},
+      {name:'Lamor',    kind:'town',    gridX:286, gridZ:262, pop:820},
+      {name:'Tamaron',  kind:'town',    gridX:236, gridZ:388, pop:760},
+      {name:'Aglaz',    kind:'village', gridX:214, gridZ:172, pop:230},
+      {name:'Perōna',   kind:'village', gridX:268, gridZ:150, pop:210},
+      {name:'Sardīl',   kind:'village', gridX:330, gridZ:318, pop:260},
+      {name:'Medōm',    kind:'village', gridX:196, gridZ:420, pop:200}
+    ]
+  };
+}
+
 // ---------- boot ----------
 initRenderer();
 initInput();
 initUI();
 (function boot(){
   const m = location.hash.match(/s=([^&]+)/);
-  let seed = m ? decodeURIComponent(m[1]) : String(Math.floor(Math.random()*9000000)+1000000);
+  let seed = m ? decodeURIComponent(m[1]) : 'epeshu';   // the Marble City is the world you meet first
   if(!m) history.replaceState(null, '', '#s='+encodeURIComponent(seed));
   document.getElementById('seedIn').value = seed;
   requestAnimationFrame(frame);
