@@ -1,0 +1,200 @@
+[
+ {
+  "type": "Major Regions",
+  "x": 1758,
+  "y": 738,
+  "name": "Empheros"
+ },
+ {
+  "type": "Minor Regions",
+  "x": 2478.5,
+  "y": 1063.4,
+  "name": "Pārāgōl"
+ },
+ {
+  "type": "Minor Regions",
+  "x": 2371.3,
+  "y": 909.8,
+  "name": "Nenog"
+ },
+ {
+  "type": "Major Regions",
+  "x": 316,
+  "y": 759,
+  "name": "Alensis"
+ },
+ {
+  "type": "Major Regions",
+  "x": 612.4,
+  "y": 267.5,
+  "name": "Relkor"
+ },
+ {
+  "type": "Major Regions",
+  "x": 3288,
+  "y": 1048,
+  "name": "Garnatos"
+ },
+ {
+  "type": "Minor Regions",
+  "x": 3095.0,
+  "y": 1224.0,
+  "name": "Drāgīnor"
+ },
+ {
+  "type": "Major Regions",
+  "x": 968.0,
+  "y": 634.9,
+  "name": "Sargāzat"
+ },
+ {
+  "type": "Major Regions",
+  "x": 1943.1,
+  "y": 312.8,
+  "name": "Khōrgos"
+ },
+ {
+  "type": "Settlements",
+  "x": 523,
+  "y": 58,
+  "name": "Summarch"
+ },
+ {
+  "type": "Settlements",
+  "x": 1941,
+  "y": 747,
+  "name": "Penthelon"
+ },
+ {
+  "type": "Minor Regions",
+  "x": 1601,
+  "y": 1262,
+  "name": "Bībūnor"
+ },
+ {
+  "type": "Bodies of Water",
+  "x": 3040,
+  "y": 815,
+  "name": "Green Sea"
+ },
+ {
+  "type": "Bodies of Water",
+  "x": 3872,
+  "y": 628,
+  "name": "Aldronde"
+ },
+ {
+  "type": "Bodies of Water",
+  "x": 616.6,
+  "y": 1384.7,
+  "name": "White Sea"
+ },
+ {
+  "type": "Bodies of Water",
+  "x": 1940.8,
+  "y": 1505.4,
+  "name": "Great Chasmous Sea"
+ },
+ {
+  "type": "Mountains and Hills",
+  "x": 2676,
+  "y": 206,
+  "name": "Mountain Wall"
+ },
+ {
+  "type": "Major Regions",
+  "x": 1053,
+  "y": 1786,
+  "name": "Horat"
+ },
+ {
+  "type": "Major Regions",
+  "x": 3988.1,
+  "y": 1719.9,
+  "name": "Mākh Abath"
+ },
+ {
+  "type": "Major Regions",
+  "x": 1401,
+  "y": 1618,
+  "name": "Leponnia"
+ },
+ {
+  "type": "Settlements",
+  "x": 1222,
+  "y": 1404,
+  "name": "Epēshu"
+ },
+ {
+  "type": "Minor Regions",
+  "x": 1337,
+  "y": 1335,
+  "name": "Paerāndas"
+ },
+ {
+  "type": "Settlements",
+  "x": 1146,
+  "y": 1415,
+  "name": "Lepon"
+ },
+ {
+  "type": "Minor Regions",
+  "x": 2641,
+  "y": 1369,
+  "name": "Phagal"
+ },
+ {
+  "type": "Bodies of Water",
+  "x": 1483,
+  "y": 2169,
+  "name": "Tungril"
+ },
+ {
+  "type": "Mountains and Hills",
+  "x": 3148,
+  "y": 2134,
+  "name": "Far Mountains"
+ },
+ {
+  "type": "Minor Regions",
+  "x": 2088,
+  "y": -94,
+  "name": "Hoarland"
+ },
+ {
+  "type": "Major Regions",
+  "x": 2353.3,
+  "y": 2160.0,
+  "name": "Far South"
+ },
+ {
+  "type": "Major Regions",
+  "x": 1826,
+  "y": -92,
+  "name": "Far North"
+ },
+ {
+  "type": "Mountains and Hills",
+  "x": 782,
+  "y": -93,
+  "name": "Fell Mountains"
+ },
+ {
+  "type": "Major Regions",
+  "x": 500,
+  "y": 2160,
+  "name": "Home Islands"
+ },
+ {
+  "type": "Major Regions",
+  "x": -174.9,
+  "y": 1441.3,
+  "name": "Moonless Lands"
+ },
+ {
+  "type": "Settlements",
+  "x": 1344,
+  "y": 1769,
+  "name": "Drāmūz"
+ }
+]

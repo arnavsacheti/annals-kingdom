@@ -1,0 +1,86 @@
+[
+  {
+    "name": "East-West Road",
+    "x": 610,
+    "y": 140,
+    "session": 0,
+    "note": "Approximate. Ambushed by a wendigo pack while traveling toward Summarch; found blood glyphs carved in their hides."
+  },
+  {
+    "name": "Summarch",
+    "x": 523,
+    "y": 58,
+    "session": 0,
+    "note": "Investigated Grandmaster Hagar's death, first Hooded Man encounter, killed Panry Chenech, tasked to pursue the Grandmother north."
+  },
+  {
+    "name": "Watchwater",
+    "x": 1175,
+    "y": 33,
+    "session": 0,
+    "note": "Approximate, interpolated between Summarch and the Far North. Crossed the Watchwater to enter the Far North."
+  },
+  {
+    "name": "Far North",
+    "x": 1826,
+    "y": 8,
+    "session": 0,
+    "note": "Clamped into frame from native y ~-92. Defeated a Leshy conjured by the Grandmother before pressing on to the Fell Mountains."
+  },
+  {
+    "name": "Fell Mountains",
+    "x": 782,
+    "y": 8,
+    "session": 0,
+    "note": "Clamped into frame from native y ~-93. Found the dragon Lugal's lair, brokered his neutrality, and routed the Grandmother's camp."
+  },
+  {
+    "name": "Summarch",
+    "x": 545,
+    "y": 80,
+    "session": 0,
+    "note": "Approximate, offset from prior visit for clarity. Returned to find the city in open rebellion."
+  },
+  {
+    "name": "Siege of the Seat",
+    "x": 560,
+    "y": 95,
+    "session": 0,
+    "note": "Approximate, at Summarch's citadel. Cresadoc, the Hooded Man, and Selwin killed; Kembar returned; party expelled from the Allhammers."
+  },
+  {
+    "name": "Sepos",
+    "x": 560,
+    "y": 300,
+    "session": 0,
+    "note": "Approximate, interpolated south from Summarch toward the White Sea. Fled here with Aderyn Sly's aid and hired Captain Lahar."
+  },
+  {
+    "name": "White Sea",
+    "x": 617,
+    "y": 1385,
+    "session": 1,
+    "note": "Set sail on the Tamarnīn along a dangerous route across the White Sea bound for Epēshu."
+  },
+  {
+    "name": "Paerāndas",
+    "x": 1337,
+    "y": 1335,
+    "session": 2,
+    "note": "Diverted into the archipelago to shelter from an oncoming storm; later explored ancient ruins on one of its islands."
+  },
+  {
+    "name": "White Sea (Dagon's attack)",
+    "x": 1280,
+    "y": 1370,
+    "session": 6,
+    "note": "Approximate, interpolated between the Paerāndas and Epēshu. Attacked at sea by Dagon, who was defeated and vanished."
+  },
+  {
+    "name": "Epēshu",
+    "x": 1222,
+    "y": 1404,
+    "session": 7,
+    "note": "Arrived at the great port city; Aderyn revealed himself as a Wite before glyphs and enchantments began failing citywide."
+  }
+]

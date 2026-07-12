@@ -1,0 +1,130 @@
+[
+  {
+    "place": "Summarch",
+    "reviewer": "Frösted Flækes",
+    "stars": 3,
+    "date": "1374 A.B., Mid Summer",
+    "text": "Nice bell towers, terrible customer service. Arrived to investigate Grandmaster Hagar's death and had a hooded stranger following me before I'd even unpacked. 3 stars, deduct 2 for the ambiance of dread.",
+    "session": 1
+  },
+  {
+    "place": "Summarch",
+    "reviewer": "Guantanamo Michael",
+    "stars": 1,
+    "date": "1374 A.B., Mid Summer",
+    "text": "Selwin's hospitality: one (1) cell, no windows, poor room service. Had to break myself and Frösted out just to get some air. Would not recommend the Seat's guest accommodations.",
+    "session": 1
+  },
+  {
+    "place": "Summarch",
+    "reviewer": "Babar Ett-Clan",
+    "stars": 2,
+    "date": "1374 A.B., Mid Summer",
+    "text": "Toured the sewers beneath the city. Highlight: ancient stonework. Lowlight: getting jumped by an ooze that clearly hadn't heard of personal space. Bring a torch and low expectations.",
+    "session": 1
+  },
+  {
+    "place": "Summarch",
+    "reviewer": "Babar Ett-Clan",
+    "stars": 4,
+    "date": "1374 A.B., Mid Summer",
+    "text": "Spoke up for Rennick before the Seat and watched him get elected Grandmaster right in front of me. Democracy, Allhammer-style. Docking a star only because the sewers under this place are unforgivable.",
+    "session": 1
+  },
+  {
+    "place": "Summarch",
+    "reviewer": "Frösted Flækes",
+    "stars": 1,
+    "date": "1374 A.B., Late Autumn",
+    "text": "Returned to find the city mid-rebellion and watched the Seat besieged, Selwin and the Hooded Man both killed, and the Kembar somehow back. Then got expelled from my own order. One star, will not return for my mail.",
+    "session": 1
+  },
+  {
+    "place": "Summarch",
+    "reviewer": "A Traveling Allhammer",
+    "stars": 3,
+    "date": "1374 A.B., Mid Summer",
+    "text": "Passed the East-West Road on the way here and got jumped by a whole pack of wendigos with blood glyphs carved into their hides. Skinned them for pelts, sold them to Panry Chenech. Grim but efficient use of a Tuesday.",
+    "session": 1
+  },
+  {
+    "place": "Fell Mountains",
+    "reviewer": "Aderyn Sly",
+    "stars": 5,
+    "date": "1374 A.B., Early Autumn",
+    "text": "Snuck into a literal dragon's lair expecting to die and instead talked Lugal into staying neutral in our whole mess. Five stars for the view alone, ten if you can survive the negotiation.",
+    "session": 1
+  },
+  {
+    "place": "Fell Mountains",
+    "reviewer": "Guantanamo Michael",
+    "stars": 4,
+    "date": "1374 A.B., Early Autumn",
+    "text": "Raided the Grandmother's camp outside the dragon's lair and sent her running, then walked off with a very fashionable dwimmercloak. Four stars; Frösted made a fairy dragon friend and I didn't, hence the deduction.",
+    "session": 1
+  },
+  {
+    "place": "Far North",
+    "reviewer": "Babar Ett-Clan",
+    "stars": 3,
+    "date": "1374 A.B., Early Autumn",
+    "text": "Crossed the Watchwater into the Far North and immediately got ambushed by a leshy the Grandmother cooked up. Scenery: frozen and unwelcoming. Wildlife: also unwelcoming.",
+    "session": 1
+  },
+  {
+    "place": "White Sea",
+    "reviewer": "Guantanamo Michael",
+    "stars": 2,
+    "date": "1374 A.B., Early Winter",
+    "text": "Fought a rotting sea-thing named Dagon on the open deck and ended it with a lightning bolt. Only afterward, going over the bound captain's runes below, did we have to blind him to spare his life from a hidden kill-glyph. Two stars for the lightning bolt, zero for the guilt.",
+    "session": 6
+  },
+  {
+    "place": "Paerāndas",
+    "reviewer": "Aderyn Sly",
+    "stars": 3,
+    "date": "1374 A.B., Early Winter",
+    "text": "Diverted here to dodge a storm and found ancient ruins full of black webs that flinch from torchlight, plus a blocked passage to the land of the dead. Solid detour, mediocre snorkeling.",
+    "session": 4
+  },
+  {
+    "place": "Epēshu",
+    "reviewer": "Aderyn Sly",
+    "stars": 4,
+    "date": "1374 A.B., Early Winter",
+    "text": "Finally made port after a very long row. My contact Pahīn was not thrilled when Guantanamo tried to cross the city on thirty-foot stilts. The safehouse itself is lovely, if you can reach it without a scene.",
+    "session": 7
+  },
+  {
+    "place": "Epēshu",
+    "reviewer": "Leon Mallister",
+    "stars": 5,
+    "date": "1374 A.B., Early Winter",
+    "text": "Heard Aderyn's impassioned cellar speech about the Kembar and pledged my life to stopping them, then found out our own guide was a Wite the whole time. Riveting evening. Five stars for the reveal alone.",
+    "session": 7
+  },
+  {
+    "place": "Epēshu",
+    "reviewer": "Frösted Flækes",
+    "stars": 4,
+    "date": "1374 A.B., Early Winter",
+    "text": "Made Sjefenhold Specials for the whole crew during a citywide magic blackout; everyone loved them except El, who apparently doesn't eat breakfast. Four stars, docked one for the ominous unending storm.",
+    "session": 8
+  },
+  {
+    "place": "Epēshu",
+    "reviewer": "Frösted Flækes",
+    "stars": 5,
+    "date": "1374 A.B., Early Winter",
+    "text": "Sold four invisibility potions to a fellow Hoarlander alchemist in the Marble Quarter for 3200 coin and restocked my whole kit. Best shopping day of the campaign, five stars, would sell potions here again.",
+    "session": 9
+  },
+  {
+    "place": "Epēshu",
+    "reviewer": "Leon Mallister",
+    "stars": 5,
+    "date": "1374 A.B., Early Winter",
+    "text": "Scouted the Thūkīn Amphitheater disguised as a Games inspector, charmed a guard named Buddy into showing me everything, and learned they're releasing pudkhars into a jungle arena. Five stars, terrifying, can't wait.",
+    "session": 9
+  }
+]

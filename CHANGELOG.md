@@ -4,6 +4,15 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.4.0-alpha.1] — 2026-07-12
+- New `maps-site/`: the interactive atlas for maps.princexizor.ddns.net — Leaflet over
+  a tiled PatrinorModern (z0–4), wiki markers with lore popups and read-more links,
+  realm-boundary polygons extracted from the atlas tints (all 8 legend realms), the
+  party's 12-waypoint route with session notes, diacritic-folding search, and 16
+  Traveller's Reviews grounded in the session logs (lore-reviewed and corrected)
+- `DEPLOY.md`: nginx/Caddy blocks for sim. and maps. subdomains
+- README rewritten for the campaign fork (upstream credit retained)
+
 ## [0.3.0-alpha.1] — 2026-07-12
 - World enlarged 6 km → 9 km (N=768, CELL unchanged) with a whole-realm zoom ceiling
   (alt 11 km), altitude-scaled fog, and content density scaled to the larger land

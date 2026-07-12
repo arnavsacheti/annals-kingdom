@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Agrakh Nīmilkad Utheg — the Wide World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<style>
+  :root{
+    --parch:#e9dcc0; --parch2:#efe6cf; --panel:#f3ecd7; --panel2:#e7dabb;
+    --ink:#2c2418; --ink2:#4a3f2c; --muted:#6e5f43;
+    --line:#c7b58c; --line2:#b09a6c;
+    --rust:#8a3c28; --bronze:#8a6224; --water:#3a6478; --moss:#5a6b34;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;background:var(--parch);color:var(--ink);
+    font-family:'Lora',Georgia,serif;}
+  #app{display:flex;flex-direction:column;height:100%;}
+
+  header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    padding:8px 16px;background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border-bottom:2px solid var(--line2);box-shadow:0 2px 8px rgba(44,36,24,.25);
+    z-index:1000;position:relative;}
+  header h1{font-family:'EB Garamond',serif;font-weight:600;font-size:22px;
+    margin:0;letter-spacing:.3px;color:var(--ink);white-space:nowrap;
+    text-shadow:0 1px 0 rgba(255,255,255,.4);}
+  header h1 .em{color:var(--rust);}
+  .search-wrap{position:relative;flex:1 1 220px;max-width:360px;min-width:150px;}
+  #search{width:100%;padding:7px 10px;border:1px solid var(--line2);
+    background:var(--parch2);color:var(--ink);border-radius:4px;
+    font-family:'Lora',serif;font-size:14px;outline:none;}
+  #search:focus{border-color:var(--bronze);box-shadow:0 0 0 2px rgba(138,98,36,.2);}
+  #suggest{position:absolute;top:100%;left:0;right:0;margin-top:2px;
+    background:var(--panel);border:1px solid var(--line2);border-radius:4px;
+    box-shadow:0 6px 16px rgba(44,36,24,.3);max-height:280px;overflow:auto;
+    display:none;z-index:1200;}
+  #suggest.on{display:block;}
+  .sug{padding:7px 10px;cursor:pointer;font-size:14px;border-bottom:1px solid rgba(199,181,140,.5);}
+  .sug:last-child{border-bottom:none;}
+  .sug:hover,.sug.active{background:var(--panel2);}
+  .sug .st{font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;
+    text-transform:uppercase;letter-spacing:.5px;}
+  .links{display:flex;gap:10px;margin-left:auto;}
+  .links a{font-family:'EB Garamond',serif;font-size:15px;color:var(--ink);
+    text-decoration:none;padding:5px 11px;border:1px solid var(--line2);
+    border-radius:4px;background:var(--parch2);white-space:nowrap;transition:.15s;}
+  .links a:hover{background:var(--rust);color:#f5ecd6;border-color:var(--rust);}
+
+  #map{flex:1 1 auto;background:#d9cba7;}
+
+  footer{padding:5px 16px;background:var(--panel2);border-top:1px solid var(--line2);
+    font-family:'EB Garamond',serif;font-size:13px;color:var(--muted);
+    text-align:center;font-style:italic;letter-spacing:.2px;}
+
+  /* ---- markers ---- */
+  .mk{display:flex;align-items:center;pointer-events:none;}
+  .mk .glyph{pointer-events:auto;display:flex;align-items:center;justify-content:center;
+    width:22px;height:22px;border-radius:50%;font-size:14px;line-height:1;
+    border:1.5px solid rgba(44,36,24,.55);background:var(--parch2);
+    box-shadow:0 1px 3px rgba(0,0,0,.35);color:var(--ink);flex:0 0 auto;}
+  .mk .lbl{pointer-events:auto;margin-left:5px;font-family:'EB Garamond',serif;
+    font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;
+    text-shadow:0 0 3px var(--parch),0 0 3px var(--parch),0 0 3px var(--parch);
+    display:none;}
+  .atlas-labels .mk .lbl{display:inline;}
+  .mk.t-set .glyph{background:#f2e7cb;color:#5a3210;border-color:#5a3210;}
+  .mk.t-major .glyph{background:#efe3c6;color:var(--bronze);border-color:var(--bronze);
+    width:24px;height:24px;font-size:15px;}
+  .mk.t-minor .glyph{background:#efe3c6;color:var(--bronze);border-color:#a98a4c;
+    width:18px;height:18px;font-size:11px;}
+  .mk.t-water .glyph{background:#d8e4e6;color:var(--water);border-color:var(--water);}
+  .mk.t-mtn .glyph{background:#e6ddc9;color:#6a4a24;border-color:#6a4a24;}
+  .mk.t-major .lbl{font-size:14px;}
+  .mk.t-water .lbl{color:#2e5060;font-style:italic;}
+
+  /* route waypoints */
+  .wp{display:flex;align-items:center;justify-content:center;
+    width:20px;height:20px;border-radius:50%;background:var(--rust);color:#f5ecd6;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;
+    border:1.5px solid #f5ecd6;box-shadow:0 1px 4px rgba(0,0,0,.45);}
+  .route-line{animation:dashmove 5s linear infinite;}
+  @keyframes dashmove{to{stroke-dashoffset:-240;}}
+
+  /* ---- popups ---- */
+  .leaflet-popup-content-wrapper{background:var(--panel);color:var(--ink);
+    border:1px solid var(--line2);border-radius:6px;
+    box-shadow:0 8px 24px rgba(44,36,24,.4);}
+  .leaflet-popup-tip{background:var(--panel);border:1px solid var(--line2);}
+  .leaflet-popup-content{margin:12px 14px;font-family:'Lora',serif;line-height:1.5;
+    width:290px !important;}
+  .pp h3{font-family:'EB Garamond',serif;font-size:20px;margin:0 0 4px;color:var(--ink);}
+  .pp .badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;
+    text-transform:uppercase;letter-spacing:.8px;color:#f5ecd6;background:var(--bronze);
+    padding:2px 7px;border-radius:3px;margin-bottom:8px;}
+  .pp .excerpt{font-size:13.5px;color:var(--ink2);margin:6px 0;}
+  .pp .more{font-family:'EB Garamond',serif;font-size:14px;color:var(--rust);
+    text-decoration:none;font-weight:600;}
+  .pp .more:hover{text-decoration:underline;}
+  .pp .rev-h{font-family:'EB Garamond',serif;font-size:15px;margin:12px 0 4px;
+    padding-top:8px;border-top:1px solid var(--line);color:var(--muted);
+    text-transform:uppercase;letter-spacing:1px;}
+  .rev{margin:8px 0;padding:7px 9px;background:var(--parch2);border-radius:5px;
+    border:1px solid rgba(199,181,140,.7);}
+  .rev .top{display:flex;justify-content:space-between;align-items:baseline;gap:6px;}
+  .rev .who{font-weight:600;font-size:13px;}
+  .rev .stars{font-size:13px;letter-spacing:1px;color:var(--bronze);white-space:nowrap;}
+  .rev .stars .off{color:#c3b088;}
+  .rev .when{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);}
+  .rev .txt{font-size:12.5px;color:var(--ink2);margin-top:3px;font-style:italic;}
+  .wp-note{font-family:'Lora',serif;font-size:13px;line-height:1.45;}
+  .wp-note b{font-family:'EB Garamond',serif;font-size:15px;}
+  .wp-note .sess{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.6px;display:block;margin:2px 0 5px;}
+
+  /* leaflet controls parchment skin */
+  .leaflet-bar a,.leaflet-control-layers{background:var(--panel);color:var(--ink);
+    border-color:var(--line2)!important;}
+  .leaflet-bar a{color:var(--ink);}
+  .leaflet-bar a:hover{background:var(--panel2);}
+  .leaflet-control-layers{font-family:'EB Garamond',serif;font-size:14px;
+    box-shadow:0 4px 14px rgba(44,36,24,.3);border-radius:5px;padding:2px;}
+  .leaflet-control-layers-toggle{background-color:var(--panel);}
+  .leaflet-control-layers label{margin:2px 0;}
+  .leaflet-control-attribution{background:rgba(243,236,215,.85)!important;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;}
+  .realm-tip{font-family:'EB Garamond',serif;font-size:14px;background:var(--panel);
+    border:1px solid var(--line2);color:var(--ink);}
+
+  @media (max-width:640px){
+    header{padding:6px 10px;gap:8px;}
+    header h1{font-size:16px;white-space:normal;flex:1 1 100%;text-align:center;}
+    .search-wrap{max-width:none;order:2;flex:1 1 60%;}
+    .links{order:3;margin-left:0;}
+    .links a{font-size:13px;padding:4px 8px;}
+    footer{font-size:11px;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>Agrakh Nīmilkad Utheg <span class="em">— the Wide World</span></h1>
+    <div class="search-wrap">
+      <input id="search" type="text" placeholder="Search places…" autocomplete="off" spellcheck="false"/>
+      <div id="suggest"></div>
+    </div>
+    <div class="links">
+      <a href="https://princexizor.ddns.net/" target="_blank" rel="noopener">Wiki&nbsp;↗</a>
+      <a href="https://sim.princexizor.ddns.net/" target="_blank" rel="noopener">Sim&nbsp;↗</a>
+    </div>
+  </header>
+  <div id="map"></div>
+  <footer>Atlas by the campaign's cartographer · interactive chart for the Tale of the Allhammers</footer>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+"use strict";
+(function(){
+  var NZ=4, IMG_W=4390, IMG_H=2188, TILE_W=4608, TILE_H=2304;
+  var WIKI_BASE='https://princexizor.ddns.net/';
+
+  var map=L.map('map',{crs:L.CRS.Simple,minZoom:0,maxZoom:6,
+    zoomControl:true,attributionControl:true});
+  function px(x,y){return map.unproject([x,y],NZ);}
+  var contentBounds=L.latLngBounds(px(0,0),px(IMG_W,IMG_H));
+  var tileBounds=L.latLngBounds(px(0,0),px(TILE_W,TILE_H));
+
+  L.tileLayer('tiles/{z}/{x}/{y}.jpg',{
+    minNativeZoom:0,maxNativeZoom:NZ,maxZoom:6,tileSize:256,noWrap:true,
+    bounds:tileBounds,
+    attribution:'Agrakh Nīmilkad Utheg · the Tale of the Allhammers'
+  }).addTo(map);
+
+  map.fitBounds(contentBounds);
+  map.setMaxBounds(contentBounds.pad(0.25));
+
+  // ---- helpers ----
+  function esc(s){return String(s==null?'':s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');}
+  function fold(s){return String(s||'').normalize('NFD')
+    .replace(/[̀-ͯ]/g,'').toLowerCase().trim();}
+  function stars(n){n=Math.max(0,Math.min(5,n|0));var o='';
+    for(var i=0;i<5;i++)o+=i<n?'★':'<span class="off">★</span>';return o;}
+
+  // ---- clean a wiki page body into a ~400-char excerpt ----
+  function excerpt(content){
+    if(!content)return '';
+    var blocks=content.replace(/\r/g,'').split(/\n{2,}/);
+    var body=[];
+    for(var i=0;i<blocks.length;i++){
+      var b=blocks[i].replace(/\s+/g,' ').trim();
+      if(!b)continue;
+      if(/General Information|People and History/.test(b))continue;
+      if(/^(Other Names|Location|Type|Inhabitants|Events|Regions)/.test(b))continue;
+      if(/^[“"'\-–—]/.test(b))continue;            // skip quotes / attributions
+      if(b.length<40 || !/[.!?]/.test(b))continue; // skip captions/titles
+      body.push(b);
+      if(body.join(' ').length>=380)break;
+    }
+    var txt=body.join(' ');
+    if(!txt){ // fallback: first non-trivial line
+      txt=content.replace(/\s+/g,' ').trim();
+    }
+    if(txt.length>400){
+      var cut=txt.slice(0,400);var sp=cut.lastIndexOf(' ');
+      txt=(sp>300?cut.slice(0,sp):cut).replace(/[.,;:]$/,'')+'…';
+    }
+    return txt;
+  }
+
+  // ---- season ranking for "newest first" ----
+  var PHASE={early:0,mid:1,late:2};
+  var SEASON={spring:0,summer:1,autumn:2,fall:2,winter:3};
+  function chron(r){
+    var y=0,m=(String(r.date||'').match(/(\d{3,4})/));if(m)y=+m[1];
+    var d=fold(r.date), ph=1, se=0;
+    for(var k in PHASE)if(d.indexOf(k)>=0)ph=PHASE[k];
+    for(var s in SEASON)if(d.indexOf(s)>=0)se=SEASON[s];
+    return y*1000 + (se*3+ph)*10 + (r.session||0);
+  }
+
+  // ---- state ----
+  var MARKERS=[], MREF={}, WIKI={}, WIKIFOLD={}, REVIEWS={};
+
+  function pageFor(name){
+    if(WIKI[name])return WIKI[name];
+    var f=fold(name);
+    if(WIKIFOLD[f])return WIKIFOLD[f];
+    for(var t in WIKI){if(fold(t).indexOf(f)>=0||f.indexOf(fold(t))>=0)return WIKI[t];}
+    return null;
+  }
+
+  function popupHtml(mk){
+    var page=pageFor(mk.name);
+    var h='<div class="pp"><h3>'+esc(mk.name)+'</h3>'+
+      '<span class="badge">'+esc(mk.type)+'</span>';
+    if(page){
+      var ex=excerpt(page.content);
+      if(ex)h+='<div class="excerpt">'+esc(ex)+'</div>';
+      var url=WIKI_BASE+page.slug.split('/').map(encodeURIComponent).join('/');
+      h+='<a class="more" href="'+esc(url)+'" target="_blank" rel="noopener">Read more →</a>';
+    }else{
+      h+='<div class="excerpt">No chronicle entry recorded for this place.</div>';
+    }
+    var rv=REVIEWS[mk.name];
+    if(rv&&rv.length){
+      var sorted=rv.slice().sort(function(a,b){return chron(b)-chron(a);});
+      h+='<div class="rev-h">Traveller’s Reviews</div>';
+      for(var i=0;i<sorted.length;i++){var r=sorted[i];
+        h+='<div class="rev"><div class="top">'+
+          '<span class="who">'+esc(r.reviewer)+'</span>'+
+          '<span class="stars">'+stars(r.stars)+'</span></div>'+
+          '<div class="when">'+esc(r.date)+'</div>'+
+          '<div class="txt">“'+esc(r.text)+'”</div></div>';
+      }
+    }
+    h+='</div>';
+    return h;
+  }
+
+  var TYPE_STYLE={
+    'Settlements':{cls:'t-set',g:'⌂'},
+    'Major Regions':{cls:'t-major',g:'✦'},
+    'Minor Regions':{cls:'t-minor',g:'◆'},
+    'Bodies of Water':{cls:'t-water',g:'≈'},
+    'Mountains and Hills':{cls:'t-mtn',g:'▲'}
+  };
+  var LAYERS={};
+
+  function buildMarkers(data){
+    MARKERS=data;
+    data.forEach(function(m){
+      var st=TYPE_STYLE[m.type]||{cls:'t-minor',g:'•'};
+      var icon=L.divIcon({className:'',iconSize:null,iconAnchor:[11,11],
+        html:'<div class="mk '+st.cls+'"><span class="glyph">'+st.g+'</span>'+
+             '<span class="lbl">'+esc(m.name)+'</span></div>'});
+      var mk=L.marker(px(m.x,m.y),{icon:icon,title:m.name});
+      mk.bindPopup(function(){return popupHtml(m);},{maxWidth:320,minWidth:290,autoPanPadding:[40,80]});
+      m._mk=mk; MREF[fold(m.name)]=m;
+      if(!LAYERS[m.type])LAYERS[m.type]=L.layerGroup();
+      LAYERS[m.type].addLayer(mk);
+    });
+  }
+
+  function buildRoute(pts){
+    if(!pts||!pts.length)return null;
+    var g=L.layerGroup();
+    var latlngs=pts.map(function(p){return px(p.x,p.y);});
+    L.polyline(latlngs,{className:'route-line',color:'#8a3c28',weight:3,
+      opacity:.85,dashArray:'10 14',lineJoin:'round'}).addTo(g);
+    pts.forEach(function(p,i){
+      var ic=L.divIcon({className:'',iconSize:[20,20],iconAnchor:[10,10],
+        html:'<div class="wp">'+(i+1)+'</div>'});
+      var wp=L.marker(px(p.x,p.y),{icon:ic,title:p.name,zIndexOffset:400});
+      wp.bindPopup('<div class="wp-note"><b>'+esc(p.name)+'</b>'+
+        '<span class="sess">Waypoint '+(i+1)+
+        (p.session?' · Session '+p.session:' · pre-campaign')+'</span>'+
+        esc(p.note||'')+'</div>',{maxWidth:260});
+      g.addLayer(wp);
+    });
+    return g;
+  }
+
+  function buildRealms(gj){
+    if(!gj||!gj.features||!gj.features.length)return null;
+    var g=L.layerGroup();
+    gj.features.forEach(function(f){
+      var col=(f.properties&&f.properties.color)||'#8a6224';
+      var name=(f.properties&&f.properties.name)||'';
+      var geom=f.geometry;if(!geom)return;
+      var polys=geom.type==='MultiPolygon'?geom.coordinates:
+                geom.type==='Polygon'?[geom.coordinates]:[];
+      polys.forEach(function(rings){
+        var latlngs=rings.map(function(ring){
+          return ring.map(function(c){return px(c[0],c[1]);});
+        });
+        var poly=L.polygon(latlngs,{color:col,weight:1.5,opacity:.7,
+          fillColor:col,fillOpacity:.22,className:'realm'});
+        if(name)poly.bindTooltip(esc(name),{sticky:true,className:'realm-tip'});
+        g.addLayer(poly);
+      });
+    });
+    return g;
+  }
+
+  // ---- search ----
+  var searchEl=document.getElementById('search'),
+      sugEl=document.getElementById('suggest'), sugIdx=-1, sugItems=[];
+  function flyTo(m){
+    map.flyTo(m._mk.getLatLng(),Math.max(map.getZoom(),3),{duration:.8});
+    map.once('moveend',function(){m._mk.openPopup();});
+  }
+  function renderSug(list){
+    sugItems=list;sugIdx=-1;
+    if(!list.length){sugEl.className='';sugEl.innerHTML='';return;}
+    sugEl.innerHTML=list.map(function(m,i){
+      return '<div class="sug" data-i="'+i+'"><span>'+esc(m.name)+'</span> '+
+        '<span class="st">'+esc(m.type)+'</span></div>';
+    }).join('');
+    sugEl.className='on';
+    Array.prototype.forEach.call(sugEl.children,function(el){
+      el.addEventListener('mousedown',function(e){e.preventDefault();
+        pick(sugItems[+el.getAttribute('data-i')]);});
+    });
+  }
+  function pick(m){if(!m)return;searchEl.value=m.name;sugEl.className='';flyTo(m);}
+  function doSearch(q){
+    q=fold(q);if(!q)return renderSug([]);
+    var hits=MARKERS.filter(function(m){return fold(m.name).indexOf(q)>=0;})
+      .sort(function(a,b){return fold(a.name).indexOf(q)-fold(b.name).indexOf(q);})
+      .slice(0,8);
+    renderSug(hits);
+  }
+  searchEl.addEventListener('input',function(){doSearch(this.value);});
+  searchEl.addEventListener('keydown',function(e){
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();
+      if(!sugItems.length)return;
+      sugIdx+=(e.key==='ArrowDown'?1:-1);
+      sugIdx=(sugIdx+sugItems.length)%sugItems.length;
+      Array.prototype.forEach.call(sugEl.children,function(el,i){
+        el.className='sug'+(i===sugIdx?' active':'');});
+    }else if(e.key==='Enter'){
+      pick(sugIdx>=0?sugItems[sugIdx]:sugItems[0]);
+    }else if(e.key==='Escape'){sugEl.className='';}
+  });
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('.search-wrap'))sugEl.className='';});
+
+  // ---- label visibility by zoom ----
+  function updLabels(){var c=map.getContainer();
+    if(map.getZoom()>=3)c.classList.add('atlas-labels');
+    else c.classList.remove('atlas-labels');}
+  map.on('zoomend',updLabels);
+
+  // ---- load everything ----
+  function getJSON(u){return fetch(u).then(function(r){
+    if(!r.ok)throw new Error(u+' '+r.status);return r.json();}).catch(function(){return null;});}
+
+  Promise.all([
+    getJSON('data/maps_markers.json'),
+    getJSON('data/wiki-places.json'),
+    getJSON('data/reviews.json'),
+    getJSON('data/party-route.json'),
+    getJSON('data/realms.geojson')
+  ]).then(function(res){
+    var markers=res[0]||[], wiki=res[1]||[], reviews=res[2]||[],
+        route=res[3]||[], realms=res[4];
+
+    wiki.forEach(function(p){WIKI[p.title]=p;WIKIFOLD[fold(p.title)]=p;});
+    reviews.forEach(function(r){(REVIEWS[r.place]=REVIEWS[r.place]||[]).push(r);});
+
+    buildMarkers(markers);
+
+    var overlays={};
+    var order=['Settlements','Major Regions','Minor Regions','Bodies of Water','Mountains and Hills'];
+    var TL={'Settlements':'⌂ Settlements','Major Regions':'✦ Major Regions',
+      'Minor Regions':'◆ Minor Regions','Bodies of Water':'≈ Bodies of Water',
+      'Mountains and Hills':'▲ Mountains & Hills'};
+    order.forEach(function(t){if(LAYERS[t]){LAYERS[t].addTo(map);overlays[TL[t]]=LAYERS[t];}});
+
+    var realmLayer=buildRealms(realms);
+    if(realmLayer){realmLayer.addTo(map);overlays['⚑ Realm Boundaries']=realmLayer;}
+
+    var routeLayer=buildRoute(route);
+    if(routeLayer){routeLayer.addTo(map);overlays['⚔ Party Route']=routeLayer;}
+
+    L.control.layers(null,overlays,{collapsed:window.innerWidth<=760,position:'topright'}).addTo(map);
+    updLabels();
+
+    window.ATLAS={map:map,markers:MARKERS,ready:true,
+      find:function(n){return MREF[fold(n)];},
+      fly:function(n){var m=MREF[fold(n)];if(m)flyTo(m);return !!m;}};
+  });
+})();
+</script>
+</body>
+</html>
