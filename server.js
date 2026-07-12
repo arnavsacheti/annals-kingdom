@@ -4,7 +4,7 @@ const root = __dirname;
 const mime = { '.html':'text/html; charset=utf-8', '.js':'text/javascript', '.css':'text/css', '.txt':'text/plain' };
 http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0].split('#')[0]);
-  if(p === '/') p = '/index.html';
+  if(p.endsWith('/')) p += 'index.html';   // '/' → the sim, '/maps-site/' → the atlas
   const f = path.normalize(path.join(root, p));
   if(!f.startsWith(root)){ res.writeHead(403); return res.end(); }
   fs.readFile(f, (err, data) => {
