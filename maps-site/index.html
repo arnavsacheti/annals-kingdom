@@ -211,6 +211,100 @@
   .realm-tip:before{display:none;}
   .leaflet-interactive{cursor:pointer;}
 
+  /* ---- Company origin POIs / trails + faction badges (tier panes) ---- */
+  .leaflet-pTrail-pane,.leaflet-pOrigin-pane,.leaflet-pFaction-pane{transition:opacity .2s ease;}
+  .map-tier-a .leaflet-pOrigin-pane{opacity:0;pointer-events:none;}
+  .map-tier-a .leaflet-pTrail-pane,.map-tier-b .leaflet-pTrail-pane,
+  .map-tier-a .leaflet-pFaction-pane,.map-tier-b .leaflet-pFaction-pane{
+    opacity:0;pointer-events:none;}
+  .mk.t-origin .glyph{color:#f5ecd6;}
+  .mk.t-origin .glyph.copulse{animation:copulse 1.3s ease-out 2;}
+  @keyframes copulse{0%{box-shadow:0 0 0 0 rgba(138,60,40,.55);}
+    100%{box-shadow:0 0 0 15px rgba(138,60,40,0);}}
+  .fac-badge{width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+    font-size:18px;line-height:1;cursor:pointer;pointer-events:auto;
+    text-shadow:0 0 3px var(--parch),0 0 3px var(--parch),0 1px 2px rgba(0,0,0,.4);
+    transition:transform .15s ease;}
+  .fac-badge:hover{transform:scale(1.22);}
+  .trail-line{stroke-dasharray:2 7;}
+  .trail-line.emph{stroke-width:2.6px;stroke-dasharray:5 5;}
+
+  /* ---- Company card + Faction card (side panel) ---- */
+  .co-head{display:flex;align-items:center;gap:12px;margin:2px 34px 6px 0;}
+  .co-mono{flex:0 0 auto;width:46px;height:46px;border-radius:50%;display:flex;
+    align-items:center;justify-content:center;font-family:'EB Garamond',serif;
+    font-size:19px;font-weight:600;color:#f5ecd6;border:2px solid rgba(44,36,24,.3);
+    box-shadow:0 1px 4px rgba(0,0,0,.35);letter-spacing:.5px;}
+  .co-h-txt{min-width:0;}
+  .co-name{font-family:'EB Garamond',serif;font-size:24px;font-weight:600;
+    line-height:1.06;color:var(--ink);}
+  .co-epi{font-family:'Lora',serif;font-style:italic;font-size:13.5px;color:var(--muted);
+    margin-top:2px;}
+  .chip{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;
+    text-transform:uppercase;letter-spacing:.8px;padding:2px 8px;border-radius:3px;
+    color:#f5ecd6;margin:2px 6px 8px 0;}
+  .chip.active,.chip.ally{background:var(--moss);}
+  .chip.former,.chip.tension{background:var(--bronze);}
+  .chip.dead{background:#7a6a53;}
+  .chip.foe{background:var(--rust);}
+  .chip.neutral{background:#7a6a53;}
+  .chip.kind{background:var(--water);}
+  .co-line{font-family:'Lora',serif;font-size:13.5px;color:var(--ink2);margin:10px 0 2px;
+    line-height:1.5;}
+  .co-link{color:var(--rust);cursor:pointer;font-weight:600;text-decoration:none;}
+  .co-link:hover{text-decoration:underline;}
+  .co-beat{margin:7px 0;padding:7px 10px 8px;background:var(--parch2);border-radius:5px;
+    border-left:3px solid var(--line2);cursor:default;}
+  .co-beat[data-beat]{cursor:pointer;}
+  .co-beat[data-beat]:hover{border-left-color:var(--rust);background:#efe3c6;}
+  .co-beat .bs{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.5px;}
+  .co-beat .bl{font-family:'EB Garamond',serif;font-weight:600;font-size:14.5px;color:var(--ink);
+    margin-top:1px;}
+  .co-beat .bn{font-size:12.5px;color:var(--ink2);margin-top:2px;line-height:1.5;}
+  .co-gear,.co-disp{margin:5px 0;}
+  .co-gear a,.co-disp a{color:var(--rust);text-decoration:none;font-weight:600;
+    font-size:14px;cursor:pointer;}
+  .co-gear a:hover,.co-disp a:hover{text-decoration:underline;}
+  .fac-mem{margin:6px 0;font-size:13.5px;line-height:1.5;}
+  .fac-mem .fn{font-weight:600;}
+  .fac-mem .fr{color:var(--ink2);}
+  .fac-grp{font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;
+    letter-spacing:1px;color:var(--muted);margin:15px 0 3px;
+    border-bottom:1px solid var(--line);padding-bottom:3px;}
+  .fac-row{display:flex;align-items:center;gap:9px;padding:7px 8px;margin:2px 0;cursor:pointer;
+    border-radius:5px;border:1px solid transparent;}
+  .fac-row:hover{background:var(--parch2);border-color:var(--line);}
+  .fac-row .sh{font-size:16px;flex:0 0 auto;line-height:1;}
+  .fac-row .fnm{font-family:'EB Garamond',serif;font-weight:600;font-size:15.5px;}
+  .fac-row .fk{font-size:11px;color:var(--muted);margin-left:auto;font-style:italic;
+    text-align:right;}
+
+  /* ---- bottom-left dock: Groups button + Company strip ---- */
+  .dock{display:flex;flex-direction:column;gap:6px;align-items:flex-start;margin-bottom:4px;}
+  .grp-btn{font-family:'EB Garamond',serif;font-size:14px;color:var(--ink);
+    background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line2);
+    border-radius:6px;padding:6px 11px;cursor:pointer;box-shadow:0 3px 12px rgba(44,36,24,.28);
+    white-space:nowrap;}
+  .grp-btn:hover{background:var(--rust);color:#f5ecd6;border-color:var(--rust);}
+  .strip{display:flex;align-items:center;gap:5px;flex-wrap:wrap;
+    background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--line2);border-radius:22px;padding:5px 8px;
+    box-shadow:0 3px 12px rgba(44,36,24,.28);max-width:min(78vw,560px);}
+  .strip.collapsed .co-chip,.strip.collapsed .strip-lbl{display:none;}
+  .strip-toggle{flex:0 0 auto;width:24px;height:24px;border-radius:50%;
+    border:1px solid var(--line2);background:var(--parch2);color:var(--ink);cursor:pointer;
+    font-size:12px;line-height:1;font-family:'EB Garamond',serif;}
+  .strip-toggle:hover{background:var(--rust);color:#f5ecd6;}
+  .strip-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;
+    letter-spacing:.8px;color:var(--muted);margin:0 3px 0 1px;}
+  .co-chip{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;
+    justify-content:center;font-family:'EB Garamond',serif;font-size:12.5px;font-weight:600;
+    color:#f5ecd6;cursor:pointer;border:1.5px solid rgba(245,236,214,.55);
+    box-shadow:0 1px 3px rgba(0,0,0,.35);transition:transform .12s ease;letter-spacing:.3px;}
+  .co-chip:hover{transform:scale(1.16);}
+  .co-chip.dead{opacity:.5;}
+
   @media (max-width:640px){
     header{padding:6px 10px;gap:8px;}
     header h1{font-size:16px;white-space:normal;flex:1 1 100%;text-align:center;}
@@ -225,6 +319,9 @@
     .panel-open .leaflet-top.leaflet-left{margin-left:0;}
     .era-ctrl{max-width:200px;padding:6px 8px;}
     .era-ctrl label{font-size:13px;}
+    .strip{max-width:82vw;}
+    .grp-btn{font-size:13px;padding:5px 9px;}
+    .co-name,.card-name{font-size:22px;}
   }
 </style>
 </head>
@@ -259,8 +356,11 @@
   var WIKI_BASE='https://princexizor.ddns.net/';
   var RETINA=!!L.Browser.retina;
 
-  var map=L.map('map',{crs:L.CRS.Simple,minZoom:0,maxZoom:6,
-    zoomControl:true,attributionControl:true,
+  // detectRetina drops each base layer's effective maxZoom by 1 on HiDPI (6→5); the map's
+  // maxZoom must match, or zooms 5–6 render over blank parchment (and tierZoom('c') would
+  // land there). Cap the map to the deepest zoom the tiles actually render.
+  var map=L.map('map',{crs:L.CRS.Simple,minZoom:0,maxZoom:RETINA?5:6,
+    zoomControl:true,attributionControl:true,maxBoundsViscosity:1.0,
     zoomSnap:.5,zoomDelta:.5,wheelPxPerZoomLevel:80,wheelDebounceTime:20,
     fadeAnimation:true});
   function px(x,y){return map.unproject([x,y],NZ);}
@@ -269,8 +369,9 @@
 
   // ---- panes (one per overlay tier; ordering via z-index) ----
   // realms sit below markers; route waypoints above the route line.
-  [['pRealm',410],['pRouteLine',415],['pWater',618],['pMajor',620],
-   ['pMtn',622],['pSettle',624],['pMinor',626],['pRouteWp',640]].forEach(function(p){
+  [['pRealm',410],['pTrail',412],['pRouteLine',415],['pWater',618],['pMajor',620],
+   ['pMtn',622],['pSettle',624],['pMinor',626],['pOrigin',628],['pFaction',630],
+   ['pRouteWp',640]].forEach(function(p){
     map.createPane(p[0]); map.getPane(p[0]).style.zIndex=p[1];
   });
 
@@ -297,23 +398,32 @@
     if(eraInputs)Array.prototype.forEach.call(eraInputs,function(i){i.checked=(i.value===k);});
   }
 
-  // ---- initial view: cover-fit so the atlas fills the viewport ----
-  // ceil to the .5 snap: flooring a cover zoom drops below the fill threshold
-  // and reintroduces parchment void.
-  function coverZoom(){return Math.ceil(map.getBoundsZoom(contentBounds,true)*2)/2;}
-  var fitZoom=coverZoom();
+  // ---- initial view: vertical-lock so the atlas ALWAYS fills the height ----
+  // minZoom is the smallest z with (IMG_H·2^(z−NZ)) ≥ viewport height, snapped up
+  // to zoomSnap; below it parchment void would show above/below. Horizontal panning
+  // stays free inside maxBounds (Google-Maps side-scroll feel). fitZoom feeds the
+  // tier system (tierZoom/tierFor/revealZoom), so the reveal tiers ride on it.
+  function fillZoom(){
+    var vh=map.getSize().y||map.getContainer().clientHeight||IMG_H;
+    var z=NZ+Math.log(vh/IMG_H)/Math.LN2;   // IMG_H·2^(z−NZ) = vh
+    var snap=map.options.zoomSnap||0.5;
+    return Math.ceil(z/snap)*snap;
+  }
+  var EPESHU=[1222,1404];                   // Leponnia/Epēshu — initial centre
+  var fitZoom=fillZoom();
   map.setMinZoom(fitZoom);
-  map.setView(contentBounds.getCenter(),fitZoom,{animate:false});
-  map.setMaxBounds(contentBounds.pad(0.08));
+  map.setMaxBounds(contentBounds);          // exact atlas rectangle, viscosity 1.0
+  map.setView(px(EPESHU[0],EPESHU[1]),fitZoom,{animate:false});
+  map.panInsideBounds(contentBounds,{animate:false});  // close the 1px clamp seam
   // keep it filled across viewport resizes (never leave void at min zoom)
   var _rzT;
   window.addEventListener('resize',function(){
     clearTimeout(_rzT);
     _rzT=setTimeout(function(){
       map.invalidateSize({animate:false});
-      fitZoom=coverZoom(); map.setMinZoom(fitZoom);
-      if(map.getZoom()<fitZoom)map.setView(contentBounds.getCenter(),fitZoom,{animate:false});
-      updTier();
+      fitZoom=fillZoom(); map.setMinZoom(fitZoom);
+      if(map.getZoom()<fitZoom)map.setView(px(EPESHU[0],EPESHU[1]),fitZoom,{animate:false});
+      updScale(); updTier();
     },180);
   });
 
@@ -325,6 +435,36 @@
     .replace(/[̀-ͯ]/g,'').toLowerCase().trim();}
   function stars(n){n=Math.max(0,Math.min(5,n|0));var o='';
     for(var i=0;i<5;i++)o+=i<n?'★':'<span class="off">★</span>';return o;}
+
+  // ---- centripetal Catmull-Rom (alpha=.5): smooth curve through control points
+  // without the overshoot uniform CR gives on the widely-spread sea legs. Endpoints
+  // are duplicated so the curve starts/ends exactly on the first/last point. Used by
+  // both the campaign route (per leg) and the Company origin trails.
+  function crSpline(pts,seg){
+    if(!pts||pts.length<3)return (pts||[]).slice();
+    function d(a,b){return Math.pow(Math.max(1e-6,Math.hypot(b[0]-a[0],b[1]-a[1])),0.5);}
+    var out=[pts[0].slice?pts[0].slice():[pts[0][0],pts[0][1]]];
+    for(var i=0;i<pts.length-1;i++){
+      var p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||pts[i+1];
+      var t0=0,t1=t0+d(p0,p1),t2=t1+d(p1,p2),t3=t2+d(p2,p3);
+      for(var k=1;k<=seg;k++){
+        var t=t1+(t2-t1)*k/seg;
+        var a1x=(t1-t)/(t1-t0)*p0[0]+(t-t0)/(t1-t0)*p1[0],
+            a1y=(t1-t)/(t1-t0)*p0[1]+(t-t0)/(t1-t0)*p1[1],
+            a2x=(t2-t)/(t2-t1)*p1[0]+(t-t1)/(t2-t1)*p2[0],
+            a2y=(t2-t)/(t2-t1)*p1[1]+(t-t1)/(t2-t1)*p2[1],
+            a3x=(t3-t)/(t3-t2)*p2[0]+(t-t2)/(t3-t2)*p3[0],
+            a3y=(t3-t)/(t3-t2)*p2[1]+(t-t2)/(t3-t2)*p3[1],
+            b1x=(t2-t)/(t2-t1)*a1x+(t-t1)/(t2-t1)*a2x,
+            b1y=(t2-t)/(t2-t1)*a1y+(t-t1)/(t2-t1)*a2y,
+            b2x=(t3-t)/(t3-t2)*a2x+(t-t2)/(t3-t2)*a3x,
+            b2y=(t3-t)/(t3-t2)*a2y+(t-t2)/(t3-t2)*a3y;
+        out.push([(t2-t)/(t2-t1)*b1x+(t-t1)/(t2-t1)*b2x,
+                  (t2-t)/(t2-t1)*b1y+(t-t1)/(t2-t1)*b2y]);
+      }
+    }
+    return out;
+  }
 
   // ---- clean a wiki page body into readable paragraphs (full text) ----
   var META=/^(General Information|People and History|Other Names|Location|Type|Inhabitants|Events|Regions|Map|Footnotes|See Session)/;
@@ -376,6 +516,8 @@
   // ---- state ----
   var MARKERS=[], MREF={}, WIKI={}, WIKIFOLD={}, REVIEWS={}, ROUTE=[];
   var routePoly=null;
+  var PARTY=[], FACTIONS=[], PMREF={}, FMREF={};
+  var companyTrails=null, layersCtrl=null;
 
   function pageFor(name){
     if(WIKI[name])return WIKI[name];
@@ -513,7 +655,16 @@
     if(!pts||!pts.length)return null;
     ROUTE=pts;
     var g=L.layerGroup();
-    var latlngs=pts.map(function(p){return px(p.x,p.y);});
+    // each leg is its own centripetal spline through [prev, ...via, current]; legs
+    // are concatenated but NOT smoothed across waypoints (stops stay sharp corners).
+    var latlngs=[];
+    for(var li=1;li<pts.length;li++){
+      var ctrl=[[pts[li-1].x,pts[li-1].y]];
+      (pts[li].via||[]).forEach(function(v){ctrl.push([v[0],v[1]]);});
+      ctrl.push([pts[li].x,pts[li].y]);
+      var seg=crSpline(ctrl,18);
+      for(var k=(li===1?0:1);k<seg.length;k++)latlngs.push(px(seg[k][0],seg[k][1]));
+    }
     routePoly=L.polyline(latlngs,{className:'route-line',color:'#8a3c28',weight:3,
       opacity:.85,dashArray:'10 14',lineJoin:'round',pane:'pRouteLine'}).addTo(g);
     pts.forEach(function(p,i){
@@ -549,6 +700,211 @@
       });
     });
     return g;
+  }
+
+  // ================= The Company (spec P) + Groups & Powers (spec AC) =================
+  function mono(name){var w=String(name||'').trim().split(/\s+/);
+    return ((w[0]?w[0][0]:'?')+(w[1]?w[1][0]:'')).toUpperCase();}
+  function slugUrl(s){return WIKI_BASE+String(s).split('/').map(encodeURIComponent).join('/');}
+  function flyTo(x,y,t){map.flyTo(px(x,y),Math.max(map.getZoom(),tierZoom(t||'c')),
+    {duration:.9,easeLinearity:.25});}
+  function alignColor(a){return a==='ally'?'#5a6b34':a==='foe'?'#8a3c28':
+    a==='tension'?'#8a6224':'#7a6a53';}
+
+  // a road beat / dispatch place → native coords (reuse route waypoint or marker px)
+  function placeCoords(label){
+    var f=fold(label),i;
+    for(i=0;i<ROUTE.length;i++)if(fold(ROUTE[i].name)===f)return {x:ROUTE[i].x,y:ROUTE[i].y};
+    if(MREF[f])return {x:MREF[f].x,y:MREF[f].y};
+    for(i=0;i<ROUTE.length;i++){var rn=fold(ROUTE[i].name);
+      if(f.indexOf(rn)>=0||rn.indexOf(f)>=0)return {x:ROUTE[i].x,y:ROUTE[i].y};}
+    return null;
+  }
+  function dispatchesFor(name){var f=fold(name),seen={},out=[];
+    for(var pl in REVIEWS)REVIEWS[pl].forEach(function(r){
+      if(fold(r.reviewer)===f&&!seen[pl]){seen[pl]=1;out.push(pl);}});
+    return out;
+  }
+  function openPlaceByName(name){var m=MREF[fold(name)];
+    if(m){flyToMarker(m);openPlace(m);}else openPlace({name:name});}
+
+  // ---- Company card (experiment B) ----
+  var STATUS_LABEL={active:'Active member',former:'Former member',dead:'Fallen'};
+  function openCompanyByName(n,f){var p=PMREF[fold(n)];if(p){openCompany(p,f);return true;}return false;}
+  function openCompany(p,doFly){
+    var h='<span class="card-type">The Company · '+esc(STATUS_LABEL[p.status]||p.status)+'</span>';
+    h+='<div class="co-head"><div class="co-mono" style="background:'+esc(p.color)+'">'+
+       esc(mono(p.name))+'</div><div class="co-h-txt"><div class="co-name">'+esc(p.name)+'</div>'+
+       (p.epithet?'<div class="co-epi">'+esc(p.epithet)+'</div>':'')+'</div></div>';
+    h+='<div><span class="chip '+esc(p.status)+'">'+esc(p.status)+'</span>'+
+       (p.race?'<span class="chip kind">'+esc(p.race)+'</span>':'')+'</div>';
+    if(p.origin){
+      h+='<div class="co-line">'+(p.status==='former'?'Haunt: ':'Home: ')+esc(p.origin.label)+
+         (p.origin.approx?' (approx.)':'')+' — <a class="co-link" data-fly="1">show on the map ↗</a></div>';
+    }
+    h+='<div class="card-lore">'+p.bio.map(function(b){return '<p>'+esc(b)+'</p>';}).join('')+'</div>';
+    if(p.road&&p.road.length){
+      h+='<h4>Their road so far</h4>';
+      p.road.forEach(function(b,i){var c=placeCoords(b.label);
+        h+='<div class="co-beat"'+(c?' data-beat="'+i+'"':'')+'><div class="bs">Session '+
+          esc(b.session)+(c?'  ·  fly ↗':'')+'</div><div class="bl">'+esc(b.label)+
+          '</div><div class="bn">'+esc(b.note)+'</div></div>';});
+    }
+    if(p.gear&&p.gear.length){h+='<h4>Gear</h4>';
+      p.gear.forEach(function(gr){h+='<div class="co-gear"><a href="'+esc(slugUrl(gr.wikiSlug))+
+        '" target="_blank" rel="noopener">'+esc(gr.name)+' ↗</a></div>';});}
+    var disp=dispatchesFor(p.name);
+    if(disp.length){h+='<h4>Dispatches</h4>';
+      disp.forEach(function(pl){h+='<div class="co-disp"><a data-disp="'+esc(pl)+
+        '">'+esc(pl)+' — Traveller’s Reviews →</a></div>';});}
+    if(p.wikiSlug)h+='<a class="card-wiki" href="'+esc(slugUrl(p.wikiSlug))+
+      '" target="_blank" rel="noopener">Read on the wiki →</a>';
+    showPanel(h);
+    setHash('#company='+encodeURIComponent(p.name));
+    Array.prototype.forEach.call(panelBody.querySelectorAll('[data-fly],[data-beat],[data-disp]'),
+      function(el){el.addEventListener('click',function(){
+        if(el.hasAttribute('data-fly')){if(p.origin)flyTo(p.origin.x,p.origin.y,'c');}
+        else if(el.hasAttribute('data-beat')){var c=placeCoords(p.road[+el.getAttribute('data-beat')].label);if(c)flyTo(c.x,c.y,'c');}
+        else if(el.hasAttribute('data-disp'))openPlaceByName(el.getAttribute('data-disp'));
+      });});
+    if(doFly&&p.origin)flyTo(p.origin.x,p.origin.y,'c');
+  }
+
+  // ---- Faction card + list (spec AC #2) ----
+  var ALIGN_ORDER=['ally','tension','neutral','foe'];
+  var ALIGN_LABEL={ally:'Allies',tension:'Uneasy — watch closely',neutral:'Neutral parties',foe:'Foes'};
+  function openFactionByName(n,f){var x=FMREF[fold(n)];if(x){openFaction(x,f);return true;}return false;}
+  function openFaction(f,doFly){
+    var h='<span class="card-type">Group · '+esc(f.kind)+'</span>'+
+      '<h2 class="card-name">'+esc(f.name)+'</h2>'+
+      '<div><span class="chip '+esc(f.alignment)+'">'+esc(f.alignment)+'</span></div>'+
+      '<div class="card-lore">'+f.summary.map(function(s){return '<p>'+esc(s)+'</p>';}).join('')+'</div>';
+    if(f.seat)h+='<div class="co-line">Seat: '+esc(f.seat.label)+
+      ' — <a class="co-link" data-seat="1">show on the map ↗</a></div>';
+    if(f.members&&f.members.length){h+='<h4>Known members</h4>';
+      f.members.forEach(function(mb){
+        var link=mb.company&&PMREF[fold(mb.name)];
+        h+='<div class="fac-mem"><span class="fn">'+
+          (link?'<a class="co-link" data-mem="'+esc(mb.name)+'">'+esc(mb.name)+'</a>':esc(mb.name))+
+          '</span><span class="fr">— '+esc(mb.role)+'</span></div>';});}
+    if(f.wikiSlug)h+='<a class="card-wiki" href="'+esc(slugUrl(f.wikiSlug))+
+      '" target="_blank" rel="noopener">Read on the wiki →</a>';
+    if(f.sessions&&f.sessions.length)
+      h+='<div class="card-sess" style="margin-top:14px">Seen in sessions '+esc(f.sessions.join(', '))+'</div>';
+    showPanel(h);
+    setHash('#faction='+encodeURIComponent(f.name));
+    Array.prototype.forEach.call(panelBody.querySelectorAll('[data-seat],[data-mem]'),
+      function(el){el.addEventListener('click',function(){
+        if(el.hasAttribute('data-seat')){if(f.seat)flyTo(f.seat.x,f.seat.y,'c');}
+        else openCompanyByName(el.getAttribute('data-mem'),true);
+      });});
+    if(doFly&&f.seat)flyTo(f.seat.x,f.seat.y,'c');
+  }
+  function openFactionsList(){
+    var h='<span class="card-type">Atlas</span><h2 class="card-name">Groups &amp; Powers</h2>'+
+      '<div class="card-lore" style="margin-bottom:2px"><p>The factions, orders, and powers '+
+      'the company has come to know across the Wide World.</p></div>';
+    ALIGN_ORDER.forEach(function(al){
+      var grp=FACTIONS.filter(function(f){return f.alignment===al;});
+      if(!grp.length)return;
+      h+='<div class="fac-grp">'+esc(ALIGN_LABEL[al])+'</div>';
+      grp.forEach(function(f){h+='<div class="fac-row" data-fac="'+esc(f.name)+'">'+
+        '<span class="sh" style="color:'+alignColor(al)+'">⛊</span>'+
+        '<span class="fnm">'+esc(f.name)+'</span><span class="fk">'+esc(f.kind)+'</span></div>';});
+    });
+    showPanel(h);
+    Array.prototype.forEach.call(panelBody.querySelectorAll('[data-fac]'),function(el){
+      el.addEventListener('click',function(){openFactionByName(el.getAttribute('data-fac'),true);});});
+  }
+
+  // ---- Origin POIs (experiment A) ----
+  function buildOrigins(){
+    var g=L.layerGroup();
+    PARTY.forEach(function(p){
+      if(!p.origin)return;
+      var lbl=(p.status==='former'?'Haunt of ':'Hometown of ')+p.name;
+      var icon=L.divIcon({className:'',iconSize:null,iconAnchor:[11,11],
+        html:'<div class="mk t-origin"><span class="glyph" style="background:'+esc(p.color)+
+          ';color:#f5ecd6;border-color:rgba(44,36,24,.6)">⚑</span>'+
+          '<span class="lbl">'+esc(lbl)+'</span></div>'});
+      var mk=L.marker(px(p.origin.x,p.origin.y),{icon:icon,title:lbl,pane:'pOrigin',riseOnHover:true});
+      mk.bindTooltip(esc(lbl),{direction:'right',offset:[12,0],className:'mk-tip',opacity:1});
+      mk.on('click',function(){openCompany(p,false);});
+      p._omk=mk; g.addLayer(mk);
+    });
+    return g;
+  }
+  // ---- Origin trails (experiment C): quadratic-bowed dotted line origin→joined ----
+  function buildTrails(){
+    var g=L.layerGroup();
+    PARTY.forEach(function(p){
+      if(p.status!=='active'||!p.origin||!p.joined)return;
+      var o=p.origin,j=p.joined,mx=(o.x+j.x)/2,my=(o.y+j.y)/2,
+          dx=j.x-o.x,dy=j.y-o.y,len=Math.hypot(dx,dy)||1,off=len*0.13;
+      var pts=crSpline([[o.x,o.y],[mx-dy/len*off,my+dx/len*off],[j.x,j.y]],20)
+        .map(function(c){return px(c[0],c[1]);});
+      var line=L.polyline(pts,{className:'trail-line',color:p.color,weight:1.5,opacity:.5,
+        dashArray:'2 7',lineJoin:'round',pane:'pTrail'});
+      line.bindTooltip('the road that brought them (conjectural)',
+        {sticky:true,className:'realm-tip',direction:'top'});
+      p._trail=line; g.addLayer(line);
+    });
+    return g;
+  }
+  // ---- Faction seat badges (spec AC #2) ----
+  function buildFactionBadges(){
+    var g=L.layerGroup(), seen={};
+    FACTIONS.forEach(function(f){
+      if(!f.seat)return;
+      var key=f.seat.x+','+f.seat.y,n=seen[key]||0; seen[key]=n+1;
+      var ox=0,oy=0;                          // spread badges that share a seat
+      if(n){var ang=(n-1)*2.3999+0.5;ox=Math.cos(ang)*14;oy=Math.sin(ang)*14;}
+      var icon=L.divIcon({className:'',iconSize:[22,22],iconAnchor:[11,11],
+        html:'<div class="fac-badge" style="color:'+alignColor(f.alignment)+'">⛊</div>'});
+      var mk=L.marker(px(f.seat.x+ox,f.seat.y+oy),
+        {icon:icon,title:f.name,pane:'pFaction',riseOnHover:true});
+      mk.bindTooltip(esc(f.name),{direction:'right',offset:[11,0],className:'mk-tip',opacity:1});
+      mk.on('click',(function(ff){return function(){openFaction(ff,false);};})(f));
+      g.addLayer(mk);
+    });
+    return g;
+  }
+
+  // ---- The Company strip (experiment D) + Groups button, docked bottom-left ----
+  var stripEl=null;
+  function showStrip(on){if(stripEl)stripEl.style.display=on?'':'none';}
+  function stripClick(p){
+    openCompany(p,!!p.origin);
+    if(p._omk&&p._omk._icon){var gl=p._omk._icon.querySelector('.glyph');
+      if(gl){gl.classList.remove('copulse');void gl.offsetWidth;gl.classList.add('copulse');
+        setTimeout(function(){gl.classList.remove('copulse');},2700);}}
+    if(p._trail&&companyTrails&&map.hasLayer(companyTrails)){
+      var el=p._trail.getElement&&p._trail.getElement();
+      if(el){el.classList.add('emph');setTimeout(function(){el.classList.remove('emph');},1900);}}
+  }
+  function addCompanyDock(){
+    var C=L.Control.extend({options:{position:'bottomleft'},onAdd:function(){
+      var d=L.DomUtil.create('div','dock');
+      var gb=L.DomUtil.create('button','grp-btn',d);
+      gb.type='button'; gb.innerHTML='⛊ Groups &amp; Powers';
+      gb.addEventListener('click',openFactionsList);
+      stripEl=L.DomUtil.create('div','strip',d);
+      var tg=L.DomUtil.create('button','strip-toggle',stripEl);
+      tg.type='button'; tg.textContent='⚑'; tg.title='Collapse the Company';
+      tg.addEventListener('click',function(){stripEl.classList.toggle('collapsed');
+        tg.title=stripEl.classList.contains('collapsed')?'Show the Company':'Collapse the Company';});
+      var lb=L.DomUtil.create('span','strip-lbl',stripEl); lb.textContent='The Company';
+      PARTY.forEach(function(p){
+        var c=L.DomUtil.create('div','co-chip'+(p.status==='dead'?' dead':''),stripEl);
+        c.style.background=p.color; c.textContent=mono(p.name);
+        c.title=p.name+(p.epithet?' — '+p.epithet:'');
+        c.addEventListener('click',function(){stripClick(p);});
+      });
+      L.DomEvent.disableClickPropagation(d);
+      L.DomEvent.disableScrollPropagation(d);
+      return d;
+    }});
+    map.addControl(new C());
   }
 
   // ---- journey play-through ----
@@ -658,13 +1014,19 @@
     });
   }
   function pick(m){if(!m)return;searchEl.value=m.name;sugEl.className='';
-    flyToMarker(m);openPlace(m);}
+    if(m._t==='company')openCompanyByName(m.name,true);
+    else if(m._t==='faction')openFactionByName(m.name,true);
+    else{flyToMarker(m);openPlace(m);}}
   function doSearch(q){
     q=fold(q);if(!q)return renderSug([]);
-    var hits=MARKERS.filter(function(m){return fold(m.name).indexOf(q)>=0;})
-      .sort(function(a,b){return fold(a.name).indexOf(q)-fold(b.name).indexOf(q);})
-      .slice(0,8);
-    renderSug(hits);
+    var hits=[];
+    MARKERS.forEach(function(m){if(fold(m.name).indexOf(q)>=0)hits.push(m);});
+    PARTY.forEach(function(p){if(fold(p.name).indexOf(q)>=0)
+      hits.push({name:p.name,type:'Company',_t:'company'});});
+    FACTIONS.forEach(function(f){if(fold(f.name).indexOf(q)>=0)
+      hits.push({name:f.name,type:'Faction',_t:'faction'});});
+    hits.sort(function(a,b){return fold(a.name).indexOf(q)-fold(b.name).indexOf(q);});
+    renderSug(hits.slice(0,10));
   }
   searchEl.addEventListener('input',function(){doSearch(this.value);});
   searchEl.addEventListener('keydown',function(e){
@@ -701,10 +1063,12 @@
   map.on('zoom zoomend moveend',updScale);
 
   // ---- deep link (#place=Name) ----
+  function hashVal(re){var m=String(location.hash||'').match(re);if(!m)return null;
+    try{return decodeURIComponent(m[1]);}catch(_){return m[1];}}
   function handleHash(){
-    var m=String(location.hash||'').match(/place=([^&]+)/);
-    if(!m)return;
-    var name; try{name=decodeURIComponent(m[1]);}catch(_){name=m[1];}
+    var c=hashVal(/company=([^&]+)/); if(c){openCompanyByName(c,true);return;}
+    var f=hashVal(/faction=([^&]+)/); if(f){openFactionByName(f,true);return;}
+    var name=hashVal(/place=([^&]+)/); if(!name)return;
     var mk=MREF[fold(name)];
     if(mk){flyToMarker(mk);openPlace(mk);}
   }
@@ -718,13 +1082,18 @@
     getJSON('data/wiki-places.json'),
     getJSON('data/reviews.json'),
     getJSON('data/party-route.json'),
-    getJSON('data/realms.geojson')
+    getJSON('data/realms.geojson'),
+    getJSON('data/party.json'),
+    getJSON('data/factions.json')
   ]).then(function(res){
     var markers=res[0]||[], wiki=res[1]||[], reviews=res[2]||[],
         route=res[3]||[], realms=res[4];
+    PARTY=res[5]||[]; FACTIONS=res[6]||[];
 
     wiki.forEach(function(p){WIKI[p.title]=p;WIKIFOLD[fold(p.title)]=p;});
     reviews.forEach(function(r){(REVIEWS[r.place]=REVIEWS[r.place]||[]).push(r);});
+    PARTY.forEach(function(p){PMREF[fold(p.name)]=p;});
+    FACTIONS.forEach(function(f){FMREF[fold(f.name)]=f;});
 
     buildMarkers(markers);
 
@@ -741,17 +1110,55 @@
     var routeLayer=buildRoute(route);
     if(routeLayer){routeLayer.addTo(map);overlays['⚔ Party Route']=routeLayer;}
 
+    // ---- Company + Factions layers (each experiment toggleable; default ON) ----
+    var companyOrigins=buildOrigins();   // A
+    companyTrails=buildTrails();          // C (module-scoped for strip emphasis)
+    var companyMaster=L.layerGroup();     // D-master handle (toggles A+C+strip together)
+    var factionBadges=buildFactionBadges();
+    companyOrigins.addTo(map); companyTrails.addTo(map); companyMaster.addTo(map);
+    factionBadges.addTo(map);
+    overlays['⚑ The Company']=companyMaster;
+    overlays[' ⚑ Origin homelands']=companyOrigins;
+    overlays[' ⋯ Origin trails']=companyTrails;
+    overlays['⛊ Faction seats']=factionBadges;
+
     addEraControl();
-    L.control.layers(null,overlays,{collapsed:window.innerWidth<=760,position:'topright'}).addTo(map);
+    layersCtrl=L.control.layers(null,overlays,{collapsed:window.innerWidth<=760,position:'topright'});
+    layersCtrl.addTo(map);
     addJourneyControl();
     addScaleControl();
+    addCompanyDock();                     // after scale → strip sits above the scale bar
+
+    // master toggle drives the sub-layers + strip. Coordination is DEFERRED to a
+    // timeout so it runs AFTER Control.Layers' _onInputClick finishes its own add/
+    // remove loop (which would otherwise re-add the sub-layers from their still-checked
+    // boxes, and where a synchronous _update() would corrupt the in-flight input list).
+    function coordMaster(on){
+      if(on){
+        if(!map.hasLayer(companyOrigins))companyOrigins.addTo(map);
+        if(!map.hasLayer(companyTrails))companyTrails.addTo(map);
+      }else{
+        if(map.hasLayer(companyOrigins))map.removeLayer(companyOrigins);
+        if(map.hasLayer(companyTrails))map.removeLayer(companyTrails);
+      }
+      showStrip(on);
+      if(layersCtrl&&layersCtrl._update)layersCtrl._update();  // reconcile checkboxes
+    }
+    var _mSync;
+    map.on('overlayadd',function(e){if(e.layer===companyMaster){
+      clearTimeout(_mSync);_mSync=setTimeout(function(){coordMaster(true);},0);}});
+    map.on('overlayremove',function(e){if(e.layer===companyMaster){
+      clearTimeout(_mSync);_mSync=setTimeout(function(){coordMaster(false);},0);}});
 
     updTier(); updScale(); handleHash();
     window.addEventListener('hashchange',handleHash);
 
-    window.ATLAS={map:map,markers:MARKERS,ready:true,
+    window.ATLAS={map:map,markers:MARKERS,party:PARTY,factions:FACTIONS,ready:true,
       find:function(n){return MREF[fold(n)];},
       fly:function(n){var m=MREF[fold(n)];if(m){flyToMarker(m);openPlace(m);}return !!m;},
+      company:function(n){return openCompanyByName(n,true);},
+      faction:function(n){return openFactionByName(n,true);},
+      groups:openFactionsList,
       era:setEra, journey:startJourney, stopJourney:stopJourney,
       openRealm:openRealm, close:closePanel};
   });

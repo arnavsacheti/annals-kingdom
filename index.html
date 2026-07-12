@@ -268,6 +268,7 @@ body.aiming #app canvas{cursor:crosshair}
 .lbl.town{font-size:15px;font-variant:small-caps}
 .lbl.vil{font-size:12.5px;font-style:italic;color:#e2d8c0}
 .lbl.geo{font-size:13px;font-style:italic;color:#cfd6df;letter-spacing:.14em;pointer-events:none}
+.lbl.dist{font-size:11px;font-style:italic;color:#d8cbb0;letter-spacing:.1em;opacity:.9}
 
 /* ---------- loading ---------- */
 #loading{position:fixed;inset:0;z-index:50;background:
@@ -792,6 +793,14 @@ function genTerrain(){
   // Custom Map Mode: a supplied heightfield stands in for procedural terrain
   if(window.CUSTOM_MAP_DATA && window.CUSTOM_MAP_DATA.H){
     W.H = new Float32Array(window.CUSTOM_MAP_DATA.H);
+    // canon terrain tines (data-driven, deterministic, no RNG): raise a few water cells so a rock breaks the surface
+    (window.CUSTOM_MAP_DATA.extraLandmarks || []).forEach(l => {
+      if(l.kind !== 'spike') return;
+      for(let dz=0; dz<2; dz++) for(let dx=0; dx<2; dx++){
+        const gi = idx(l.gridX+dx, l.gridZ+dz);
+        W.H[gi] = Math.max(W.H[gi] + 16, SEA_Y + 9);   // always clears the tide line as a visible tine
+      }
+    });
     W.hasCoast = window.CUSTOM_MAP_DATA.hasCoast !== undefined ? window.CUSTOM_MAP_DATA.hasCoast : true;
     W.coastEdge = window.CUSTOM_MAP_DATA.coastEdge || 0;
     W.spine = { ax:-2000, az:-2000, bx:2000, bz:2000 };
@@ -1139,7 +1148,11 @@ function genSettlements(){
     if(!sets.length) throw new Error('custom map supplied no settlements');
     W.settlements = sets;
     W.realmName = window.CUSTOM_MAP_DATA.realmName || sets[0].name;
-    sets.forEach(s => s.patron = pick(R2, KEMBAR));   // every charter under a Kembar god
+    sets.forEach(s => s.patron = pick(R2, KEMBAR));   // every charter under a Kembar god (draw kept intact for determinism)
+    sets.forEach((s,i) => {   // canon overrides applied AFTER the draw so the RNG stream is untouched
+      const d = window.CUSTOM_MAP_DATA.settlements[i];
+      if(d){ if(d.patron) s.patron = d.patron; if(d.templeName) s.templeName = d.templeName; if(d.cityLabels) s.cityLabels = d.cityLabels; }
+    });
     sets.forEach(s => {
       s.y = hAt(s.x, s.z);
       flattenPad(s.x, s.z, s.kind==='capital'?34:s.kind==='town'?22:11, s.y);
@@ -1860,7 +1873,7 @@ function genFlora(){
 }
 
 // ----- houses, dynasty & the founding cast -----
-const NAMES_M = ['Palagon','Malagon','Gauron','Drāgis','Dūlgor','Arpharaz','Elgemek','Relkorīn','Sārmathīn','Idūk','Mēzor','Balakhōr','Lengor','Aran','Nāk-Zōr','Māgarān','Lazgar','Khamphek','Udrikar','Bangeph','Markar','Karan','Regimen','Daemar','Piran','Gandor','Selwin','Pebros','Ghazkhon','Harmūs'];
+const NAMES_M = ['Palagon','Malagon','Gauron','Drāgis','Dūlgor','Arpharaz','Elgemek','Relkorīn','Sārmathīn','Idūk','Mēzor','Balakhōr','Lengor','Aran','Nāk-Zōr','Māgarān','Lazgar','Khamphek','Udrikar','Bangeph','Markar','Karan','Regimen','Daemar','Piran','Gandor','Sāldor','Verakhon','Ghazkhon','Harmūs'];  // Selwin/Pebros reserved to canon figures (Summarch's king; the Orondēs general) — kept out of the random pool; swapped in place to preserve RNG draw order
 const NAMES_F = ['Elgemek','Daeka','Raeka','Lara','Meldemil','Tembregan','Bernīke','Hashiger','Sanenīn','Hethel','Arbezel','Kūrila','Meldis','Tamara','Ilweth','Serida','Loria','Baranca','Ephina','Nūriel','Zabeth','Ammara','Ereshka','Phaela'];
 const TRAITS = ['bold','craven','just','cruel','shrewd','dull','pious','cynical','fertile','sickly','comely','stern','gentle','greedy','temperate','quarrelsome'];
 // the Kembar who receive worship (the Mad One is not honored, save by his cult)
@@ -1958,11 +1971,14 @@ function nName(n){
 function monarchTitle(n){
   const cnt = W.nameCounts[n.given] || 1;
   const ords = ['','','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth'];
-  return (n.sex==='m' ? 'King ' : 'Queen ') + n.given +
+  const title = W.crownTitle || (n.sex==='m' ? 'King' : 'Queen');   // canon worlds override the crown's style (e.g. Epēshu's Surīhurūk)
+  return title + ' ' + n.given +
     (cnt > 1 ? ', ' + (ords[cnt]||cnt+'th') + ' of ' + (n.sex==='m'?'his':'her') + ' name' : '');
 }
 function genHouses(){
   const R = W.rng.gen;
+  const CD = window.CUSTOM_MAP_DATA || null;
+  W.crownTitle = (CD && CD.crownTitle) || null;   // reset every forge — never leaks onto the next (procedural) realm
   W.notables = []; W.nameCounts = {};
   NOTABLE_ID = 1;
   const others = W.settlements.slice(1).sort((a,b) => b.pop - a.pop);
@@ -2001,15 +2017,25 @@ function genHouses(){
   monarch.wasMonarch = true;
   W.pol = { monarch: monarch.id, legitimacy: 62, war: null, regency: null, peaceUntil: 0, crisis: false };
   // house families
+  const priestHouses = (CD && CD.priesthoodHouses) || [];
   W.houses.forEach((h,hi) => {
     const hAge = rr(R,34,56);
     const head = makeNotable({house:hi, age: hAge, role: 'head'});
     h.head = head.id;
+    if(priestHouses.indexOf(h.name) >= 0){ h.priesthood = true; return; }   // a temple order keeps no spouse or heirs (canon: the Lektān)
     const sp = makeNotable({house:hi, sex: head.sex==='m'?'f':'m', age: hAge + rr(R,-6,4), spouse: head.id});
     head.spouse = sp.id;
     const kids = ri(R,1,3);
     for(let k=0;k<kids;k++) makeNotable({house:hi, age: rr(R,1, Math.max(2,hAge-18)), parent: head.id});
   });
+  // canon override: seat the historical first ruler (no RNG — field mutation only, after the houses loop so the head reassignment sticks)
+  if(CD && CD.firstRuler){
+    const fr = CD.firstRuler;
+    monarch.given = fr.given; if(fr.sex) monarch.sex = fr.sex;
+    W.nameCounts[monarch.given] = 1;
+    const hi = W.houses.findIndex(h => h.name === fr.house);
+    if(hi >= 0){ monarch.house = hi; W.houses[hi].head = monarch.id; }   // Hethel of the Mālaz — her heirs stay of the blood (house −1); the title carries on as crownTitle
+  }
   // court flavor
   makeNotable({house:-2, age: rr(R,42,64), role: 'High Lektān'});
   makeNotable({house:-2, age: rr(R,36,58), role: 'Master of Coin'});
@@ -3096,6 +3122,17 @@ function buildLabels(){
   document.getElementById('labels').innerHTML = '';
   W.labels = [];
   W.settlements.forEach(addLabel);
+  // canon in-world detail: city districts + landmarks beyond the walls (small, near-only 'dist' tier — hidden at whole-realm zoom)
+  W.settlements.forEach(s => {
+    if(!s.cityLabels) return;
+    s.cityLabels.forEach(c => addLabelRaw(s.x + c.dx, s.z + c.dz, 'dist', c.name, 10, ()=>flyTo(s.x + c.dx, s.z + c.dz, 300)));
+  });
+  if(window.CUSTOM_MAP_DATA && window.CUSTOM_MAP_DATA.extraLandmarks){
+    window.CUSTOM_MAP_DATA.extraLandmarks.forEach(l => {
+      const lx = gridToWorld(l.gridX), lz = gridToWorld(l.gridZ);
+      addLabelRaw(lx, lz, 'dist', l.name, l.kind==='spike'?18:14, ()=>flyTo(lx, lz, 400));
+    });
+  }
   if(W.riverName && W.rivers.length){
     const rp = W.rivers[0].pts;
     const mid = rp[(rp.length/2)|0];
@@ -3114,6 +3151,7 @@ function updateLabels(){
       if(l.cls==='cap') op = R > 150 ? 1 : 0;
       else if(l.cls==='town') op = R > 260 ? 1 : 0;
       else if(l.cls==='vil') op = (R > 300 && R < 3400) ? 1 : 0;
+      else if(l.cls==='dist') op = R < 950 ? 1 : 0;   // districts/landmarks: only when the camera is down near the city
       else op = R > 900 ? 1 : 0;
     }
     if(op > 0){
@@ -3190,7 +3228,7 @@ function chron(cls, text, x, z, pri){
   if(pinned) sc.scrollTop = sc.scrollHeight;
 }
 const T = {
-  opening(){ return 'Here begin the Annals of '+W.realmName+'. The realm counts '+fmt(Math.round(W.realmPop))+' souls in '+W.settlements.length+' places of habitation, and the crown holds '+fmt(Math.round(W.treasury))+' gold marks.'; },
+  opening(){ return 'Here begin the Annals of '+W.realmName+'. The realm counts '+fmt(Math.round(W.realmPop))+' souls in '+W.settlements.length+' places of habitation, and '+(W.crownTitle ? 'the '+W.crownTitle+'’s treasury holds ' : 'the crown holds ')+fmt(Math.round(W.treasury))+' gold marks.'; },
   year(y){ return 'Here begins the Year '+(YEAR_AB+y)+' A.B.'; },
   winter(R){ return pick(R,[
     'Winter closes the passes; the granaries are weighed and found '+(pick(R,['full enough','lighter than hoped','heavy with grain'])) + '.',
@@ -5710,6 +5748,17 @@ function flyTo(x, z, alt){
   CAM.lastInput = performance.now();
   CAM.intro = false;
 }
+function applyGotoFromHash(){
+  const gm = location.hash.match(/goto=([^&]+)/);
+  if(!gm || !W || !W.settlements) return;
+  let q; try { q = decodeURIComponent(gm[1]); } catch(e){ q = gm[1]; }
+  if(!q) return;
+  const s = W.settlements.find(s => s.name === q);
+  if(s){ flyTo(s.x, s.z, 600); return; }
+  const lm = ((window.CUSTOM_MAP_DATA && window.CUSTOM_MAP_DATA.extraLandmarks) || []).find(l => l.name === q);
+  if(lm) flyTo(gridToWorld(lm.gridX), gridToWorld(lm.gridZ), 600);
+  // unknown name: ignore
+}
 function updateCamera(dt, nowMs){
   if(CAM.follow){
     if(W.agents.indexOf(CAM.follow) < 0 && (!W.armies || W.armies.indexOf(CAM.follow) < 0)) CAM.follow = null;
@@ -6161,6 +6210,7 @@ function initUI(){
     const m = location.hash.match(/s=([^&]+)/);
     const s = m ? decodeURIComponent(m[1]) : null;
     if(s && W && s !== W.seed){ document.getElementById('seedIn').value = s; forgeWorld(s); }
+    else applyGotoFromHash();   // same world, new &goto= target: just fly there, no reforge
   });
   // drawer
   const drawer = document.getElementById('drawer'), handle = document.getElementById('drawerHandle');
@@ -6299,12 +6349,12 @@ function inspectSettlement(s){
 }
 function inspectBuilding(b, s){
   const grand = b.t===ARCH.KEEP || b.t===ARCH.TEMPLE || b.t===ARCH.TOWER || b.t===ARCH.WALL;
-  const nm = b.t===ARCH.TEMPLE ? 'Temple-tower of '+(s.patron||'the Nine')
+  const nm = b.t===ARCH.TEMPLE ? (s.templeName || 'Temple-tower of '+(s.patron||'the Nine'))
            : (grand ? '' : TIER_ADJ[b.tier]) + ARCH_NAMES[b.t];
   let rows = inspRow('In', s.name);
   if(b.t===ARCH.GRANARY) rows += inspRow('Holds', fmt(Math.round(s.stores.grain))+' grain (town stores)');
   else if(b.t===ARCH.WAREHOUSE) rows += inspRow('Holds', 'trade goods of '+s.name);
-  else if(b.t===ARCH.KEEP) rows += inspRow('Seat of', 'the crown of '+W.realmName);
+  else if(b.t===ARCH.KEEP) rows += inspRow('Seat of', (W.crownTitle ? 'the '+W.crownTitle+' of '+W.realmName : 'the crown of '+W.realmName));
   else if(b.t===ARCH.WALL || b.t===ARCH.TOWER) rows += inspRow('Of', 'the ramparts of '+s.name);
   else if(!grand) rows += inspRow('Household', Math.max(2, Math.round(s.pop / Math.max(1,nDwell(s))))+' souls');
   showInspector(
@@ -6779,7 +6829,7 @@ function updateMonarchChip(){
   if(!n){ el.innerHTML = ''; return; }
   const cnt = W.nameCounts[n.given] || 1;
   el.innerHTML = '<img src="'+W.crownSigil.url+'" style="width:15px;height:15px;vertical-align:-3px;border-radius:2px"> <b>'+
-    (n.sex==='m'?'King ':'Queen ') + n.given + (cnt>1 ? ' '+(ROMAN[cnt]||cnt) : '') + '</b>' +
+    (W.crownTitle ? W.crownTitle+' ' : (n.sex==='m'?'King ':'Queen ')) + n.given + (cnt>1 ? ' '+(ROMAN[cnt]||cnt) : '') + '</b>' +
     (W.pol.regency ? ' <span style="font-style:italic">(regency)</span>' : '');
 }
 function renderHousesPanel(){
@@ -7009,11 +7059,17 @@ async function forgeWorld(seed){
     hideInspector();
     chron('year', T.year(Math.floor(W.clock.day/360)+1));
     chron('realm', T.opening(), cap.x, cap.z);
+    if(window.CUSTOM_MAP_DATA && window.CUSTOM_MAP_DATA.pebrosCamp){   // the Orondēs army, camped at the ruins of Lepon (canon: Yuleday campaign)
+      const pc = window.CUSTOM_MAP_DATA.pebrosCamp, px = gridToWorld(pc.gridX), pz = gridToWorld(pc.gridZ);
+      addLabelRaw(px, pz, 'dist', 'Pebros’s Camp', 18, ()=>flyTo(px, pz, 420));
+      chron('war', 'General Pebros and the army of the city lie encamped by the ruins of Lepon, awaiting Yuleday.', px, pz, 6);
+    }
     W.sceneReady = true;
     await wait(1000);
     lo.style.opacity = 0;
     setTimeout(()=> lo.classList.add('hidden'), 1300);
     window.__annalsReady = true; ANNALS.ready = true;
+    applyGotoFromHash();   // deep link: #s=…&goto=<place> flies the camera there once the world is ready
     console.log('[ANNALS] seed='+seed+' realm='+W.realmName+' settlements='+W.settlements.length+
       ' buildings='+countBuildings()+' trees='+(W.flora.dec.length+W.flora.pine.length)+
       ' rivers='+W.rivers.length+' lakes='+W.lakes.length+' coast='+W.hasCoast);
@@ -7373,10 +7429,32 @@ function buildEpeshuMapData(){
   return {
     H: EPESHU_HF, realmName: 'Epēshu', hasCoast: true, coastEdge: 0, climate: 0.04,
     houseNames: ['Eshbrīn','Orondēs','Lektān','Mālaz','Relkonim'],
+    priesthoodHouses: ['Lektān'],   // a temple order, not a breeding dynasty (canon: devoted to Thobrauk)
+    crownTitle: 'Surīhurūk',        // Epēshu is a republic; its elected head bears this title, not King/Queen
+    firstRuler: {given:'Hethel', house:'Mālaz', sex:'f'},   // canon: Surīhurūk Hethel of the Mālaz
     mapArt: EPESHU_ART_URI,
     ruin: {name:'Lepon the Old', gridX:83, gridZ:173},
+    pebrosCamp: {gridX:88, gridZ:170},   // the Orondēs army encamped by the Lepon ruins
+    extraLandmarks: [
+      {name:'Mount Mastery', gridX:169, gridZ:150, kind:'label'},
+      {name:'Fairy Arch', gridX:205, gridZ:185, kind:'label'},
+      {name:'the Thūkīn Amphitheater', gridX:186, gridZ:184, kind:'label'},
+      {name:'Bangeph Rock', gridX:163, gridZ:154, kind:'spike'}
+    ],
     settlements: [
-      {name:'Epēshu', kind:'capital', gridX:169, gridZ:168, pop:2600, harbor:true},
+      {name:'Epēshu', kind:'capital', gridX:169, gridZ:168, pop:2600, harbor:true, patron:'Thobrauk',
+        templeName:'the Blue Temple of Thobrauk',
+        cityLabels:[
+          {name:'Epēshīn Forum', dx:0, dz:-15},
+          {name:'the Marble Quarter', dx:120, dz:-105},
+          {name:'Wood Quay', dx:-95, dz:-150},
+          {name:'Whitestreet', dx:-70, dz:-45},
+          {name:'Necropolis of the Founders', dx:-120, dz:-95},
+          {name:'Outwall', dx:25, dz:200},
+          {name:'Eelwynd', dx:-190, dz:150},
+          {name:'Kohabron', dx:210, dz:25},
+          {name:'Old Quarry Lot', dx:180, dz:-175}
+        ]},
       {name:'Sokundo', kind:'town', gridX:401, gridZ:196, pop:780, harbor:true},
       {name:'Kanae', kind:'village', gridX:443, gridZ:233, pop:320, harbor:true},
       {name:'Tamaron', kind:'town', gridX:574, gridZ:296, pop:880, harbor:true},

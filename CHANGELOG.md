@@ -4,6 +4,23 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.6.0-alpha.1] — 2026-07-12
+- The Company: character cards (grounded bios, fly-able road beats, gear, review
+  dispatches), hometown POIs, conjectural origin trails, company strip — each
+  toggleable; deep links (#company=…)
+- Groups & Powers: nine factions with alignments, seat badges, member cross-links
+  (the Eshbrīn, Orondēs, and Lektān of Epēshu; the Allhammers, Ninth House,
+  the Cloister, Pebros's Army, the Senate, the Māgosh)
+- Viewport locked vertical-fill with free side-scroll (Google-Maps feel); party
+  route redrawn as centripetal Catmull-Rom curves through geographic via points
+- The sim's Epēshu is now the canon city: nine district labels (Wood Quay,
+  Whitestreet, the Marble Quarter…), the Blue Temple of Thobrauk, Bangeph Rock
+  raised offshore, Mount Mastery and the Fairy Arch, Pebros's camp at Lepon with
+  its chronicle line, ruler = Surīhurūk Hethel of the Mālaz (republic title
+  threaded through chip/chronicle/inspector), &goto= deep links
+- Canon-name hygiene: Selwin and Pebros removed from the random name pool
+  (in-place swap, RNG draw order preserved)
+
 ## [0.5.0-alpha.1] — 2026-07-12
 - Atlas UX overhaul: side-panel place cards with full wiki lore (popups retired),
   era base layers (Modern / War of the Patrons / Imperial), realm hover cartouches,

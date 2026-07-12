@@ -1,0 +1,239 @@
+[
+  {
+    "name": "Leon Mallister",
+    "epithet": "The Westerman Gleeman",
+    "status": "active",
+    "race": "Man",
+    "culture": "Westermen",
+    "origin": {
+      "label": "Westerland, the country about Summarch",
+      "x": 560,
+      "y": 200,
+      "approx": true
+    },
+    "joined": { "label": "Summarch", "x": 523, "y": 58 },
+    "color": "#8B4A3E",
+    "bio": [
+      "Leon Mallister is a Westerman of the tribes about Summarch, a mighty warrior and gleeman who carries Daybreak, a war hammer of enchanted bloodsteel whose head was bought from the mage Amaury Armond and whose haft was cut from the old war hammer of his brother Elias.",
+      "Aboard the Tamarnīn, traveling under cover as a fleeing noble with the rest of the company posing as his retainers, Leon played melancholy songs upon his lute at the ship's prow, brooding over the turns the past month had wrought.",
+      "When the sea-fiend Dagon rose against them, Leon gave himself over to a berserker's rage, caving in the back of the creature's skull and crippling its arm with a single blow of Daybreak, though he came away from the fight with a deep wound of his own.",
+      "In Epēshu, disguised as an inspector of the Games alongside Aderyn, he charmed his way into the Thūkīn Amphitheater's inner sanctum by flirting with a guard he nicknamed \"Buddy\" — a courtship Buddy will regret discovering was never sincere."
+    ],
+    "road": [
+      { "label": "White Sea", "session": 1, "note": "Played melancholy songs at the Tamarnīn's prow, keeping up the company's cover as a fleeing noble and his retainers." },
+      { "label": "White Sea (Dagon's attack)", "session": 6, "note": "Entered a berserker's rage against Dagon, caving in its skull and crippling its arm with Daybreak, but took a deep wound from its sickle sword." },
+      { "label": "Epēshu", "session": 9, "note": "Disguised as a Games inspector, scouted the Thūkīn Amphitheater and charmed a besotted guard he nicknamed \"Buddy.\"" }
+    ],
+    "gear": [
+      { "name": "Daybreak", "wikiSlug": "Lore--and--History/Items,-Magic,--and--Materials/Weapons/Daybreak" }
+    ],
+    "wikiSlug": "Characters--and--Monsters/Players/Leon-Mallister"
+  },
+  {
+    "name": "Aderyn Sly",
+    "epithet": "The Wite Who Wears a Human Face",
+    "status": "active",
+    "race": "Wite",
+    "culture": "the Ninth House",
+    "origin": null,
+    "joined": { "label": "Summarch", "x": 523, "y": 58 },
+    "color": "#4A4A6A",
+    "bio": [
+      "Aderyn Sly is an ancient Wite, firstborn of the Elder Children, and long a secret agent of the clandestine Ninth House — that hidden order founded by the Raven to keep the Kembar bound. For years he served as handler to Eol Firenze, his contact seeded among the Allhammers of Relkor.",
+      "When the Return of the Kembar broke Summarch open, it was Aderyn who spirited the company out of the city and across the sea to Patrinor, disguising his face with illusion so that none in Epēshu would know a Wite walked among them.",
+      "In a dusty cellar in the Marble City, Aderyn cast off that disguise, showed the party a vision of the horrors the Last War once wrought, and bound them by oath to stand against the Nine Gods' return — the last of the Allhammers, sworn anew.",
+      "But something in the city gnaws at his craft: since their arrival his illusory faces have begun to fail without warning, flickering out in his sleep and in the middle of the day alike, a fault he cannot yet explain. His road, in truth, began long before any map was drawn."
+    ],
+    "road": [
+      { "label": "Paerāndas", "session": 4, "note": "Dreamed of a pine forest where ravens called him by an old name, Umag, and met a masked, feathered figure who said they would speak again when he \"came home.\"" },
+      { "label": "White Sea (Dagon's attack)", "session": 6, "note": "Cast illusions of Leon charging Dagon to confound the fiend during the shipboard battle." },
+      { "label": "Epēshu", "session": 7, "note": "Dropped his disguise, revealed himself as a Wite, and delivered the Cellar Speech binding the company to its cause." },
+      { "label": "Epēshu", "session": 8, "note": "Woke to find his illusory glyphs had shut off in the night, the first sign of the disruption spreading through the city." }
+    ],
+    "gear": [],
+    "wikiSlug": "Characters--and--Monsters/Players/Aderyn-Sly"
+  },
+  {
+    "name": "Babar Ett-Clan",
+    "epithet": "Tracker and Monster-Lorist",
+    "status": "active",
+    "race": "Trogmunder",
+    "culture": "Trogmunders",
+    "origin": null,
+    "joined": { "label": "Summarch", "x": 523, "y": 58 },
+    "color": "#5C7A5E",
+    "bio": [
+      "Babar Ett-Clan is a Trogmunder held in high regard for his skill in tracking, hunting, and the lore of monsters, a talent that has served the company well in the wilds of Rhusagos and beyond. His people's homeland, the Home Islands, lies far to the south beyond the edge of this map, and no record says whether Babar himself was born there or among the many Trogmunders scattered along other shores.",
+      "It was Babar's voice, raised in the Winehall in support of the Marshal Rennick, that helped tip the election of a new Grandmaster of the Allhammers — a choice the company would come to regret bitterly.",
+      "At sea, his sharp eyes caught the glimmer of a great red krake's shell in the dark, and his suspicion of Captain Lahar's secrecy grew from that night onward; ashore, tracking a boar, he found the cave of ancient Trogmunder carvings that led the party down to the Deep Lake.",
+      "In Epēshu's Marble Quarter, Babar helped sell off the company's looted silverware to the smith Amat, and helped restock their dwindling alchemical supplies before the coming Games."
+    ],
+    "road": [
+      { "label": "Paerāndas", "session": 3, "note": "Spied the glimmer of a great red krake's shell offshore and grew deeply suspicious of Captain Lahar's secrecy." },
+      { "label": "Paerāndas", "session": 4, "note": "While tracking a boar, discovered a cave of ancient Trogmunder carvings depicting the Pilot." },
+      { "label": "White Sea (Dagon's attack)", "session": 6, "note": "Retrieved Dagon's conch horn after it blasted out of Guantanamo's hands." },
+      { "label": "Epēshu", "session": 9, "note": "Sold the company's silverware to the smith Amat and restocked alchemical supplies in the Marble Quarter." }
+    ],
+    "gear": [],
+    "wikiSlug": "Characters--and--Monsters/Players/Babar-Ett-Clan"
+  },
+  {
+    "name": "Frösted Flækes",
+    "epithet": "The Hord Alchemist",
+    "status": "active",
+    "race": "Man",
+    "culture": "Hords",
+    "origin": {
+      "label": "Hoarland, in the Far North",
+      "x": 2088,
+      "y": 40,
+      "approx": true
+    },
+    "joined": { "label": "Summarch", "x": 523, "y": 58 },
+    "color": "#4E7A96",
+    "bio": [
+      "Frösted Flækes is a Hord out of the Far North, self-taught in alchemy and medicine, and by his own reckoning the finest hand in all Rhusagos at the making of the Sjefenhold Special — uncracked eggshells and all.",
+      "Aboard the Tamarnīn he startled the sailors half out of their wits with a demonstration of invisibility potion, earning the nickname \"guthrūk,\" wizard, though Guantanamo repaid the show of skill by cursing his alchemical kit out of spite.",
+      "In the fight against Dagon he staggered the fiend with a well-thrown knife, and once safe in Epēshu he cooked Sjefenhold Specials for the company's breakfast — enjoyed by all but Maelys, who declared \"I don't eat breakfast\" and went back to sleep.",
+      "In the Marble Quarter he found a countryman of sorts in the Elf alchemist Chasal, and in speaking Hordish together let slip that he is both a member of the Cloister and the inventor of the Frösted Flask — knowledge that let him strike a lucrative trade of invisibility potions for coin and rare supplies."
+    ],
+    "road": [
+      { "label": "White Sea", "session": 1, "note": "Impressed the ship's sailors with a demonstration of invisibility potion, earning the chant of \"guthrūk,\" wizard." },
+      { "label": "White Sea (Dagon's attack)", "session": 6, "note": "Threw a knife that left Dagon staggered during the shipboard battle." },
+      { "label": "Epēshu", "session": 8, "note": "Cooked Sjefenhold Specials for the company's breakfast in the Epēshu safehouse." },
+      { "label": "Epēshu", "session": 9, "note": "Struck a lucrative potion trade with the Elf alchemist Chasal, revealing himself as a Cloister-trained alchemist and Allhammer." }
+    ],
+    "gear": [
+      { "name": "Stake", "wikiSlug": "Lore--and--History/Items,-Magic,--and--Materials/Weapons/Stake" }
+    ],
+    "wikiSlug": "Characters--and--Monsters/Players/Frösted-Flækes"
+  },
+  {
+    "name": "Maelys",
+    "epithet": "The Craftswoman Who Was \"El\"",
+    "status": "active",
+    "race": "Man",
+    "culture": "tribes of the Rainless Shore",
+    "origin": {
+      "label": "tribes of the Rainless Shore",
+      "x": 2920,
+      "y": 195,
+      "approx": true
+    },
+    "joined": { "label": "Sepos", "x": 560, "y": 300 },
+    "color": "#A6763A",
+    "bio": [
+      "Maelys was born among the tribes of the Rainless Shore, and is an exceptionally talented — and strong — craftswoman. She first came to the company's notice at Sepos, where Captain Lahar hired her on as the Tamarnīn's carpenter, and where, wary of strangers, she went for a time by the name \"El.\"",
+      "Through the crossing she built a ship-mounted ballista against the chance of battle, and it was her flaming sword, cutting through black webs that recoiled from light, that first opened the company's way down into the cavern of the Deep Lake.",
+      "In Epēshu's cellar she set aside the pretense of \"El\" and swore herself fully to the company's cause, though not without confessing a personal errand of her own: she is searching for a woman on the governor's advisory body, a Fair Trog of the Home Islands, and will not yet say why.",
+      "More recently, in the Marble Quarter, she has taken to buying hinges, latches, and barbed tips of metal, piecing together some device whose purpose she has kept to herself."
+    ],
+    "road": [
+      { "label": "Sepos", "session": 1, "note": "Hired by Captain Lahar as the Tamarnīn's carpenter, going by the name \"El\" to keep her passage quiet." },
+      { "label": "Paerāndas", "session": 3, "note": "Built a ship-mounted ballista through the night, anticipating ship-to-ship combat." },
+      { "label": "Paerāndas", "session": 5, "note": "Cut through the cave's light-averse black webs with her flaming sword, opening the way to the Deep Lake." },
+      { "label": "Epēshu", "session": 7, "note": "Dropped the pretense of \"El\" and swore herself fully to the company's cause, while confessing a personal mission of her own." },
+      { "label": "Epēshu", "session": 9, "note": "Purchased hinges, latches, and barbed tips in the Marble Quarter, building some mysterious device of her own design." }
+    ],
+    "gear": [],
+    "wikiSlug": "Characters--and--Monsters/Players/Maelys"
+  },
+  {
+    "name": "Guantanamo Michael",
+    "epithet": "The Last Elf, Quite Mad",
+    "status": "active",
+    "race": "Elf",
+    "culture": "Elves",
+    "origin": {
+      "label": "the Underwall",
+      "x": 2485,
+      "y": 270,
+      "approx": true
+    },
+    "joined": { "label": "Summarch", "x": 523, "y": 58 },
+    "color": "#6B5B95",
+    "bio": [
+      "Guantanamo Michael is one of the last Elves left in the Wide World, a carver and a self-taught expert in the magicks and artifices of Zhē Drūmor's making — mad lore for a mad Elf, as he is the first to admit.",
+      "In the Far North he took a strange, enchanted dwimmercloak from the belongings of the Grandmother, a garment that seems to hunger for \"unlight\"; aboard ship, his sabotage of a pursuing vessel — depth charges disguised as cargo — likely destroyed it entirely, a ship none in the company yet know had been hired by the Ninth House.",
+      "In the Deep Lake's caverns he found inscriptions describing Gurmakhar, the Hall of Passing, and in the battle against Dagon it was his lightning that finally drove the fiend off — though when he dared to sound Dagon's conch horn himself, an unnamed power cast him out of it, saying, \"This is not for you, elf.\"",
+      "His curiosity nearly cost him everything: dispelling the glyphs that had begun to kill Captain Lahar from within, Guantanamo saved the man's life but permanently blinded himself in doing so. Now, while the rest of the company enters the Thūkīn Games, he remains behind in the Epēshu safehouse, picking at the mystery of his cloak and the city's failing magic alike."
+    ],
+    "road": [
+      { "label": "Paerāndas", "session": 3, "note": "Secretly deployed depth charges disguised as cargo against the pursuing ship, defying Captain Lahar's orders." },
+      { "label": "Paerāndas", "session": 5, "note": "Leapt into the underground lake and found inscriptions describing Gurmakhar, the Hall of Passing." },
+      { "label": "White Sea (Dagon's attack)", "session": 6, "note": "Cast the lightning bolt that finally drove off Dagon, then was rejected by the power within Dagon's conch horn." },
+      { "label": "Epēshu", "session": 7, "note": "Dispelled the glyphs killing Captain Lahar from within, saving his life but permanently blinding himself." },
+      { "label": "Epēshu", "session": 8, "note": "Remained behind at the safehouse to study his Dwimmercloak and the source of the city's failing glyphs." }
+    ],
+    "gear": [
+      { "name": "Dwimmercloak", "wikiSlug": "Lore--and--History/Items,-Magic,--and--Materials/Armor--and--Clothing/Dwimmercloak" }
+    ],
+    "wikiSlug": "Characters--and--Monsters/Players/Guantanamo-Michael"
+  },
+  {
+    "name": "Shiv Mathor",
+    "epithet": "The Steward Who Turned",
+    "status": "former",
+    "race": "Man",
+    "culture": "Westermen",
+    "origin": {
+      "label": "now at the Sargāzat war camps",
+      "x": 968,
+      "y": 635,
+      "approx": true
+    },
+    "joined": { "label": "Summarch", "x": 523, "y": 58 },
+    "color": "#7A6A53",
+    "bio": [
+      "Shiv Mathor once served as Steward of the Allhammers, an expert in barrier magic — and, by his own vanity, in the maintenance of fine leather boots, which he oiled every night of every journey and defended jealously from thieves within his own company.",
+      "When Rennick revealed himself merged with the Coppersmith at the Siege of the Seat, Shiv alone among the party declared for him, walking to the new king's side and coming, in time, to believe in his cause.",
+      "Elevated to Steward after Cresadoc's death, Shiv now stands as one of Rennick's chief lieutenants, presently quartered at Rennick's war camps by the Sargāzat."
+    ],
+    "road": [],
+    "gear": [
+      { "name": "Shiv's Leather Boots", "wikiSlug": "Lore--and--History/Items,-Magic,--and--Materials/Armor--and--Clothing/Shiv's-Leather-Boots" }
+    ],
+    "wikiSlug": "Characters--and--Monsters/Players/Shiv-Mathor"
+  },
+  {
+    "name": "Eol Firenze",
+    "epithet": "The Knave Who Stayed Behind",
+    "status": "former",
+    "race": "Elf",
+    "culture": "Elves",
+    "origin": {
+      "label": "Relkor",
+      "x": 612,
+      "y": 268,
+      "approx": false
+    },
+    "joined": { "label": "Summarch", "x": 523, "y": 58 },
+    "color": "#3E6B5C",
+    "bio": [
+      "Eol Firenze is an Elven knave, a thief and assassin trained in spycraft, who wielded the guided hand-axe Trueling and served the Allhammers for some years — though his deeper loyalty was ever to the Ninth House, and to his handler, Aderyn Sly.",
+      "When the Return of the Kembar broke the order apart, Eol chose to remain behind in Relkor rather than flee south with the rest of the company, hoping to stall Rennick's plans and mount some resistance from within.",
+      "What has become of him since, the company does not know."
+    ],
+    "road": [],
+    "gear": [
+      { "name": "Trueling", "wikiSlug": "Lore--and--History/Items,-Magic,--and--Materials/Weapons/Trueling" }
+    ],
+    "wikiSlug": "Characters--and--Monsters/Players/Eol-Firenze"
+  },
+  {
+    "name": "Hocus Pocus",
+    "epithet": "Food Poisoning Casualty",
+    "status": "dead",
+    "race": null,
+    "culture": null,
+    "origin": null,
+    "joined": null,
+    "color": "#9C8AA5",
+    "bio": [
+      "She died of food poisoning."
+    ],
+    "road": [],
+    "gear": [],
+    "wikiSlug": "Characters--and--Monsters/Players/Hocus-Pocus"
+  }
+]

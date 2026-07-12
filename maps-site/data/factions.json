@@ -1,0 +1,150 @@
+[
+  {
+    "name": "The Eshbrīn",
+    "kind": "senate party",
+    "alignment": "tension",
+    "seat": { "label": "Epēshu", "x": 1222, "y": 1404 },
+    "summary": [
+      "The Eshbrīn are Epēshu's populist faction, and by far the dominant power in the senate since Hethel of the Mālaz clan won the last election for Surīhurūk. With the city's army away on campaign under her rivals, Hethel has moved to consolidate her rule: expanding the grain dole despite regional famine, swelling the ranks of her personal guard, and — so her critics whisper — laying the groundwork for outright tyranny.",
+      "When the storm and the citywide failure of blood glyphs struck Epēshu, Pahīn named questioning the Surīhurūk among the party's chief leads — though the Surīhurūk rarely grants private audiences, and non-senators are forbidden even to speak before the Curia."
+    ],
+    "members": [
+      { "name": "Hethel", "role": "Surīhurūk (governor-consul) of Epēshu; leader of the Eshbrīn, of the Mālaz clan", "company": false }
+    ],
+    "wikiSlug": null,
+    "sessions": [8]
+  },
+  {
+    "name": "The Orondēs",
+    "kind": "senate party",
+    "alignment": "neutral",
+    "seat": { "label": "Ruins of Lepon (Pebros's camp)", "x": 1146, "y": 1415 },
+    "summary": [
+      "The Orondēs are the conservative faction that lost the senate to the Eshbrīn in the last election. They look to Pebros, commander of Epēshu's army, as their informal leader; he has been away on campaign but is now returning, presently encamped with his forces among the ruins of Lepon some fifty miles from the city.",
+      "Should Pebros arrive with the army's loyalty still his own, the Orondēs may use that strength to wrest back control of the senate — a prospect that has the Eshbrīn visibly anxious to forestall."
+    ],
+    "members": [
+      { "name": "Pebros", "role": "commander of Epēshu's army; informal leader of the Orondēs, camped at the ruins of Lepon", "company": false }
+    ],
+    "wikiSlug": null,
+    "sessions": [8]
+  },
+  {
+    "name": "The Lektān Priesthood",
+    "kind": "priesthood",
+    "alignment": "tension",
+    "seat": { "label": "Blue Temple, Epēshu", "x": 1222, "y": 1404 },
+    "summary": [
+      "The Lektān are the priesthood of the Blue Temple on Epēshu's northern coast, devoted to Thobrauk the Pilot, the city's patron deity. Led by the Tuk Lektān (high priest) Ishkibal, they hold considerable public sway and lean toward the Orondēs, since the general Pebros is known for his piety.",
+      "Ishkibal has declared the unrelenting storm and the citywide failure of blood glyphs to be a divine omen, promising that 'great things' will come to pass this Yuleday, now only days away — a claim the party has flagged as a lead worth investigating in its own right."
+    ],
+    "members": [
+      { "name": "Ishkibal", "role": "Tuk Lektān (high priest) of the Blue Temple; proclaims the storm and glyph-failures omens of Yuleday", "company": false }
+    ],
+    "wikiSlug": null,
+    "sessions": [8]
+  },
+  {
+    "name": "The Senate of Epēshu",
+    "kind": "government",
+    "alignment": "neutral",
+    "seat": { "label": "Curia of the Senate, Epēshu", "x": 1222, "y": 1404 },
+    "summary": [
+      "Epēshu is governed by a body of one hundred senators, presided over by an elected Surīhurūk ('governor, consul') who stands for re-election every two years. The senate convenes in the Curia overlooking the Epēshīn Forum, a chamber closed to non-senators, who are forbidden even to speak at its sessions.",
+      "Beneath the Surīhurūk's office churns the ongoing rivalry of the Eshbrīn and Orondēs parties, with the Lektān priesthood lending its moral weight to the latter — and a handful of lesser city folk the party has come to know along the way."
+    ],
+    "members": [
+      { "name": "Hethel", "role": "Surīhurūk presiding over the hundred senators", "company": false },
+      { "name": "Kir-Hamash", "role": "low-level clerk in the Curia; a contact for tracking down El's missing advisor", "company": false },
+      { "name": "Amat", "role": "silversmith of the Marble Quarter; bought the party's silverware for 880 coin", "company": false },
+      { "name": "Buddy", "role": "charmed sentry; ignorance is bliss", "company": false }
+    ],
+    "wikiSlug": null,
+    "sessions": [7, 8]
+  },
+  {
+    "name": "The Allhammers",
+    "kind": "brotherhood",
+    "alignment": "foe",
+    "seat": { "label": "Summarch", "x": 523, "y": 58 },
+    "summary": [
+      "Once the order the party belonged to, the Allhammers are monster-hunters and peacekeepers sworn to the Coppersmith, based out of the Winehall in Summarch. After Grandmaster Hagar's murder, Rennick was elected in his place — and used the office to overthrow Summarch's ruler Selwin at the Siege of the Seat, only to reveal that he had merged his spirit with the Coppersmith himself in the Return of the Kembar.",
+      "Shiv Mathor chose to stand at Rennick's side and was later raised to Steward; the rest of the company refused and fled, their anvil pendants cracking and rusting the moment they were cast out. The order now serves Rennick's new kingship, its former independence gone."
+    ],
+    "members": [
+      { "name": "Rennick", "role": "Grandmaster of the Allhammers; merged his spirit with the Coppersmith; self-proclaimed King of Westerland", "company": false },
+      { "name": "Shiv Mathor", "role": "Steward of the Allhammers; betrayed the party to stand at Rennick's side", "company": true },
+      { "name": "Finch", "role": "Marshal of the Allhammers, a Dwarf", "company": false },
+      { "name": "Leon Mallister", "role": "formerly of the Allhammers", "company": true },
+      { "name": "Frösted Flækes", "role": "formerly of the Allhammers", "company": true },
+      { "name": "Babar Ett-Clan", "role": "formerly of the Allhammers", "company": true },
+      { "name": "Guantanamo Michael", "role": "formerly of the Allhammers", "company": true },
+      { "name": "Eol Firenze", "role": "formerly of the Allhammers; remained in Relkor to stall Rennick", "company": true }
+    ],
+    "wikiSlug": "Lore--and--History/Groups--and--Organizations/Eight-Houses/Allhammers",
+    "sessions": [7]
+  },
+  {
+    "name": "The Ninth House",
+    "kind": "secret network",
+    "alignment": "ally",
+    "seat": null,
+    "summary": [
+      "A secret order unknown even to the Eight Houses, the Ninth House was founded by Doremil the Raven just before their self-sacrifice completed the Binding, with the sole purpose of ensuring the Kembar never return to the Wide World. Its cells operate in near-total isolation from one another, taking rare orders from a hidden 'handler' further up the chain.",
+      "Aderyn Sly is a Ninth House agent, as was Eol Firenze before he stayed behind in Relkor to stall Rennick. In Epēshu, Aderyn's contact Pahīn sheltered the party in a safehouse — until news of the Kembar's return, unheard-of even within the House, sent him rushing to inform his superiors in person."
+    ],
+    "members": [
+      { "name": "Aderyn Sly", "role": "Ninth House handler; ancient Wite", "company": true },
+      { "name": "Eol Firenze", "role": "Ninth House agent placed among the Allhammers", "company": true },
+      { "name": "Pahīn", "role": "Aderyn's contact in Epēshu; sheltered the party in an abandoned villa", "company": false }
+    ],
+    "wikiSlug": "Lore--and--History/Groups--and--Organizations/Eight-Houses/Ninth-House",
+    "sessions": [7, 8]
+  },
+  {
+    "name": "The Cloister",
+    "kind": "order",
+    "alignment": "ally",
+    "seat": null,
+    "summary": [
+      "The Cloister is the order of herbalists, botanists, poisoners, and alchemists sworn to Mālgal the Shepherd. Frösted Flækes counts himself among their number, an identity he rarely advertises.",
+      "In Epēshu's Marble Quarter, the alchemist Dravidian Chasal — a fellow native of Rhusagos — recognized Frösted as both a Cloister member and the inventor of the Frösted Flask after the two spoke in their shared tongue, striking a lucrative deal for invisibility potions on the strength of that kinship."
+    ],
+    "members": [
+      { "name": "Frösted Flækes", "role": "alchemist of the Cloister; inventor of the Frösted Flask", "company": true },
+      { "name": "Dravidian Chasal", "role": "Elf alchemist of the Marble Quarter; recognized Frösted as Cloister and Allhammer", "company": false }
+    ],
+    "wikiSlug": null,
+    "sessions": [9]
+  },
+  {
+    "name": "Pebros's Army",
+    "kind": "army",
+    "alignment": "tension",
+    "seat": { "label": "Lepon camp", "x": 1146, "y": 1415 },
+    "summary": [
+      "The army of Epēshu marches under the banner of General Pebros, informal leader of the Orondēs conservatives. Having been away on campaign for some time, it is now encamped among the ruins of Lepon, some fifty miles from the city, as Pebros makes his way home.",
+      "The army's loyalty lies with Pebros personally rather than with the senate, a fact that has the Eshbrīn populists uneasy — and which the Orondēs may yet use to reclaim the government by force of arms."
+    ],
+    "members": [
+      { "name": "Pebros", "role": "commander of the army encamped at the ruins of Lepon", "company": false }
+    ],
+    "wikiSlug": null,
+    "sessions": [8]
+  },
+  {
+    "name": "The Māgosh",
+    "kind": "government",
+    "alignment": "neutral",
+    "seat": null,
+    "summary": [
+      "The Māgosh are the eight great city-states of Patrinor, of which Epēshu is one, alongside Cyrikon and Bōlkhar in Rubea, Hordon, Drāmūz, and Tamaron on the Leponnian Peninsula, and Gizalīs and Ākat in the eastern land of Makagos. Lepon was once numbered among them before its sack and ruin.",
+      "Epēshu itself contests dominion over the Marble Gulf with Hordon, and holds sway over the lands of Pēshunor and Lamor — a position of Māgos-level influence that shapes everything the party has found in the city, from its senate to its priesthood. Captain Lahar, the Patrin sea-captain who ferried the party across the White Sea to Epēshu, hails from this same world of Māgos rivalries and trade."
+    ],
+    "members": [
+      { "name": "Captain Lahar", "role": "Patrin sea-captain who ferried the party to Epēshu, now blind and left behind at port", "company": false }
+    ],
+    "wikiSlug": "Lore--and--History/Groups--and--Organizations/Governments/Māgosh",
+    "sessions": [7, 8]
+  }
+]
