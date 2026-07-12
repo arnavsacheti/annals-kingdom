@@ -35,6 +35,7 @@ body{font-family:var(--serif);color:var(--ink);-webkit-user-select:none;user-sel
 input,textarea{-webkit-user-select:text;user-select:text}
 canvas{display:block;touch-action:none}
 #app{position:fixed;inset:0}
+#mapCanvas{position:absolute;inset:0;width:100%;height:100%}
 
 /* ---------- vignette ---------- */
 #vignette{position:fixed;inset:0;pointer-events:none;z-index:5;
@@ -269,7 +270,7 @@ body.aiming #app canvas{cursor:crosshair}
 </style>
 </head>
 <body>
-<div id="app"></div>
+<div id="app"><canvas id="mapCanvas"></canvas></div>
 <div id="vignette"></div>
 <div id="labels"></div>
 
@@ -423,10 +424,111 @@ body.aiming #app canvas{cursor:crosshair}
   <button onclick="location.reload()" style="font-family:var(--serif);padding:4px 14px;cursor:pointer">Begin again</button>
 </div></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" crossorigin="anonymous"></script>
+<!-- Three.js dropped for 2D Canvas top-down view -->
 <script>
 'use strict';
 (function(){
+const THREE_RAW = {
+  Vector3: class {
+    constructor(x=0, y=0, z=0) { this.x = x; this.y = y; this.z = z; }
+    set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
+    copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
+    lerp(v, alpha) { this.x += (v.x - this.x) * alpha; this.z += (v.z - this.z) * alpha; return this; }
+    project(camera) { return this; }
+    multiplyScalar(s) { this.x *= s; this.y *= s; this.z *= s; return this; }
+    distanceTo(v) { return Math.hypot(this.x - v.x, this.z - v.z); }
+  },
+  Color: class {
+    constructor(c) { this.hex = c; }
+    setHex(h) { this.hex = h; return this; }
+  },
+  Raycaster: class {},
+  Scene: class {
+    add() {}
+    remove() {}
+    traverse() {}
+  },
+  PerspectiveCamera: class {
+    constructor() { this.position = new THREE.Vector3(); this.projectionMatrix = new THREE.Matrix4(); this.matrixWorldInverse = new THREE.Matrix4(); }
+    updateProjectionMatrix() {}
+    lookAt() {}
+  },
+  Matrix4: class {
+    multiplyMatrices() { return this; }
+    makeScale() { return this; }
+  },
+  Quaternion: class {},
+  Euler: class {},
+  Frustum: class {
+    setFromProjectionMatrix() { return this; }
+    intersectsSphere() { return true; }
+  },
+  Mesh: class {
+    constructor() { this.position = new THREE.Vector3(); this.scale = new THREE.Vector3(1,1,1); this.rotation = new THREE.Vector3(); this.userData = {}; }
+  },
+  BufferGeometry: class {
+    constructor() { this.attributes = {}; this.userData = {}; }
+    setAttribute() {}
+    computeVertexNormals() {}
+  },
+  Float32BufferAttribute: class {
+    constructor() {}
+  },
+  CanvasTexture: class {
+    constructor() {}
+  },
+  MeshBasicMaterial: class {
+    constructor() {}
+  },
+  InstancedMesh: class {
+    constructor() {
+      this.instanceMatrix = { needsUpdate: false };
+      this.instanceColor = { needsUpdate: false };
+    }
+    setMatrixAt() {}
+    setColorAt() {}
+  },
+  BufferAttribute: class {
+    constructor() {}
+  },
+  Group: class {
+    constructor() {
+      this.position = new THREE.Vector3();
+      this.scale = new THREE.Vector3(1,1,1);
+      this.rotation = new THREE.Vector3();
+      this.userData = {};
+    }
+    add() {}
+    remove() {}
+  },
+  ShaderMaterial: class {
+    constructor() {}
+  },
+  Sphere: class {
+    constructor() {}
+  },
+  BackSide: 1,
+  DoubleSide: 2
+};
+
+const THREE = new Proxy(THREE_RAW, {
+  get(target, prop) {
+    if (prop in target) return target[prop];
+    return class DummyClass {
+      constructor() { this.userData = {}; }
+      setAttribute() {}
+      computeVertexNormals() {}
+      set() {}
+      copy() {}
+      multiplyScalar() {}
+      project() {}
+      add() {}
+      remove() {}
+      traverse() {}
+    };
+  }
+});
+
 /* =======================================================================
    ANNALS — Phase 1: The Land
    A living kingdom in a single file. Deterministic per seed.
@@ -448,12 +550,12 @@ window.addEventListener('error', e => {
   }
   fatal(e.message + '\n' + (e.filename||'') + ':' + (e.lineno||''));
 });
-if(!window.THREE){ fatal('Three.js failed to load from CDN. Check the network and reload.'); return; }
+// Three.js loading check disabled
 
 // ---------- 1. constants ----------
-const W_SIZE = 6000;            // world edge, meters
-const N = 512;                  // heightfield grid
-const CELL = W_SIZE / N;
+let W_SIZE = 6000;            // world edge, meters
+let N = 512;                  // heightfield grid
+let CELL = W_SIZE / N;
 const RES = 384;                // terrain render mesh resolution
 const SEA_Y = 0;
 const CHUNKS = 6;               // tree chunk grid
@@ -1239,7 +1341,133 @@ function flattenPad(x, z, rad, ty){
 }
 
 // ----- roads -----
-function genRoads(){
+function genRoadsPatrinor(){
+  return new Promise((resolve) => {
+    const G = 512;
+    const cost = new Float32Array(G*G);
+    
+    for(let iz=0; iz<G; iz++) for(let ix=0; ix<G; ix++){
+      const x = (ix/(G-1)-0.5)*W_SIZE, z = (iz/(G-1)-0.5)*W_SIZE;
+      const gi = idx(Math.round(worldToGrid(x)), Math.round(worldToGrid(z)));
+      const sl = slopeAt(x,z);
+      let c = 1 + sl*sl*46;
+      if(W.waterMask[gi]) c += 34;
+      else if(W.B[gi]===2 || W.B[gi]===3) c += 2.4;
+      else if(W.B[gi]===5) c += 7;
+      else if(W.B[gi]===4) c += 5;
+      cost[iz*G+ix] = c;
+    }
+    W.roadCost = cost; W.roadCostG = G;
+    
+    const workerBlob = new Blob([`
+      self.onmessage = function(e) {
+        const { G, W_SIZE, cost, settlements } = e.data;
+        
+        function dist2d(ax, az, bx, bz) {
+          return Math.hypot(ax - bx, az - bz);
+        }
+        
+        function roadAstar(x0, z0, x1, z1) {
+          const s = [Math.round((x0/W_SIZE+0.5)*(G-1)), Math.round((z0/W_SIZE+0.5)*(G-1))];
+          const e = [Math.round((x1/W_SIZE+0.5)*(G-1)), Math.round((z1/W_SIZE+0.5)*(G-1))];
+          const open = [[0, s[0], s[1]]];
+          const gS = new Float32Array(G*G).fill(1e18);
+          const from = new Int32Array(G*G).fill(-1);
+          gS[s[1]*G+s[0]] = 0;
+          const closed = new Uint8Array(G*G);
+          let iter = 0;
+          while(open.length && iter++ < 190000){
+            let bi=0; for(let i=1;i<open.length;i++) if(open[i][0]<open[bi][0]) bi=i;
+            const cur3 = open.splice(bi,1)[0];
+            const ix = cur3[1], iz = cur3[2];
+            const ci = iz*G+ix;
+            if(closed[ci]) continue;
+            closed[ci] = 1;
+            if(ix===e[0] && iz===e[1]){
+              const path = [];
+              let cur = ci;
+              while(cur >= 0){ path.push(cur); cur = from[cur]; }
+              path.reverse();
+              return path.map(i=>({ x:((i%G)/(G-1)-0.5)*W_SIZE, z:(((i/G)|0)/(G-1)-0.5)*W_SIZE }));
+            }
+            for(let d=0; d<8; d++){
+              const nx = ix+[1,-1,0,0,1,1,-1,-1][d], nz = iz+[0,0,1,-1,1,-1,1,-1][d];
+              if(nx<0||nx>=G||nz<0||nz>=G) continue;
+              const ni = nz*G+nx;
+              if(closed[ni]) continue;
+              const step = d<4?1:1.4142;
+              const ng = gS[ci] + (cost[ci]+cost[ni])*0.5*step;
+              if(ng < gS[ni]){
+                gS[ni] = ng; from[ni] = ci;
+                const hx = Math.abs(nx-e[0]), hz = Math.abs(nz-e[1]);
+                open.push([ng + Math.max(hx,hz) + 0.4142*Math.min(hx,hz), nx, nz]);
+              }
+            }
+          }
+          return [{x:x0,z:z0},{x:x1,z:z1}];
+        }
+
+        const connected = [settlements[0]];
+        const rest = settlements.slice(1);
+        const roads = [];
+
+        for(const s of rest){
+          let best=null, bd=1e18;
+          for(const c of connected){ const d = dist2d(s.x,s.z,c.x,c.z); if(d<bd){bd=d;best=c;} }
+          let path = roadAstar(s.x, s.z, best.x, best.z);
+          roads.push({ pts: path, fromIdx: settlements.indexOf(s), toIdx: settlements.indexOf(best), major: s.kind!=='village' });
+          connected.push(s);
+        }
+        
+        const towns = settlements.filter(s=>s.kind==='town');
+        if(towns.length >= 2){
+          let path = roadAstar(towns[0].x, towns[0].z, towns[1].x, towns[1].z);
+          roads.push({ pts: path, fromIdx: settlements.indexOf(towns[0]), toIdx: settlements.indexOf(towns[1]), major:true });
+        }
+
+        self.postMessage({ roads });
+      };
+    `], { type: 'application/javascript' });
+    
+    const worker = new Worker(URL.createObjectURL(workerBlob));
+    worker.onmessage = function(e) {
+      const sets = W.settlements;
+      W.roads = e.data.roads.map(r => ({
+        pts: resample(chaikin(chaikin(r.pts)), 24),
+        from: sets[r.fromIdx],
+        to: sets[r.toIdx],
+        major: r.major
+      }));
+      
+      W.roadMask = new Uint8Array(N*N);
+      W.roads.forEach(rd => {
+        rd.pts.forEach(p => {
+          const gx = Math.round(worldToGrid(p.x)), gz = Math.round(worldToGrid(p.z));
+          for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++){
+            const nx=gx+dx,nz=gz+dz;
+            if(nx>=0&&nx<N&&nz>=0&&nz<N) W.roadMask[idx(nx,nz)]=1;
+          }
+        });
+        registerRoadEntries(rd);
+      });
+      
+      W.bridges = [];
+      W.roads.forEach(rd => bridgeRoad(rd));
+      
+      worker.terminate();
+      resolve();
+    };
+    
+    const setsToSend = W.settlements.map(s => ({ x: s.x, z: s.z, kind: s.kind }));
+    worker.postMessage({ G, W_SIZE, cost, settlements: setsToSend });
+  });
+}
+
+async function genRoads(){
+  if (isPatrinor) {
+    await genRoadsPatrinor();
+    return;
+  }
   const G = 192;
   const cost = new Float32Array(G*G);
   for(let iz=0; iz<G; iz++) for(let ix=0; ix<G; ix++){
@@ -1255,7 +1483,6 @@ function genRoads(){
   }
   W.roadCost = cost; W.roadCostG = G;
   const astar = roadAstar;
-  // connect: capital first, then each settlement to nearest connected
   const sets = W.settlements;
   const connected = [sets[0]];
   const rest = sets.slice(1).sort((a,b)=> (b.kind==='town')-(a.kind==='town'));
@@ -1269,14 +1496,12 @@ function genRoads(){
     W.roads.push({ pts: path, from:s, to:best, major: s.kind!=='village' });
     connected.push(s);
   }
-  // one loop road between the two closest towns not already directly linked
   const towns = sets.filter(s=>s.kind==='town');
   if(towns.length >= 2){
     let path = astar(towns[0].x, towns[0].z, towns[1].x, towns[1].z);
     path = resample(chaikin(chaikin(path)), 24);
     W.roads.push({ pts: path, from:towns[0], to:towns[1], major:true });
   }
-  // record entries into settlements & road mask for tree clearing
   W.roadMask = new Uint8Array(N*N);
   W.roads.forEach(rd => {
     rd.pts.forEach(p => {
@@ -1288,7 +1513,6 @@ function genRoads(){
     });
     registerRoadEntries(rd);
   });
-  // bridges: spans of road over water — any water, sea inlets included
   W.bridges = [];
   W.roads.forEach(rd => bridgeRoad(rd));
 }
@@ -1884,23 +2108,24 @@ let renderTod = 0.34;      // visual time-of-day, decoupled from sim speed
 let fpsAvg = 60, degradeStep = 0, degradeTimer = 0;
 const ARCH_CACHE = new Map();
 
+let canvas, ctx;
+let zoom = 1.0;
+let panX = 0;
+let panY = 0;
+let isPatrinor = false;
+let patrinorImage = null;
+let W_ASPECT = 1.0;
+
 function initRenderer(){
-  renderer = new THREE.WebGLRenderer({antialias:true, powerPreference:'high-performance'});
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, innerWidth <= 760 ? 1.6 : 2));
-  renderer.setSize(innerWidth, innerHeight);
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  document.getElementById('app').appendChild(renderer.domElement);
-  camera = new THREE.PerspectiveCamera(46, innerWidth/innerHeight, 2, 16000);
-  window.addEventListener('resize', ()=>{
-    renderer.setSize(innerWidth, innerHeight);
-    camera.aspect = innerWidth/innerHeight;
-    camera.updateProjectionMatrix();
-  });
-  MAT.world = patchWorldMaterial(new THREE.MeshLambertMaterial({vertexColors:true}));
-  MAT.road  = patchWorldMaterial(new THREE.MeshLambertMaterial({vertexColors:true, side:THREE.DoubleSide,
-                polygonOffset:true, polygonOffsetFactor:-3, polygonOffsetUnits:-3}));
-  buildSky();
+  canvas = document.getElementById('mapCanvas');
+  ctx = canvas.getContext('2d');
+  
+  function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
 }
 
 // ---------- sky ----------
@@ -3269,18 +3494,10 @@ function updateAgents(){
   for(const a of W.agents){
     const d = clamp((now - a.departDay)*a.speed, 0, a.route.dist);
     const p = routePos(a.route, d);
-    const y = a.kind==='cog'
-      ? SEA_Y + 0.05 + Math.sin(now*38 + d*0.01)*0.12
-      : roadY(p.x, p.z) + 0.12 + Math.sin(d*0.9)*0.05;
-    a.mesh.position.set(p.x, y, p.z);
-    a.mesh.rotation.y = Math.atan2(p.tx, p.tz);
-    // stay legible from altitude: agents swell into map-markers as the camera rises
-    const sc = clamp(CAM.radius/300, 1, 6) * (a.kind==='cog' ? 0.9 : 1);
-    a.mesh.scale.setScalar(sc);
+    a.pos = {x: p.x, z: p.z};
   }
 }
 function removeAgent(a){
-  scene.remove(a.mesh);
   const i = W.agents.indexOf(a);
   if(i>=0) W.agents.splice(i,1);
   if(CAM.follow === a) CAM.follow = null;
@@ -3986,69 +4203,7 @@ function cometFrame(nowMs){
 }
 /* ---------- ambient life: sheep, birds, hearth smoke ---------- */
 function buildAmbient(){
-  const R = W.rng.amb;
   W.sheep = []; W.birds = [];
-  // sheep near farming settlements
-  const gbS = GB();
-  gbBlobOct(gbS, 0, 0.5, 0, 0.55, 0.42, 0.78, hexRGB(0xcfc9bb), hexRGB(0xefe9dc), [0,0,0], [0,0,0], 0.3);
-  gbBox(gbS, 0, 0.28, 0.58, 0.22, 0.3, 0.26, hexRGB(0x3d362e));
-  const geoS = gbToGeometry(gbS);
-  const flocks = [];
-  W.settlements.forEach(s => {
-    if(s.geo && s.geo.farm > 0.5 && flocks.length < 7 && chance(R, 0.8)){
-      const a = rr(R,0,6.28), d = s.R*1.3 + rr(R,40,140);
-      const fx2 = s.x + Math.cos(a)*d, fz2 = s.z + Math.sin(a)*d;
-      const gi = idx(Math.round(worldToGrid(clamp(fx2,-2900,2900))), Math.round(worldToGrid(clamp(fz2,-2900,2900))));
-      if(!W.waterMask[gi] && slopeAt(fx2,fz2) < 0.3) flocks.push({x: fx2, z: fz2, n: ri(R,5,9)});
-    }
-  });
-  let total = 0;
-  flocks.forEach(f => total += f.n);
-  if(total){
-    const inst = new THREE.InstancedMesh(geoS, MAT.world, total);
-    const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e2 = new THREE.Euler();
-    const v = new THREE.Vector3(1,1,1), col = new THREE.Color();
-    let i = 0;
-    flocks.forEach(f => {
-      for(let k=0;k<f.n;k++){
-        const sx = f.x + rr(R,-26,26), sz = f.z + rr(R,-26,26);
-        W.sheep.push({i, x: sx, z: sz, hx: f.x, hz: f.z, a: rr(R,0,6.28), t: rr(R,0,9)});
-        e2.set(0, rr(R,0,6.28), 0); q.setFromEuler(e2);
-        m4.compose(new THREE.Vector3(sx, hAt(sx,sz), sz), q, v);
-        inst.setMatrixAt(i, m4);
-        col.setRGB(rr(R,0.92,1.05), rr(R,0.9,1.02), rr(R,0.88,1));
-        inst.setColorAt(i, col);
-        i++;
-      }
-    });
-    inst.instanceMatrix.needsUpdate = true;
-    if(inst.instanceColor) inst.instanceColor.needsUpdate = true;
-    inst.castShadow = true;
-    inst.frustumCulled = false;
-    scene.add(inst);
-    W.sheepMesh = inst;
-  }
-  // two lazy wheels of birds
-  const gbB = GB();
-  gbTri(gbB, -0.9,0,0, 0.9,0,0, 0,0.12,0.55, [0.16,0.15,0.16]);
-  gbTri(gbB, 0.9,0,0, -0.9,0,0, 0,0.12,0.55, [0.1,0.1,0.11]);
-  const geoB = gbToGeometry(gbB);
-  const nb = 22;
-  W.birdMesh = new THREE.InstancedMesh(geoB, MAT.world, nb);
-  const wcol = new THREE.Color(1,1,1);
-  for(let i=0;i<nb;i++){
-    W.birds.push({i, f: i < 11 ? 0 : 1, ph: rr(R,0,6.28), r: rr(R,10,60), h: rr(R,28,64)});
-    W.birdMesh.setColorAt(i, wcol);
-  }
-  const rvMid = W.rivers[0] ? W.rivers[0].pts[(W.rivers[0].pts.length/2)|0] : W.settlements[0];
-  W.birdFlocks = [
-    {cx: W.settlements[0].x, cz: W.settlements[0].z, a: 0, sp: 0.10},
-    {cx: rvMid.x, cz: rvMid.z, a: 2.2, sp: 0.085}
-  ];
-  W.birdMesh.instanceMatrix.needsUpdate = true;
-  if(W.birdMesh.instanceColor) W.birdMesh.instanceColor.needsUpdate = true;
-  W.birdMesh.frustumCulled = false;
-  scene.add(W.birdMesh);
 }
 function ambientFrame(dt, nowMs){
   const m4 = _grow4, q = _growQ, e2 = _growE, v = _growV;
@@ -4143,22 +4298,14 @@ function spawnArmy(hi, side, from, target, day){
     kind: 'army', hi, side, strength, morale: 0.8,
     commander: cmdr ? cmdr.id : null,
     from, target, route, departDay: day, speed: 210,
-    state: 'march', holdUntil: 0, pos: {x: from.x, z: from.z},
-    mesh: armyMesh(hi, strength)
+    state: 'march', holdUntil: 0, pos: {x: from.x, z: from.z}
   };
-  a.mesh.position.set(from.x, hAt(from.x, from.z), from.z);
-  scene.add(a.mesh);
   W.armies.push(a);
   return a;
 }
 function disbandArmy(a, home){
   const dst = home || a.from || W.settlements[0];
   dst.pop += a.strength * 0.6;
-  scene.remove(a.mesh);
-  a.mesh.traverse(o => {
-    if(o.geometry) o.geometry.dispose();
-    if(o.material && o.material !== MAT.world){ if(o.material.map) o.material.map.dispose(); o.material.dispose(); }
-  });
   const i = W.armies.indexOf(a);
   if(i >= 0) W.armies.splice(i, 1);
   if(CAM.follow === a) CAM.follow = null;
@@ -4174,17 +4321,7 @@ function armyPos(a, day){
 function updateArmies(){
   const now = W.clock.day;
   for(const a of W.armies){
-    const p = armyPos(a, now);
-    a.mesh.position.set(p.x, roadY(p.x, p.z) + 0.1, p.z);
-    if(a.state === 'march' && a.route){
-      const d = clamp((now - a.departDay)*a.speed, 0.1, a.route.dist);
-      const q = routePos(a.route, d);
-      a.mesh.rotation.y = Math.atan2(q.tx, q.tz);
-    } else if(a.face){
-      a.mesh.rotation.y = Math.atan2(a.face.x - p.x, a.face.z - p.z);
-    }
-    a.mesh.scale.setScalar(clamp(CAM.radius/300, 1.6, 5));
-    if(a.mesh.userData.camp) a.mesh.userData.camp.visible = a.state === 'siege';
+    armyPos(a, now);
   }
 }
 function isHostileTo(a, s){
@@ -5293,13 +5430,13 @@ function tickDay(day){
   if(doy === 0) chron('year', T.year(Math.floor(day/360)+1));
   if(doy === 271 && chance(R,0.55)) chron('flavor', T.winter(R), null, null);
   if(doy === 150 && chance(R,0.6)) chron('realm','Midsummer: bonfires on the green of '+W.settlements[0].name+', ale on the crown, and three betrothals sworn by morning.', W.settlements[0].x, W.settlements[0].z, 3);
-  tickWeather(day);
-  tickFires(day);
-  tickPlague(day);
-  tickBandits(day);
-  tickOmens(day);
-  tickDragon(day);
-  tickLandmarks(day);
+  if(day % 3 === 0) tickWeather(day);
+  if(day % 2 === 0) tickFires(day);
+  if(day % 4 === 0) tickPlague(day);
+  if(day % 5 === 0) tickBandits(day);
+  if(day % 6 === 0) tickOmens(day);
+  if(day % 3 === 0) tickDragon(day);
+  if(day % 10 === 0) tickLandmarks(day);
   if(day % 30 === 21) rareEvents(day);
   progressDaily(day);
   // old ruins are cleared when good times return
@@ -5445,7 +5582,7 @@ function tickDay(day){
       war: !!W.pol.war, pl: W.settlements.some(s2 => (s2.inf||0) > 0.02) });
     if(W.series.length > 4800) W.series = W.series.filter((_, i2) => i2 % 2 === 0);
   }
-  tickPolitics(day);
+  if(day % 5 === 0) tickPolitics(day);
   // harvest festival of stores
   if(doy === 195){
     let q = rr(R, 0.62, 1.38) * (W.drought ? 0.45 : 1);
@@ -5498,186 +5635,217 @@ function tickDay(day){
 /* =======================================================================
    CAMERA
    ======================================================================= */
+let drag = null, pinch = null;
+
 const CAM = {
   focus: new THREE.Vector3(), focusT: new THREE.Vector3(),
   yaw: 0.9, yawT: 0.9, pitchOff: 0, pitchOffT: 0,
   t: 0.95, tT: 0.62, radius: 3000, intro: true, lastInput: 0, follow: null
 };
+
 function tFromAlt(alt){ return clamp((Math.log(clamp(alt,9,4300))-Math.log(9))/(Math.log(4300)-Math.log(9)), 0, 1); }
+
 function flyTo(x, z, alt){
-  CAM.focusT.set(clamp(x,-2850,2850), 0, clamp(z,-2850,2850));
+  CAM.focusT.set(clamp(x,-W_SIZE*0.485,W_SIZE*0.485), 0, clamp(z,-W_SIZE*0.485,W_SIZE*0.485));
   if(alt) CAM.tT = tFromAlt(alt);
   CAM.lastInput = performance.now();
   CAM.intro = false;
 }
+
 function updateCamera(dt, nowMs){
   if(CAM.follow){
-    if(W.agents.indexOf(CAM.follow) < 0 && (!W.armies || W.armies.indexOf(CAM.follow) < 0)) CAM.follow = null;
-    else {
-      const m = CAM.follow.mesh.position;
-      CAM.focusT.set(clamp(m.x,-2850,2850), 0, clamp(m.z,-2850,2850));
+    const pos = CAM.follow.pos || (CAM.follow.mesh ? {x: CAM.follow.mesh.position.x, z: CAM.follow.mesh.position.z} : null);
+    if(pos){
+      CAM.focusT.set(clamp(pos.x,-W_SIZE*0.485,W_SIZE*0.485), 0, clamp(pos.z,-W_SIZE*0.485,W_SIZE*0.485));
     }
   }
-  if(nowMs - CAM.lastInput > 22000 && !CAM.follow && CAM.tT > 0.5) CAM.yawT += dt*0.012;
   const rate = CAM.intro ? 0.4 : 6;
-  const kF = 1-Math.exp(-dt*(CAM.intro?0.6:4.5)), kA = 1-Math.exp(-dt*7), kT = 1-Math.exp(-dt*rate);
+  const kF = 1-Math.exp(-dt*(CAM.intro?0.6:4.5)), kT = 1-Math.exp(-dt*rate);
   CAM.focus.lerp(CAM.focusT, kF);
-  CAM.yaw += (CAM.yawT-CAM.yaw)*kA;
-  CAM.pitchOff += (CAM.pitchOffT-CAM.pitchOff)*kA;
   CAM.t += (CAM.tT-CAM.t)*kT;
   if(CAM.intro && Math.abs(CAM.t-CAM.tT) < 0.015) CAM.intro = false;
-  const R = Math.exp(lerp(Math.log(9), Math.log(4300), CAM.t));
-  CAM.radius = R;
-  const pitch = clamp(lerp(0.30, 1.42, smooth(CAM.t)) + CAM.pitchOff, 0.14, 1.50);
-  const fy = hAt(CAM.focus.x, CAM.focus.z);
-  const horiz = Math.cos(pitch)*R;
-  const px = CAM.focus.x + Math.sin(CAM.yaw)*horiz;
-  const pz = CAM.focus.z + Math.cos(CAM.yaw)*horiz;
-  let py = fy + Math.sin(pitch)*R;
-  const gy = hAt(px,pz) + 3.5;
-  if(py < gy) py = gy;
-  camera.position.set(px, py, pz);
-  if(CAM.shakeUntil && nowMs < CAM.shakeUntil){
-    const m = (CAM.shakeMag||4) * (CAM.shakeUntil - nowMs)/2600;
-    camera.position.x += (Math.random()-0.5)*m;
-    camera.position.y += (Math.random()-0.5)*m*0.6;
-    camera.position.z += (Math.random()-0.5)*m;
+
+  // Apply auto-directed pan and zoom only when follow or intro is active
+  if (canvas && (CAM.follow || CAM.intro)) {
+    const baseScale = Math.min(canvas.width, canvas.height) / W_SIZE;
+    const targetZoom = lerp(12.0, 0.6, CAM.t);
+    const targetPanX = -CAM.focus.x * W_ASPECT * baseScale * targetZoom;
+    const targetPanY = -CAM.focus.z * baseScale * targetZoom;
+    
+    zoom = lerp(zoom, targetZoom, kT);
+    panX = lerp(panX, targetPanX, kF);
+    panY = lerp(panY, targetPanY, kF);
+  } else if (canvas) {
+    // Synchronize CAM focus back to the current manual pan center
+    const centerWorld = screenToWorld(canvas.width / 2, canvas.height / 2);
+    CAM.focus.set(centerWorld.x, 0, centerWorld.z);
+    CAM.focusT.copy(CAM.focus);
+    CAM.t = clamp((12.0 - zoom) / (12.0 - 0.6), 0, 1);
+    CAM.tT = CAM.t;
   }
-  camera.lookAt(CAM.focus.x, fy+2.5, CAM.focus.z);
-  camera.near = clamp(R*0.02, 0.5, 50);
-  camera.updateProjectionMatrix();
-  skyMesh.position.copy(camera.position);
 }
+
+function worldToScreen(wx, wz) {
+  if (!canvas) return { x: 0, y: 0 };
+  const baseScale = Math.min(canvas.width, canvas.height) / W_SIZE;
+  const screenX = canvas.width / 2 + panX + (wx * W_ASPECT) * baseScale * zoom;
+  const screenY = canvas.height / 2 + panY + wz * baseScale * zoom;
+  return { x: screenX, y: screenY };
+}
+
+function screenToWorld(sx, sy) {
+  if (!canvas) return { x: 0, z: 0 };
+  const baseScale = Math.min(canvas.width, canvas.height) / W_SIZE;
+  const wx = (sx - canvas.width / 2 - panX) / (W_ASPECT * baseScale * zoom);
+  const wz = (sy - canvas.height / 2 - panY) / (baseScale * zoom);
+  return { x: clamp(wx, -W_SIZE/2, W_SIZE/2), z: clamp(wz, -W_SIZE/2, W_SIZE/2) };
+}
+
 function groundHit(clientX, clientY){
-  const nx = (clientX/innerWidth)*2-1, ny = -(clientY/innerHeight)*2+1;
-  _ray.setFromCamera({x:nx, y:ny}, camera);
-  const o = _ray.ray.origin, d = _ray.ray.direction;
-  let t = 0, prevT = 0;
-  for(let i=0;i<900;i++){
-    t += Math.max(6, t*0.02);
-    if(t > 13000) return null;
-    const x = o.x+d.x*t, y = o.y+d.y*t, z = o.z+d.z*t;
-    if(y > 2600 && d.y > 0) return null;
-    if(y < hAt(x,z)){
-      let lo = prevT, hi2 = t;
-      for(let k=0;k<14;k++){
-        const m = (lo+hi2)/2;
-        const yy = o.y+d.y*m;
-        if(yy < hAt(o.x+d.x*m, o.z+d.z*m)) hi2 = m; else lo = m;
+  const pt = screenToWorld(clientX, clientY);
+  return { x: pt.x, y: hAt(pt.x, pt.z), z: pt.z };
+}
+
+function cacheProceduralMap() {
+  const cacheCanvas = document.createElement('canvas');
+  cacheCanvas.width = N;
+  cacheCanvas.height = N;
+  const cacheCtx = cacheCanvas.getContext('2d');
+  const imgData = cacheCtx.createImageData(N, N);
+  for(let i=0; i<N*N; i++) {
+    const h = W.H[i];
+    let r, g, b;
+    if (h < 0) { // Water
+      const t = clamp01((h + 120) / 120);
+      r = Math.round(lerp(24, 60, t));
+      g = Math.round(lerp(30, 95, t));
+      b = Math.round(lerp(45, 115, t));
+    } else { // Land
+      if (h < 15) { // Sand / Coast
+        r = 211; g = 192; b = 145;
+      } else if (h < 80) { // Valleys / Meadow
+        const t = clamp01((h - 15) / 65);
+        r = Math.round(lerp(124, 100, t));
+        g = Math.round(lerp(155, 130, t));
+        b = Math.round(lerp(82, 74, t));
+      } else if (h < 220) { // Mountains
+        const t = clamp01((h - 80) / 140);
+        r = Math.round(lerp(138, 116, t));
+        g = Math.round(lerp(130, 108, t));
+        b = Math.round(lerp(118, 98, t));
+      } else { // Snow peaks
+        r = 240; g = 240; b = 245;
       }
-      const m = (lo+hi2)/2;
-      return new THREE.Vector3(o.x+d.x*m, o.y+d.y*m, o.z+d.z*m);
     }
-    prevT = t;
+    imgData.data[i*4] = r;
+    imgData.data[i*4+1] = g;
+    imgData.data[i*4+2] = b;
+    imgData.data[i*4+3] = 255;
   }
-  return null;
+  cacheCtx.putImageData(imgData, 0, 0);
+  patrinorImage = cacheCanvas;
 }
 const _ray = new THREE.Raycaster();
 function initInput(){
-  const el = renderer.domElement;
+  const el = canvas;
   let drag = null, pinch = null;
   const ptrs = new Map();
   const lastTap = {t: 0, x: 0, y: 0};
-  function panBy(dx, dy){
-    CAM.follow = null;
-    const sc = CAM.radius*0.0016;
-    const fx = -Math.sin(CAM.yaw), fz = -Math.cos(CAM.yaw);
-    const rx = Math.cos(CAM.yaw), rz = -Math.sin(CAM.yaw);
-    CAM.focusT.x = clamp(CAM.focusT.x + (-rx*dx - fx*dy)*sc, -2850, 2850);
-    CAM.focusT.z = clamp(CAM.focusT.z + (-rz*dx - fz*dy)*sc, -2850, 2850);
-  }
+  
   el.addEventListener('pointerdown', e => {
     ptrs.set(e.pointerId, {x: e.clientX, y: e.clientY});
     try{ el.setPointerCapture(e.pointerId); }catch(_){}
-    CAM.lastInput = performance.now(); CAM.intro = false;
+    CAM.lastInput = performance.now();
+    CAM.follow = null;
+    CAM.intro = false;
     if(ptrs.size === 2){
-      // second finger down: the gesture becomes pinch-zoom / two-finger pan
       drag = null;
       const [a, b] = [...ptrs.values()];
       pinch = {d: Math.hypot(a.x-b.x, a.y-b.y), cx: (a.x+b.x)/2, cy: (a.y+b.y)/2};
     } else if(ptrs.size === 1){
-      drag = {btn: e.button, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, moved: false, touch: e.pointerType === 'touch'};
-    } else { drag = null; pinch = null; }
+      drag = {btn: e.button, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, moved: false};
+    }
   });
+
   el.addEventListener('pointermove', e => {
     const p = ptrs.get(e.pointerId);
     if(p){ p.x = e.clientX; p.y = e.clientY; }
     if(pinch && ptrs.size === 2){
-      CAM.lastInput = performance.now();
       const [a, b] = [...ptrs.values()];
       const d = Math.hypot(a.x-b.x, a.y-b.y), cx = (a.x+b.x)/2, cy = (a.y+b.y)/2;
-      CAM.tT = clamp(CAM.tT + (pinch.d - d)*0.0016, 0, 1);
-      if(cx !== pinch.cx || cy !== pinch.cy) panBy(cx - pinch.cx, cy - pinch.cy);
+      
+      // zoom with pinch
+      const zoomFactor = d / pinch.d;
+      const mouseBefore = screenToWorld(cx, cy);
+      zoom = clamp(zoom * zoomFactor, 0.4, 50);
+      const baseScale = Math.min(canvas.width, canvas.height) / W_SIZE;
+      panX = cx - canvas.width / 2 - mouseBefore.x * baseScale * zoom;
+      panY = cy - canvas.height / 2 - mouseBefore.z * baseScale * zoom;
+      
+      // pan with two fingers
+      panX += cx - pinch.cx;
+      panY += cy - pinch.cy;
+      
       pinch.d = d; pinch.cx = cx; pinch.cy = cy;
       return;
     }
     if(!drag) return;
-    const dx = e.clientX-drag.x, dy = e.clientY-drag.y;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
     drag.x = e.clientX; drag.y = e.clientY;
-    if(Math.hypot(e.clientX-drag.sx, e.clientY-drag.sy) > 5) drag.moved = true;
-    CAM.lastInput = performance.now();
-    if(drag.btn === 0){
-      CAM.yawT -= dx*0.0052;
-      CAM.pitchOffT = clamp(CAM.pitchOffT + dy*0.0034, -0.65, 0.65);
-    } else {
-      panBy(dx, dy);
-    }
+    if(Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 5) drag.moved = true;
+    
+    // Pan
+    panX += dx;
+    panY += dy;
   });
+
   const endPtr = e => {
     ptrs.delete(e.pointerId);
     if(ptrs.size < 2) pinch = null;
-    if(drag && drag.btn === 0 && !drag.moved){
-      if(drag.touch){
-        // double-tap travels; a single tap inspects
-        const now = performance.now();
-        if(now - lastTap.t < 350 && Math.hypot(e.clientX-lastTap.x, e.clientY-lastTap.y) < 36){
-          lastTap.t = 0;
-          const hit = groundHit(e.clientX, e.clientY);
-          if(hit){ flyTo(hit.x, hit.z); if(CAM.tT > 0.6) CAM.tT -= 0.14; }
-        } else {
-          lastTap.t = now; lastTap.x = e.clientX; lastTap.y = e.clientY;
-          doPick(e.clientX, e.clientY);
-        }
-      } else doPick(e.clientX, e.clientY);
+    if(drag && !drag.moved){
+      doPick(e.clientX, e.clientY);
     }
     if(ptrs.size === 0) drag = null;
   };
   el.addEventListener('pointerup', endPtr);
   el.addEventListener('pointercancel', endPtr);
+
   el.addEventListener('wheel', e => {
     e.preventDefault();
-    CAM.lastInput = performance.now(); CAM.intro = false;
-    // scale by delta magnitude: a mouse wheel clicks in ~120px steps, a trackpad
-    // streams dozens of small events per second — sign-stepping made trackpads slam
+    CAM.lastInput = performance.now();
+    CAM.follow = null;
+    CAM.intro = false;
     let dy = e.deltaY;
     if(e.deltaMode === 1) dy *= 33; else if(e.deltaMode === 2) dy *= innerHeight;
-    // trackpad pinch arrives as ctrl+wheel with small deltas: give it more gain
-    const step = clamp(dy * (e.ctrlKey ? 0.0028 : 0.00048), -0.09, 0.09);
-    if(step < 0){
-      const hit = groundHit(e.clientX, e.clientY);
-      if(hit) CAM.focusT.lerp(new THREE.Vector3(clamp(hit.x,-2850,2850),0,clamp(hit.z,-2850,2850)), clamp(-step*3.2, 0, 0.2));
+    const zoomFactor = 1.15;
+    
+    const mouseBefore = screenToWorld(e.clientX, e.clientY);
+    if(dy < 0){
+      zoom = Math.min(50, zoom * zoomFactor);
+    } else {
+      zoom = Math.max(0.4, zoom / zoomFactor);
     }
-    CAM.tT = clamp(CAM.tT + step, 0, 1);
+    const baseScale = Math.min(canvas.width, canvas.height) / W_SIZE;
+    panX = e.clientX - canvas.width / 2 - mouseBefore.x * baseScale * zoom;
+    panY = e.clientY - canvas.height / 2 - mouseBefore.z * baseScale * zoom;
   }, {passive:false});
-  // Safari's trackpad pinch never reaches the wheel handler — it fires proprietary
-  // gesture events (and zooms the page unless we claim them)
-  let gestT = null;
-  el.addEventListener('gesturestart', e => { e.preventDefault(); gestT = CAM.tT; });
-  el.addEventListener('gesturechange', e => {
-    e.preventDefault();
-    if(gestT === null) return;
-    CAM.lastInput = performance.now(); CAM.intro = false;
-    CAM.tT = clamp(gestT - Math.log2(e.scale || 1) * 0.5, 0, 1);
-  });
-  el.addEventListener('gestureend', e => { e.preventDefault(); gestT = null; });
+
   el.addEventListener('dblclick', e => {
+    // Zoom in on double click
+    CAM.follow = null;
+    CAM.intro = false;
     const hit = groundHit(e.clientX, e.clientY);
     if(hit){
-      flyTo(hit.x, hit.z);
-      if(CAM.tT > 0.6) CAM.tT -= 0.14;
+      const cx = canvas.width/2, cy = canvas.height/2;
+      zoom = Math.min(50, zoom * 2);
+      const baseScale = Math.min(canvas.width, canvas.height) / W_SIZE;
+      panX = e.clientX - canvas.width / 2 - hit.x * baseScale * zoom;
+      panY = e.clientY - canvas.height / 2 - hit.z * baseScale * zoom;
     }
   });
+
   el.addEventListener('contextmenu', e => e.preventDefault());
+
   window.addEventListener('keydown', e => {
     if(e.target && (e.target.tagName==='INPUT' || e.target.tagName==='TEXTAREA')) return;
     const k = e.key.toLowerCase();
@@ -5884,7 +6052,11 @@ function initUI(){
   });
   document.getElementById('btnReforge').addEventListener('click', ()=>{
     const s = document.getElementById('seedIn').value.trim() || String(Math.floor(Math.random()*9000000)+1000000);
-    history.replaceState(null, '', '#s='+encodeURIComponent(s));
+    if (s.toLowerCase() === 'patrinor') {
+      history.replaceState(null, '', '#map=patrinor');
+    } else {
+      history.replaceState(null, '', '#s='+encodeURIComponent(s));
+    }
     forgeWorld(s);
   });
   // D&D custom map loader
@@ -5956,6 +6128,14 @@ function initUI(){
   document.getElementById('btnHideUI').addEventListener('click', toggleUI);
   document.getElementById('btnStats').addEventListener('click', ()=>{ statsOn = !statsOn; document.getElementById('stats').style.display = statsOn?'block':'none'; });
   window.addEventListener('hashchange', ()=>{
+    const isPat = location.hash.includes('map=patrinor') || location.hash.includes('seed=patrinor') || location.hash.toLowerCase().includes('s=patrinor');
+    if (isPat) {
+      if (W && W.seed !== 'patrinor') {
+        document.getElementById('seedIn').value = 'patrinor';
+        forgeWorld('patrinor');
+      }
+      return;
+    }
     const m = location.hash.match(/s=([^&]+)/);
     const s = m ? decodeURIComponent(m[1]) : null;
     if(s && W && s !== W.seed){ document.getElementById('seedIn').value = s; forgeWorld(s); }
@@ -6128,10 +6308,9 @@ function doPick(cx, cy){
   }
   let best = null, bd = 26;
   for(const a of [...W.agents, ...(W.armies||[])]){
-    _lv.copy(a.mesh.position).project(camera);
-    if(_lv.z > 1 || _lv.z < -1) continue;
-    const px = (_lv.x+1)/2*innerWidth, py = (1-_lv.y)/2*innerHeight;
-    const d = Math.hypot(px-cx, py-cy);
+    const pos = a.pos || (a.mesh ? {x: a.mesh.position.x, z: a.mesh.position.z} : {x: 0, z: 0});
+    const sPos = worldToScreen(pos.x, pos.z);
+    const d = Math.hypot(sPos.x - cx, sPos.y - cy);
     if(d < bd){ bd = d; best = a; }
   }
   if(best){ if(best.kind === 'army') inspectArmy(best); else inspectAgent(best); return; }
@@ -6172,11 +6351,14 @@ function doPick(cx, cy){
       return;
     }
   }
-  if(W.dragon && W.dragon.mesh && W.dragon.mesh.visible && dist2d(hit.x, hit.z, W.dragon.mesh.position.x, W.dragon.mesh.position.z) < 260){
-    showInspector('<div class="ih"><span class="nm">'+W.dragon.name+'</span><span class="kd">dragon</span><span class="x">✕</span></div><hr>'+
-      inspRow('Mood', W.dragon.state === 'raiding' ? 'incendiary' : 'proprietary') +
-      inspRow('Hoard', fmt(Math.round(W.dragon.hoard))+' marks'));
-    return;
+  if(W.dragon && !W.dragon.dead){
+    const dPos = W.dragon.pos || {x: W.dragon.lair.x, z: W.dragon.lair.z};
+    if(dist2d(hit.x, hit.z, dPos.x, dPos.z) < 260) {
+      showInspector('<div class="ih"><span class="nm">'+W.dragon.name+'</span><span class="kd">dragon</span><span class="x">✕</span></div><hr>'+
+        inspRow('Mood', W.dragon.state === 'raiding' ? 'incendiary' : 'proprietary') +
+        inspRow('Hoard', fmt(Math.round(W.dragon.hoard))+' marks'));
+      return;
+    }
   }
   for(const s of W.settlements){
     if(dist2d(hit.x, hit.z, s.x, s.z) < s.R*1.02){ inspectSettlement(s); return; }
@@ -6190,22 +6372,9 @@ let territoryOn = false, housesDirtyFlag = true;
 function housesDirty(){ housesDirtyFlag = true; }
 function ownerColor(o){ return o === -1 ? '#c9a227' : (W.houses && W.houses[o]) ? W.houses[o].colA : '#999180'; }
 function buildTerritory(){
-  // one draped overlay; regions are painted, not stamped, so borders are organic
-  const seg = 96;
-  const geo = new THREE.PlaneGeometry(W_SIZE, W_SIZE, seg, seg);
-  geo.rotateX(-Math.PI/2);
-  const pos = geo.attributes.position;
-  for(let i=0;i<pos.count;i++) pos.setY(i, hAt(pos.getX(i), pos.getZ(i)) + 2.2);
   W.terrCanvas = document.createElement('canvas');
   W.terrCanvas.width = W.terrCanvas.height = 256;
-  W.terrTex = new THREE.CanvasTexture(W.terrCanvas);
-  const mat = new THREE.MeshBasicMaterial({ map: W.terrTex, transparent: true, fog: false,
-    depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -5, polygonOffsetUnits: -5 });
-  W.terrMesh = new THREE.Mesh(geo, mat);
-  W.terrMesh.renderOrder = 6;
-  W.terrMesh.visible = territoryOn;
-  W.terrMesh.frustumCulled = false;
-  scene.add(W.terrMesh);
+  W.terrTex = { needsUpdate: false };
   paintTerritory();
 }
 function paintTerritory(){
@@ -6720,6 +6889,67 @@ async function forgeWorld(seed){
     document.getElementById('loadTitle').innerHTML = '<span class="orn">✥</span>The Annals<span class="orn">✥</span>';
     window.__annalsReady = false; ANNALS.ready = false;
     await raf2();
+
+    // Check if we are loading Patrinor
+    isPatrinor = (seed.toLowerCase() === 'patrinor' || location.hash.includes('map=patrinor'));
+
+    if (isPatrinor) {
+      addStep('Loading Patrinor map and settlements…');
+      await raf2();
+
+      // Load settlements JSON
+      const sResponse = await fetch('/patrinor_settlements.json');
+      const settlementsData = await sResponse.json();
+
+      // Load PatrinorModern.png
+      const img = new Image();
+      const imgLoaded = new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+      img.src = '/PatrinorModern.png';
+      await imgLoaded;
+
+      // Extract heightmap from the image
+      const tempCanvas = document.createElement('canvas');
+      const N_VAL = 2048;
+      tempCanvas.width = N_VAL;
+      tempCanvas.height = N_VAL;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.drawImage(img, 0, 0, N_VAL, N_VAL);
+      const imgData = tempCtx.getImageData(0, 0, N_VAL, N_VAL);
+      const H = new Float32Array(N_VAL * N_VAL);
+      for(let i=0; i<N_VAL*N_VAL; i++) {
+        const r = imgData.data[i*4];
+        const g = imgData.data[i*4+1];
+        const b = imgData.data[i*4+2];
+        const pv = (r + g + b) / 3.0;
+        H[i] = (pv - 40) * 4.0; // Sea level is at 40
+      }
+
+      window.CUSTOM_MAP_DATA = {
+        H: H,
+        settlements: settlementsData,
+        hasCoast: true,
+        coastEdge: 0
+      };
+
+      // Cache the loaded image for drawing in 2D
+      patrinorImage = img;
+
+      // Scale constants
+      N = 2048;
+      W_SIZE = 60000;
+      W_ASPECT = 4390 / 2188;
+    } else {
+      window.CUSTOM_MAP_DATA = null;
+      patrinorImage = null;
+      N = 512;
+      W_SIZE = 6000;
+      W_ASPECT = 1.0;
+    }
+    CELL = W_SIZE / N;
+
     NAME.used.clear(); ARCH_CACHE.clear();
     disposeScene();
     W = {
@@ -6732,38 +6962,22 @@ async function forgeWorld(seed){
     for(const [label, fn] of GEN_STEPS){
       addStep(label);
       await raf2();
-      fn();
+      await fn();
     }
     addStep('Illuminating the manuscript…');
     await raf2();
+    
+    // Stub out THREE scene setup
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0xd2d3bb, 900, 6800);
-    hemiLight = new THREE.HemisphereLight(0xa3bcd4, 0x6d6d55, 0.62);
-    scene.add(hemiLight);
-    sunLight = new THREE.DirectionalLight(0xfff4d8, 1.1);
-    sunLight.castShadow = true;
-    sunLight.shadow.mapSize.set(2048, 2048);
-    sunLight.shadow.camera.near = 50;
-    sunLight.shadow.camera.far = 7000;
-    sunLight.shadow.bias = -0.0005;
-    sunLight.shadow.normalBias = 2.0;
-    scene.add(sunLight); scene.add(sunLight.target);
-    W.fillLight = new THREE.DirectionalLight(0xbfd0e0, 0.3);
-    scene.add(W.fillLight); scene.add(W.fillLight.target);
-    scene.add(skyMesh);
-    buildTerrainMesh();
-    await raf2();
-    buildWater();
-    buildPrecip();
-    buildRoads();
-    await raf2();
-    W.settlements.forEach(buildSettlementMeshes);
-    buildWild();
-    buildLair();
-    buildMills();
-    await raf2();
-    buildFloraMeshes();
-    buildLabels();
+    camera = new THREE.PerspectiveCamera();
+    skyMesh = new THREE.Mesh();
+    skyMesh.position = new THREE.Vector3();
+
+    // Draw the procedural map background cache if not in Patrinor mode
+    if (!isPatrinor) {
+      cacheProceduralMap();
+    }
+
     buildTerritory();
     const nm = 'The Annals of ' + W.realmName;
     document.getElementById('loadTitle').innerHTML = '<span class="orn">✥</span>'+nm+'<span class="orn">✥</span>';
@@ -6794,8 +7008,14 @@ async function forgeWorld(seed){
     lo.style.opacity = 0;
     setTimeout(()=> lo.classList.add('hidden'), 1300);
     window.__annalsReady = true; ANNALS.ready = true;
+    
+    // Zoom/Pan reset to default centering on the capital
+    const baseScale = Math.min(canvas.width, canvas.height) / W_SIZE;
+    zoom = 1.0;
+    panX = -cap.x * W_ASPECT * baseScale * zoom;
+    panY = -cap.z * baseScale * zoom;
+
     console.log('[ANNALS] seed='+seed+' realm='+W.realmName+' settlements='+W.settlements.length+
-      ' buildings='+countBuildings()+' trees='+(W.flora.dec.length+W.flora.pine.length)+
       ' rivers='+W.rivers.length+' lakes='+W.lakes.length+' coast='+W.hasCoast);
   } catch(err){
     console.error(err);
@@ -6820,50 +7040,279 @@ let prevMs = performance.now(), frameN = 0;
 function tick(dt, nowMs){
   const sp = SPEEDS[W.clock.speed];
   simAdvance(sp*dt);
-  // the light keeps its own slow, steady time at every sim speed: one ambient
-  // day ≈ 5 real minutes, and the nights pass quickly
+  
+  // Night visual transition
   const nightNow = SH.uNightG.value > 0.45;
   renderTod = (renderTod + (dt/300) * (nightNow ? 2.9 : 1)) % 1;
+  
   updateAgents();
   if(W.armies) updateArmies();
-  if(W.rebuildQueue && W.rebuildQueue.size && nowMs - (W.lastRebuildMs||0) > 700){
-    const s = W.rebuildQueue.values().next().value;
-    W.rebuildQueue.delete(s);
-    buildSettlementMeshes(s);
-    W.lastRebuildMs = nowMs;
-  }
-  if(W.roadsDirty && nowMs - (W.lastRoadsMs||0) > 2500){
-    W.roadsDirty = false;
-    W.lastRoadsMs = nowMs;
-    buildRoads();
-  }
+  
   if(W.overlayMode && (W.terrDirty || W.overlayMode !== 'territory') &&
      nowMs - (W.lastTerrMs||0) > (W.terrDirty ? 1200 : 4500)){
     W.terrDirty = false;
     W.lastTerrMs = nowMs;
     paintOverlay(W.overlayMode);
   }
-  if(W.riverDirty && nowMs - (W.lastRiverMs||0) > 1500){
-    W.riverDirty = false;
-    W.lastRiverMs = nowMs;
-    rebuildRivers();
-  }
-  updateFx();
-  precipFrame(dt);
-  ambientFrame(dt, nowMs);
+  
   dragonFrame(nowMs);
-  cometFrame(nowMs);
   directorFrame(nowMs, dt);
   updateCamera(dt, nowMs);
-  updateSkyAndLight(nowMs/1000);
-  WATERU.uTime.value = (nowMs/1000) % 3600;
-  SH.uTimeG.value = (nowMs/1000) % 3600;
-  updateLOD();
-  for(const wm of W.wheelMeshes) wm.rotation.x += dt*(sp>0 ? 1.1 : 0.35);
-  updateLabels();
+  
   updateHUD();
   refreshGraphs();
-  renderer.render(scene, camera);
+  drawMap();
+}
+
+function drawMap() {
+  if (!canvas || !ctx) return;
+  
+  // 1. Clear background
+  ctx.fillStyle = '#1e1814'; // dark parchment base
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  const baseScale = Math.min(canvas.width, canvas.height) / W_SIZE;
+  const cw = W_SIZE * W_ASPECT * baseScale * zoom;
+  const ch = W_SIZE * baseScale * zoom;
+  const cx = canvas.width / 2 + panX - cw / 2;
+  const cy = canvas.height / 2 + panY - ch / 2;
+  
+  // 2. Draw heightfield image (Patrinor png or cache Canvas)
+  if (patrinorImage) {
+    ctx.drawImage(patrinorImage, cx, cy, cw, ch);
+  }
+  
+  // 3. Draw political borders (if territoryOn is true)
+  if (territoryOn && W.terrCanvas) {
+    ctx.save();
+    ctx.globalAlpha = 0.35;
+    ctx.drawImage(W.terrCanvas, cx, cy, cw, ch);
+    ctx.restore();
+  }
+  
+  // 4. Draw rivers
+  ctx.save();
+  ctx.strokeStyle = 'rgba(58, 124, 147, 0.7)';
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  W.rivers.forEach(rv => {
+    ctx.beginPath();
+    rv.pts.forEach((p, idx) => {
+      const sPos = worldToScreen(p.x, p.z);
+      if (idx === 0) ctx.moveTo(sPos.x, sPos.y);
+      else ctx.lineTo(sPos.x, sPos.y);
+    });
+    ctx.lineWidth = Math.max(1, (rv.pts[0].w || 16) * baseScale * zoom * 0.45);
+    ctx.stroke();
+  });
+  ctx.restore();
+  
+  // 5. Draw roads
+  ctx.save();
+  ctx.strokeStyle = '#8d6f45'; // dirt brown
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  W.roads.forEach(rd => {
+    ctx.beginPath();
+    rd.pts.forEach((p, idx) => {
+      const sPos = worldToScreen(p.x, p.z);
+      if (idx === 0) ctx.moveTo(sPos.x, sPos.y);
+      else ctx.lineTo(sPos.x, sPos.y);
+    });
+    ctx.lineWidth = Math.max(1.2, (rd.major ? 4 : 2) * baseScale * zoom);
+    if (!rd.major) {
+      ctx.setLineDash([4 * baseScale * zoom, 4 * baseScale * zoom]);
+    } else {
+      ctx.setLineDash([]);
+    }
+    ctx.stroke();
+  });
+  ctx.restore();
+  
+  // 6. Draw bridges
+  ctx.save();
+  ctx.strokeStyle = '#8a8276';
+  ctx.lineWidth = Math.max(2, 6 * baseScale * zoom);
+  W.bridges.forEach(br => {
+    const sA = worldToScreen(br.a.x, br.a.z);
+    const sB = worldToScreen(br.b.x, br.b.z);
+    ctx.beginPath();
+    ctx.moveTo(sA.x, sA.y);
+    ctx.lineTo(sB.x, sB.y);
+    ctx.stroke();
+  });
+  ctx.restore();
+  
+  // 7. Draw landmarks, cairns, bandit camps
+  ctx.save();
+  // Cairns
+  (W.cairns || []).forEach(c => {
+    const sPos = worldToScreen(c.x, c.z);
+    ctx.fillStyle = '#8a8276';
+    ctx.strokeStyle = '#2b2320';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(sPos.x, sPos.y, Math.max(2, 4 * baseScale * zoom), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  });
+  
+  // Bandit Camps
+  (W.banditCamps || []).forEach(camp => {
+    const sPos = worldToScreen(camp.x, camp.z);
+    ctx.fillStyle = '#2d2620';
+    ctx.strokeStyle = '#c96a2a';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(sPos.x, sPos.y, Math.max(3, 6 * baseScale * zoom), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  });
+  
+  // Landmarks
+  (W.landmarks || []).forEach(lm => {
+    const sPos = worldToScreen(lm.x, lm.z);
+    ctx.fillStyle = '#74808f';
+    ctx.strokeStyle = '#2b2320';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(sPos.x, sPos.y, Math.max(3, 5 * baseScale * zoom), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#fff';
+    ctx.font = `${Math.max(8, 10 * baseScale * zoom)}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(lm.kind === 'monastery' ? '⛪' : lm.kind === 'windmill' ? '⛢' : '⛩', sPos.x, sPos.y);
+  });
+  ctx.restore();
+  
+  // 8. Draw settlements
+  ctx.save();
+  W.settlements.forEach(s => {
+    const sPos = worldToScreen(s.x, s.z);
+    const rSize = Math.max(10, s.R * baseScale * zoom * 0.15);
+    
+    // Circle outline
+    ctx.fillStyle = s.owner === -1 ? '#c9a227' : (s.owner >= 0 && W.houses[s.owner]) ? W.houses[s.owner].colA : '#8d6f45';
+    ctx.strokeStyle = '#2b2320';
+    ctx.lineWidth = 2;
+    
+    ctx.beginPath();
+    ctx.arc(sPos.x, sPos.y, rSize, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    
+    // Draw sigil inside
+    let sigilCanvas = null;
+    if (s.kind === 'capital') {
+      sigilCanvas = W.crownSigil.canvas;
+    } else if (s.kind === 'town' && s.owner >= 0 && W.houses[s.owner]) {
+      sigilCanvas = W.houses[s.owner].canvas;
+    }
+    
+    if (sigilCanvas) {
+      const sigSize = rSize * 1.4;
+      ctx.drawImage(sigilCanvas, sPos.x - sigSize/2, sPos.y - sigSize/2, sigSize, sigSize);
+    } else {
+      // Village dot
+      ctx.fillStyle = '#2b2320';
+      ctx.beginPath();
+      ctx.arc(sPos.x, sPos.y, rSize * 0.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    // Labels
+    if (labelsOn) {
+      ctx.font = `italic ${Math.max(11, 14 * zoom * 0.5)}px var(--serif)`;
+      ctx.fillStyle = '#2b2320';
+      ctx.textAlign = 'center';
+      ctx.fillText(s.name, sPos.x, sPos.y - rSize - 4);
+    }
+  });
+  ctx.restore();
+  
+  // 9. Draw agents (caravans & cogs)
+  ctx.save();
+  W.agents.forEach(a => {
+    const pos = a.pos || (a.mesh ? {x: a.mesh.position.x, z: a.mesh.position.z} : {x: 0, z: 0});
+    const sPos = worldToScreen(pos.x, pos.z);
+    const aSize = Math.max(5, 9 * baseScale * zoom);
+    
+    ctx.fillStyle = a.kind === 'cog' ? '#3a7c93' : '#7a6248';
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    
+    ctx.beginPath();
+    ctx.arc(sPos.x, sPos.y, aSize, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    
+    // Draw follow ring
+    if (CAM.follow === a) {
+      ctx.strokeStyle = '#c9a227';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(sPos.x, sPos.y, aSize + 3, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  });
+  ctx.restore();
+  
+  // 10. Draw armies
+  ctx.save();
+  W.armies.forEach(a => {
+    const pos = a.pos || (a.mesh ? {x: a.mesh.position.x, z: a.mesh.position.z} : {x: 0, z: 0});
+    const sPos = worldToScreen(pos.x, pos.z);
+    const aSize = Math.max(8, 14 * baseScale * zoom);
+    
+    ctx.fillStyle = a.side === 'rebel' ? '#7a2c22' : '#c9a227';
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    
+    ctx.beginPath();
+    ctx.arc(sPos.x, sPos.y, aSize, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#fff';
+    ctx.font = `${aSize * 0.9}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('⚔', sPos.x, sPos.y);
+    
+    // Draw follow ring
+    if (CAM.follow === a) {
+      ctx.strokeStyle = '#c9a227';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(sPos.x, sPos.y, aSize + 4, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  });
+  ctx.restore();
+  
+  // 11. Draw dragon
+  if (W.dragon && !W.dragon.dead && W.dragon.state !== 'sleeping') {
+    const dragonPos = W.dragon.pos || {x: W.dragon.lair.x, z: W.dragon.lair.z};
+    const sPos = worldToScreen(dragonPos.x, dragonPos.z);
+    ctx.fillStyle = '#aa2211';
+    ctx.font = `${Math.max(16, 26 * baseScale * zoom)}px sans-serif`;
+    ctx.fillText('🐉', sPos.x, sPos.y);
+  }
+  
+  // 12. Apply Night Darkening filter
+  if (renderTod > 0.45 || renderTod < 0.25) {
+    ctx.save();
+    let opacity = 0;
+    if (renderTod > 0.45 && renderTod < 0.5) opacity = (renderTod - 0.45) / 0.05 * 0.5;
+    else if (renderTod >= 0.5 || renderTod < 0.2) opacity = 0.5;
+    else if (renderTod >= 0.2 && renderTod < 0.25) opacity = (0.25 - renderTod) / 0.05 * 0.5;
+    ctx.fillStyle = `rgba(16, 26, 40, ${opacity})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+  }
 }
 function frame(nowMs){
   requestAnimationFrame(frame);
@@ -6873,19 +7322,12 @@ function frame(nowMs){
   frameN++;
   tick(dt, nowMs);
   if(frameN % 30 === 0) renderHousesPanel();
-  // fps + graceful degradation
+  
   fpsAvg = lerp(fpsAvg, 1/Math.max(dt,1e-4), 0.04);
-  degradeTimer += dt;
-  if(degradeTimer > 5 && frameN > 300){
-    degradeTimer = 0;
-    if(fpsAvg < 42 && degradeStep === 0){ degradeStep = 1; renderer.setPixelRatio(1); console.log('[ANNALS] degrade: pixelRatio → 1'); }
-    else if(fpsAvg < 42 && degradeStep === 1){ degradeStep = 2; W.terrainMesh.castShadow = false; console.log('[ANNALS] degrade: terrain shadows off'); }
-    else if(fpsAvg < 42 && degradeStep === 2){ degradeStep = 3; console.log('[ANNALS] degrade: shadows off'); }
-  }
   if(statsOn && frameN % 20 === 0){
+    const sp = SPEEDS[W.clock.speed];
     document.getElementById('stats').textContent =
-      (fpsAvg|0)+' fps · '+renderer.info.render.calls+' calls · '+
-      (renderer.info.render.triangles/1e6).toFixed(1)+'M tris · '+sp+' d/s';
+      (fpsAvg|0)+' fps · 2D Canvas · '+sp+' d/s';
   }
 }
 
@@ -6893,7 +7335,7 @@ function frame(nowMs){
 window.ANNALS = {
   ready: false,
   get world(){ return W; },
-  stats(){ return { fps: Math.round(fpsAvg), calls: renderer.info.render.calls, tris: renderer.info.render.triangles,
+  stats(){ return { fps: Math.round(fpsAvg), calls: 0, tris: 0,
     buildings: countBuildings(), trees: W.flora ? W.flora.dec.length+W.flora.pine.length : 0, seed: W.seed, realm: W.realmName,
     treasury: Math.round(W.treasury||0), pop: Math.round(W.realmPop||0),
     agents: W.agents ? W.agents.length : 0, chron: W.chron ? W.chron.length : 0 }; },
@@ -6957,9 +7399,16 @@ initRenderer();
 initInput();
 initUI();
 (function boot(){
+  const hasMapPatrinor = location.hash.includes('map=patrinor') || location.hash.includes('seed=patrinor') || location.hash.toLowerCase().includes('patrinor');
   const m = location.hash.match(/s=([^&]+)/);
-  let seed = m ? decodeURIComponent(m[1]) : String(Math.floor(Math.random()*9000000)+1000000);
-  if(!m) history.replaceState(null, '', '#s='+encodeURIComponent(seed));
+  let seed;
+  if (hasMapPatrinor) {
+    seed = 'patrinor';
+    history.replaceState(null, '', '#map=patrinor');
+  } else {
+    seed = m ? decodeURIComponent(m[1]) : String(Math.floor(Math.random()*9000000)+1000000);
+    if(!m) history.replaceState(null, '', '#s='+encodeURIComponent(seed));
+  }
   document.getElementById('seedIn').value = seed;
   requestAnimationFrame(frame);
   forgeWorld(seed);

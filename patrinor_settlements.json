@@ -1,0 +1,106 @@
+[
+  {
+    "name": "Patrinor City",
+    "kind": "capital",
+    "gridX": 1000,
+    "gridZ": 1600,
+    "pop": 4200,
+    "harbor": true
+  },
+  {
+    "name": "Ostergarde",
+    "kind": "town",
+    "gridX": 350,
+    "gridZ": 100,
+    "pop": 1200,
+    "harbor": false
+  },
+  {
+    "name": "Threngarde",
+    "kind": "town",
+    "gridX": 900,
+    "gridZ": 700,
+    "pop": 1100,
+    "harbor": false
+  },
+  {
+    "name": "Lothwyck",
+    "kind": "town",
+    "gridX": 1300,
+    "gridZ": 800,
+    "pop": 1350,
+    "harbor": true
+  },
+  {
+    "name": "Fenholt",
+    "kind": "town",
+    "gridX": 1800,
+    "gridZ": 1150,
+    "pop": 950,
+    "harbor": false
+  },
+  {
+    "name": "Ravensmoor",
+    "kind": "town",
+    "gridX": 550,
+    "gridZ": 1200,
+    "pop": 1050,
+    "harbor": false
+  },
+  {
+    "name": "Ashford",
+    "kind": "village",
+    "gridX": 50,
+    "gridZ": 150,
+    "pop": 250,
+    "harbor": false
+  },
+  {
+    "name": "Brookdale",
+    "kind": "village",
+    "gridX": 200,
+    "gridZ": 450,
+    "pop": 310,
+    "harbor": false
+  },
+  {
+    "name": "Greywater",
+    "kind": "village",
+    "gridX": 500,
+    "gridZ": 650,
+    "pop": 190,
+    "harbor": true
+  },
+  {
+    "name": "Stonecliffe",
+    "kind": "village",
+    "gridX": 1900,
+    "gridZ": 950,
+    "pop": 280,
+    "harbor": false
+  },
+  {
+    "name": "Fenworth",
+    "kind": "village",
+    "gridX": 1200,
+    "gridZ": 1350,
+    "pop": 220,
+    "harbor": false
+  },
+  {
+    "name": "Highcrag",
+    "kind": "village",
+    "gridX": 1300,
+    "gridZ": 1500,
+    "pop": 180,
+    "harbor": false
+  },
+  {
+    "name": "Dundale",
+    "kind": "village",
+    "gridX": 550,
+    "gridZ": 1650,
+    "pop": 210,
+    "harbor": false
+  }
+]

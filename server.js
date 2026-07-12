@@ -1,7 +1,7 @@
 // Minimal static server for local preview of the ANNALS single-file app.
 const http = require('http'), fs = require('fs'), path = require('path');
 const root = __dirname;
-const mime = { '.html':'text/html; charset=utf-8', '.js':'text/javascript', '.css':'text/css', '.txt':'text/plain' };
+const mime = { '.html':'text/html; charset=utf-8', '.js':'text/javascript', '.css':'text/css', '.txt':'text/plain', '.png':'image/png', '.json':'application/json' };
 http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0].split('#')[0]);
   if(p === '/') p = '/index.html';
