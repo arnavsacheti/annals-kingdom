@@ -49,7 +49,8 @@
     border-radius:4px;background:var(--parch2);white-space:nowrap;transition:.15s;}
   .links a:hover{background:var(--rust);color:#f5ecd6;border-color:var(--rust);}
 
-  #map{flex:1 1 auto;background:#d9cba7;}
+  #stage{flex:1 1 auto;position:relative;display:flex;min-height:0;}
+  #map{flex:1 1 auto;height:100%;background:#d9cba7;}
 
   footer{padding:5px 16px;background:var(--panel2);border-top:1px solid var(--line2);
     font-family:'EB Garamond',serif;font-size:13px;color:var(--muted);
@@ -60,8 +61,10 @@
   .mk .glyph{pointer-events:auto;display:flex;align-items:center;justify-content:center;
     width:22px;height:22px;border-radius:50%;font-size:14px;line-height:1;
     border:1.5px solid rgba(44,36,24,.55);background:var(--parch2);
-    box-shadow:0 1px 3px rgba(0,0,0,.35);color:var(--ink);flex:0 0 auto;}
-  .mk .lbl{pointer-events:auto;margin-left:5px;font-family:'EB Garamond',serif;
+    box-shadow:0 1px 3px rgba(0,0,0,.35);color:var(--ink);flex:0 0 auto;cursor:pointer;
+    transition:transform .15s ease;}
+  .mk .glyph:hover{transform:scale(1.18);}
+  .mk .lbl{pointer-events:none;margin-left:5px;font-family:'EB Garamond',serif;
     font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;
     text-shadow:0 0 3px var(--parch),0 0 3px var(--parch),0 0 3px var(--parch);
     display:none;}
@@ -75,32 +78,81 @@
   .mk.t-mtn .glyph{background:#e6ddc9;color:#6a4a24;border-color:#6a4a24;}
   .mk.t-major .lbl{font-size:14px;}
   .mk.t-water .lbl{color:#2e5060;font-style:italic;}
+  /* glyphs step up one notch at the closest tier */
+  .map-tier-c .mk .glyph{transform:scale(1.14);}
+  .map-tier-c .mk .glyph:hover{transform:scale(1.3);}
+
+  /* hover name tooltip (only when atlas labels are off) */
+  .mk-tip{font-family:'EB Garamond',serif;font-size:13px;font-weight:600;
+    background:var(--panel);border:1px solid var(--line2);color:var(--ink);
+    padding:1px 8px;border-radius:3px;box-shadow:0 2px 6px rgba(0,0,0,.25);}
+  .mk-tip:before{display:none;}
+  .atlas-labels .mk-tip{display:none;}
 
   /* route waypoints */
   .wp{display:flex;align-items:center;justify-content:center;
     width:20px;height:20px;border-radius:50%;background:var(--rust);color:#f5ecd6;
     font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;
-    border:1.5px solid #f5ecd6;box-shadow:0 1px 4px rgba(0,0,0,.45);}
-  .route-line{animation:dashmove 5s linear infinite;}
+    border:1.5px solid #f5ecd6;box-shadow:0 1px 4px rgba(0,0,0,.45);cursor:pointer;
+    transition:transform .15s ease;}
+  .wp:hover{transform:scale(1.18);}
+  .route-line{stroke-dasharray:10 14;}
+  .route-line.playing{animation:dashmove 2.6s linear infinite;}
   @keyframes dashmove{to{stroke-dashoffset:-240;}}
 
-  /* ---- popups ---- */
-  .leaflet-popup-content-wrapper{background:var(--panel);color:var(--ink);
-    border:1px solid var(--line2);border-radius:6px;
-    box-shadow:0 8px 24px rgba(44,36,24,.4);}
-  .leaflet-popup-tip{background:var(--panel);border:1px solid var(--line2);}
-  .leaflet-popup-content{margin:12px 14px;font-family:'Lora',serif;line-height:1.5;
-    width:290px !important;}
-  .pp h3{font-family:'EB Garamond',serif;font-size:20px;margin:0 0 4px;color:var(--ink);}
-  .pp .badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;
-    text-transform:uppercase;letter-spacing:.8px;color:#f5ecd6;background:var(--bronze);
-    padding:2px 7px;border-radius:3px;margin-bottom:8px;}
-  .pp .excerpt{font-size:13.5px;color:var(--ink2);margin:6px 0;}
-  .pp .more{font-family:'EB Garamond',serif;font-size:14px;color:var(--rust);
-    text-decoration:none;font-weight:600;}
-  .pp .more:hover{text-decoration:underline;}
-  .pp .rev-h{font-family:'EB Garamond',serif;font-size:15px;margin:12px 0 4px;
-    padding-top:8px;border-top:1px solid var(--line);color:var(--muted);
+  /* ---- tier panes (fade reveal) ---- */
+  .leaflet-pMajor-pane,.leaflet-pWater-pane,.leaflet-pSettle-pane,.leaflet-pMtn-pane,
+  .leaflet-pMinor-pane,.leaflet-pRealm-pane,.leaflet-pRouteLine-pane,.leaflet-pRouteWp-pane{
+    transition:opacity .2s ease;}
+  /* tier A (z0-1): major regions + seas only */
+  .map-tier-a .leaflet-pSettle-pane,.map-tier-a .leaflet-pMtn-pane,
+  .map-tier-a .leaflet-pRealm-pane,.map-tier-a .leaflet-pMinor-pane,
+  .map-tier-a .leaflet-pRouteLine-pane,.map-tier-a .leaflet-pRouteWp-pane{
+    opacity:0;pointer-events:none;}
+  /* tier B (z2-3): + settlements, mountains, realm fills, route line */
+  .map-tier-b .leaflet-pMinor-pane,.map-tier-b .leaflet-pRouteWp-pane{
+    opacity:0;pointer-events:none;}
+  /* tier C (z4+): everything */
+
+  /* ---- side panel drawer ---- */
+  #panel{position:absolute;top:0;left:0;bottom:0;width:340px;max-width:86vw;
+    background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border-right:2px solid var(--line2);box-shadow:6px 0 22px rgba(44,36,24,.35);
+    transform:translateX(-104%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+    z-index:1100;display:flex;flex-direction:column;}
+  #panel.open{transform:translateX(0);}
+  .panel-close{position:absolute;top:9px;right:11px;z-index:3;border:1px solid var(--line2);
+    background:var(--parch2);color:var(--ink);width:30px;height:30px;border-radius:50%;
+    font-size:19px;line-height:1;cursor:pointer;font-family:'EB Garamond',serif;}
+  .panel-close:hover{background:var(--rust);color:#f5ecd6;border-color:var(--rust);}
+  .panel-body{overflow-y:auto;padding:18px 20px 44px;flex:1 1 auto;}
+  .panel-open .leaflet-top.leaflet-left{margin-left:346px;transition:margin .28s;}
+
+  .card-type{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;
+    letter-spacing:1.2px;color:#f5ecd6;background:var(--bronze);display:inline-block;
+    padding:3px 9px;border-radius:3px;margin-bottom:9px;}
+  .card-name{font-family:'EB Garamond',serif;font-size:30px;font-weight:600;
+    margin:2px 40px 12px 0;line-height:1.06;color:var(--ink);}
+  .card-sess{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.6px;margin:-4px 0 12px;}
+  .card-lore{font-family:'Lora',serif;font-size:14.5px;line-height:1.62;color:var(--ink2);}
+  .card-lore p{margin:0 0 11px;}
+  .card-lore h4{font-family:'EB Garamond',serif;font-size:16.5px;color:var(--ink);
+    margin:16px 0 5px;letter-spacing:.2px;font-weight:600;}
+  .card-wiki{display:inline-block;margin:8px 0 2px;font-family:'EB Garamond',serif;
+    font-size:15px;color:var(--rust);font-weight:600;text-decoration:none;}
+  .card-wiki:hover{text-decoration:underline;}
+  .jrow{display:flex;gap:8px;margin-top:18px;}
+  .jbtn{flex:1 1 auto;font-family:'EB Garamond',serif;font-size:14px;padding:8px 10px;
+    cursor:pointer;background:var(--parch2);border:1px solid var(--line2);border-radius:5px;
+    color:var(--ink);}
+  .jbtn:hover:not(:disabled){background:var(--rust);color:#f5ecd6;border-color:var(--rust);}
+  .jbtn:disabled{opacity:.4;cursor:default;}
+  .jbtn.stop{flex:0 0 auto;}
+
+  /* ---- reviews ---- */
+  .rev-h{font-family:'EB Garamond',serif;font-size:15px;margin:18px 0 6px;
+    padding-top:10px;border-top:1px solid var(--line);color:var(--muted);
     text-transform:uppercase;letter-spacing:1px;}
   .rev{margin:8px 0;padding:7px 9px;background:var(--parch2);border-radius:5px;
     border:1px solid rgba(199,181,140,.7);}
@@ -110,10 +162,37 @@
   .rev .stars .off{color:#c3b088;}
   .rev .when{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);}
   .rev .txt{font-size:12.5px;color:var(--ink2);margin-top:3px;font-style:italic;}
-  .wp-note{font-family:'Lora',serif;font-size:13px;line-height:1.45;}
-  .wp-note b{font-family:'EB Garamond',serif;font-size:15px;}
-  .wp-note .sess{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);
-    text-transform:uppercase;letter-spacing:.6px;display:block;margin:2px 0 5px;}
+
+  /* ---- era switcher control ---- */
+  .era-ctrl{background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--line2);border-radius:6px;padding:8px 11px;
+    box-shadow:0 4px 14px rgba(44,36,24,.3);font-family:'EB Garamond',serif;
+    color:var(--ink);max-width:236px;}
+  .era-title{font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;
+    color:var(--muted);margin-bottom:6px;border-bottom:1px solid var(--line);padding-bottom:5px;}
+  .era-ctrl label{display:flex;align-items:center;gap:8px;font-size:14px;padding:3px 3px;
+    cursor:pointer;border-radius:3px;}
+  .era-ctrl label:hover{background:var(--panel2);}
+  .era-ctrl input{accent-color:var(--rust);cursor:pointer;margin:0;}
+
+  /* ---- journey control ---- */
+  .jrn-ctrl{background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--line2);border-radius:6px;box-shadow:0 4px 14px rgba(44,36,24,.3);}
+  .jrn-ctrl button{font-family:'EB Garamond',serif;font-size:14px;color:var(--ink);
+    background:none;border:none;padding:8px 12px;cursor:pointer;white-space:nowrap;
+    border-radius:6px;}
+  .jrn-ctrl button:hover{background:var(--panel2);}
+  .jrn-ctrl button.on{background:var(--rust);color:#f5ecd6;}
+
+  /* ---- scale bar ---- */
+  .scalebar{font-family:'IBM Plex Mono',monospace;color:var(--ink);
+    background:rgba(243,236,215,.9);border:1px solid var(--line2);border-radius:4px;
+    padding:4px 8px 3px;box-shadow:0 2px 8px rgba(44,36,24,.25);}
+  .sb-track{display:flex;height:7px;border:1px solid var(--ink2);}
+  .sb-seg{height:100%;background:var(--ink2);}
+  .sb-seg.alt{background:var(--parch2);}
+  .sb-ticks{display:flex;justify-content:space-between;font-size:9.5px;margin-top:2px;
+    color:var(--ink2);letter-spacing:.3px;}
 
   /* leaflet controls parchment skin */
   .leaflet-bar a,.leaflet-control-layers{background:var(--panel);color:var(--ink);
@@ -126,8 +205,11 @@
   .leaflet-control-layers label{margin:2px 0;}
   .leaflet-control-attribution{background:rgba(243,236,215,.85)!important;
     font-family:'IBM Plex Mono',monospace;font-size:10px;}
-  .realm-tip{font-family:'EB Garamond',serif;font-size:14px;background:var(--panel);
-    border:1px solid var(--line2);color:var(--ink);}
+  .realm-tip{font-family:'EB Garamond',serif;font-size:15px;font-weight:600;letter-spacing:.4px;
+    background:var(--panel);border:1px solid var(--line2);color:var(--ink);
+    padding:3px 11px;border-radius:4px;box-shadow:0 3px 10px rgba(44,36,24,.3);}
+  .realm-tip:before{display:none;}
+  .leaflet-interactive{cursor:pointer;}
 
   @media (max-width:640px){
     header{padding:6px 10px;gap:8px;}
@@ -136,6 +218,13 @@
     .links{order:3;margin-left:0;}
     .links a{font-size:13px;padding:4px 8px;}
     footer{font-size:11px;}
+    #panel{top:auto;left:0;right:0;bottom:0;width:auto;max-width:none;height:64%;
+      transform:translateY(104%);border-right:none;border-top:2px solid var(--line2);
+      border-radius:16px 16px 0 0;box-shadow:0 -6px 22px rgba(44,36,24,.4);}
+    #panel.open{transform:translateY(0);}
+    .panel-open .leaflet-top.leaflet-left{margin-left:0;}
+    .era-ctrl{max-width:200px;padding:6px 8px;}
+    .era-ctrl label{font-size:13px;}
   }
 </style>
 </head>
@@ -152,7 +241,13 @@
       <a href="https://sim.princexizor.ddns.net/" target="_blank" rel="noopener">Sim&nbsp;↗</a>
     </div>
   </header>
-  <div id="map"></div>
+  <div id="stage">
+    <div id="map"></div>
+    <aside id="panel" aria-hidden="true" role="dialog" aria-label="Place details">
+      <button id="panelClose" class="panel-close" aria-label="Close panel" title="Close">×</button>
+      <div id="panelBody" class="panel-body"></div>
+    </aside>
+  </div>
   <footer>Atlas by the campaign's cartographer · interactive chart for the Tale of the Allhammers</footer>
 </div>
 
@@ -162,21 +257,65 @@
 (function(){
   var NZ=4, IMG_W=4390, IMG_H=2188, TILE_W=4608, TILE_H=2304;
   var WIKI_BASE='https://princexizor.ddns.net/';
+  var RETINA=!!L.Browser.retina;
 
   var map=L.map('map',{crs:L.CRS.Simple,minZoom:0,maxZoom:6,
-    zoomControl:true,attributionControl:true});
+    zoomControl:true,attributionControl:true,
+    zoomSnap:.5,zoomDelta:.5,wheelPxPerZoomLevel:80,wheelDebounceTime:20,
+    fadeAnimation:true});
   function px(x,y){return map.unproject([x,y],NZ);}
   var contentBounds=L.latLngBounds(px(0,0),px(IMG_W,IMG_H));
   var tileBounds=L.latLngBounds(px(0,0),px(TILE_W,TILE_H));
 
-  L.tileLayer('tiles/{z}/{x}/{y}.jpg',{
-    minNativeZoom:0,maxNativeZoom:NZ,maxZoom:6,tileSize:256,noWrap:true,
-    bounds:tileBounds,
-    attribution:'Agrakh Nīmilkad Utheg · the Tale of the Allhammers'
-  }).addTo(map);
+  // ---- panes (one per overlay tier; ordering via z-index) ----
+  // realms sit below markers; route waypoints above the route line.
+  [['pRealm',410],['pRouteLine',415],['pWater',618],['pMajor',620],
+   ['pMtn',622],['pSettle',624],['pMinor',626],['pRouteWp',640]].forEach(function(p){
+    map.createPane(p[0]); map.getPane(p[0]).style.zIndex=p[1];
+  });
 
-  map.fitBounds(contentBounds);
-  map.setMaxBounds(contentBounds.pad(0.25));
+  // ---- base layers: Modern (0..5) / War (0..4) / Imperial (0..4) ----
+  // detectRetina bumps the requested URL zoom by 1 on HiDPI, so cap maxNativeZoom
+  // one below the deepest on-disk zoom on retina to avoid 404 tiles at max zoom.
+  var ATTR='Agrakh Nīmilkad Utheg · the Tale of the Allhammers';
+  function makeBase(path,deepZoom){
+    return L.tileLayer(path+'{z}/{x}/{y}.jpg',{
+      minNativeZoom:0,maxNativeZoom:RETINA?deepZoom-1:deepZoom,maxZoom:6,
+      tileSize:256,noWrap:true,bounds:tileBounds,detectRetina:true,keepBuffer:4,
+      attribution:ATTR});
+  }
+  var BASES={
+    modern:makeBase('tiles/',5),
+    war:makeBase('tiles-war/',4),
+    imperial:makeBase('tiles-imperial/',4)
+  };
+  var curBase=BASES.modern; curBase.addTo(map);
+  var eraInputs=null;
+  function setEra(k){
+    if(!BASES[k]||BASES[k]===curBase)return;
+    map.removeLayer(curBase); curBase=BASES[k]; curBase.addTo(map);
+    if(eraInputs)Array.prototype.forEach.call(eraInputs,function(i){i.checked=(i.value===k);});
+  }
+
+  // ---- initial view: cover-fit so the atlas fills the viewport ----
+  // ceil to the .5 snap: flooring a cover zoom drops below the fill threshold
+  // and reintroduces parchment void.
+  function coverZoom(){return Math.ceil(map.getBoundsZoom(contentBounds,true)*2)/2;}
+  var fitZoom=coverZoom();
+  map.setMinZoom(fitZoom);
+  map.setView(contentBounds.getCenter(),fitZoom,{animate:false});
+  map.setMaxBounds(contentBounds.pad(0.08));
+  // keep it filled across viewport resizes (never leave void at min zoom)
+  var _rzT;
+  window.addEventListener('resize',function(){
+    clearTimeout(_rzT);
+    _rzT=setTimeout(function(){
+      map.invalidateSize({animate:false});
+      fitZoom=coverZoom(); map.setMinZoom(fitZoom);
+      if(map.getZoom()<fitZoom)map.setView(contentBounds.getCenter(),fitZoom,{animate:false});
+      updTier();
+    },180);
+  });
 
   // ---- helpers ----
   function esc(s){return String(s==null?'':s)
@@ -187,33 +326,29 @@
   function stars(n){n=Math.max(0,Math.min(5,n|0));var o='';
     for(var i=0;i<5;i++)o+=i<n?'★':'<span class="off">★</span>';return o;}
 
-  // ---- clean a wiki page body into a ~400-char excerpt ----
-  function excerpt(content){
+  // ---- clean a wiki page body into readable paragraphs (full text) ----
+  var META=/^(General Information|People and History|Other Names|Location|Type|Inhabitants|Events|Regions|Map|Footnotes|See Session)/;
+  function cleanWiki(content,name){
     if(!content)return '';
-    var blocks=content.replace(/\r/g,'').split(/\n{2,}/);
-    var body=[];
-    for(var i=0;i<blocks.length;i++){
-      var b=blocks[i].replace(/\s+/g,' ').trim();
-      if(!b)continue;
-      if(/General Information|People and History/.test(b))continue;
-      if(/^(Other Names|Location|Type|Inhabitants|Events|Regions)/.test(b))continue;
-      if(/^[“"'\-–—]/.test(b))continue;            // skip quotes / attributions
-      if(b.length<40 || !/[.!?]/.test(b))continue; // skip captions/titles
-      body.push(b);
-      if(body.join(' ').length>=380)break;
+    var lines=content.replace(/\r/g,'').split('\n'), arr=[], fn=fold(name||'');
+    for(var i=0;i<lines.length;i++){
+      var t=lines[i].replace(/\s+/g,' ').trim();
+      if(!t)continue;
+      if(META.test(t))continue;
+      if(t==='↩'||/^\d+$/.test(t))continue;
+      if(fn&&arr.length===0&&fold(t)===fn)continue; // repeated title at top
+      arr.push(t);
     }
-    var txt=body.join(' ');
-    if(!txt){ // fallback: first non-trivial line
-      txt=content.replace(/\s+/g,' ').trim();
+    var html='';
+    for(var j=0;j<arr.length;j++){
+      var s=arr[j];
+      var heading=s.length<=34&&!/[.!?,;:]$/.test(s)&&!/[.!?]/.test(s)&&j<arr.length-1;
+      html+=heading?'<h4>'+esc(s)+'</h4>':'<p>'+esc(s)+'</p>';
     }
-    if(txt.length>400){
-      var cut=txt.slice(0,400);var sp=cut.lastIndexOf(' ');
-      txt=(sp>300?cut.slice(0,sp):cut).replace(/[.,;:]$/,'')+'…';
-    }
-    return txt;
+    return html;
   }
 
-  // ---- season ranking for "newest first" ----
+  // ---- season ranking for "newest first" reviews ----
   var PHASE={early:0,mid:1,late:2};
   var SEASON={spring:0,summer:1,autumn:2,fall:2,winter:3};
   function chron(r){
@@ -223,9 +358,24 @@
     for(var s in SEASON)if(d.indexOf(s)>=0)se=SEASON[s];
     return y*1000 + (se*3+ph)*10 + (r.session||0);
   }
+  function reviewsHtml(name){
+    var rv=REVIEWS[name];
+    if(!rv||!rv.length)return '';
+    var sorted=rv.slice().sort(function(a,b){return chron(b)-chron(a);});
+    var h='<div class="rev-h">Traveller’s Reviews</div>';
+    for(var i=0;i<sorted.length;i++){var r=sorted[i];
+      h+='<div class="rev"><div class="top">'+
+        '<span class="who">'+esc(r.reviewer)+'</span>'+
+        '<span class="stars">'+stars(r.stars)+'</span></div>'+
+        '<div class="when">'+esc(r.date)+'</div>'+
+        '<div class="txt">“'+esc(r.text)+'”</div></div>';
+    }
+    return h;
+  }
 
   // ---- state ----
-  var MARKERS=[], MREF={}, WIKI={}, WIKIFOLD={}, REVIEWS={};
+  var MARKERS=[], MREF={}, WIKI={}, WIKIFOLD={}, REVIEWS={}, ROUTE=[];
+  var routePoly=null;
 
   function pageFor(name){
     if(WIKI[name])return WIKI[name];
@@ -234,53 +384,125 @@
     for(var t in WIKI){if(fold(t).indexOf(f)>=0||f.indexOf(fold(t))>=0)return WIKI[t];}
     return null;
   }
+  function wikiUrl(page){return WIKI_BASE+page.slug.split('/').map(encodeURIComponent).join('/');}
 
-  function popupHtml(mk){
-    var page=pageFor(mk.name);
-    var h='<div class="pp"><h3>'+esc(mk.name)+'</h3>'+
-      '<span class="badge">'+esc(mk.type)+'</span>';
+  // ---- side panel ----
+  var panel=document.getElementById('panel'),
+      panelBody=document.getElementById('panelBody'),
+      stage=document.getElementById('stage');
+  document.getElementById('panelClose').addEventListener('click',closePanel);
+  function showPanel(html){
+    panelBody.innerHTML=html; panelBody.scrollTop=0;
+    panel.classList.add('open'); stage.classList.add('panel-open');
+    panel.setAttribute('aria-hidden','false');
+  }
+  function closePanel(){
+    panel.classList.remove('open'); stage.classList.remove('panel-open');
+    panel.setAttribute('aria-hidden','true');
+    stopJourney();
+    history.replaceState(null,'',location.pathname+location.search);
+  }
+  function setHash(h){history.replaceState(null,'',location.pathname+location.search+h);}
+
+  function openPlace(m){
+    var page=pageFor(m.name);
+    var h='<span class="card-type">'+esc(m.type||'Place')+'</span>'+
+      '<h2 class="card-name">'+esc(m.name)+'</h2>';
     if(page){
-      var ex=excerpt(page.content);
-      if(ex)h+='<div class="excerpt">'+esc(ex)+'</div>';
-      var url=WIKI_BASE+page.slug.split('/').map(encodeURIComponent).join('/');
-      h+='<a class="more" href="'+esc(url)+'" target="_blank" rel="noopener">Read more →</a>';
+      var body=cleanWiki(page.content,m.name);
+      h+='<div class="card-lore">'+(body||'<p>The chronicles record only the name.</p>')+'</div>';
+      h+='<a class="card-wiki" href="'+esc(wikiUrl(page))+'" target="_blank" rel="noopener">Read on the wiki →</a>';
     }else{
-      h+='<div class="excerpt">No chronicle entry recorded for this place.</div>';
+      h+='<div class="card-lore"><p>No chronicle entry recorded for this place.</p></div>';
     }
-    var rv=REVIEWS[mk.name];
-    if(rv&&rv.length){
-      var sorted=rv.slice().sort(function(a,b){return chron(b)-chron(a);});
-      h+='<div class="rev-h">Traveller’s Reviews</div>';
-      for(var i=0;i<sorted.length;i++){var r=sorted[i];
-        h+='<div class="rev"><div class="top">'+
-          '<span class="who">'+esc(r.reviewer)+'</span>'+
-          '<span class="stars">'+stars(r.stars)+'</span></div>'+
-          '<div class="when">'+esc(r.date)+'</div>'+
-          '<div class="txt">“'+esc(r.text)+'”</div></div>';
-      }
-    }
-    h+='</div>';
-    return h;
+    h+=reviewsHtml(m.name);
+    showPanel(h);
+    setHash('#place='+encodeURIComponent(m.name));
   }
 
+  function openRealm(name){
+    var bare=name.replace(/^(Kgd\.\s+of|Kingdom\s+of|Once-Realm\s+of|Kgd\.\s+under\s+the)\s+/i,'').trim();
+    var page=pageFor(bare)||pageFor(name);
+    var h='<span class="card-type">Realm</span>'+
+      '<h2 class="card-name">'+esc(name)+'</h2>';
+    if(page){
+      var body=cleanWiki(page.content,page.title);
+      h+='<div class="card-lore">'+(body||'<p>Of this realm the chronicles say little.</p>')+'</div>';
+      h+='<a class="card-wiki" href="'+esc(wikiUrl(page))+'" target="_blank" rel="noopener">Read on the wiki →</a>';
+    }else{
+      h+='<div class="card-lore"><p>Of this realm the chronicles say little.</p></div>';
+    }
+    showPanel(h);
+  }
+
+  function openWaypoint(i){
+    if(i<0||i>=ROUTE.length)return;
+    var p=ROUTE[i];
+    var h='<span class="card-type">Journey · Waypoint '+(i+1)+' of '+ROUTE.length+'</span>'+
+      '<h2 class="card-name">'+esc(p.name)+'</h2>'+
+      '<div class="card-sess">'+(p.session?'Session '+p.session:'Pre-campaign')+'</div>'+
+      '<div class="card-lore"><p>'+esc(p.note||'')+'</p></div>'+
+      '<div class="jrow">'+
+        '<button class="jbtn" data-j="prev"'+(i<=0?' disabled':'')+'>← Prev</button>'+
+        '<button class="jbtn" data-j="next"'+(i>=ROUTE.length-1?' disabled':'')+'>Next →</button>'+
+        (jrn.on?'<button class="jbtn stop" data-j="stop">Stop</button>':'')+
+      '</div>';
+    showPanel(h);
+    jrn.i=i;
+    Array.prototype.forEach.call(panelBody.querySelectorAll('[data-j]'),function(b){
+      b.addEventListener('click',function(){
+        var a=b.getAttribute('data-j');
+        if(a==='prev')goWaypoint(i-1);
+        else if(a==='next')goWaypoint(i+1);
+        else stopJourney();
+      });
+    });
+  }
+  // walk the route (used by Prev/Next and by journey play-through)
+  function goWaypoint(i){
+    if(i<0||i>=ROUTE.length)return;
+    var p=ROUTE[i];
+    map.flyTo(px(p.x,p.y),Math.max(map.getZoom(),tierZoom('c')),{duration:1.2,easeLinearity:.25});
+    openWaypoint(i);
+  }
+
+  // ---- markers ----
   var TYPE_STYLE={
-    'Settlements':{cls:'t-set',g:'⌂'},
-    'Major Regions':{cls:'t-major',g:'✦'},
-    'Minor Regions':{cls:'t-minor',g:'◆'},
-    'Bodies of Water':{cls:'t-water',g:'≈'},
-    'Mountains and Hills':{cls:'t-mtn',g:'▲'}
+    'Settlements':{cls:'t-set',g:'⌂',pane:'pSettle'},
+    'Major Regions':{cls:'t-major',g:'✦',pane:'pMajor'},
+    'Minor Regions':{cls:'t-minor',g:'◆',pane:'pMinor'},
+    'Bodies of Water':{cls:'t-water',g:'≈',pane:'pWater'},
+    'Mountains and Hills':{cls:'t-mtn',g:'▲',pane:'pMtn'}
   };
   var LAYERS={};
+
+  // tier boundary zooms, relative to the (viewport-dependent) fit zoom so tiers
+  // A/B/C are all reachable within [minZoom,maxZoom]; the fit view sits in tier A
+  // and the range up to maxZoom is split into thirds.
+  function tierZoom(t){
+    var range=map.getMaxZoom()-fitZoom;
+    if(range<=0)return fitZoom;
+    return t==='c'?fitZoom+2*range/3:t==='b'?fitZoom+range/3:fitZoom;
+  }
+  function revealZoom(type){
+    // broad features read at tier B; points reveal fully (labels + waypoints) at tier C
+    var t=(type==='Major Regions'||type==='Bodies of Water')?'b':'c';
+    return Math.max(map.getZoom(),tierZoom(t));
+  }
+  function flyToMarker(m){
+    map.flyTo(m._mk.getLatLng(),revealZoom(m.type),{duration:.9,easeLinearity:.25});
+  }
 
   function buildMarkers(data){
     MARKERS=data;
     data.forEach(function(m){
-      var st=TYPE_STYLE[m.type]||{cls:'t-minor',g:'•'};
+      var st=TYPE_STYLE[m.type]||{cls:'t-minor',g:'•',pane:'pMinor'};
       var icon=L.divIcon({className:'',iconSize:null,iconAnchor:[11,11],
         html:'<div class="mk '+st.cls+'"><span class="glyph">'+st.g+'</span>'+
              '<span class="lbl">'+esc(m.name)+'</span></div>'});
-      var mk=L.marker(px(m.x,m.y),{icon:icon,title:m.name});
-      mk.bindPopup(function(){return popupHtml(m);},{maxWidth:320,minWidth:290,autoPanPadding:[40,80]});
+      var mk=L.marker(px(m.x,m.y),{icon:icon,title:m.name,pane:st.pane,riseOnHover:true});
+      mk.bindTooltip(esc(m.name),{direction:'right',offset:[12,0],className:'mk-tip',opacity:1});
+      mk.on('click',function(){openPlace(m);});
       m._mk=mk; MREF[fold(m.name)]=m;
       if(!LAYERS[m.type])LAYERS[m.type]=L.layerGroup();
       LAYERS[m.type].addLayer(mk);
@@ -289,18 +511,16 @@
 
   function buildRoute(pts){
     if(!pts||!pts.length)return null;
+    ROUTE=pts;
     var g=L.layerGroup();
     var latlngs=pts.map(function(p){return px(p.x,p.y);});
-    L.polyline(latlngs,{className:'route-line',color:'#8a3c28',weight:3,
-      opacity:.85,dashArray:'10 14',lineJoin:'round'}).addTo(g);
+    routePoly=L.polyline(latlngs,{className:'route-line',color:'#8a3c28',weight:3,
+      opacity:.85,dashArray:'10 14',lineJoin:'round',pane:'pRouteLine'}).addTo(g);
     pts.forEach(function(p,i){
       var ic=L.divIcon({className:'',iconSize:[20,20],iconAnchor:[10,10],
         html:'<div class="wp">'+(i+1)+'</div>'});
-      var wp=L.marker(px(p.x,p.y),{icon:ic,title:p.name,zIndexOffset:400});
-      wp.bindPopup('<div class="wp-note"><b>'+esc(p.name)+'</b>'+
-        '<span class="sess">Waypoint '+(i+1)+
-        (p.session?' · Session '+p.session:' · pre-campaign')+'</span>'+
-        esc(p.note||'')+'</div>',{maxWidth:260});
+      var wp=L.marker(px(p.x,p.y),{icon:ic,title:p.name,pane:'pRouteWp'});
+      wp.on('click',function(){openWaypoint(i);});
       g.addLayer(wp);
     });
     return g;
@@ -320,21 +540,110 @@
           return ring.map(function(c){return px(c[0],c[1]);});
         });
         var poly=L.polygon(latlngs,{color:col,weight:1.5,opacity:.7,
-          fillColor:col,fillOpacity:.22,className:'realm'});
-        if(name)poly.bindTooltip(esc(name),{sticky:true,className:'realm-tip'});
+          fillColor:col,fillOpacity:.22,pane:'pRealm'});
+        if(name)poly.bindTooltip(esc(name),{sticky:true,className:'realm-tip',direction:'top'});
+        poly.on('mouseover',function(){poly.setStyle({fillOpacity:.42,weight:2.4});});
+        poly.on('mouseout',function(){poly.setStyle({fillOpacity:.22,weight:1.5});});
+        poly.on('click',function(){openRealm(name);});
         g.addLayer(poly);
       });
     });
     return g;
   }
 
+  // ---- journey play-through ----
+  var jrn={on:false,i:0};
+  function setRoutePlaying(on){
+    if(!routePoly)return;
+    var el=routePoly.getElement&&routePoly.getElement();
+    if(el)el.classList.toggle('playing',on);
+  }
+  function startJourney(){
+    if(!ROUTE.length)return;
+    jrn.on=true; setRoutePlaying(true); jrnBtn.classList.add('on');
+    goWaypoint(0);
+  }
+  function stopJourney(){
+    if(!jrn.on)return;
+    jrn.on=false; setRoutePlaying(false); jrnBtn.classList.remove('on');
+  }
+
+  // ---- controls ----
+  var jrnBtn; // set when journey control added
+  function addEraControl(){
+    var C=L.Control.extend({options:{position:'topright'},
+      onAdd:function(){
+        var d=L.DomUtil.create('div','era-ctrl');
+        d.setAttribute('role','radiogroup');
+        d.setAttribute('aria-label','The Atlas Through the Ages');
+        d.innerHTML='<div class="era-title">The Atlas Through the Ages</div>'+
+          '<label><input type="radio" name="era" value="modern" autocomplete="off"> Modern (1374 A.B.)</label>'+
+          '<label><input type="radio" name="era" value="war" autocomplete="off"> War of the Patrons (1124–1133)</label>'+
+          '<label><input type="radio" name="era" value="imperial" autocomplete="off"> Imperial (the golden age)</label>';
+        L.DomEvent.disableClickPropagation(d);
+        L.DomEvent.disableScrollPropagation(d);
+        d.addEventListener('change',function(e){
+          if(e.target&&e.target.name==='era')setEra(e.target.value);
+        });
+        // force the default regardless of browser form-state restoration
+        d.querySelector('input[value="modern"]').checked=true;
+        eraInputs=d.querySelectorAll('input[name=era]');
+        return d;
+      }});
+    map.addControl(new C());
+  }
+  function addJourneyControl(){
+    var C=L.Control.extend({options:{position:'topright'},
+      onAdd:function(){
+        var d=L.DomUtil.create('div','jrn-ctrl');
+        jrnBtn=L.DomUtil.create('button','',d);
+        jrnBtn.type='button'; jrnBtn.textContent='⚑ Follow the journey';
+        L.DomEvent.disableClickPropagation(d);
+        jrnBtn.addEventListener('click',function(){
+          if(jrn.on)stopJourney(); else startJourney();
+        });
+        return d;
+      }});
+    map.addControl(new C());
+  }
+
+  // ---- scale bar (Cyrikon miles) ----
+  var MI_PER_NATIVE=600/723; // 600 Imperial (Cyrikon) mi ≈ 723 native px
+  var scaleEl=null;
+  function addScaleControl(){
+    var C=L.Control.extend({options:{position:'bottomleft'},
+      onAdd:function(){scaleEl=L.DomUtil.create('div','scalebar');
+        L.DomEvent.disableClickPropagation(scaleEl);return scaleEl;}});
+    map.addControl(new C());
+  }
+  function niceRound(v){
+    if(v<=0)return 1;
+    var p=Math.pow(10,Math.floor(Math.log10(v))), f=v/p;
+    var n=f>=5?5:f>=2.5?2.5:f>=2?2:1;
+    return n*p;
+  }
+  function fmtMi(v){v=Math.round(v);return v>=1000?v.toLocaleString('en-US'):''+v;}
+  function updScale(){
+    if(!scaleEl)return;
+    var a=map.latLngToContainerPoint(px(0,0)),
+        b=map.latLngToContainerPoint(px(1000,0));
+    var screenPerNative=Math.abs(b.x-a.x)/1000;          // screen px per native px
+    if(!screenPerNative){scaleEl.innerHTML='';return;}
+    var miPerScreen=MI_PER_NATIVE/screenPerNative;        // miles per screen px
+    var nice=niceRound(miPerScreen*112);                  // ~target width
+    var w=nice/miPerScreen;
+    scaleEl.innerHTML=
+      '<div class="sb-track" style="width:'+w.toFixed(0)+'px">'+
+        '<div class="sb-seg" style="width:50%"></div>'+
+        '<div class="sb-seg alt" style="width:50%"></div>'+
+      '</div>'+
+      '<div class="sb-ticks" style="width:'+w.toFixed(0)+'px">'+
+        '<span>0</span><span>'+fmtMi(nice/2)+'</span><span>'+fmtMi(nice)+' mi</span></div>';
+  }
+
   // ---- search ----
   var searchEl=document.getElementById('search'),
       sugEl=document.getElementById('suggest'), sugIdx=-1, sugItems=[];
-  function flyTo(m){
-    map.flyTo(m._mk.getLatLng(),Math.max(map.getZoom(),3),{duration:.8});
-    map.once('moveend',function(){m._mk.openPopup();});
-  }
   function renderSug(list){
     sugItems=list;sugIdx=-1;
     if(!list.length){sugEl.className='';sugEl.innerHTML='';return;}
@@ -348,7 +657,8 @@
         pick(sugItems[+el.getAttribute('data-i')]);});
     });
   }
-  function pick(m){if(!m)return;searchEl.value=m.name;sugEl.className='';flyTo(m);}
+  function pick(m){if(!m)return;searchEl.value=m.name;sugEl.className='';
+    flyToMarker(m);openPlace(m);}
   function doSearch(q){
     q=fold(q);if(!q)return renderSug([]);
     var hits=MARKERS.filter(function(m){return fold(m.name).indexOf(q)>=0;})
@@ -370,12 +680,34 @@
   });
   document.addEventListener('click',function(e){
     if(!e.target.closest('.search-wrap'))sugEl.className='';});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&panel.classList.contains('open')&&sugEl.className!=='on')
+      closePanel();
+  });
 
-  // ---- label visibility by zoom ----
-  function updLabels(){var c=map.getContainer();
-    if(map.getZoom()>=3)c.classList.add('atlas-labels');
-    else c.classList.remove('atlas-labels');}
-  map.on('zoomend',updLabels);
+  // ---- zoom-tier reveal ----
+  function tierFor(z){
+    var bz=tierZoom('b'), cz=tierZoom('c');
+    return z>=cz-0.01?'c':z>=bz-0.01?'b':'a';
+  }
+  function updTier(){
+    var t=tierFor(map.getZoom()), c=map.getContainer();
+    c.classList.toggle('map-tier-a',t==='a');
+    c.classList.toggle('map-tier-b',t==='b');
+    c.classList.toggle('map-tier-c',t==='c');
+    c.classList.toggle('atlas-labels',t==='c'); // labels on at closest tier
+  }
+  map.on('zoomend',updTier);
+  map.on('zoom zoomend moveend',updScale);
+
+  // ---- deep link (#place=Name) ----
+  function handleHash(){
+    var m=String(location.hash||'').match(/place=([^&]+)/);
+    if(!m)return;
+    var name; try{name=decodeURIComponent(m[1]);}catch(_){name=m[1];}
+    var mk=MREF[fold(name)];
+    if(mk){flyToMarker(mk);openPlace(mk);}
+  }
 
   // ---- load everything ----
   function getJSON(u){return fetch(u).then(function(r){
@@ -409,12 +741,19 @@
     var routeLayer=buildRoute(route);
     if(routeLayer){routeLayer.addTo(map);overlays['⚔ Party Route']=routeLayer;}
 
+    addEraControl();
     L.control.layers(null,overlays,{collapsed:window.innerWidth<=760,position:'topright'}).addTo(map);
-    updLabels();
+    addJourneyControl();
+    addScaleControl();
+
+    updTier(); updScale(); handleHash();
+    window.addEventListener('hashchange',handleHash);
 
     window.ATLAS={map:map,markers:MARKERS,ready:true,
       find:function(n){return MREF[fold(n)];},
-      fly:function(n){var m=MREF[fold(n)];if(m)flyTo(m);return !!m;}};
+      fly:function(n){var m=MREF[fold(n)];if(m){flyToMarker(m);openPlace(m);}return !!m;},
+      era:setEra, journey:startJourney, stopJourney:stopJourney,
+      openRealm:openRealm, close:closePanel};
   });
 })();
 </script>

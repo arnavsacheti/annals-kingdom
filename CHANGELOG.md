@@ -4,6 +4,14 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.5.0-alpha.1] — 2026-07-12
+- Atlas UX overhaul: side-panel place cards with full wiki lore (popups retired),
+  era base layers (Modern / War of the Patrons / Imperial), realm hover cartouches,
+  fit-relative zoom-tier reveal, "Follow the journey" fly-through, Cyrikon-miles
+  scale bar, cover-fit viewport with resize handling, retina tiles (z5 crisp),
+  deep links (#place=…)
+- server.js resolves directory paths (serves /maps-site/ alongside the sim)
+
 ## [0.4.0-alpha.1] — 2026-07-12
 - New `maps-site/`: the interactive atlas for maps.princexizor.ddns.net — Leaflet over
   a tiled PatrinorModern (z0–4), wiki markers with lore popups and read-more links,
