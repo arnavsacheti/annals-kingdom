@@ -48,6 +48,11 @@ canvas{display:block;touch-action:none}
   display:flex;align-items:center;gap:16px;padding:7px 18px;white-space:nowrap;user-select:none;
   flex-wrap:wrap;justify-content:center;row-gap:2px;max-width:min(94vw, 860px)}
 #hud .title{font-size:19px;letter-spacing:.04em;font-variant:small-caps}
+#hud .hudlinks{display:inline-flex;gap:6px}
+#hud .hudlink{font-size:12.5px;color:var(--ink);text-decoration:none;cursor:pointer;
+  border:1px solid var(--rule);border-radius:4px;padding:2px 8px;background:rgba(255,252,240,.55);
+  transition:background .15s,color .15s}
+#hud .hudlink:hover{background:var(--gold);color:#fff}
 #hud .title .orn{color:var(--gold);font-size:15px;padding:0 6px}
 #hud .date{font-size:14.5px;color:var(--ink-soft);font-style:italic;text-align:center}
 #warStrip{position:fixed;top:74px;left:50%;transform:translateX(-50%);z-index:19;cursor:pointer;
@@ -304,7 +309,9 @@ body.aiming #app canvas{cursor:crosshair}
   <span class="hudstat" id="monTxt" style="cursor:pointer" title="The reigning monarch"></span>
   <span class="hudstat" id="treasTxt"></span>
   <span class="hudstat" id="popTxt"></span>
-  <a class="hudstat" id="atlasLink" href="maps-site/" title="Open the atlas of the Wide World" style="order:8;text-decoration:none;cursor:pointer">⚘ Atlas</a>
+  <span class="hudlinks" style="order:8">
+    <a class="hudlink" id="atlasLink" href="maps-site/" title="Open the atlas of the Wide World">⚘ Atlas</a><a class="hudlink" id="wikiLink" href="https://princexizor.ddns.net/" target="_blank" rel="noopener" title="The campaign wiki">✦ Wiki</a>
+  </span>
   <span id="speeds" style="order:9">
     <button data-s="0" title="Pause (Space)">⏸</button><button data-s="1" title="Watching pace — a day in 10 seconds">▶</button><button data-s="2" class="on" title="1 day/sec">▶▶</button><button data-s="3" title="5 days/sec">▶▶▶</button><button data-s="4" title="30 days/sec — a year in 12s">▶▶▶▶</button><button data-s="5" title="120 days/sec — a reign in minutes">▶▶▶▶▶</button>
   </span>

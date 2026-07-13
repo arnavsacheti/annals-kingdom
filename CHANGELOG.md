@@ -4,6 +4,11 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.9.3-alpha.1] — 2026-07-13
+- The sim's Atlas and Wiki links are now proper buttons in the top bar (bordered
+  chips with hover) instead of a text chip camouflaged among the stats; Wiki link
+  added (it was missing entirely)
+
 ## [0.9.2-alpha.1] — 2026-07-13
 - Census completed: the 13 uncertain transcriptions resolved at wider crops — four
   more towns join the atlas (Netho, Nīs Garnata, Ūmak-nūs-Ion, Nhandar Khezīn),
