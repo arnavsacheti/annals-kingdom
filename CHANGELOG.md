@@ -4,6 +4,12 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.9.1-alpha.1] — 2026-07-13
+- Summarch gets its true city plan — "Sun's March" (player-provided, 4245×3951):
+  tiled to native for the modal chart, high-res overlay for the meshed descent
+  (replacing the sketch), and nine legend POIs detected to exact badge centers —
+  The Seat and the Winehall link their wiki chronicles from both card paths
+
 ## [0.9.0-alpha.1] — 2026-07-13
 - The full settlement census: every named ring-dot on the atlas is now an anchored,
   searchable, descendable place — 167 towns transcribed from the map's own labels

@@ -85,9 +85,10 @@
   "maxz": 3
  },
  "Summarch": {
-  "kind": "image",
-  "path": "art/chart-Summarch.jpg",
-  "w": 644,
-  "h": 597
+  "kind": "tiles",
+  "path": "charts/summarch",
+  "w": 4245,
+  "h": 3951,
+  "maxz": 3
  }
 }

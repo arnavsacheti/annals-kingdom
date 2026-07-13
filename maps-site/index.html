@@ -1302,6 +1302,8 @@
     var h='<span class="card-type">'+esc(canon)+' · Point '+p.n+'</span>'+
       '<h2 class="card-name">'+esc(p.name)+'</h2>'+
       '<div class="card-lore"><p>'+esc(p.d||'')+'</p></div>'+
+      (p.wikiSlug?'<a class="co-link" target="_blank" rel="noopener" href="https://princexizor.ddns.net/'+
+        p.wikiSlug.split('/').map(encodeURIComponent).join('/')+'">Read on the wiki ↗</a><br/>':'')+
       '<a class="co-link" data-backcity="1">Part of '+esc(canon)+
         ' — back to the city card ↗</a>';
     showPanel(h);
@@ -1512,6 +1514,8 @@
       '<h2 class="card-name">'+esc(p.name)+provStar(prov)+'</h2>'+
       provBlock(prov)+
       '<div class="card-lore"><p>'+esc(p.d||'')+'</p></div>'+
+      (p.wikiSlug?'<a class="co-link" target="_blank" rel="noopener" href="https://princexizor.ddns.net/'+
+        p.wikiSlug.split('/').map(encodeURIComponent).join('/')+'">Read on the wiki ↗</a><br/>':'')+
       '<a class="co-link" data-backcity="1">Part of '+esc(name)+' — back to the city ↗</a>';
     showPanel(h);
     setHash('#chart='+encodeURIComponent(name)+'&poi='+p.n);
@@ -2396,7 +2400,11 @@
       poiRef:{w:eref.w,h:eref.h},
       pois:(POIS['Epēshu']||[]).map(function(p){
         return {n:p.n,name:p.name,x:p.x,y:p.y,d:p.d,prov:'canon'};})});
-    registerCityOverlay('Summarch','art/overlay-Summarch.jpg',{prov:'canon',w:644,h:597});
+    var sref=DETAIL['Summarch']||{w:4245,h:3951};
+    registerCityOverlay('Summarch','art/overlay-Summarch.jpg',{prov:'canon',w:3072,h:2859,
+      poiRef:{w:sref.w,h:sref.h},
+      pois:(POIS['Summarch']||[]).map(function(p){
+        return {n:p.n,name:p.name,x:p.x,y:p.y,d:p.d,wikiSlug:p.wikiSlug,prov:'canon'};})});
 
     // grain + corner watermark for uncharted country (siblings of the map-pane)
     var mc=map.getContainer();

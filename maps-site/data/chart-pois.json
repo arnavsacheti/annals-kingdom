@@ -133,5 +133,72 @@
    "y": 2627,
    "d": "Two perpendicular arches intersecting at their peaks, deep in the woods. None know who built it, or why."
   }
+ ],
+ "Summarch": [
+  {
+   "n": 1,
+   "name": "First Temple of the Flower",
+   "x": 2081,
+   "y": 1602,
+   "d": "The city's first and greatest shrine — the Temple of the Flower, from the days before the Allhammers held the town."
+  },
+  {
+   "n": 2,
+   "name": "Regimens Magor",
+   "x": 2478,
+   "y": 2125,
+   "d": "Regimens Magor — a monument of the house of Regimen, who united the tribes of Westerland."
+  },
+  {
+   "n": 3,
+   "name": "Daemar's Arch",
+   "x": 1861,
+   "y": 2266,
+   "d": "Daemar's Arch — an old gate-arch of the inner town."
+  },
+  {
+   "n": 4,
+   "name": "Winehall",
+   "x": 1870,
+   "y": 2721,
+   "d": "The Winehall — a great drinking-hall of the city.",
+   "wikiSlug": "Locations/Buildings/Winehall"
+  },
+  {
+   "n": 5,
+   "name": "The Seat",
+   "x": 1389,
+   "y": 2073,
+   "d": "The Seat — the walled hall of the Allhammers, where Grandmasters are elected and were besieged. The party knows its cells and its sewers.",
+   "wikiSlug": "Locations/Buildings/Seat"
+  },
+  {
+   "n": 6,
+   "name": "Chet East",
+   "x": 3225,
+   "y": 2043,
+   "d": "Chet East — the quarter beyond the river's east reach."
+  },
+  {
+   "n": 7,
+   "name": "Cabbage End",
+   "x": 2130,
+   "y": 879,
+   "d": "Cabbage End — the north quarter, named for its market gardens."
+  },
+  {
+   "n": 8,
+   "name": "Glass Corner",
+   "x": 2897,
+   "y": 1599,
+   "d": "Glass Corner — the glassmakers' quarter at the east wall."
+  },
+  {
+   "n": 9,
+   "name": "Chet West",
+   "x": 1009,
+   "y": 1891,
+   "d": "Chet West — the west-bank quarter beyond the walls."
+  }
  ]
 }
