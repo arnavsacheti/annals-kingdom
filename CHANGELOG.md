@@ -4,6 +4,14 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.9.3-alpha.2] — 2026-07-13
+- The Sun Road now follows its canon: Drāmūz to Cyrikon by Lepon, Epēshu, Tamaron,
+  and Bōlkhar, hugging the coast (mask-validated through Leponnia) — no more
+  mysterious water crossings; its card tells the thousand-league story
+- Eight "detail charts" that were just blurry crops of the atlas removed; the five
+  genuinely distinct charts (the Seat's building plan, the Nīmlad–Tamar cosmology,
+  the Far North and Rhusagos reliefs, the Trogmunder Home Islands) typed properly
+
 ## [0.9.3-alpha.1] — 2026-07-13
 - The sim's Atlas and Wiki links are now proper buttons in the top bar (bordered
   chips with hover) instead of a text chip camouflaged among the stats; Wiki link
