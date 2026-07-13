@@ -217,8 +217,8 @@
  },
  {
   "type": "Settlements",
-  "x": 2608,
-  "y": 277,
+  "x": 2577,
+  "y": 255,
   "name": "Clickerhall-by-Goblin-Hole"
  },
  {
@@ -974,6 +974,34 @@
   "x": 2227,
   "y": 1834,
   "name": "Mhikel Or",
+  "minor": true
+ },
+ {
+  "type": "Settlements",
+  "x": 2896,
+  "y": 987,
+  "name": "Netho",
+  "minor": true
+ },
+ {
+  "type": "Settlements",
+  "x": 3333,
+  "y": 1146,
+  "name": "Nīs Garnata",
+  "minor": true
+ },
+ {
+  "type": "Settlements",
+  "x": 1126,
+  "y": 323,
+  "name": "Ūmak-nūs-Ion",
+  "minor": true
+ },
+ {
+  "type": "Settlements",
+  "x": 2516,
+  "y": 1631,
+  "name": "Nhandar Khezīn",
   "minor": true
  }
 ]

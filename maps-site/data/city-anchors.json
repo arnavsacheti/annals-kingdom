@@ -218,8 +218,8 @@
   "sea": null
  },
  "Clickerhall-by-Goblin-Hole": {
-  "atlasX": 2608,
-  "atlasY": 277,
+  "atlasX": 2577,
+  "atlasY": 255,
   "kind": "town",
   "harbor": false,
   "sea": null
@@ -1082,6 +1082,38 @@
  "Mhikel Or": {
   "atlasX": 2227,
   "atlasY": 1834,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Netho": {
+  "atlasX": 2896,
+  "atlasY": 987,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Nīs Garnata": {
+  "atlasX": 3333,
+  "atlasY": 1146,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Ūmak-nūs-Ion": {
+  "atlasX": 1126,
+  "atlasY": 323,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Nhandar Khezīn": {
+  "atlasX": 2516,
+  "atlasY": 1631,
   "kind": "village",
   "harbor": false,
   "sea": null,

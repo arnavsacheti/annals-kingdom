@@ -10,9 +10,6 @@ non-conflicting item instead.
 
 ## Queue
 
-- [ ] **Census follow-ups** — 13 low-confidence transcriptions excluded (re-shoot
-  wider crops + transcribe); double-ring major-city glyphs elsewhere on the atlas
-  (template-match with the known Epēshu/Tamaron/Drāmūz glyphs as templates).
 - [ ] **Addressable alleys** — generated plans fake alleys as gaps between building
   cells. Add a true lane graph pass (minor streets branching between spokes/ring,
   buildings snapped to lane frontages) so the warren is traceable turn by turn.
@@ -54,6 +51,12 @@ non-conflicting item instead.
 ## Done
 
 (check items off above and move them here with a one-line result + version)
+
+- [x] **Census follow-ups** — wide-crop re-read of the 13 quarantined names recovered
+  4 towns (Netho, Nīs Garnata, Ūmak-nūs-Ion, Nhandar Khezīn; Ītor Hāspira was already
+  in) and 7 confirmed non-towns; Clickerhall snapped 40px to its true printed dot;
+  full-atlas template match proved the three known double-ring glyphs are the only
+  ones — an honest negative. (v0.9.2-alpha.1)
 
 - [x] **All named cities anchored (USER FLAG)** — 306 detected dots transcribed by a
   7-agent fan-out (167 towns high-confidence, 126 false positives skipped, 13 low-
