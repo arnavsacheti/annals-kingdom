@@ -3,39 +3,119 @@
   "name": "Road that Walks with the Sun",
   "prov": "trace",
   "wikiSlug": "Locations/Regions/Patrinor/Road-that-Walks-with-the-Sun",
-  "note": "The great imperial highway; it passes through the Epēshīn Forum before turning east to Tamaron. Trace approximate.",
+  "note": "The Sun Road — longest road in the world, a thousand leagues. The original course ran Drāmūz to Cyrikon by Lepon, Epēshu, Tamaron, and Bōlkhar, closely following the coast; the imperial extension runs on to Nub-Nefer in the Sārmath Land. Trace approximate.",
   "pts": [
+   [
+    1335,
+    1734
+   ],
+   [
+    1268,
+    1748
+   ],
+   [
+    1205,
+    1720
+   ],
+   [
+    1152,
+    1665
+   ],
+   [
+    1118,
+    1590
+   ],
+   [
+    1102,
+    1510
+   ],
+   [
+    1118,
+    1452
+   ],
+   [
+    1146,
+    1420
+   ],
+   [
+    1185,
+    1408
+   ],
    [
     1222,
     1404
    ],
    [
-    1300,
-    1432
+    1290,
+    1400
    ],
    [
-    1400,
-    1452
+    1360,
+    1408
    ],
    [
-    1500,
+    1440,
+    1442
+   ],
+   [
+    1521,
     1492
    ],
    [
-    1590,
-    1522
+    1585,
+    1520
    ],
    [
     1658,
-    1548
+    1550
    ],
    [
-    1755,
-    1562
+    1691,
+    1582
    ],
    [
-    1868,
-    1588
+    1740,
+    1602
+   ],
+   [
+    1810,
+    1615
+   ],
+   [
+    1900,
+    1628
+   ],
+   [
+    2000,
+    1645
+   ],
+   [
+    2110,
+    1690
+   ],
+   [
+    2230,
+    1755
+   ],
+   [
+    2360,
+    1800
+   ],
+   [
+    2480,
+    1830
+   ],
+   [
+    2600,
+    1862
+   ],
+   [
+    2720,
+    1900
+   ],
+   [
+    2830,
+    1932
    ]
   ]
  },

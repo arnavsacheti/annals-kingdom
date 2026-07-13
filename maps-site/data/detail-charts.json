@@ -1,94 +1,53 @@
 {
- "Great Chasmous Sea": {
-  "kind": "image",
-  "path": "art/chart-Great_Chasmous_Sea.jpg",
-  "w": 2318,
-  "h": 826
- },
  "Seat": {
   "kind": "image",
   "path": "art/chart-Seat.jpg",
   "w": 327,
-  "h": 362
+  "h": 362,
+  "label": "BUILDING PLAN"
  },
  "Nīmlad": {
   "kind": "image",
   "path": "art/chart-Nīmlad.jpg",
   "w": 987,
-  "h": 469
+  "h": 469,
+  "label": "COSMOLOGY"
  },
  "Far North": {
   "kind": "image",
   "path": "art/chart-Far_North.jpg",
   "w": 943,
-  "h": 305
+  "h": 305,
+  "label": "REGION CHART"
  },
  "Home Islands": {
   "kind": "image",
   "path": "art/chart-Home_Islands.jpg",
   "w": 699,
-  "h": 762
- },
- "Horat": {
-  "kind": "image",
-  "path": "art/chart-Horat.jpg",
-  "w": 529,
-  "h": 283
- },
- "Alensis": {
-  "kind": "image",
-  "path": "art/chart-Alensis.jpg",
-  "w": 647,
-  "h": 633
- },
- "Drāgīnor": {
-  "kind": "image",
-  "path": "art/chart-Drāgīnor.jpg",
-  "w": 317,
-  "h": 164
- },
- "Empheros": {
-  "kind": "image",
-  "path": "art/chart-Empheros.jpg",
-  "w": 1820,
-  "h": 923
- },
- "Khōrgos": {
-  "kind": "image",
-  "path": "art/chart-Khōrgos.jpg",
-  "w": 1212,
-  "h": 646
- },
- "Relkor": {
-  "kind": "image",
-  "path": "art/chart-Relkor.jpg",
-  "w": 1345,
-  "h": 623
+  "h": 762,
+  "label": "REGION CHART"
  },
  "Rhusagos": {
   "kind": "image",
   "path": "art/chart-Rhusagos.jpg",
   "w": 863,
-  "h": 467
- },
- "Sargāzat": {
-  "kind": "image",
-  "path": "art/chart-Sargāzat.jpg",
-  "w": 672,
-  "h": 622
+  "h": 467,
+  "label": "REGION CHART"
  },
  "Epēshu": {
   "kind": "tiles",
   "path": "charts/epeshu",
   "w": 3914,
   "h": 4200,
-  "maxz": 3
+  "maxz": 3,
+  "label": "CITY CHART"
  },
  "Summarch": {
   "kind": "tiles",
   "path": "charts/summarch",
   "w": 4245,
   "h": 3951,
-  "maxz": 3
+  "maxz": 3,
+  "label": "CITY CHART"
  }
 }
