@@ -304,6 +304,7 @@ body.aiming #app canvas{cursor:crosshair}
   <span class="hudstat" id="monTxt" style="cursor:pointer" title="The reigning monarch"></span>
   <span class="hudstat" id="treasTxt"></span>
   <span class="hudstat" id="popTxt"></span>
+  <a class="hudstat" id="atlasLink" href="maps-site/" title="Open the atlas of the Wide World" style="order:8;text-decoration:none;cursor:pointer">⚘ Atlas</a>
   <span id="speeds" style="order:9">
     <button data-s="0" title="Pause (Space)">⏸</button><button data-s="1" title="Watching pace — a day in 10 seconds">▶</button><button data-s="2" class="on" title="1 day/sec">▶▶</button><button data-s="3" title="5 days/sec">▶▶▶</button><button data-s="4" title="30 days/sec — a year in 12s">▶▶▶▶</button><button data-s="5" title="120 days/sec — a reign in minutes">▶▶▶▶▶</button>
   </span>
@@ -7487,6 +7488,9 @@ initMap();
   let seed = m ? decodeURIComponent(m[1]) : 'epeshu';   // the Marble City is the world you meet first
   if(!m) history.replaceState(null, '', '#s='+encodeURIComponent(seed));
   document.getElementById('seedIn').value = seed;
+  // the Atlas link resolves per host: subdomains in production, relative elsewhere
+  const al = document.getElementById('atlasLink');
+  if(al && location.hostname.endsWith('princexizor.ddns.net')) al.href = 'https://maps.princexizor.ddns.net/';
   requestAnimationFrame(frame);
   decodeEpeshuHF(() => forgeWorld(seed));   // atlas heightfield decodes once, up front
 })();

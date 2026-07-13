@@ -4,6 +4,11 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.7.1-alpha.2] — 2026-07-13
+- Sim ↔ atlas cross-links: an "⚘ Atlas" chip in the sim's top bar (host-aware:
+  relative on Pages/localhost, subdomain in production); the atlas's Sim link
+  gains the same host-awareness in the next site build
+
 ## [0.7.1-alpha.1] — 2026-07-13
 - GitHub Pages deployment: every push to master publishes the sim at
   arnavsacheti.github.io/annals-kingdom/ and the atlas at /maps-site/ —
