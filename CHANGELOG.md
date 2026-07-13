@@ -4,6 +4,17 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.8.4-alpha.1] — 2026-07-13
+- The towns stop being interchangeable: biome-aware plans (frost-pale Sjefenhold,
+  arid Hordon per canon's own "semi-arid island", wooded Leponnian coasts), decay
+  states (fourteen lesser imperial towns render faded — gap-toothed blocks, breached
+  walls — under the post-Sack decline, honestly ✶-flagged), hinterland market roads
+  leaning toward Epēshu, and race-informed architecture: Lakemen stilt-wharves at
+  Penthelon, goblin-and-dwarf burrow-holds at Clickerhall, Hord longhouse ruins at
+  Sjefenhold, a Trogmunder quarter in Drāmūz
+- Three new canon anchors join the meshed world: Hordon (Epēshu's gulf rival),
+  Clickerhall-by-Goblin-Hole, and abandoned Ion Ephel at the Tungril's mouth
+
 ## [0.8.3-alpha.1] — 2026-07-13
 - Routes and plans now line up: generated towns open their gates on the true
   bearings of arriving roads and routes, harbor quays bias toward their sea lanes

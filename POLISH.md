@@ -10,18 +10,6 @@ non-conflicting item instead.
 
 ## Queue
 
-- [ ] **Cultural & historical texture (USER QUESTION → PASS)** — extend city traits +
-  generator with four canon-grounded dimensions: `biome` (reuse the melding pass's
-  atlas sampling for hue → wooded/arid/frost vegetation + ground tones, plus region-page
-  prose), `condition: thriving|faded|decayed|ruin` (Long Decline canon: faded imperial
-  towns get patched walls, roofless clusters, overgrown lots; Ion Ephel abandoned
-  c. 1060), `hinterlandOf` (Epēshu↔Pēshunor/Lamor influence canon: market-road
-  emphasis toward the port, outlying steads; ports get warehouse belts), and
-  race-informed style (Drāmūz Trogmunder blocks; Penthelon Lakemen stilt piers —
-  canon; Hord longhouses in the cold). Data pass first (sonnet, strict provenance:
-  canon vs ✶), then generator styles (opus). Also add canon anchors: Hordon
-  (1098,1686 — Epēshu's gulf rival), Clickerhall-by-Goblin-Hole (2608,277),
-  the Underwall remnant, Ion Ephel (Far South, ruin, edge-clamped).
 - [ ] **Epēshu roundel doubling** — the real chart has its own printed number badges
   and the engine adds live POI roundels ~28 px offset from them at depth. Suppress the
   seam: either align the engine markers to the printed badges exactly (per-POI pixel
@@ -35,6 +23,9 @@ non-conflicting item instead.
 - [ ] **Overlay pre-warm** — first approach to a generated city can jank on the
   synchronous 2048² draw. Pre-generate the nearest unbuilt city during idle (rIC) once
   the camera is within ~6 footprints.
+- [ ] **Lake biome** — Penthelon is canonically on the Five Fingers LAKE, currently
+  approximated as 'riverine'; add a lake enum (shore on the mask's water, no tide
+  marks, fishing-stake rows) when the river mode lands.
 - [ ] **Riverside cities** — Kolens is canon 'riverside' but the generator only knows
   seas: add a river mode (traits `river: {side}`), a winding watercourse through or
   beside the plan with a bridge or two, quays optional.
@@ -64,6 +55,15 @@ non-conflicting item instead.
 ## Done
 
 (check items off above and move them here with a one-line result + version)
+
+- [x] **Cultural & historical texture (USER QUESTION → PASS)** — 28 cities now carry
+  biome/condition/hinterland with per-claim provenance (Hordon arid per canon's
+  "semi-arid island"; Ion Ephel ruin at the Tungril's mouth; 14 lesser Leponnian
+  towns faded under the post-Sack decline, ✶-flagged); generator renders frost/arid/
+  wooded grounds, gap-toothed faded towns with wall breaches, Lakemen stilt-piers,
+  Goblin-Dwarf burrow-holds, Hord longhouse ruins, port-leaning hinterland roads;
+  three new canon anchors (Hordon, Clickerhall, Ion Ephel); default-trait cities
+  byte-identical. (v0.8.4-alpha.1)
 
 - [x] **Route continuity (USER FLAG)** — per-city approach bearings from every
   world polyline: gates open exactly where roads arrive (Tamaron's Sun-Road gate

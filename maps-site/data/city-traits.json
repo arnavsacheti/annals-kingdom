@@ -1,5 +1,5 @@
 {
- "_readme": "Refinement surface for the city generator (see spec-meshed-world.md §B/§C). Hand-edit any field to upgrade a city's generated plan without touching code: harbor/sea steer the shoreline, kind steers wall/extent, patron adds a temple POI, races/canonNotes are flavor text surfaced on cards. prov 'canon' = stated by a wiki page or the campaign chronicles directly about this place; prov 'invented' = either a total fabrication (generated inn names, most patrons) or a fact inferred from the Annals' own telling rather than the wiki (per the spec, these still count as invented and get the '✶ per the Annals' telling' banner). A race entry's prov covers only the PRESENCE of that people (canon when a wiki Inhabitants line names them); its optional 'noteProv' separately marks the reasoning in 'note' — set 'noteProv':'invented' when the note explains *why* they are present with detail the sources never give (e.g. Drāmūz: the wiki lists Horatines/Trogmunders but never says why). When 'noteProv' is absent the note inherits the entry's prov. Any future card rendering MUST honor noteProv per-note so an invented note earns its ✶ even on a canon-present race. Sources: data/city-anchors.json, data/wiki-places.json, scratchpad/epeshu-canon.md, scratchpad/party-sources.md, scratchpad/session-logs.md.",
+ "_readme": "Refinement surface for the city generator (see spec-meshed-world.md §B/§C). Hand-edit any field to upgrade a city's generated plan without touching code: harbor/sea steer the shoreline, kind steers wall/extent, patron adds a temple POI, races/canonNotes are flavor text surfaced on cards. prov 'canon' = stated by a wiki page or the campaign chronicles directly about this place; prov 'invented' = either a total fabrication (generated inn names, most patrons) or a fact inferred from the Annals' own telling rather than the wiki (per the spec, these still count as invented and get the '✶ per the Annals' telling' banner). A race entry's prov covers only the PRESENCE of that people (canon when a wiki Inhabitants line names them); its optional 'noteProv' separately marks the reasoning in 'note' — set 'noteProv':'invented' when the note explains *why* they are present with detail the sources never give (e.g. Drāmūz: the wiki lists Horatines/Trogmunders but never says why). When 'noteProv' is absent the note inherits the entry's prov. Any future card rendering MUST honor noteProv per-note so an invented note earns its ✶ even on a canon-present race. `biome` ({value,prov,note}) is one of plateau|wooded|arid|frost|riverine|temperate, grounded in the region wiki pages in data/wiki-places.json (Leponnia, Horat, Hoarland, etc.) where possible; 'canon' only when a wiki page states the biome for THIS place directly (its own settlement page, or an unambiguous Description field like Horat's 'semi-arid island'), else 'invented' as a region-grounded best fit. `condition` ({value,prov,note}) is one of thriving|faded|decayed|ruin; 'canon' only where a source says so outright (Epēshu's free-city status, Kolens' 'bustling', Lepon/Sjefenhold/Ion Ephel's destruction), else 'invented' as a kind-plausible default reflecting Leponnia's long post-imperial decline after the Sack of Lepon (745 A.B.) for its lesser old towns/villages. `hinterlandOf` ({name,prov:'annals'}) marks a town as falling within a larger city's canon sphere of influence when the wiki names the district/region but not the specific town (e.g. Epēshu 'exerts much influence over the lands of Pēshunor and Lamor') — prov 'annals' flags this town-level membership as inferred from district-level canon plus this file's own atlas-position data, distinct from a direct wiki statement. Sources: data/city-anchors.json, data/wiki-places.json, scratchpad/epeshu-canon.md, scratchpad/party-sources.md, scratchpad/session-logs.md.",
  "Epēshu": {
   "name": "Epēshu",
   "kind": "capital",
@@ -53,11 +53,25 @@
    {
     "text": "The party arrived here in the winter of 1374 A.B. and entered the Thūkīn Amphitheater's Games.",
     "prov": "canon"
+   },
+   {
+    "text": "Epēshu's own page states it 'exerts much influence over the lands of Pēshunor and Lamor'; the wiki names no specific towns within those districts, so this town's membership is inferred from its position clustered near Epēshu within Leponnia Kaugrīn, not stated outright.",
+    "prov": "invented"
    }
   ],
   "inn": {
    "name": "The Black Barghest",
    "prov": "canon"
+  },
+  "biome": {
+   "value": "wooded",
+   "prov": "canon",
+   "note": "Epēshu's own page: forests and farmlands to its south and east, hills to the north, the White Sea to its west."
+  },
+  "condition": {
+   "value": "thriving",
+   "prov": "canon",
+   "note": "Epēshu's own page: after the War of the Patrons it 'declared itself a free city and divorced itself from the Empire' — an active, self-governing Māgos with senate, factions, temple, and games underway."
   }
  },
  "Sokundo": {
@@ -75,7 +89,21 @@
   "wall": true,
   "races": [],
   "canonNotes": [],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "wooded",
+   "prov": "invented",
+   "note": "Leponnia's coasts are forested; not stated for Sokundo itself."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "A kind-plausible default for a lesser Leponnia harbor town in the long aftermath of Lepon's fall and the Empire's contraction — patched walls, thinned trade, no canon statement either way."
+  },
+  "hinterlandOf": {
+   "name": "Epēshu",
+   "prov": "annals"
+  }
  },
  "Kanae": {
   "name": "Kanae",
@@ -92,7 +120,21 @@
   "wall": false,
   "races": [],
   "canonNotes": [],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "wooded",
+   "prov": "invented",
+   "note": "Leponnia's coasts are forested; not stated for Kanae itself."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "Same reasoning as Sokundo: a lesser Leponnia village in the post-imperial decline, not attested directly."
+  },
+  "hinterlandOf": {
+   "name": "Epēshu",
+   "prov": "annals"
+  }
  },
  "Tamaron": {
   "name": "Tamaron",
@@ -122,7 +164,17 @@
     "prov": "canon"
    }
   ],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "wooded",
+   "prov": "invented",
+   "note": "Leponnia's coasts are forested; not stated for Tamaron itself."
+  },
+  "condition": {
+   "value": "thriving",
+   "prov": "invented",
+   "note": "One of the three Leponnian Māgosh, still an active city-state (sheltered Gimīlahar's forces, sits on the Road that Walks with the Sun) — not called 'thriving' outright, but shows none of the marks of decline."
+  }
  },
  "Mago": {
   "name": "Mago",
@@ -139,7 +191,17 @@
   "wall": false,
   "races": [],
   "canonNotes": [],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "wooded",
+   "prov": "invented",
+   "note": "Leponnia's coasts are forested; not stated for Mago itself."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "A lesser Leponnia village in the post-imperial decline; not attested directly."
+  }
  },
  "Aldorūs": {
   "name": "Aldorūs",
@@ -161,7 +223,21 @@
     "prov": "invented"
    }
   ],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "plateau",
+   "prov": "invented",
+   "note": "Matches this file's own existing note: sits well inland on the Leponnian plateau."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "A lesser inland Leponnia village; not attested directly."
+  },
+  "hinterlandOf": {
+   "name": "Epēshu",
+   "prov": "annals"
+  }
  },
  "Rēketis": {
   "name": "Rēketis",
@@ -178,7 +254,21 @@
   "wall": false,
   "races": [],
   "canonNotes": [],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "plateau",
+   "prov": "invented",
+   "note": "Well inland (sea distPx 36) on Leponnia's dry interior plateau; not stated directly."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "A lesser inland Leponnia village; not attested directly."
+  },
+  "hinterlandOf": {
+   "name": "Epēshu",
+   "prov": "annals"
+  }
  },
  "Āglaz": {
   "name": "Āglaz",
@@ -195,7 +285,21 @@
   "wall": false,
   "races": [],
   "canonNotes": [],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "wooded",
+   "prov": "invented",
+   "note": "Leponnia's coasts are forested; not stated for Āglaz itself."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "A lesser Leponnia village; not attested directly."
+  },
+  "hinterlandOf": {
+   "name": "Epēshu",
+   "prov": "annals"
+  }
  },
  "Mīth Mīrdak": {
   "name": "Mīth Mīrdak",
@@ -212,7 +316,21 @@
   "wall": false,
   "races": [],
   "canonNotes": [],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "wooded",
+   "prov": "invented",
+   "note": "Leponnia's coasts are forested; not stated for Mīth Mīrdak itself."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "A lesser Leponnia village; not attested directly."
+  },
+  "hinterlandOf": {
+   "name": "Epēshu",
+   "prov": "annals"
+  }
  },
  "Pharzeban": {
   "name": "Pharzeban",
@@ -225,7 +343,21 @@
   "wall": false,
   "races": [],
   "canonNotes": [],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "plateau",
+   "prov": "invented",
+   "note": "Well inland (sea distPx 59) on Leponnia's dry interior plateau; not stated directly."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "A lesser inland Leponnia village; not attested directly."
+  },
+  "hinterlandOf": {
+   "name": "Epēshu",
+   "prov": "annals"
+  }
  },
  "Sardil": {
   "name": "Sardil",
@@ -240,7 +372,17 @@
     "prov": "canon"
    }
   ],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "plateau",
+   "prov": "canon",
+   "note": "This file's own canonNote: marks the inland edge of Leponnia Tanrīn, the plateau country."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "A minor plateau-edge town, not a Māgos; not attested directly."
+  }
  },
  "Perōna": {
   "name": "Perōna",
@@ -253,7 +395,17 @@
   "wall": false,
   "races": [],
   "canonNotes": [],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "plateau",
+   "prov": "invented",
+   "note": "Well inland (sea distPx 63) on Leponnia's dry interior plateau; not stated directly."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "A lesser inland Leponnia village; not attested directly."
+  }
  },
  "Tarap": {
   "name": "Tarap",
@@ -266,7 +418,21 @@
   "wall": false,
   "races": [],
   "canonNotes": [],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "wooded",
+   "prov": "invented",
+   "note": "Leponnia's coasts are forested; not stated for Tarap itself."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "A lesser Leponnia village; not attested directly."
+  },
+  "hinterlandOf": {
+   "name": "Epēshu",
+   "prov": "annals"
+  }
  },
  "Thalbaen": {
   "name": "Thalbaen",
@@ -279,7 +445,17 @@
   "wall": false,
   "races": [],
   "canonNotes": [],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "wooded",
+   "prov": "invented",
+   "note": "Leponnia's coasts are forested; not stated for Thalbaen itself."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "A lesser Leponnia village; not attested directly."
+  }
  },
  "Drāmūz": {
   "name": "Drāmūz",
@@ -324,7 +500,17 @@
     "prov": "canon"
    }
   ],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "arid",
+   "prov": "invented",
+   "note": "Leponnia's dry interior plateau and the Rhoshkhon mountains lie at the peninsula's south, near Drāmūz's mines; not stated directly for the city."
+  },
+  "condition": {
+   "value": "thriving",
+   "prov": "invented",
+   "note": "The wealthiest Māgos, ringed by working tin/gold/silver mines and known for its bankers — not called 'thriving' outright, but plainly prosperous, not declined."
+  }
  },
  "Medem": {
   "name": "Medem",
@@ -337,7 +523,17 @@
   "wall": false,
   "races": [],
   "canonNotes": [],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "arid",
+   "prov": "invented",
+   "note": "Inland of Drāmūz's mining country; not stated directly."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "A lesser Leponnia village; not attested directly."
+  }
  },
  "Shengo": {
   "name": "Shengo",
@@ -350,7 +546,17 @@
   "wall": false,
   "races": [],
   "canonNotes": [],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "wooded",
+   "prov": "invented",
+   "note": "Near-coastal (sea distPx 2) in the Drāmūz/Kardunash cluster; Leponnia's coasts are forested."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "A lesser Leponnia village; not attested directly."
+  }
  },
  "Kardunash": {
   "name": "Kardunash",
@@ -368,7 +574,17 @@
     "prov": "canon"
    }
   ],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "wooded",
+   "prov": "invented",
+   "note": "Harbor town on Leponnia's coast; Leponnia's coasts are forested, not stated directly for Kardunash."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "A border town, not a Māgos; not attested directly."
+  }
  },
  "Rhup": {
   "name": "Rhup",
@@ -381,7 +597,17 @@
   "wall": false,
   "races": [],
   "canonNotes": [],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "wooded",
+   "prov": "invented",
+   "note": "Inland of the Tamaron coastal cluster; approximated to Leponnia's general coastal-forest texture."
+  },
+  "condition": {
+   "value": "faded",
+   "prov": "invented",
+   "note": "A lesser Leponnia village; not attested directly."
+  }
  },
  "Lepon the Old": {
   "name": "Lepon the Old",
@@ -417,7 +643,17 @@
     "prov": "canon"
    }
   ],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "wooded",
+   "prov": "invented",
+   "note": "Lepon's own page places it on the Marble Gulf coast; Leponnia's coasts are forested, not stated directly for Lepon."
+  },
+  "condition": {
+   "value": "ruin",
+   "prov": "canon",
+   "note": "Lepon's own page and this file's own canonNotes: sacked in 745 A.B., 'never recovered,' deserted, its stones carried off."
+  }
  },
  "Summarch": {
   "name": "Summarch",
@@ -450,7 +686,17 @@
     "prov": "canon"
    }
   ],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "riverine",
+   "prov": "canon",
+   "note": "Summarch's own page: built around High Hill and the Stony River, which girdles its southern flank."
+  },
+  "condition": {
+   "value": "thriving",
+   "prov": "invented",
+   "note": "An active royal capital as of 1374 A.B. (Rennick's new reign); not called 'thriving' outright, but functioning and contested rather than declined."
+  }
  },
  "Penthelon": {
   "name": "Penthelon",
@@ -479,7 +725,17 @@
     "prov": "canon"
    }
   ],
-  "inn": null
+  "inn": null,
+  "biome": {
+   "value": "riverine",
+   "prov": "invented",
+   "note": "Approximated: Penthelon's own page sets it on the shore of the Five Fingers, a lake system rich with fish — closest available category to a true lake-shore, not a literal river."
+  },
+  "condition": {
+   "value": "thriving",
+   "prov": "invented",
+   "note": "Called 'the greatest city of the Umbadic Empire,' rarely troubled by storm, famine, or drought; not called 'thriving' outright, but the description is uniformly prosperous."
+  }
  },
  "Sjefenhold": {
   "name": "Sjefenhold",
@@ -487,7 +743,14 @@
   "harbor": false,
   "sea": null,
   "wall": false,
-  "races": [],
+  "races": [
+   {
+    "name": "Hords",
+    "prov": "canon",
+    "note": "Hoarland's Mannish people; the region's own page names its largest villages as Sjefen, Kolin, and Hvalstrond — plausibly this Sjefenhold and neighboring Kolens.",
+    "noteProv": "invented"
+   }
+  ],
   "canonNotes": [
    {
     "text": "Frösted Flækes' home village, and namesake of the Sjefenhold Special — destroyed some years past; the tale of its fall is his to tell. Its place on the chart is approximate.",
@@ -497,7 +760,17 @@
     "text": "Nearby stood Brandvik the Butcher's old house, which every child in the village believed haunted.",
     "prov": "canon"
    }
-  ]
+  ],
+  "biome": {
+   "value": "frost",
+   "prov": "canon",
+   "note": "Hoarland's own page: cold moors and uplands, snowy forests, gray-white/'hoar' terrain; Sjefenhold (Sjefen) is one of its named villages."
+  },
+  "condition": {
+   "value": "ruin",
+   "prov": "canon",
+   "note": "This file's own canonNote: 'destroyed some years past.'"
+  }
  },
  "Kolens": {
   "name": "Kolens",
@@ -515,6 +788,149 @@
     "text": "A bustling riverside city in Diapremon, a country the atlas does not chart — its place here is approximate. Frösted Flækes was a renowned chef at its tavern, the Kolens Connection, famous for knife-throwing tricks between courses.",
     "prov": "canon"
    }
-  ]
+  ],
+  "biome": {
+   "value": "riverine",
+   "prov": "canon",
+   "note": "This file's own canonNote calls it 'a bustling riverside city.'"
+  },
+  "condition": {
+   "value": "thriving",
+   "prov": "canon",
+   "note": "This file's own canonNote calls it 'a bustling riverside city.'"
+  }
+ },
+ "Hordon": {
+  "name": "Hordon",
+  "kind": "town",
+  "harbor": true,
+  "sea": null,
+  "wall": true,
+  "races": [
+   {
+    "name": "Horatines",
+    "prov": "canon",
+    "note": "Horat's dominant people, held to be especially divergent from their Patrin kin by blood and language.",
+    "noteProv": "canon"
+   },
+   {
+    "name": "Trogmunders",
+    "prov": "canon",
+    "note": "Make homes on Hordon given the island's relative closeness to the Home Islands.",
+    "noteProv": "canon"
+   }
+  ],
+  "canonNotes": [
+   {
+    "text": "One of the eight Māgosh; the whole of Horat Isle stands under Hordon's dominion or influence.",
+    "prov": "canon"
+   },
+   {
+    "text": "Competes with Epēshu for dominion over the Marble Gulf.",
+    "prov": "canon"
+   },
+   {
+    "text": "Alensis City began as a colony of Hordon, and honors it as its imbāgos ('mother-city'), sending tribute every ten years.",
+    "prov": "canon"
+   },
+   {
+    "text": "Kind ('town') and wall are generator size-class defaults matching how this file already treats fellow Māgosh Drāmūz and Tamaron — not a literal demotion from Hordon's Māgos status, which the wiki attests directly.",
+    "prov": "invented"
+   }
+  ],
+  "inn": null,
+  "biome": {
+   "value": "arid",
+   "prov": "canon",
+   "note": "Horat's own page Description field states outright: 'Semi-arid island across the Azrāken from Patrinor.'"
+  },
+  "condition": {
+   "value": "thriving",
+   "prov": "invented",
+   "note": "An active rival Māgos still collecting tribute from its former colony Alensis; no decline recorded, but 'thriving' itself is not the wiki's wording."
+  }
+ },
+ "Clickerhall-by-Goblin-Hole": {
+  "name": "Clickerhall-by-Goblin-Hole",
+  "kind": "town",
+  "harbor": false,
+  "sea": null,
+  "wall": false,
+  "races": [
+   {
+    "name": "Goblins",
+    "prov": "canon",
+    "note": "Co-rule the Kingdom of Goblins and Dwarves from here; the Chief under the Wall resides at Clickerhall.",
+    "noteProv": "canon"
+   },
+   {
+    "name": "Dwarves",
+    "prov": "canon",
+    "note": "Delved these mountain halls and palaces alongside the Goblins, their friends and co-rulers.",
+    "noteProv": "canon"
+   }
+  ],
+  "canonNotes": [
+   {
+    "text": "Vastest of all the Kingdom of Goblins and Dwarves' works; seat of the Chief under the Wall.",
+    "prov": "canon"
+   },
+   {
+    "text": "Canon per the After-the-Binding timeline entry 'Founding of the Kingdom of Goblins and Dwarves.'",
+    "prov": "canon"
+   },
+   {
+    "text": "South of it stands Ernbury, built within a vale rather than carved into the rock, watching over Longdale and the Dale Road.",
+    "prov": "canon"
+   },
+   {
+    "text": "Kind ('town'), wall (false), and harbor (false) are generator-classification choices, not literal wiki fact — Clickerhall is in truth a delved mountain-hold, not a walled surface town; it has no coast.",
+    "prov": "invented"
+   }
+  ],
+  "inn": null,
+  "biome": {
+   "value": "temperate",
+   "prov": "invented",
+   "note": "Mountain Wall's southern reach near Longdale/the Green Sea; approximated milder than the Far North's frost, not stated directly."
+  },
+  "condition": {
+   "value": "thriving",
+   "prov": "canon",
+   "note": "Mountain Wall's own page calls it 'vastest of all that kingdom's works,' seat of the Chief under the Wall."
+  }
+ },
+ "Ion Ephel": {
+  "name": "Ion Ephel",
+  "kind": "ruin",
+  "harbor": true,
+  "sea": null,
+  "wall": false,
+  "races": [],
+  "canonNotes": [
+   {
+    "text": "A colony of the Patrin Empire, established by the mouth of the Tungril, which feeds into the White Sea at the northern edge of Ponbar.",
+    "prov": "canon"
+   },
+   {
+    "text": "Founded c. 910 A.B., abandoned c. 1060 A.B., per the After-the-Binding timeline.",
+    "prov": "canon"
+   },
+   {
+    "text": "Its charted position is approximate (edge-clamped in the Far South near the Tungril's mouth, which the atlas does not finely detail); harbor is inferred from its river-mouth founding, not stated outright.",
+    "prov": "invented"
+   }
+  ],
+  "inn": null,
+  "biome": {
+   "value": "riverine",
+   "prov": "canon",
+   "note": "Tungril's own page: Ion Ephel was established by the river's mouth."
+  },
+  "condition": {
+   "value": "ruin",
+   "prov": "canon",
+   "note": "Founded c. 910 A.B., abandoned c. 1060 A.B., per the timeline."
+  }
  }
 }

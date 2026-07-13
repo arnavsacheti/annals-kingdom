@@ -209,5 +209,27 @@
   "kind": "town",
   "harbor": false,
   "sea": null
+ },
+ "Hordon": {
+  "atlasX": 1098,
+  "atlasY": 1686,
+  "kind": "town",
+  "harbor": true,
+  "sea": null
+ },
+ "Clickerhall-by-Goblin-Hole": {
+  "atlasX": 2608,
+  "atlasY": 277,
+  "kind": "town",
+  "harbor": false,
+  "sea": null
+ },
+ "Ion Ephel": {
+  "atlasX": 1307,
+  "atlasY": 2122,
+  "kind": "ruin",
+  "harbor": true,
+  "sea": null,
+  "approx": true
  }
 }

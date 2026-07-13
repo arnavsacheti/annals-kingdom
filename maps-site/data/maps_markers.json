@@ -208,5 +208,23 @@
   "x": 2162.0,
   "y": 54.0,
   "name": "Kolens"
+ },
+ {
+  "type": "Settlements",
+  "x": 1098,
+  "y": 1686,
+  "name": "Hordon"
+ },
+ {
+  "type": "Settlements",
+  "x": 2608,
+  "y": 277,
+  "name": "Clickerhall-by-Goblin-Hole"
+ },
+ {
+  "type": "Settlements",
+  "x": 1307,
+  "y": 2122,
+  "name": "Ion Ephel"
  }
 ]

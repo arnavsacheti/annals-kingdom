@@ -1763,7 +1763,7 @@
     function pick(ar){return ar[Math.floor(R()*ar.length)];}
     var S=GEN_SIZE, cv=document.createElement('canvas'); cv.width=S;cv.height=S;
     var g=cv.getContext('2d');
-    var ruin=(t.kind==='ruin');
+    var ruin=(t.kind==='ruin')||((t.condition&&t.condition.value)==='ruin'); // defensive: ruin condition ⇒ ruin path
     var appr=cityApproaches(name), landAppr=ruin?[]:appr.land, seaAppr=appr.sea;
     // surround tinted toward the sampled atlas land hue (§c): the crossfade band
     // then dissolves without a hue shift.
@@ -1776,6 +1776,33 @@
     var OUT=ruin?'#6b5c48':'#4a3b2a', INK='rgba(74,70,60,.55)';
     var ROAD=ruin?'#e0d5b8':'#f6f1e0', STONE='#b8a884', STONE_O='#6b5c48';
     var TREE=['#4a5c38','#55663f','#5f7148'], SAGE='#cdd6b0';
+
+    // ---- biome / condition / race style (Cultural & historical texture pass) ----
+    // Pure look/flags here — NO rng. temperate|plateau|riverine keep the current palette
+    // exactly (riverine's watercourse is a separate backlog item), so a default-trait city
+    // is byte-identical. wooded|arid|frost retone the surround/ground/roofs/trees.
+    var biome=(t.biome&&t.biome.value)||'temperate';
+    var cond=(t.condition&&t.condition.value)||'thriving';
+    var raceNames=(t.races||[]).map(function(r){return r.name;});
+    function hasRace(n){return raceNames.indexOf(n)>=0;}
+    var goblinish=hasRace('Goblins')||hasRace('Dwarves');
+    var trogmund=hasRace('Trogmunders'), lakemen=hasRace('Lakemen'), hords=hasRace('Hords');
+    var condSkip=cond==='faded'?0.12:cond==='decayed'?0.30:0;   // Long-Decline building cells dropped
+    var condRoof=cond==='faded'?0.14:cond==='decayed'?0.34:0;   // kept cells left as roofless outline
+    var treeMul=1, scrub=false, snow=false;
+    if(biome==='wooded'){
+      GREEN='rgb('+Math.round(78+(LT[0]-78)*.4)+','+Math.round(98+(LT[1]-98)*.4)+','+Math.round(62+(LT[2]-62)*.4)+')';
+      TREE=['#39492a','#425435','#4c5d3d']; treeMul=1.8;
+    } else if(biome==='arid'){
+      GREEN='rgb('+Math.round(150+(LT[0]-150)*.5)+','+Math.round(148+(LT[1]-148)*.5)+','+Math.round(108+(LT[2]-108)*.5)+')';
+      if(!ruin)CREAM='#ece1c4';
+      TREE=['#6f7a49','#7d8759','#8a9269']; treeMul=0.4; scrub=true;
+    } else if(biome==='frost'){
+      GREEN='rgb('+Math.round(150+(LT[0]-150)*.35)+','+Math.round(162+(LT[1]-162)*.35)+','+Math.round(150+(LT[2]-150)*.35)+')';
+      CREAM=ruin?'#dfe2e0':'#e9eceb';
+      if(!ruin)BLD=['#a9b0b6','#b6bcc0','#9fa6ac','#c2c7cb','#adb4b9'];  // snow-toned roofs
+      TREE=['#5b6a5c','#66755f','#71806a']; treeMul=0.5; snow=true;
+    }
 
     // --- extent / center (shifted a touch off the sea so more land shows) ---
     var kR={capital:0.34,town:0.26,village:0.17,ruin:0.24}[t.kind]||0.2;
@@ -1863,6 +1890,17 @@
       g.restore();
     }
 
+    // --- biome ground texture (arid scrub / frost snow), drawn under the buildings ---
+    // guarded by the biome flags → temperate|plateau|riverine consume no rng here.
+    if(scrub){g.fillStyle='rgba(140,150,96,.5)';
+      for(var sc=0;sc<520;sc++){var sca=R()*Math.PI*2,scr=coreR*rr(.15,1.5);
+        var scx=cx+Math.cos(sca)*scr,scy=cy+Math.sin(sca)*scr;
+        if(inLand(scx,scy)&&!inWater(scx,scy)){g.beginPath();g.arc(scx,scy,rr(.6,1.7),0,6.283);g.fill();}}}
+    if(snow){g.fillStyle='rgba(238,242,244,.6)';
+      for(var sn=0;sn<420;sn++){var sna=R()*Math.PI*2,snr=coreR*rr(.1,1.5);
+        var snx=cx+Math.cos(sna)*snr,sny=cy+Math.sin(sna)*snr;
+        if(inLand(snx,sny)&&!inWater(snx,sny)){g.beginPath();g.arc(snx,sny,rr(1,3),0,6.283);g.fill();}}}
+
     // --- nodes: market square, gates, waterfront ---
     var sq={x:cx+rr(-coreR*.12,coreR*.12), y:cy+rr(-coreR*.12,coreR*.12)};
     var walled = t.wall && !ruin;
@@ -1878,6 +1916,16 @@
       var gdup=false;for(var gj=0;gj<gates.length;gj++)if(angDelta(gates[gj].ang,ga)<0.5){gdup=true;break;}
       if(gdup)continue;
       gates.push(mkGate(ga,false));}
+    // hinterland (traits.hinterlandOf): emphasize the gate/road toward the parent port.
+    // Reuse the nearest existing gate to the anchor→port bearing; add one only if none faces
+    // that way. Pure geometry (no rng) → non-hinterland cities are untouched here.
+    var hinterA=t.hinterlandOf&&CITY_ANCHORS[t.hinterlandOf.name], hinterGate=null;
+    if(hinterA&&!ruin){
+      var hb=Math.atan2(hinterA.atlasY-a.atlasY,hinterA.atlasX-a.atlasX),bestd3=1e9;
+      for(var hg=0;hg<gates.length;hg++){var d3=angDelta(gates[hg].ang,hb);if(d3<bestd3){bestd3=d3;hinterGate=gates[hg];}}
+      if(!hinterGate||bestd3>0.6){hinterGate=mkGate(hb,true);gates.push(hinterGate);}
+      else hinterGate.appr=true;
+      hinterGate.hinter=true;}
     // sea-approach bias (route continuity §): prefer the lane's arrival bearing (nearest the
     // charted sea side) for the waterfront, but the mask stays authoritative — shoreHit still
     // lands on the true waterline; if that bearing is dry, fall back to the compass side.
@@ -1930,6 +1978,7 @@
     // --- building infill: jittered grid of tiny terracotta blocks, clipped to land ---
     var step=({capital:15,town:16,village:17,ruin:20})[t.kind]||16;
     var denseR=coreR*(ruin?1.0:1.12);
+    var trogA=trogmund?R()*6.283:0;   // seat of the Trogmunder quarter (no rng unless present)
     for(var by=cy-landR;by<cy+landR;by+=step){
       for(var bx=cx-landR;bx<cx+landR;bx+=step){
         var jx=bx+rr(-step*.35,step*.35), jy=by+rr(-step*.35,step*.35);
@@ -1937,19 +1986,34 @@
         var dc=Math.sqrt((jx-cx)*(jx-cx)+(jy-cy)*(jy-cy));
         var dens = dc<denseR ? 1 : Math.max(0,1-(dc-denseR)/(landR-denseR));
         if(R()>dens*(ruin?0.5:0.94))continue;   // thins toward the fringe / sparse ruin
+        if(condSkip>0&&R()<condSkip)continue;   // Long-Decline: gap-toothed blocks (thriving: no rng)
         var bw=rr(5,11),bh=rr(5,11),rot=rr(-.25,.25);
         g.save();g.translate(jx,jy);g.rotate(rot);
-        if(ruin){g.fillStyle='rgba(150,140,120,.25)';g.fillRect(-bw/2,-bh/2,bw,bh);
-          g.strokeStyle=OUT;g.lineWidth=1.1;g.strokeRect(-bw/2,-bh/2,bw,bh);}
-        else{g.fillStyle=pick(BLD);g.fillRect(-bw/2,-bh/2,bw,bh);
-          g.strokeStyle=OUT;g.lineWidth=0.8;g.strokeRect(-bw/2,-bh/2,bw,bh);
-          if(R()<0.3){g.fillStyle=pick(BLD);g.fillRect(-bw/2+bw*.55,-bh/2,bw*.5,bh);}}
+        if(ruin){var lw=hords?bw*2.6:bw, lh=hords?bh*.72:bh;   // Hord longhouses: elongated footprints
+          g.fillStyle='rgba(150,140,120,.25)';g.fillRect(-lw/2,-lh/2,lw,lh);
+          g.strokeStyle=OUT;g.lineWidth=1.1;g.strokeRect(-lw/2,-lh/2,lw,lh);
+          if(hords){g.beginPath();g.moveTo(-lw/2,0);g.lineTo(lw/2,0);g.stroke();}}   // roof-ridge line
+        else{
+          var roofless=condRoof>0&&R()<condRoof;   // faded/decayed: roofless shell (thriving: no rng)
+          if(roofless){g.strokeStyle=OUT;g.lineWidth=0.9;g.strokeRect(-bw/2,-bh/2,bw,bh);}
+          else if(goblinish&&R()<0.55){            // Goblin/Dwarf burrow: round mound + hill-door
+            var mr=(bw+bh)/4+1;
+            g.fillStyle=pick(BLD);g.beginPath();g.ellipse(0,0,mr,mr*.82,0,0,6.283);g.fill();
+            g.strokeStyle=OUT;g.lineWidth=0.8;g.stroke();
+            g.fillStyle='#4a3b2a';g.beginPath();g.arc(0,mr*.35,mr*.42,Math.PI,2*Math.PI,true);g.fill();}
+          else{
+            var trog=trogmund&&Math.abs(((Math.atan2(jy-cy,jx-cx)-trogA+Math.PI)%(2*Math.PI))-Math.PI)<0.7;
+            g.fillStyle=pick(BLD);
+            if(trog&&g.roundRect){g.beginPath();g.roundRect(-bw/2,-bh/2,bw,bh,Math.min(bw,bh)*.4);g.fill();
+              g.strokeStyle=OUT;g.lineWidth=0.8;g.stroke();}
+            else{g.fillRect(-bw/2,-bh/2,bw,bh);g.strokeStyle=OUT;g.lineWidth=0.8;g.strokeRect(-bw/2,-bh/2,bw,bh);}
+            if(R()<0.3){g.fillStyle=pick(BLD);g.fillRect(-bw/2+bw*.55,-bh/2,bw*.5,bh);}}}
         g.restore();
       }
     }
 
     // --- tree clusters ---
-    var nTrees=ruin?ri(10,16):ri(8,20);
+    var nTrees=Math.round((ruin?ri(10,16):ri(8,20))*treeMul);   // wooded denser, arid/frost sparser (treeMul=1 default)
     for(var ti=0;ti<nTrees;ti++){var ta=R()*Math.PI*2,tr=coreR*rr(.2,1.45);
       var txx=cx+Math.cos(ta)*tr,tyy=cy+Math.sin(ta)*tr;
       if(!inLand(txx,tyy)||inWater(txx,tyy))continue;
@@ -1964,13 +2028,33 @@
       g.strokeStyle=ROAD;g.lineWidth=roadHalf*1.5;g.lineCap='round';g.lineJoin='round';g.stroke();
       g.strokeStyle=INK;g.lineWidth=1;g.stroke();});
 
+    // --- hinterland market-road: a broader corridor toward the parent port + outlying steads ---
+    if(hinterGate){var ha=hinterGate.ang,perpH={x:-Math.sin(ha),y:Math.cos(ha)};
+      g.beginPath();g.moveTo(sq.x,sq.y);g.lineTo(hinterGate.x,hinterGate.y);
+      g.lineTo(cx+Math.cos(ha)*S*0.62,cy+Math.sin(ha)*S*0.62);
+      g.strokeStyle=ROAD;g.lineWidth=roadHalf*2.1;g.lineCap='round';g.lineJoin='round';g.stroke();
+      g.strokeStyle=INK;g.lineWidth=1.2;g.stroke();
+      var nStead=ri(3,5);
+      for(var hst=0;hst<nStead;hst++){var hd=coreR*rr(1.12,1.45),hoff=rr(-coreR*.25,coreR*.25);   // stay inside landR (1.55) so steads aren't culled
+        var stx=cx+Math.cos(ha)*hd+perpH.x*hoff, sty=cy+Math.sin(ha)*hd+perpH.y*hoff;
+        if(!inLand(stx,sty)||inWater(stx,sty))continue;
+        var nb2=ri(2,4);
+        for(var hb2=0;hb2<nb2;hb2++){g.save();g.translate(stx+rr(-10,10),sty+rr(-10,10));g.rotate(rr(-.3,.3));
+          g.fillStyle=pick(BLD);g.fillRect(-4,-3.5,8,7);g.strokeStyle=OUT;g.lineWidth=0.7;g.strokeRect(-4,-3.5,8,7);g.restore();}}}
+
     // --- wall + towers + gates (or broken arcs for a ruin) ---
     if(walled){
+      // Long-Decline breaches: ragged gaps + fallen stones in a faded/decayed wall
+      // (thriving walled cities keep an intact circuit — no rng consumed there).
+      var breach=[];
+      if(condSkip>0){var nbr=cond==='decayed'?ri(2,3):ri(1,2);
+        for(var bri=0;bri<nbr;bri++)breach.push({a:R()*Math.PI*2,w:rr(.12,.28)});}
       var rings=(t.kind==='capital')?[coreR*0.5,coreR*0.92]:[coreR*0.9];
       rings.forEach(function(wr,rix){
         var gateA=gates.map(function(gg){return gg.ang;});
         for(var wa=0;wa<Math.PI*2;wa+=0.02){
           var open=false;for(var gk=0;gk<gateA.length;gk++){var da=Math.abs(((wa-gateA[gk]+Math.PI)%(Math.PI*2))-Math.PI);if(da<0.09){open=true;break;}}
+          if(!open)for(var bk=0;bk<breach.length;bk++){var db2=Math.abs(((wa-breach[bk].a+Math.PI)%(Math.PI*2))-Math.PI);if(db2<breach[bk].w){open=true;break;}}
           if(open)continue;
           var wob=1+.03*Math.sin(5*wa+rix);
           var x1=cx+Math.cos(wa)*wr*wob,y1=cy+Math.sin(wa)*wr*wob;
@@ -1982,6 +2066,10 @@
         for(var to=0;to<nTow;to++){var toa=to/nTow*Math.PI*2;
           g.beginPath();g.arc(cx+Math.cos(toa)*wr,cy+Math.sin(toa)*wr,4.5,0,6.283);
           g.fillStyle=STONE;g.fill();g.strokeStyle=STONE_O;g.lineWidth=1.4;g.stroke();}
+        if(rix===rings.length-1)breach.forEach(function(br){   // fallen stones at each breach
+          g.save();g.translate(cx+Math.cos(br.a)*wr,cy+Math.sin(br.a)*wr);g.rotate(br.a+rr(-.5,.5));
+          g.fillStyle=STONE;g.strokeStyle=STONE_O;g.lineWidth=1.1;
+          g.fillRect(-rr(6,12),-3,rr(12,22),6);g.strokeRect(-rr(6,12),-3,rr(12,22),6);g.restore();});
       });
     } else if(ruin){
       var arcs=ri(3,5),wr2=coreR*0.85;
@@ -2049,6 +2137,20 @@
           g.save();g.translate(mx2,my2);g.rotate(Math.atan2(qp.y,qp.x)+rr(-.3,.3));
           g.fillStyle='#5a4a36';g.beginPath();g.ellipse(0,0,rr(5,8),rr(1.6,2.6),0,0,6.283);g.fill();g.restore();}
       }
+      // Lakemen stilt-pier rows reaching out over the water (canon: Penthelon of the Five Fingers)
+      if(lakemen){var nP=ri(4,7);
+        for(var pi=0;pi<nP;pi++){var pb2=null,pvv=sv;
+          if(WD){var pa3=(pi/nP)*2*Math.PI;                 // sweep full circle: a lake nub has shore on every side
+            pb2=shoreHit(cx,cy,Math.cos(pa3),Math.sin(pa3));
+            if(!pb2)continue; pvv=seaNormal(pb2.x,pb2.y);}
+          else{var ps=(nP>1?(pi/(nP-1)-.5):0)*coreR*1.3;
+            pb2={x:cx+sv.x*shoreOff(ps)+perp.x*ps,y:cy+sv.y*shoreOff(ps)+perp.y*ps};}
+          var plen=rr(42,82),hw=rr(8,12);
+          g.save();g.translate(pb2.x,pb2.y);g.rotate(Math.atan2(pvv.y,pvv.x));
+          g.strokeStyle='#6a4a30';g.lineWidth=3;g.beginPath();g.moveTo(0,0);g.lineTo(plen,0);g.stroke();
+          g.fillStyle='#4a3520';for(var st2=8;st2<plen;st2+=9)g.fillRect(st2-1,-1,2,2);   // stilts
+          g.fillStyle=pick(BLD);g.strokeStyle=OUT;g.lineWidth=0.8;                          // pier hut over water
+          g.fillRect(plen-3,-hw/2,hw,hw);g.strokeRect(plen-3,-hw/2,hw,hw);g.restore();}}
     }
 
     // --- temple precinct (drawn over infill) ---
@@ -2073,19 +2175,23 @@
     var pois=[], pn=0;
     function addPoi(x,y,nm,d){pn++;pois.push({n:pn,name:nm,x:x,y:y,d:d,prov:'invented'});}
     if(ruin){
-      addPoi(sq.x,sq.y,'The Fallen Forum','Where the seat of the old Māgos once stood; only pavings and toppled columns remain.');
+      addPoi(sq.x,sq.y,hords?'The Ruined Steading':'The Fallen Forum',hords?'Where the great hall of the steading once stood; only hearth-stones and fallen posts remain.':'Where the seat of the old Māgos once stood; only pavings and toppled columns remain.');
       var bh0=gates.length?gates[0]:{x:cx+coreR*.4,y:cy};
-      addPoi(cx+rr(-coreR*.2,coreR*.2),cy+rr(-coreR*.2,coreR*.2),'The Burned Hall','A roofless shell, its stones blackened; said to be the tallest of those the empress put to the torch.');
+      addPoi(cx+rr(-coreR*.2,coreR*.2),cy+rr(-coreR*.2,coreR*.2),hords?'The Great Long-Hall':'The Burned Hall',hords?'The roofless shell of a Hord long-hall, its ridge-beam long since fallen; the largest of the steading’s halls.':'A roofless shell, its stones blackened; said to be the tallest of those the empress put to the torch.');
       if(drawWater)addPoi(cx+sv.x*(shoreDist+S*0.14),cy+sv.y*(shoreDist+S*0.14),'The Island Fortress','A ruined keep on its island, half a mile offshore; the sea has taken the causeway.');
       addPoi(cx+Math.cos(gate0)*coreR*.85,cy+Math.sin(gate0)*coreR*.85,'The Broken Gate','A gap in the fallen wall where a gatehouse once barred the road.');
     } else {
-      addPoi(sq.x,sq.y,'The Market Square','The town’s market; stalls crowd the paving on fair-days, or so the road-talk runs.');
+      var mktN=cond==='faded'?'The Half-Empty Market':cond==='decayed'?'The Failing Market':'The Market Square';
+      var mktD=cond==='faded'?'The town’s market; half its stalls stand idle now, the fair-days thinner than the old folk recall.'
+        :cond==='decayed'?'A market much shrunk; a few stalls keep to the weed-cracked paving where crowds once pressed.'
+        :'The town’s market; stalls crowd the paving on fair-days, or so the road-talk runs.';
+      addPoi(sq.x,sq.y,mktN,mktD);
       if(temple)addPoi(temple.x,temple.y,'Temple of '+t.patron.name,'A precinct kept to '+t.patron.name+', the city’s tutelary god — its columns face the square.');
-      if(drawWater&&waterNode)addPoi(waterNode.x,waterNode.y,t.harbor?'The Quays':'The Waterside','Stone quays and moored craft along the '+(sea||'shore').toLowerCase()+' water.');
+      if(drawWater&&waterNode)addPoi(waterNode.x,waterNode.y,lakemen?'The Stilt-Wharves':(t.harbor?'The Quays':'The Waterside'),lakemen?'Rows of Lakemen piers on their stilts, reaching out over the water; the folk here live half on land and half above the shallows.':'Stone quays and moored craft along the '+(sea||'shore').toLowerCase()+' water.');
       if(walled&&gates.length){var gg2=gates[0];addPoi(gg2.x,gg2.y,'The '+gg2.dir+' Gate','A gate in the town wall, where the road passes within.');}
       var innName='The '+pick(INN_ADJ)+' '+pick(INN_NOUN);
       var ia=R()*Math.PI*2,ir=coreR*rr(.25,.5);
-      addPoi(cx+Math.cos(ia)*ir,cy+Math.sin(ia)*ir,innName,innName+' — a travellers’ house near the square, by the reckoning of those who pass through.');
+      addPoi(cx+Math.cos(ia)*ir,cy+Math.sin(ia)*ir,innName,innName+' — a travellers’ house near the square'+(goblinish?', delved into the hillside as is the custom under the Wall':'')+', by the reckoning of those who pass through.');
       var odd=pick([{n:'The Old Well',d:'An old well of worn stone, its water counted sweet.'},
         {n:'The Wayshrine',d:'A small roadside shrine, its offerings renewed by no one anyone can name.'},
         {n:'The Standing Stone',d:'A single weathered stone, older than the streets that grew about it.'}]);
