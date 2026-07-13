@@ -127,6 +127,7 @@
   .panel-close:hover{background:var(--rust);color:#f5ecd6;border-color:var(--rust);}
   .panel-body{overflow-y:auto;padding:18px 20px 44px;flex:1 1 auto;}
   .panel-open .leaflet-top.leaflet-left{margin-left:346px;transition:margin .28s;}
+  .panel-open .leaflet-bottom.leaflet-left{margin-left:346px;transition:margin .28s;}
 
   .card-type{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;
     letter-spacing:1.2px;color:#f5ecd6;background:var(--bronze);display:inline-block;
@@ -317,6 +318,7 @@
       border-radius:16px 16px 0 0;box-shadow:0 -6px 22px rgba(44,36,24,.4);}
     #panel.open{transform:translateY(0);}
     .panel-open .leaflet-top.leaflet-left{margin-left:0;}
+    .panel-open .leaflet-bottom.leaflet-left{margin-left:0;visibility:hidden;}  /* bottom sheet covers it anyway */
     .era-ctrl{max-width:200px;padding:6px 8px;}
     .era-ctrl label{font-size:13px;}
     .strip{max-width:82vw;}

@@ -4,6 +4,11 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.6.1-alpha.2] — 2026-07-12
+- Fix: bottom-left dock (Company strip, Groups button, scale bar) no longer hides
+  behind the open side panel — it shifts clear on desktop, and yields to the
+  bottom sheet on mobile
+
 ## [0.6.1-alpha.1] — 2026-07-12
 - Deep-zoom quality: z5 tile level rebuilt with unsharp masking (linework and
   lettering crisp at max zoom, no halos) and extended to the Imperial and
