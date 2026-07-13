@@ -306,6 +306,55 @@
   .co-chip:hover{transform:scale(1.16);}
   .co-chip.dead{opacity:.5;}
 
+  /* ---- card art header (a plate in the book) ---- */
+  .card-plate{margin:-18px -20px 14px;position:relative;background:var(--panel2);
+    border-bottom:2px solid var(--line2);overflow:hidden;}
+  .card-plate img{display:block;width:100%;height:184px;object-fit:cover;
+    background:var(--panel2);}
+  .card-plate:after{content:"";position:absolute;inset:7px;pointer-events:none;
+    border:1px solid rgba(245,236,214,.55);box-shadow:inset 0 0 22px rgba(44,36,24,.4);}
+
+  /* ---- "View the chart" call-to-action ---- */
+  .chart-btn{display:block;width:100%;margin:2px 0 4px;padding:10px 12px;
+    font-family:'EB Garamond',serif;font-size:15.5px;font-weight:600;cursor:pointer;
+    background:var(--rust);color:#f5ecd6;border:1px solid var(--rust);border-radius:6px;
+    text-align:center;letter-spacing:.3px;box-shadow:0 2px 8px rgba(138,60,40,.3);}
+  .chart-btn:hover{background:#a04a32;}
+
+  /* ---- chart-mode POI roundels (the map's own dark-circle style) ---- */
+  .poi-mk{display:flex;align-items:center;justify-content:center;width:22px;height:22px;
+    border-radius:50%;background:var(--ink);color:var(--parch2);
+    font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;
+    border:1.5px solid var(--parch2);box-shadow:0 1px 4px rgba(0,0,0,.5);cursor:pointer;
+    transition:transform .15s ease;}
+  .poi-mk:hover{transform:scale(1.18);}
+
+  /* ---- chart-mode cartouche + back control (parchment idiom) ---- */
+  .chart-title{background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--line2);border-radius:6px;padding:6px 15px 7px;
+    box-shadow:0 4px 14px rgba(44,36,24,.3);color:var(--ink);text-align:center;
+    max-width:min(62vw,420px);}
+  .chart-title .ct-name{font-family:'EB Garamond',serif;font-size:18px;font-weight:600;
+    letter-spacing:.3px;line-height:1.1;}
+  .chart-title .ct-sub{font-family:'IBM Plex Mono',monospace;font-size:9.5px;
+    text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);margin-top:1px;}
+  .chart-back{background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--line2);border-radius:6px;box-shadow:0 4px 14px rgba(44,36,24,.3);}
+  .chart-back button{font-family:'EB Garamond',serif;font-size:14px;color:var(--ink);
+    background:none;border:none;padding:8px 12px;cursor:pointer;white-space:nowrap;
+    border-radius:6px;}
+  .chart-back button:hover{background:var(--rust);color:#f5ecd6;}
+
+  /* ---- chart mode: hide every world overlay pane + world-only control ---- */
+  .chart-mode .leaflet-pRealm-pane,.chart-mode .leaflet-pTrail-pane,
+  .chart-mode .leaflet-pRouteLine-pane,.chart-mode .leaflet-pWater-pane,
+  .chart-mode .leaflet-pMajor-pane,.chart-mode .leaflet-pMtn-pane,
+  .chart-mode .leaflet-pSettle-pane,.chart-mode .leaflet-pMinor-pane,
+  .chart-mode .leaflet-pOrigin-pane,.chart-mode .leaflet-pFaction-pane,
+  .chart-mode .leaflet-pRouteWp-pane{display:none!important;}
+  .chart-mode .era-ctrl,.chart-mode .jrn-ctrl,.chart-mode .leaflet-control-layers,
+  .chart-mode .dock,.chart-mode .scalebar{display:none!important;}
+
   @media (max-width:640px){
     header{padding:6px 10px;gap:8px;}
     header h1{font-size:16px;white-space:normal;flex:1 1 100%;text-align:center;}
@@ -324,6 +373,12 @@
     .strip{max-width:82vw;}
     .grp-btn{font-size:13px;padding:5px 9px;}
     .co-name,.card-name{font-size:22px;}
+    .card-plate img{height:150px;}
+    /* keep the chart's back button + title cartouche from colliding across a narrow top */
+    .chart-back button{font-size:12px;padding:6px 8px;}
+    .chart-title{max-width:44vw;padding:4px 9px;}
+    .chart-title .ct-name{font-size:14px;}
+    .chart-title .ct-sub{font-size:8.5px;letter-spacing:1px;}
   }
 </style>
 </head>
@@ -423,6 +478,12 @@
     clearTimeout(_rzT);
     _rzT=setTimeout(function(){
       map.invalidateSize({animate:false});
+      if(CHART.on){                       // keep the chart height-filled; leave the world alone
+        var cz=fillZoomAt(CHART.def.h,CHART.atZoom); if(cz>map.getMaxZoom())cz=map.getMaxZoom();
+        map.setMinZoom(cz);
+        if(map.getZoom()<cz)map.setView(CHART.cb.getCenter(),cz,{animate:false});
+        return;
+      }
       fitZoom=fillZoom(); map.setMinZoom(fitZoom);
       if(map.getZoom()<fitZoom)map.setView(px(EPESHU[0],EPESHU[1]),fitZoom,{animate:false});
       updScale(); updTier();
@@ -520,6 +581,13 @@
   var routePoly=null;
   var PARTY=[], FACTIONS=[], PMREF={}, FMREF={};
   var companyTrails=null, layersCtrl=null;
+  // detail charts / POIs / card art — folded indices resolve to the canonical JSON
+  // key (names drift in case/diacritics across files, as WIKIFOLD already handles).
+  var DETAIL={}, DETAILFOLD={}, POIS={}, LOCART={}, LOCARTFOLD={};
+  var CHART={on:false,name:null,def:null,atZoom:0,layer:null,poiLayer:null,
+    cb:null,pois:null,cpx:null,titleCtrl:null,backCtrl:null,save:null};
+  function detailKey(name){return DETAIL[name]?name:(DETAILFOLD[fold(name)]||null);}
+  function artFor(name){return LOCART[name]||LOCARTFOLD[fold(name)]||null;}
 
   function pageFor(name){
     if(WIKI[name])return WIKI[name];
@@ -544,14 +612,19 @@
     panel.classList.remove('open'); stage.classList.remove('panel-open');
     panel.setAttribute('aria-hidden','true');
     stopJourney();
-    history.replaceState(null,'',location.pathname+location.search);
+    if(CHART.on)setHash('#chart='+encodeURIComponent(CHART.name));
+    else history.replaceState(null,'',location.pathname+location.search);
   }
   function setHash(h){history.replaceState(null,'',location.pathname+location.search+h);}
 
   function openPlace(m){
     var page=pageFor(m.name);
-    var h='<span class="card-type">'+esc(m.type||'Place')+'</span>'+
+    var art=artFor(m.name), canon=detailKey(m.name);
+    var h=(art?'<div class="card-plate"><img class="card-art" src="'+esc(art)+'" alt=""></div>':'')+
+      '<span class="card-type">'+esc(m.type||'Place')+'</span>'+
       '<h2 class="card-name">'+esc(m.name)+'</h2>';
+    if(canon)h+='<button class="chart-btn" data-chart="'+esc(canon)+'">⚘ View the chart of '+
+      esc(canon)+'</button>';
     if(page){
       var body=cleanWiki(page.content,m.name);
       h+='<div class="card-lore">'+(body||'<p>The chronicles record only the name.</p>')+'</div>';
@@ -562,12 +635,16 @@
     h+=reviewsHtml(m.name);
     showPanel(h);
     setHash('#place='+encodeURIComponent(m.name));
+    var cbtn=panelBody.querySelector('[data-chart]');
+    if(cbtn)cbtn.addEventListener('click',function(){enterChart(cbtn.getAttribute('data-chart'));});
   }
 
   function openRealm(name){
     var bare=name.replace(/^(Kgd\.\s+of|Kingdom\s+of|Once-Realm\s+of|Kgd\.\s+under\s+the)\s+/i,'').trim();
     var page=pageFor(bare)||pageFor(name);
-    var h='<span class="card-type">Realm</span>'+
+    var art=artFor(bare)||artFor(name);
+    var h=(art?'<div class="card-plate"><img class="card-art" src="'+esc(art)+'" alt=""></div>':'')+
+      '<span class="card-type">Realm</span>'+
       '<h2 class="card-name">'+esc(name)+'</h2>';
     if(page){
       var body=cleanWiki(page.content,page.title);
@@ -872,6 +949,143 @@
     return g;
   }
 
+  // ================= Detail charts (spec CC): chart mode over the map stage ==========
+  // vertical-fill min zoom for arbitrary chart dims, measured at the chart's unproject
+  // reference zoom (tiles: maxz; single images: 0 → 1 native px = 1 CRS unit).
+  function fillZoomAt(h,atZoom){
+    var vh=map.getSize().y||map.getContainer().clientHeight||h;
+    var z=atZoom+Math.log(vh/h)/Math.LN2;
+    var snap=map.options.zoomSnap||0.5;
+    return Math.ceil(z/snap)*snap;
+  }
+  function hvOf(h,re){var m=String(h||'').match(re);if(!m)return null;
+    try{return decodeURIComponent(m[1]);}catch(_){return m[1];}}
+  function buildPOILayer(canon,pois,cpx){
+    var g=L.layerGroup();
+    pois.forEach(function(p){
+      var icon=L.divIcon({className:'',iconSize:[22,22],iconAnchor:[11,11],
+        html:'<div class="poi-mk">'+p.n+'</div>'});
+      var mk=L.marker(cpx(p.x,p.y),{icon:icon,title:p.name,riseOnHover:true});
+      mk.bindTooltip(esc(p.name),{direction:'top',offset:[0,-11],className:'mk-tip',opacity:1});
+      mk.on('click',function(){openPOI(canon,p);});
+      p._pmk=mk; g.addLayer(mk);
+    });
+    return g;
+  }
+  function openPOI(canon,p){
+    var h='<span class="card-type">'+esc(canon)+' · Point '+p.n+'</span>'+
+      '<h2 class="card-name">'+esc(p.name)+'</h2>'+
+      '<div class="card-lore"><p>'+esc(p.d||'')+'</p></div>'+
+      '<a class="co-link" data-backcity="1">Part of '+esc(canon)+
+        ' — back to the city card ↗</a>';
+    showPanel(h);
+    setHash('#chart='+encodeURIComponent(canon)+'&poi='+p.n);
+    var b=panelBody.querySelector('[data-backcity]');
+    if(b)b.addEventListener('click',function(){
+      exitChart();
+      var m=MREF[fold(canon)];
+      if(m){flyToMarker(m);openPlace(m);}else openPlace({name:canon});
+    });
+  }
+  function selectPOI(canon,n){
+    var pois=POIS[canon]; if(!pois)return;
+    for(var i=0;i<pois.length;i++)if(pois[i].n===n){
+      openPOI(canon,pois[i]);
+      if(pois[i]._pmk)map.panTo(pois[i]._pmk.getLatLng(),{animate:false});
+      return;
+    }
+  }
+  function chartTeardownLayers(){
+    if(CHART.layer){map.removeLayer(CHART.layer);CHART.layer=null;}
+    if(CHART.poiLayer){map.removeLayer(CHART.poiLayer);CHART.poiLayer=null;}
+    if(CHART.titleCtrl){map.removeControl(CHART.titleCtrl);CHART.titleCtrl=null;}
+    if(CHART.backCtrl){map.removeControl(CHART.backCtrl);CHART.backCtrl=null;}
+    CHART.pois=null;
+  }
+  function enterChart(name,poiN){
+    var canon=detailKey(name); if(!canon)return false;
+    var def=DETAIL[canon];
+    if(CHART.on){
+      if(CHART.name===canon){if(poiN)selectPOI(canon,poiN);return true;}
+      chartTeardownLayers();                 // switching charts: keep the saved world state
+    }else{
+      CHART.save={hash:location.hash,center:map.getCenter(),zoom:map.getZoom(),
+        minZoom:map.getMinZoom(),maxZoom:map.getMaxZoom(),maxBounds:map.options.maxBounds};
+      map.removeLayer(curBase);
+      closePanel();                          // drop the place card; the chart is the view
+      var mc=map.getContainer();
+      mc.classList.add('chart-mode');
+      mc.classList.remove('map-tier-a','map-tier-b','map-tier-c','atlas-labels');
+    }
+    CHART.on=true; CHART.name=canon; CHART.def=def;
+    var atZoom=def.kind==='tiles'?def.maxz:0; CHART.atZoom=atZoom;
+    var cpx=function(x,y){return map.unproject([x,y],atZoom);}; CHART.cpx=cpx;
+    var cb=L.latLngBounds(cpx(0,0),cpx(def.w,def.h)); CHART.cb=cb;
+    if(def.kind==='tiles'){
+      CHART.layer=L.tileLayer(def.path+'/{z}/{x}/{y}.jpg',{
+        minNativeZoom:0,maxNativeZoom:RETINA?def.maxz-1:def.maxz,maxZoom:def.maxz+1,
+        tileSize:256,noWrap:true,bounds:cb,detectRetina:true,keepBuffer:4,attribution:ATTR});
+    }else{
+      CHART.layer=L.imageOverlay(def.path,cb,{attribution:ATTR});
+    }
+    CHART.layer.addTo(map);
+    var minZ=fillZoomAt(def.h,atZoom);
+    // detectRetina drops the tile layer's effective maxZoom by 1 on HiDPI (maxz+1→maxz),
+    // so the map's max must match or the deepest zoom renders over blank parchment
+    // (same rule the era bases use). Image charts overzoom their single bitmap freely.
+    var maxZ=def.kind==='tiles'?(RETINA?def.maxz:def.maxz+1):Math.max(minZ+2,atZoom+2);
+    if(minZ>maxZ)minZ=maxZ;
+    map.setMaxBounds(null);
+    map.setMinZoom(minZ); map.setMaxZoom(maxZ);
+    map.setView(cb.getCenter(),minZ,{animate:false});
+    map.setMaxBounds(cb);
+    map.panInsideBounds(cb,{animate:false});
+    var pois=POIS[canon];
+    if(pois&&pois.length){CHART.pois=pois;
+      CHART.poiLayer=buildPOILayer(canon,pois,cpx); CHART.poiLayer.addTo(map);}
+    // controls: title cartouche (topright) + Back to the Wide World (topleft, under zoom)
+    var TitleC=L.Control.extend({options:{position:'topright'},onAdd:function(){
+      var d=L.DomUtil.create('div','chart-title');
+      d.innerHTML='<div class="ct-name">'+esc(canon)+'</div><div class="ct-sub">City Chart</div>';
+      L.DomEvent.disableClickPropagation(d);return d;}});
+    var BackC=L.Control.extend({options:{position:'topleft'},onAdd:function(){
+      var d=L.DomUtil.create('div','chart-back');
+      var b=L.DomUtil.create('button','',d);
+      b.type='button'; b.innerHTML='← Back to the Wide World';
+      L.DomEvent.disableClickPropagation(d);
+      b.addEventListener('click',exitChart);return d;}});
+    CHART.titleCtrl=new TitleC(); CHART.backCtrl=new BackC();
+    map.addControl(CHART.titleCtrl); map.addControl(CHART.backCtrl);
+    setHash('#chart='+encodeURIComponent(canon));
+    if(poiN)selectPOI(canon,poiN);
+    return true;
+  }
+  function restorePanel(h){
+    var n;
+    if((n=hvOf(h,/place=([^&]+)/))){var m=MREF[fold(n)];if(m){openPlace(m);return true;}}
+    if((n=hvOf(h,/company=([^&]+)/))&&openCompanyByName(n,false))return true;
+    if((n=hvOf(h,/faction=([^&]+)/))&&openFactionByName(n,false))return true;
+    return false;
+  }
+  function exitChart(){
+    if(!CHART.on)return;
+    var s=CHART.save;
+    chartTeardownLayers();
+    CHART.on=false; CHART.name=null; CHART.def=null; CHART.cb=null;
+    map.getContainer().classList.remove('chart-mode');
+    curBase.addTo(map);                        // era was never touched → restores as saved
+    map.setMaxBounds(null);
+    map.setMinZoom(s.minZoom); map.setMaxZoom(s.maxZoom);
+    var sn=map.options.zoomSnap; map.options.zoomSnap=0;  // preserve an unsnapped fly zoom exactly
+    map.setView(s.center,s.zoom,{animate:false});
+    map.options.zoomSnap=sn;
+    map.setMaxBounds(s.maxBounds);
+    updTier(); updScale();
+    if(!(s.hash&&/(?:place|company|faction)=/.test(s.hash)&&restorePanel(s.hash)))
+      closePanel();
+    CHART.save=null;
+  }
+
   // ---- The Company strip (experiment D) + Groups button, docked bottom-left ----
   var stripEl=null;
   function showStrip(on){if(stripEl)stripEl.style.display=on?'':'none';}
@@ -982,7 +1196,7 @@
   }
   function fmtMi(v){v=Math.round(v);return v>=1000?v.toLocaleString('en-US'):''+v;}
   function updScale(){
-    if(!scaleEl)return;
+    if(!scaleEl||CHART.on)return;             // the world scale bar is hidden in chart mode
     var a=map.latLngToContainerPoint(px(0,0)),
         b=map.latLngToContainerPoint(px(1000,0));
     var screenPerNative=Math.abs(b.x-a.x)/1000;          // screen px per native px
@@ -1016,12 +1230,17 @@
     });
   }
   function pick(m){if(!m)return;searchEl.value=m.name;sugEl.className='';
+    if(m._t==='poi'){openPOI(m._chart,m._poi);
+      if(m._poi._pmk)map.panTo(m._poi._pmk.getLatLng(),{animate:false});return;}
+    if(CHART.on)exitChart();                 // any world result leaves the chart first
     if(m._t==='company')openCompanyByName(m.name,true);
     else if(m._t==='faction')openFactionByName(m.name,true);
     else{flyToMarker(m);openPlace(m);}}
   function doSearch(q){
     q=fold(q);if(!q)return renderSug([]);
     var hits=[];
+    if(CHART.on&&CHART.pois)CHART.pois.forEach(function(p){if(fold(p.name).indexOf(q)>=0)
+      hits.push({name:p.name,type:'Point · '+CHART.name,_t:'poi',_poi:p,_chart:CHART.name});});
     MARKERS.forEach(function(m){if(fold(m.name).indexOf(q)>=0)hits.push(m);});
     PARTY.forEach(function(p){if(fold(p.name).indexOf(q)>=0)
       hits.push({name:p.name,type:'Company',_t:'company'});});
@@ -1045,8 +1264,9 @@
   document.addEventListener('click',function(e){
     if(!e.target.closest('.search-wrap'))sugEl.className='';});
   document.addEventListener('keydown',function(e){
-    if(e.key==='Escape'&&panel.classList.contains('open')&&sugEl.className!=='on')
-      closePanel();
+    if(e.key!=='Escape'||sugEl.className==='on')return;
+    if(CHART.on){exitChart();return;}          // chart-mode Escape has priority
+    if(panel.classList.contains('open'))closePanel();
   });
 
   // ---- zoom-tier reveal ----
@@ -1055,6 +1275,7 @@
     return z>=cz-0.01?'c':z>=bz-0.01?'b':'a';
   }
   function updTier(){
+    if(CHART.on)return;                       // world tiers are dormant inside a chart
     var t=tierFor(map.getZoom()), c=map.getContainer();
     c.classList.toggle('map-tier-a',t==='a');
     c.classList.toggle('map-tier-b',t==='b');
@@ -1068,6 +1289,12 @@
   function hashVal(re){var m=String(location.hash||'').match(re);if(!m)return null;
     try{return decodeURIComponent(m[1]);}catch(_){return m[1];}}
   function handleHash(){
+    var ch=hashVal(/chart=([^&]+)/);
+    if(ch){var poi=hashVal(/[?&]poi=(\d+)/);
+      if(!(CHART.on&&CHART.name===detailKey(ch)))enterChart(ch,poi?+poi:0);
+      else if(poi)selectPOI(CHART.name,+poi);
+      return;}
+    if(CHART.on)exitChart();                  // hash left the chart → leave chart mode
     var c=hashVal(/company=([^&]+)/); if(c){openCompanyByName(c,true);return;}
     var f=hashVal(/faction=([^&]+)/); if(f){openFactionByName(f,true);return;}
     var name=hashVal(/place=([^&]+)/); if(!name)return;
@@ -1086,16 +1313,22 @@
     getJSON('data/party-route.json'),
     getJSON('data/realms.geojson'),
     getJSON('data/party.json'),
-    getJSON('data/factions.json')
+    getJSON('data/factions.json'),
+    getJSON('data/detail-charts.json'),
+    getJSON('data/chart-pois.json'),
+    getJSON('data/location-art.json')
   ]).then(function(res){
     var markers=res[0]||[], wiki=res[1]||[], reviews=res[2]||[],
         route=res[3]||[], realms=res[4];
     PARTY=res[5]||[]; FACTIONS=res[6]||[];
+    DETAIL=res[7]||{}; POIS=res[8]||{}; LOCART=res[9]||{};
 
     wiki.forEach(function(p){WIKI[p.title]=p;WIKIFOLD[fold(p.title)]=p;});
     reviews.forEach(function(r){(REVIEWS[r.place]=REVIEWS[r.place]||[]).push(r);});
     PARTY.forEach(function(p){PMREF[fold(p.name)]=p;});
     FACTIONS.forEach(function(f){FMREF[fold(f.name)]=f;});
+    Object.keys(DETAIL).forEach(function(k){DETAILFOLD[fold(k)]=k;});
+    Object.keys(LOCART).forEach(function(k){LOCARTFOLD[fold(k)]=LOCART[k];});
 
     buildMarkers(markers);
 
@@ -1162,7 +1395,9 @@
       faction:function(n){return openFactionByName(n,true);},
       groups:openFactionsList,
       era:setEra, journey:startJourney, stopJourney:stopJourney,
-      openRealm:openRealm, close:closePanel};
+      openRealm:openRealm, close:closePanel,
+      chart:function(n,poi){return enterChart(n,poi||0);}, exitChart:exitChart,
+      chartOn:function(){return CHART.on;}};
   });
 })();
 </script>

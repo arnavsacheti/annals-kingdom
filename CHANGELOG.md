@@ -4,6 +4,18 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.7.0-alpha.1] — 2026-07-12
+- Detail charts from the wiki's MapArt: 15 locations open an in-depth chart from
+  their place card (Epēshu's 3914×4200 city plan tiled to native zoom; the Seat,
+  Summarch sketch, Rhusagos, Relkor, and more as fitted overlays), with a
+  "Back to the Wide World" control that restores the exact prior view and era,
+  and #chart= deep links
+- Epēshu's chart carries 19 interactive POIs matching the map's printed legend
+  (temples, Forum, Māmban, Relkhonak, amphitheatre, Black Barghest Inn…), each
+  opening a canon description card
+- 28 LocationArt illustrations as place/realm card header plates
+- Fix: chart tiles blanking at max zoom on retina displays
+
 ## [0.6.1-alpha.2] — 2026-07-12
 - Fix: bottom-left dock (Company strip, Groups button, scale bar) no longer hides
   behind the open side panel — it shifts clear on desktop, and yields to the

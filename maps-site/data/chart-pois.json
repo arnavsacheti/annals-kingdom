@@ -1,0 +1,137 @@
+{
+ "Epēshu": [
+  {
+   "n": 1,
+   "name": "Necropolis of the Founders",
+   "x": 783,
+   "y": 2125,
+   "d": "The first Patrin village, long since refitted as a tomb city for the founders and the notable dead. A lattice of catacombs runs beneath it; it divides Wood Quay from Whitestreet."
+  },
+  {
+   "n": 2,
+   "name": "Wood Quay",
+   "x": 1004,
+   "y": 1775,
+   "d": "The original port district — wooden docks, often rotted, frequented by smugglers and less successful merchants."
+  },
+  {
+   "n": 3,
+   "name": "Whitestreet",
+   "x": 703,
+   "y": 2589,
+   "d": "The modern southern port, named for the blocks of marble that spill out of its warehouses."
+  },
+  {
+   "n": 4,
+   "name": "Marble Quarter",
+   "x": 1449,
+   "y": 1497,
+   "d": "The masonry, stonework, and sculpting workshops for which the city is famed; shops, markets, and plazas. Amat's Metalwares and the Perfumery by Chasal trade here."
+  },
+  {
+   "n": 5,
+   "name": "Temple of Thobrauk Tegendes",
+   "x": 1069,
+   "y": 1369,
+   "d": "The Blue Temple, seat of the Lektān priesthood and dedicated to the city's patron — the Pilot, god of seas and storms. The docks about it are kept in good repair."
+  },
+  {
+   "n": 6,
+   "name": "Temple of the Ēkromatkar",
+   "x": 1523,
+   "y": 2132,
+   "d": "A gilded temple run by the cult of Palagon Patermāgor, who unified the Patrin Empire."
+  },
+  {
+   "n": 7,
+   "name": "Epēshīn Forum",
+   "x": 1189,
+   "y": 2184,
+   "d": "The heart of the city, where governance, business, and law are debated. Gimīlahar Restored — the marble empress — overlooks it."
+  },
+  {
+   "n": 8,
+   "name": "The Māmban",
+   "x": 964,
+   "y": 2253,
+   "d": "A vast garden of exotic and rare plants. The city granaries are held here."
+  },
+  {
+   "n": 9,
+   "name": "The Relkhonak",
+   "x": 1014,
+   "y": 2386,
+   "d": "The palatial villa of the Surīhurūk. Hethel of the Mālaz resides here — and rarely takes private audiences."
+  },
+  {
+   "n": 10,
+   "name": "Thūkīn Amphitheatre",
+   "x": 699,
+   "y": 2959,
+   "d": "Gladiatorial bouts, demonstrations of magic, plays, and spectacles. This year's Games are themed on the Far South — jungle, traps, and pudkhars."
+  },
+  {
+   "n": 11,
+   "name": "Outwall",
+   "x": 2029,
+   "y": 1411,
+   "d": "A downtrodden slum that stinks of pigsties and stables."
+  },
+  {
+   "n": 12,
+   "name": "Eelwynd",
+   "x": 1409,
+   "y": 458,
+   "d": "A coastal neighborhood known for its fish markets and violent reputation."
+  },
+  {
+   "n": 13,
+   "name": "Kohabron",
+   "x": 3163,
+   "y": 1352,
+   "d": "Once a separate town, swallowed as the Māgos grew; its denizens keep a strong identity of their own."
+  },
+  {
+   "n": 14,
+   "name": "Black Barghest Inn",
+   "x": 1271,
+   "y": 3135,
+   "d": "A large inn and gathering place for the poorer parts of the city, in Old Quarry Lot's north. Folk have been disappearing hereabouts."
+  },
+  {
+   "n": 15,
+   "name": "Road That Walks with the Sun",
+   "x": 3822,
+   "y": 1751,
+   "d": "The great imperial highway. It passes through the Forum before turning east to Tamaron."
+  },
+  {
+   "n": 16,
+   "name": "Old Quarry Lot",
+   "x": 1403,
+   "y": 3618,
+   "d": "Stripped bare of marble long ago; few trees or plants grow. The site of the mysterious disappearances."
+  },
+  {
+   "n": 17,
+   "name": "Mount Mastery",
+   "x": 246,
+   "y": 116,
+   "d": "The tallest hill overlooking the harbor, planted with rows of trophies from the city's past victories."
+  },
+  {
+   "n": 18,
+   "name": "Bangeph Rock",
+   "x": 716,
+   "y": 1117,
+   "d": "A tall, smooth tine of stone jutting from the center of the bay. Vultures circle it."
+  },
+  {
+   "n": 19,
+   "name": "The Fairy Arch",
+   "x": 2850,
+   "y": 2617,
+   "d": "Two perpendicular arches intersecting at their peaks, deep in the woods. None know who built it, or why."
+  }
+ ]
+}
