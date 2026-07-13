@@ -4,6 +4,13 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.8.3-alpha.1] — 2026-07-13
+- Routes and plans now line up: generated towns open their gates on the true
+  bearings of arriving roads and routes, harbor quays bias toward their sea lanes
+  (the atlas mask still decides where water is), and way-styled stubs persist into
+  street tier so the world road visibly arrives at the gate; cities untouched by
+  any line render bit-identically to before
+
 ## [0.8.2-alpha.1] — 2026-07-13
 - Generated city plans now meld with the atlas: coastlines derived from the actual
   map pixels beneath each footprint (printed labels filtered out; quays ray-cast onto

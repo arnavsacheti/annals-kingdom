@@ -10,12 +10,6 @@ non-conflicting item instead.
 
 ## Queue
 
-- [ ] **Route continuity (USER FLAG)** — ways and routes should roughly line up with
-  the plans: compute per-city approach bearings from every world polyline that ends at
-  or passes within the footprint (party route, named ways, sea lanes → data pass over
-  their pts), feed them into the generator so gates + main streets open on those
-  bearings and quays face the lane; and let a short road/route stub persist into the
-  street tier to the city edge so the connection reads visually.
 - [ ] **Cultural & historical texture (USER QUESTION → PASS)** — extend city traits +
   generator with four canon-grounded dimensions: `biome` (reuse the melding pass's
   atlas sampling for hue → wooded/arid/frost vegetation + ground tones, plus region-page
@@ -70,6 +64,13 @@ non-conflicting item instead.
 ## Done
 
 (check items off above and move them here with a one-line result + version)
+
+- [x] **Route continuity (USER FLAG)** — per-city approach bearings from every
+  world polyline: gates open exactly where roads arrive (Tamaron's Sun-Road gate
+  points at Epēshu within 3.6°), quays bias toward their sea lanes on the true
+  waterline, street-tier stubs carry the arrival into the plan; control cities
+  bit-identical to baseline; Drāmūz honestly sea-only (no land route in data).
+  (v0.8.3-alpha.1)
 
 - [x] **Terrain continuity (USER FLAG)** — generated plans now derive land/water from
   the atlas pixels beneath them (border-connected flood drops label ink; Kardunash's

@@ -1410,7 +1410,7 @@
   // data/city-traits.json (traits) or add a real chart + call registerCityOverlay — no
   // code changes needed here.
   var CITY_ANCHORS={}, CITY_ANCHORS_FOLD={}, CITY_TRAITS={}, CITYREG={};
-  var CITYVIEW={name:null,overlay:null,poiLayer:null,poiOn:false,wash:null};
+  var CITYVIEW={name:null,overlay:null,poiLayer:null,poiOn:false,wash:null,stubs:null};
   var overlayCache=new Map();               // name -> L.imageOverlay (LRU, cap 6)
 
   function log2(x){return Math.log(x)/Math.LN2;}
@@ -1537,6 +1537,20 @@
     CITYVIEW.wash=washMake(key,CITYREG[key],CITY_ANCHORS[key]);
   }
 
+  // street-tier road stubs for a generated plan (route continuity §): subtle way-styled
+  // lines in the pCity pane (NOT faded by tier-d) so the world road reads as arriving even
+  // at street tier. Real charts (canon) carry no stubs. Casing + ink like buildNamedWays.
+  function buildCityStubs(reg){
+    if(!reg||reg.prov!=='invented'||!reg.stubs||!reg.stubs.length)return null;
+    var g=L.layerGroup();
+    reg.stubs.forEach(function(s){
+      var ll=[px(s.x0,s.y0),px(s.x1,s.y1)];
+      L.polyline(ll,{color:'#efe6cf',weight:6,opacity:.5,lineCap:'round',pane:'pCity',interactive:false}).addTo(g);
+      L.polyline(ll,{color:'#6a4326',weight:2.6,opacity:.6,lineCap:'round',pane:'pCity',interactive:false}).addTo(g);
+    });
+    return g;
+  }
+
   // ---- instantiate / GC the single active city overlay + its POIs ----
   function ensureCityOverlay(name){
     var key=name?cityAnchorKey(name):null;
@@ -1544,8 +1558,9 @@
     if(CITYVIEW.overlay&&map.hasLayer(CITYVIEW.overlay))map.removeLayer(CITYVIEW.overlay);
     if(CITYVIEW.poiLayer&&map.hasLayer(CITYVIEW.poiLayer))map.removeLayer(CITYVIEW.poiLayer);
     if(CITYVIEW.wash&&map.hasLayer(CITYVIEW.wash))map.removeLayer(CITYVIEW.wash);
+    if(CITYVIEW.stubs&&map.hasLayer(CITYVIEW.stubs))map.removeLayer(CITYVIEW.stubs);
     CITYVIEW.name=null;CITYVIEW.overlay=null;CITYVIEW.poiLayer=null;CITYVIEW.poiOn=false;
-    CITYVIEW.wash=null;
+    CITYVIEW.wash=null;CITYVIEW.stubs=null;
     if(!key)return;
     var reg=CITYREG[key],a=CITY_ANCHORS[key]; if(!reg||!a)return;
     CITYVIEW.name=key;
@@ -1559,6 +1574,7 @@
     ov.setOpacity(overlayOpacity(map.getZoom()));
     ov.addTo(map); CITYVIEW.overlay=ov;
     CITYVIEW.wash=washMake(key,reg,a);
+    var st=buildCityStubs(reg); if(st){CITYVIEW.stubs=st;st.addTo(map);}
     var wp=buildWorldPOIs(key,reg,a);
     if(wp){CITYVIEW.poiLayer=wp;
       if(map.getZoom()>=8){wp.addTo(map);CITYVIEW.poiOn=true;}}
@@ -1655,7 +1671,7 @@
     else return false;
     var key=cityAnchorKey(name)||name;
     CITYREG[key]={url:url,w:w,h:h,prov:opts.prov||'invented',provText:opts.provText||null,
-      poiRef:opts.poiRef||null,pois:opts.pois||null};
+      poiRef:opts.poiRef||null,pois:opts.pois||null,stubs:opts.stubs||null};
     overlayCache.delete(key);
     if(CITYVIEW.name===key){CITYVIEW.name=null;ensureCityOverlay(key);} // hot-swap if viewing
     return true;
@@ -1692,6 +1708,54 @@
   function dirName(vx,vy){var a=(Math.atan2(vx,-vy)*180/Math.PI+360)%360;
     var names=['N','NE','E','SE','S','SW','W','NW'];return names[Math.round(a/45)%8];}
 
+  // ---- per-city approach bearings (route continuity §) ----
+  // Every world polyline that ENDS within, or PASSES THROUGH, a 2.5×footprint radius of a
+  // city's anchor yields an approach bearing = the angle anchor→boundary-crossing. Party
+  // route legs (incl. vias) + named ways classify 'land' (→ gates/roads); sea lanes 'sea'
+  // (→ quay bias). Pure fn of static geometry, cached on the anchor, so a city's plan is
+  // identical across reloads.
+  var APPR_POLYS=null;             // [{pts:[[x,y]..],cls:'land'|'sea'}] built once at load
+  function buildApprPolys(route,ways,lanes){
+    var P=[];
+    if(route)for(var i=1;i<route.length;i++){        // party legs: [prev, ...via, cur]
+      var leg=[[route[i-1].x,route[i-1].y]];
+      (route[i].via||[]).forEach(function(v){leg.push([v[0],v[1]]);});
+      leg.push([route[i].x,route[i].y]);
+      P.push({pts:leg,cls:'land'});}
+    if(ways)ways.forEach(function(w){if(w.pts&&w.pts.length>=2)P.push({pts:w.pts,cls:'land'});});
+    if(lanes)lanes.forEach(function(l){if(l.pts&&l.pts.length>=2)P.push({pts:l.pts,cls:'sea'});});
+    APPR_POLYS=P;
+  }
+  function segCircleHits(ax,ay,bx,by,cx,cy,Rr,out){  // push bearings of segment∩circle, t∈[0,1]
+    var dx=bx-ax,dy=by-ay,A=dx*dx+dy*dy; if(A<1e-9)return;
+    var fx=ax-cx,fy=ay-cy,B=2*(fx*dx+fy*dy),C=fx*fx+fy*fy-Rr*Rr,disc=B*B-4*A*C;
+    if(disc<0)return; disc=Math.sqrt(disc);
+    var t1=(-B-disc)/(2*A),t2=(-B+disc)/(2*A);
+    if(t1>=0&&t1<=1)out.push(Math.atan2(ay+dy*t1-cy,ax+dx*t1-cx));
+    if(t2>=0&&t2<=1&&Math.abs(t2-t1)>1e-6)out.push(Math.atan2(ay+dy*t2-cy,ax+dx*t2-cx));
+  }
+  function angDelta(a,b){var d=a-b;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;return Math.abs(d);}
+  function mergeAngles(arr){        // cluster crossings within ~14° via unit-vector mean
+    var out=[];
+    for(var i=0;i<arr.length;i++){var m=false;
+      for(var k=0;k<out.length;k++)if(angDelta(arr[i],out[k].a)<0.25){
+        out[k].sx+=Math.cos(arr[i]);out[k].sy+=Math.sin(arr[i]);
+        out[k].a=Math.atan2(out[k].sy,out[k].sx);m=true;break;}
+      if(!m)out.push({a:arr[i],sx:Math.cos(arr[i]),sy:Math.sin(arr[i])});}
+    return out.map(function(o){return o.a;});
+  }
+  function cityApproaches(key){
+    var a=CITY_ANCHORS[key]; if(!a)return {land:[],sea:[]};
+    if(a._appr)return a._appr;
+    if(!APPR_POLYS)return {land:[],sea:[]};          // not loaded yet: DON'T cache (would poison)
+    var Rr=2.5*footR(a.kind),landB=[],seaB=[];
+    for(var p=0;p<APPR_POLYS.length;p++){var pl=APPR_POLYS[p],dst=(pl.cls==='sea')?seaB:landB;
+      for(var s=0;s<pl.pts.length-1;s++)
+        segCircleHits(pl.pts[s][0],pl.pts[s][1],pl.pts[s+1][0],pl.pts[s+1][1],a.atlasX,a.atlasY,Rr,dst);}
+    var res={land:mergeAngles(landB),sea:mergeAngles(seaB)};
+    a._appr=res; return res;
+  }
+
   function genCityCanvas(name,t,a,mask){
     var seed=xmur3(name)(),R=mulberry32(seed);
     function rr(lo,hi){return lo+(hi-lo)*R();}
@@ -1700,6 +1764,7 @@
     var S=GEN_SIZE, cv=document.createElement('canvas'); cv.width=S;cv.height=S;
     var g=cv.getContext('2d');
     var ruin=(t.kind==='ruin');
+    var appr=cityApproaches(name), landAppr=ruin?[]:appr.land, seaAppr=appr.sea;
     // surround tinted toward the sampled atlas land hue (§c): the crossfade band
     // then dissolves without a hue shift.
     var LT=(mask&&mask.land)||LAND_TAN;
@@ -1802,16 +1867,32 @@
     var sq={x:cx+rr(-coreR*.12,coreR*.12), y:cy+rr(-coreR*.12,coreR*.12)};
     var walled = t.wall && !ruin;
     var nGates = walled ? (t.kind==='capital'?4:3) : (ruin?0:ri(3,4));
-    var gates=[], gate0=R()*Math.PI*2;
-    for(var gi=0;gi<nGates;gi++){var ga=gate0+gi/nGates*Math.PI*2+rr(-.25,.25);
-      var gr=coreR*(walled?0.9:1.15);
-      gates.push({x:cx+Math.cos(ga)*gr,y:cy+Math.sin(ga)*gr,ang:ga,dir:dirName(Math.cos(ga),Math.sin(ga))});}
+    var gr=coreR*(walled?0.9:1.15);
+    function mkGate(ga,ap){return {x:cx+Math.cos(ga)*gr,y:cy+Math.sin(ga)*gr,ang:ga,
+      dir:dirName(Math.cos(ga),Math.sin(ga)),appr:!!ap};}
+    var gates=[], gate0=R()*Math.PI*2;             // gate0 draw kept verbatim (determinism)
+    landAppr.forEach(function(b){gates.push(mkGate(b,true));});     // approaches → primary gates (RNG-free)
+    var gTarget=Math.min(6,Math.max(nGates,gates.length));
+    for(var gi=0;gi<nGates;gi++){var ga=gate0+gi/nGates*Math.PI*2+rr(-.25,.25); // rr() every iter: keeps draw count
+      if(gates.length>=gTarget)continue;
+      var gdup=false;for(var gj=0;gj<gates.length;gj++)if(angDelta(gates[gj].ang,ga)<0.5){gdup=true;break;}
+      if(gdup)continue;
+      gates.push(mkGate(ga,false));}
+    // sea-approach bias (route continuity §): prefer the lane's arrival bearing (nearest the
+    // charted sea side) for the waterfront, but the mask stays authoritative — shoreHit still
+    // lands on the true waterline; if that bearing is dry, fall back to the compass side.
+    var castV=sv, qCenter=sv;
+    if(drawWater&&WD&&sv&&seaAppr.length){
+      var svA=Math.atan2(sv.y,sv.x),bestd=1e9,pa=svA;
+      seaAppr.forEach(function(ang){var d=angDelta(ang,svA);if(d<bestd){bestd=d;pa=ang;}});
+      castV={x:Math.cos(pa),y:Math.sin(pa)};}
+    function castWater(v){var wn=shoreHit(cx,cy,v.x,v.y);
+      for(var wc=1;wc<=4&&!wn;wc++){var ra=Math.atan2(v.y,v.x)+(wc%2?1:-1)*Math.ceil(wc/2)*0.4;
+        wn=shoreHit(cx,cy,Math.cos(ra),Math.sin(ra));}return wn;}
     var waterNode=null;
     if(drawWater&&WD){
-      waterNode=shoreHit(cx,cy,sv.x,sv.y);
-      for(var wro=1;wro<=4&&!waterNode;wro++){ // sea bearing blocked: fan ±0.4, ±0.8
-        var ra2=Math.atan2(sv.y,sv.x)+(wro%2?1:-1)*Math.ceil(wro/2)*0.4;
-        waterNode=shoreHit(cx,cy,Math.cos(ra2),Math.sin(ra2));}
+      waterNode=castWater(castV); qCenter=castV;
+      if(!waterNode&&castV!==sv){waterNode=castWater(sv);qCenter=sv;}   // biased dir dry → compass side
     } else if(drawWater){waterNode={x:cx+sv.x*shoreDist*0.9,y:cy+sv.y*shoreDist*0.9};}
 
     // main roads: gate/waterfront → market, with a slight bend
@@ -1819,6 +1900,10 @@
     ends.forEach(function(e){var mx=(e.x+sq.x)/2+rr(-coreR*.12,coreR*.12),
       my=(e.y+sq.y)/2+rr(-coreR*.12,coreR*.12);
       roads.push([{x:e.x,y:e.y},{x:mx,y:my},{x:sq.x,y:sq.y}]);});
+    // approach gates also run a road OUT to the plan edge (continues the world way; the
+    // vignette dissolves its far end with everything else). Pure geometry (no RNG).
+    gates.forEach(function(gg){if(!gg.appr)return;
+      roads.push([{x:gg.x,y:gg.y},{x:cx+Math.cos(gg.ang)*S*0.6,y:cy+Math.sin(gg.ang)*S*0.6}]);});
     // a ring road for walled cores
     if(walled){var ringR=coreR*rr(.55,.7),ring=[];
       for(var ri2=0;ri2<=48;ri2++){var ra=ri2/48*Math.PI*2;
@@ -1948,7 +2033,7 @@
       // quays + jetties on the true waterline nearest the charted sea bearing
       var nQ = t.harbor ? ri(3,5) : ri(1,2);
       for(var qi=0;qi<nQ;qi++){var qs=rr(-coreR*.7,coreR*.7),qb=null,qv=sv;
-        if(WD){var qa2=Math.atan2(sv.y,sv.x)+qs/(coreR*.7)*0.55;
+        if(WD){var qa2=Math.atan2(qCenter.y,qCenter.x)+qs/(coreR*.7)*0.55;
           qb=shoreHit(cx,cy,Math.cos(qa2),Math.sin(qa2));
           if(!qb)continue;
           qv=seaNormal(qb.x,qb.y);}
@@ -2058,7 +2143,16 @@
     g.fillStyle='#6a4326';g.fillText(wm,42,S-33);
     g.restore();
 
-    return {canvas:cv,w:S,h:S,pois:pois};
+    // street-tier stubs (route continuity §): gate → just outside the plan edge, in ATLAS
+    // coords, one per land approach — drawn later in the pCity pane so the world road reads
+    // as arriving even after the tier-d fade. Pure geometry (no RNG).
+    var scl=S/(2*footR(a.kind)), stubs=[];     // canvas px per atlas px
+    gates.forEach(function(gg){if(!gg.appr)return;
+      var ix=a.atlasX+(gg.x-S/2)/scl, iy=a.atlasY+(gg.y-S/2)/scl;         // gate (exact)
+      var ox=a.atlasX+Math.cos(gg.ang)*footR(a.kind)*1.18,
+          oy=a.atlasY+Math.sin(gg.ang)*footR(a.kind)*1.18;               // just past the plan edge
+      stubs.push({x0:ix,y0:iy,x1:ox,y1:oy});});
+    return {canvas:cv,w:S,h:S,pois:pois,stubs:stubs};
   }
 
   // ---- atlas-derived land/water mask (terrain continuity §a) ----
@@ -2143,7 +2237,7 @@
         if(t&&(!reg||reg.prov==='invented')){
           var gen=genCityCanvas(key,t,a,m);
           registerCityOverlay(key,gen.canvas,{prov:'invented',w:gen.w,h:gen.h,
-            pois:gen.pois,poiRef:{w:gen.w,h:gen.h}});
+            pois:gen.pois,poiRef:{w:gen.w,h:gen.h},stubs:gen.stubs});
         }
         if(CITYVIEW.name===key)washRefresh(key);
         if(!CHART.on)worldCityUpdate();        // a just-landed reg may deepen maxZoom
@@ -2159,7 +2253,7 @@
       var q=MASKQ[key],m=(q&&q.s)?q.m:null;
       var gen=genCityCanvas(key,t,a,m);
       registerCityOverlay(key,gen.canvas,{prov:'invented',w:gen.w,h:gen.h,
-        pois:gen.pois,poiRef:{w:gen.w,h:gen.h}});
+        pois:gen.pois,poiRef:{w:gen.w,h:gen.h},stubs:gen.stubs});
       if(m)q.applied=true;
     }catch(e){}
   }
@@ -2447,6 +2541,7 @@
     Object.keys(LOCART).forEach(function(k){LOCARTFOLD[fold(k)]=LOCART[k];});
 
     meshedWorldInit(res[10],res[11]);      // anchors + traits + real overlays (before handleHash)
+    buildApprPolys(route,res[13],res[12]); // approach bearings: anchors + polylines ready, before any gen
 
     buildMarkers(markers);
 
