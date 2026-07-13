@@ -4,6 +4,15 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.8.1-alpha.1] — 2026-07-13
+- Every canon point is now visible: off-chart markers (Far North, Fell Mountains,
+  Hoarland, Moonless Lands) pin to the map's edge with a direction chevron and
+  "beyond the charted north/west" honesty in tooltip and card; the journey
+  fly-through lands every waypoint fully inside the locked viewport
+- Fixed a latent Catmull-Rom denominator bug that flung the final sub-segment of
+  every route/lane leg tens of thousands of pixels off-canvas
+- Scrubbed editor annotations that had leaked into two waypoint notes
+
 ## [0.8.0-alpha.1] — 2026-07-13
 - The meshed world: one continuous zoom from continent to alleyway — the atlas fades
   beneath you into real city plans (Epēshu with its 19 legend POIs, the Summarch

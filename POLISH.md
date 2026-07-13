@@ -10,18 +10,6 @@ non-conflicting item instead.
 
 ## Queue
 
-- [ ] **Off-frame points visible (USER FLAG)** — several canon markers lie beyond the
-  drawn atlas (Far North y≈−92, Fell Mountains −93, Hoarland −94 above the top edge;
-  Far South/Home Islands below; Moonless Lands off the left) and are unreachable under
-  the locked vertical-fill bounds; some route waypoints inherit this. Add a
-  `clampToFrame(x, y, pad≈16)` applied to EVERY rendered world point (markers, route
-  waypoints, company origins, faction seats): clamped points get an edge-marker
-  treatment — chevron rotated toward the true off-chart position, "beyond the charted
-  north/south/west" line in the card, tooltip likewise — and route splines simply use
-  the clamped coords so the line hugs the edge through those legs. Bounds stay locked
-  (do NOT reintroduce void); verify Far North, Fell Mountains, Home Islands, Moonless
-  Lands all clickable, and the journey fly-through lands inside the frame on those
-  waypoints.
 - [ ] **Terrain continuity (USER FLAG)** — generated plans must MELD with the atlas
   under them, not float over it. (a) Derive each plan's land/water from the atlas
   pixels beneath its footprint: sample the atlas tile region around the anchor,
@@ -67,9 +55,17 @@ non-conflicting item instead.
 - [ ] **Data fetch cache-busting** — append the app VERSION to data/*.json fetch URLs
   so local demos never show stale cards after a data edit (Pages ETags already handle
   the deployed site).
+- [ ] **Tier-hidden markers intercept clicks** — invisible (tier-faded) route waypoints
+  still capture pointer events and can steal clicks from markers beneath them
+  (pre-existing Leaflet pane quirk): set pointer-events none on faded panes.
 - [ ] **Sim ↔ atlas continuity** — matching deep-link vocabulary both ways
   (sim `#goto=` ↔ atlas `#chart=`), so cross-links can land on the same place.
 
 ## Done
 
 (check items off above and move them here with a one-line result + version)
+
+- [x] **Off-frame points visible (USER FLAG)** — clampToFrame at every render site;
+  4 off-chart markers now edge-pinned with direction chevrons + "beyond the charted …"
+  cards; journey lands wps 3–5 fully in-frame; BONUS: fixed a pre-existing crSpline
+  Barry–Goldman denominator bug that sprayed leg tails ±40k px. (v0.8.1-alpha.1)

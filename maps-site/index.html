@@ -100,6 +100,15 @@
   .route-line.playing{animation:dashmove 2.6s linear infinite;}
   @keyframes dashmove{to{stroke-dashoffset:-240;}}
 
+  /* off-frame edge markers: inward chevron badge pointing at the true bearing */
+  .mk.edge,.wp.edge,.fac-badge.edge{position:relative;}
+  .edge-chev{position:absolute;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;
+    display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;
+    line-height:1;color:#f5ecd6;background:var(--rust);border:1px solid #f5ecd6;
+    border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.4);pointer-events:none;z-index:2;}
+  .edge-note{font-family:'Lora',serif;font-style:italic;font-size:13px;
+    color:var(--muted);margin:2px 0 10px;}
+
   /* ---- tier panes (fade reveal) ---- */
   .leaflet-pMajor-pane,.leaflet-pWater-pane,.leaflet-pSettle-pane,.leaflet-pMtn-pane,
   .leaflet-pMinor-pane,.leaflet-pRealm-pane,.leaflet-pRouteLine-pane,.leaflet-pRouteWp-pane,
@@ -506,6 +515,19 @@
   var contentBounds=L.latLngBounds(px(0,0),px(IMG_W,IMG_H));
   var tileBounds=L.latLngBounds(px(0,0),px(TILE_W,TILE_H));
 
+  // ---- off-frame clamp: canon points beyond the drawn atlas rest at the frame edge;
+  // dir is the compass bearing of the TRUE position. In-frame points pass untouched
+  // (edge-tight ones included), so only genuinely uncharted places get the treatment.
+  function clampToFrame(x,y,pad){
+    pad=pad==null?16:pad;
+    var dir='';
+    if(y<0)dir+='N';else if(y>IMG_H)dir+='S';
+    if(x<0)dir+='W';else if(x>IMG_W)dir+='E';
+    if(!dir)return{x:x,y:y,clamped:false,dir:''};
+    return{x:Math.min(IMG_W-pad,Math.max(pad,x)),
+           y:Math.min(IMG_H-pad,Math.max(pad,y)),clamped:true,dir:dir};
+  }
+
   // ---- panes (one per overlay tier; ordering via z-index) ----
   // realms sit below markers; route waypoints above the route line.
   // WW panes: district strokes just over realm fills; sea lanes + named ways below the
@@ -614,6 +636,23 @@
   function stars(n){n=Math.max(0,Math.min(5,n|0));var o='';
     for(var i=0;i<5;i++)o+=i<n?'★':'<span class="off">★</span>';return o;}
 
+  // ---- off-frame edge treatment (companions to clampToFrame) ----
+  var DIR_WORD={N:'north',S:'south',E:'east',W:'west',
+    NW:'north-west',NE:'north-east',SW:'south-west',SE:'south-east'};
+  var DIR_ANG={E:0,SE:45,S:90,SW:135,W:180,NW:225,N:270,NE:315}; // ❯ points east at 0°
+  var DIR_VEC={N:[0,-1],S:[0,1],E:[1,0],W:[-1,0],
+    NE:[.71,-.71],NW:[-.71,-.71],SE:[.71,.71],SW:[-.71,.71]};
+  // chevron badge sits just INWARD of the glyph (the frame edge never crops it) and
+  // rotates toward the true off-chart bearing; (cx,cy) = glyph centre in icon px.
+  function chevHtml(dir,cx,cy){
+    var u=DIR_VEC[dir];
+    return '<span class="edge-chev" style="left:'+(cx-u[0]*15).toFixed(1)+'px;top:'+
+      (cy-u[1]*15).toFixed(1)+'px;transform:rotate('+DIR_ANG[dir]+'deg)">❯</span>';
+  }
+  function edgeSuffix(dir){return ' — beyond the charted '+DIR_WORD[dir];}
+  function edgeLine(subject,dir){return '<div class="edge-note">'+subject+
+    ' beyond the charted '+DIR_WORD[dir]+'; its mark rests at the map’s edge.</div>';}
+
   // ---- centripetal Catmull-Rom (alpha=.5): smooth curve through control points
   // without the overshoot uniform CR gives on the widely-spread sea legs. Endpoints
   // are duplicated so the curve starts/ends exactly on the first/last point. Used by
@@ -633,10 +672,10 @@
             a2y=(t2-t)/(t2-t1)*p1[1]+(t-t1)/(t2-t1)*p2[1],
             a3x=(t3-t)/(t3-t2)*p2[0]+(t-t2)/(t3-t2)*p3[0],
             a3y=(t3-t)/(t3-t2)*p2[1]+(t-t2)/(t3-t2)*p3[1],
-            b1x=(t2-t)/(t2-t1)*a1x+(t-t1)/(t2-t1)*a2x,
-            b1y=(t2-t)/(t2-t1)*a1y+(t-t1)/(t2-t1)*a2y,
-            b2x=(t3-t)/(t3-t2)*a2x+(t-t2)/(t3-t2)*a3x,
-            b2y=(t3-t)/(t3-t2)*a2y+(t-t2)/(t3-t2)*a3y;
+            b1x=(t2-t)/(t2-t0)*a1x+(t-t0)/(t2-t0)*a2x,
+            b1y=(t2-t)/(t2-t0)*a1y+(t-t0)/(t2-t0)*a2y,
+            b2x=(t3-t)/(t3-t1)*a2x+(t-t1)/(t3-t1)*a3x,
+            b2y=(t3-t)/(t3-t1)*a2y+(t-t1)/(t3-t1)*a3y;
         out.push([(t2-t)/(t2-t1)*b1x+(t-t1)/(t2-t1)*b2x,
                   (t2-t)/(t2-t1)*b1y+(t-t1)/(t2-t1)*b2y]);
       }
@@ -740,6 +779,7 @@
     var h=(art?'<div class="card-plate"><img class="card-art" src="'+esc(art)+'" alt=""></div>':'')+
       '<span class="card-type">'+esc(m.type||'Place')+'</span>'+
       '<h2 class="card-name">'+esc(m.name)+'</h2>';
+    if(m._edge)h+=edgeLine('This place lies',m._edge);
     if(flyCity)h+='<button class="chart-btn" data-descend="'+esc(akey)+'">⚘ Descend into '+
       esc(akey)+'</button>';
     else if(canon)h+='<button class="chart-btn" data-chart="'+esc(canon)+'">⚘ View the chart of '+
@@ -793,6 +833,7 @@
     var h='<span class="card-type">Journey · Waypoint '+(i+1)+' of '+ROUTE.length+'</span>'+
       '<h2 class="card-name">'+esc(p.name)+'</h2>'+
       '<div class="card-sess">'+(p.session?'Session '+p.session:'Pre-campaign')+'</div>'+
+      (p._edge?edgeLine('This place lies',p._edge):'')+
       '<div class="card-lore"><p>'+esc(p.note||'')+'</p></div>'+
       '<div class="jrow">'+
         '<button class="jbtn" data-j="prev"'+(i<=0?' disabled':'')+'>← Prev</button>'+
@@ -813,8 +854,8 @@
   // walk the route (used by Prev/Next and by journey play-through)
   function goWaypoint(i){
     if(i<0||i>=ROUTE.length)return;
-    var p=ROUTE[i];
-    map.flyTo(px(p.x,p.y),Math.max(map.getZoom(),tierZoom('c')),{duration:1.2,easeLinearity:.25});
+    var p=ROUTE[i],c=clampToFrame(p.x,p.y);
+    map.flyTo(px(c.x,c.y),Math.max(map.getZoom(),tierZoom('c')),{duration:1.2,easeLinearity:.25});
     openWaypoint(i);
   }
 
@@ -849,11 +890,16 @@
     MARKERS=data;
     data.forEach(function(m){
       var st=TYPE_STYLE[m.type]||{cls:'t-minor',g:'•',pane:'pMinor'};
+      var c=clampToFrame(m.x,m.y);
+      m._edge=c.clamped?c.dir:null;
+      var gc=st.cls==='t-major'?12:st.cls==='t-minor'?9:11;   // glyph centre by size
       var icon=L.divIcon({className:'',iconSize:null,iconAnchor:[11,11],
-        html:'<div class="mk '+st.cls+'"><span class="glyph">'+st.g+'</span>'+
-             '<span class="lbl">'+esc(m.name)+'</span></div>'});
-      var mk=L.marker(px(m.x,m.y),{icon:icon,title:m.name,pane:st.pane,riseOnHover:true});
-      mk.bindTooltip(esc(m.name),{direction:'right',offset:[12,0],className:'mk-tip',opacity:1});
+        html:'<div class="mk '+st.cls+(c.clamped?' edge':'')+'"><span class="glyph">'+st.g+'</span>'+
+             '<span class="lbl">'+esc(m.name)+'</span>'+
+             (c.clamped?chevHtml(c.dir,gc,gc):'')+'</div>'});
+      var mk=L.marker(px(c.x,c.y),{icon:icon,title:m.name,pane:st.pane,riseOnHover:true});
+      mk.bindTooltip(esc(m.name)+(c.clamped?edgeSuffix(c.dir):''),
+        {direction:'right',offset:[12,0],className:'mk-tip',opacity:1});
       mk.on('click',function(){openPlace(m);});
       m._mk=mk; MREF[fold(m.name)]=m;
       if(!LAYERS[m.type])LAYERS[m.type]=L.layerGroup();
@@ -868,19 +914,28 @@
     // each leg is its own centripetal spline through [prev, ...via, current]; legs
     // are concatenated but NOT smoothed across waypoints (stops stay sharp corners).
     var latlngs=[];
+    function cpt(x,y){var c=clampToFrame(x,y);return[c.x,c.y];}
     for(var li=1;li<pts.length;li++){
-      var ctrl=[[pts[li-1].x,pts[li-1].y]];
-      (pts[li].via||[]).forEach(function(v){ctrl.push([v[0],v[1]]);});
-      ctrl.push([pts[li].x,pts[li].y]);
+      var ctrl=[cpt(pts[li-1].x,pts[li-1].y)];
+      (pts[li].via||[]).forEach(function(v){ctrl.push(cpt(v[0],v[1]));});
+      ctrl.push(cpt(pts[li].x,pts[li].y));
       var seg=crSpline(ctrl,18);
-      for(var k=(li===1?0:1);k<seg.length;k++)latlngs.push(px(seg[k][0],seg[k][1]));
+      for(var k=(li===1?0:1);k<seg.length;k++){
+        var s=clampToFrame(seg[k][0],seg[k][1],0);  // spline overshoot hugs the edge
+        latlngs.push(px(s.x,s.y));
+      }
     }
     routePoly=L.polyline(latlngs,{className:'route-line',color:'#8a3c28',weight:3,
       opacity:.85,dashArray:'10 14',lineJoin:'round',pane:'pRouteLine'}).addTo(g);
     pts.forEach(function(p,i){
+      var c=clampToFrame(p.x,p.y);
+      p._edge=c.clamped?c.dir:null;
       var ic=L.divIcon({className:'',iconSize:[20,20],iconAnchor:[10,10],
-        html:'<div class="wp">'+(i+1)+'</div>'});
-      var wp=L.marker(px(p.x,p.y),{icon:ic,title:p.name,pane:'pRouteWp'});
+        html:'<div class="wp'+(c.clamped?' edge':'')+'">'+(i+1)+
+             (c.clamped?chevHtml(c.dir,10,10):'')+'</div>'});
+      var wp=L.marker(px(c.x,c.y),{icon:ic,title:p.name,pane:'pRouteWp'});
+      if(c.clamped)wp.bindTooltip(esc(p.name)+edgeSuffix(c.dir),
+        {direction:'right',offset:[12,0],className:'mk-tip',opacity:1});
       wp.on('click',function(){openWaypoint(i);});
       g.addLayer(wp);
     });
@@ -937,7 +992,8 @@
     var g=L.layerGroup();
     data.forEach(function(lane){
       if(!lane.pts||lane.pts.length<2)return;
-      var sm=crSpline(lane.pts,16);
+      var sm=crSpline(lane.pts.map(function(q){
+        var c=clampToFrame(q[0],q[1],0);return[c.x,c.y];}),16);
       var latlngs=sm.map(function(c){return px(c[0],c[1]);});
       var line=L.polyline(latlngs,{className:'lane-line',color:'#3a6478',weight:1.6,
         opacity:.6,dashArray:'2 7',lineJoin:'round',lineCap:'round',pane:'pLane'});
@@ -1031,7 +1087,8 @@
   function mono(name){var w=String(name||'').trim().split(/\s+/);
     return ((w[0]?w[0][0]:'?')+(w[1]?w[1][0]:'')).toUpperCase();}
   function slugUrl(s){return WIKI_BASE+String(s).split('/').map(encodeURIComponent).join('/');}
-  function flyTo(x,y,t){map.flyTo(px(x,y),Math.max(map.getZoom(),tierZoom(t||'c')),
+  function flyTo(x,y,t){var c=clampToFrame(x,y);
+    map.flyTo(px(c.x,c.y),Math.max(map.getZoom(),tierZoom(t||'c')),
     {duration:.9,easeLinearity:.25});}
   function alignColor(a){return a==='ally'?'#5a6b34':a==='foe'?'#8a3c28':
     a==='tension'?'#8a6224':'#7a6a53';}
@@ -1066,6 +1123,7 @@
     if(p.origin){
       h+='<div class="co-line">'+(p.status==='former'?'Haunt: ':'Home: ')+esc(p.origin.label)+
          (p.origin.approx?' (approx.)':'')+' — <a class="co-link" data-fly="1">show on the map ↗</a></div>';
+      if(p._oedge)h+=edgeLine('Their homeland lies',p._oedge);
     }
     h+='<div class="card-lore">'+p.bio.map(function(b){return '<p>'+esc(b)+'</p>';}).join('')+'</div>';
     if(p.road&&p.road.length){
@@ -1104,8 +1162,9 @@
       '<h2 class="card-name">'+esc(f.name)+'</h2>'+
       '<div><span class="chip '+esc(f.alignment)+'">'+esc(f.alignment)+'</span></div>'+
       '<div class="card-lore">'+f.summary.map(function(s){return '<p>'+esc(s)+'</p>';}).join('')+'</div>';
-    if(f.seat)h+='<div class="co-line">Seat: '+esc(f.seat.label)+
+    if(f.seat){h+='<div class="co-line">Seat: '+esc(f.seat.label)+
       ' — <a class="co-link" data-seat="1">show on the map ↗</a></div>';
+      if(f._sedge)h+=edgeLine('Their seat lies',f._sedge);}
     if(f.members&&f.members.length){h+='<h4>Known members</h4>';
       f.members.forEach(function(mb){
         var link=mb.company&&PMREF[fold(mb.name)];
@@ -1148,12 +1207,16 @@
     PARTY.forEach(function(p){
       if(!p.origin)return;
       var lbl=(p.status==='former'?'Haunt of ':'Hometown of ')+p.name;
+      var c=clampToFrame(p.origin.x,p.origin.y);
+      p._oedge=c.clamped?c.dir:null;
       var icon=L.divIcon({className:'',iconSize:null,iconAnchor:[11,11],
-        html:'<div class="mk t-origin"><span class="glyph" style="background:'+esc(p.color)+
+        html:'<div class="mk t-origin'+(c.clamped?' edge':'')+'"><span class="glyph" style="background:'+esc(p.color)+
           ';color:#f5ecd6;border-color:rgba(44,36,24,.6)">⚑</span>'+
-          '<span class="lbl">'+esc(lbl)+'</span></div>'});
-      var mk=L.marker(px(p.origin.x,p.origin.y),{icon:icon,title:lbl,pane:'pOrigin',riseOnHover:true});
-      mk.bindTooltip(esc(lbl),{direction:'right',offset:[12,0],className:'mk-tip',opacity:1});
+          '<span class="lbl">'+esc(lbl)+'</span>'+
+          (c.clamped?chevHtml(c.dir,11,11):'')+'</div>'});
+      var mk=L.marker(px(c.x,c.y),{icon:icon,title:lbl,pane:'pOrigin',riseOnHover:true});
+      mk.bindTooltip(esc(lbl)+(c.clamped?edgeSuffix(c.dir):''),
+        {direction:'right',offset:[12,0],className:'mk-tip',opacity:1});
       mk.on('click',function(){openCompany(p,false);});
       p._omk=mk; g.addLayer(mk);
     });
@@ -1164,7 +1227,8 @@
     var g=L.layerGroup();
     PARTY.forEach(function(p){
       if(p.status!=='active'||!p.origin||!p.joined)return;
-      var o=p.origin,j=p.joined,mx=(o.x+j.x)/2,my=(o.y+j.y)/2,
+      var o=clampToFrame(p.origin.x,p.origin.y),j=clampToFrame(p.joined.x,p.joined.y),
+          mx=(o.x+j.x)/2,my=(o.y+j.y)/2,
           dx=j.x-o.x,dy=j.y-o.y,len=Math.hypot(dx,dy)||1,off=len*0.13;
       var pts=crSpline([[o.x,o.y],[mx-dy/len*off,my+dx/len*off],[j.x,j.y]],20)
         .map(function(c){return px(c[0],c[1]);});
@@ -1181,14 +1245,18 @@
     var g=L.layerGroup(), seen={};
     FACTIONS.forEach(function(f){
       if(!f.seat)return;
-      var key=f.seat.x+','+f.seat.y,n=seen[key]||0; seen[key]=n+1;
+      var c=clampToFrame(f.seat.x,f.seat.y);
+      f._sedge=c.clamped?c.dir:null;
+      var key=c.x+','+c.y,n=seen[key]||0; seen[key]=n+1;
       var ox=0,oy=0;                          // spread badges that share a seat
       if(n){var ang=(n-1)*2.3999+0.5;ox=Math.cos(ang)*14;oy=Math.sin(ang)*14;}
       var icon=L.divIcon({className:'',iconSize:[22,22],iconAnchor:[11,11],
-        html:'<div class="fac-badge" style="color:'+alignColor(f.alignment)+'">⛊</div>'});
-      var mk=L.marker(px(f.seat.x+ox,f.seat.y+oy),
+        html:'<div class="fac-badge'+(c.clamped?' edge':'')+'" style="color:'+alignColor(f.alignment)+'">⛊'+
+          (c.clamped?chevHtml(c.dir,11,11):'')+'</div>'});
+      var mk=L.marker(px(c.x+ox,c.y+oy),
         {icon:icon,title:f.name,pane:'pFaction',riseOnHover:true});
-      mk.bindTooltip(esc(f.name),{direction:'right',offset:[11,0],className:'mk-tip',opacity:1});
+      mk.bindTooltip(esc(f.name)+(c.clamped?edgeSuffix(c.dir):''),
+        {direction:'right',offset:[11,0],className:'mk-tip',opacity:1});
       mk.on('click',(function(ff){return function(){openFaction(ff,false);};})(f));
       g.addLayer(mk);
     });
