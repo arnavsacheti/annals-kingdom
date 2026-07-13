@@ -102,17 +102,21 @@
 
   /* ---- tier panes (fade reveal) ---- */
   .leaflet-pMajor-pane,.leaflet-pWater-pane,.leaflet-pSettle-pane,.leaflet-pMtn-pane,
-  .leaflet-pMinor-pane,.leaflet-pRealm-pane,.leaflet-pRouteLine-pane,.leaflet-pRouteWp-pane{
+  .leaflet-pMinor-pane,.leaflet-pRealm-pane,.leaflet-pRouteLine-pane,.leaflet-pRouteWp-pane,
+  .leaflet-pLane-pane,.leaflet-pWay-pane,.leaflet-pDistrict-pane{
     transition:opacity .2s ease;}
   /* tier A (z0-1): major regions + seas only */
   .map-tier-a .leaflet-pSettle-pane,.map-tier-a .leaflet-pMtn-pane,
   .map-tier-a .leaflet-pRealm-pane,.map-tier-a .leaflet-pMinor-pane,
-  .map-tier-a .leaflet-pRouteLine-pane,.map-tier-a .leaflet-pRouteWp-pane{
+  .map-tier-a .leaflet-pRouteLine-pane,.map-tier-a .leaflet-pRouteWp-pane,
+  .map-tier-a .leaflet-pLane-pane,.map-tier-a .leaflet-pWay-pane,
+  .map-tier-a .leaflet-pDistrict-pane{
     opacity:0;pointer-events:none;}
-  /* tier B (z2-3): + settlements, mountains, realm fills, route line */
-  .map-tier-b .leaflet-pMinor-pane,.map-tier-b .leaflet-pRouteWp-pane{
+  /* tier B (z2-3): + settlements, mountains, realm fills, route line, sea lanes, ways */
+  .map-tier-b .leaflet-pMinor-pane,.map-tier-b .leaflet-pRouteWp-pane,
+  .map-tier-b .leaflet-pDistrict-pane{
     opacity:0;pointer-events:none;}
-  /* tier C (z4+): everything */
+  /* tier C (z4+): everything (incl. district borders) */
 
   /* ---- side panel drawer ---- */
   #panel{position:absolute;top:0;left:0;bottom:0;width:340px;max-width:86vw;
@@ -351,6 +355,8 @@
   .chart-mode .leaflet-pMajor-pane,.chart-mode .leaflet-pMtn-pane,
   .chart-mode .leaflet-pSettle-pane,.chart-mode .leaflet-pMinor-pane,
   .chart-mode .leaflet-pOrigin-pane,.chart-mode .leaflet-pFaction-pane,
+  .chart-mode .leaflet-pLane-pane,.chart-mode .leaflet-pWay-pane,
+  .chart-mode .leaflet-pDistrict-pane,
   .chart-mode .leaflet-pRouteWp-pane{display:none!important;}
   .chart-mode .era-ctrl,.chart-mode .jrn-ctrl,.chart-mode .leaflet-control-layers,
   .chart-mode .dock,.chart-mode .scalebar{display:none!important;}
@@ -362,6 +368,8 @@
   .map-tier-d .leaflet-pMajor-pane,.map-tier-d .leaflet-pMtn-pane,
   .map-tier-d .leaflet-pSettle-pane,.map-tier-d .leaflet-pMinor-pane,
   .map-tier-d .leaflet-pOrigin-pane,.map-tier-d .leaflet-pFaction-pane,
+  .map-tier-d .leaflet-pLane-pane,.map-tier-d .leaflet-pWay-pane,
+  .map-tier-d .leaflet-pDistrict-pane,
   .map-tier-d .leaflet-pRouteWp-pane{opacity:0!important;pointer-events:none;}
 
   /* ---- uncharted treatment: parchment grain + corner watermark ---- */
@@ -395,6 +403,24 @@
   .prov-legend{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);
     padding:6px 8px 3px;border-top:1px solid var(--line);margin-top:2px;line-height:1.4;
     letter-spacing:.2px;}
+  /* 'trace' — a third provenance variant (spec WW §4): traced from the atlas, approximate */
+  .prov-banner.trace{color:#2e5060;border-left-color:var(--water);
+    background:rgba(58,100,120,.11);border-color:rgba(58,100,120,.4);}
+
+  /* ---- Ways & Waters (spec WW): sea lanes, named roads, district borders ---- */
+  /* sea lanes — finer + lighter than the party route, distinct dash rhythm, water tone */
+  .lane-line{stroke-dasharray:2 7;}
+  .lane-cog{display:flex;align-items:center;justify-content:center;width:18px;height:18px;
+    font-size:13px;line-height:1;color:#2e5060;pointer-events:auto;cursor:pointer;
+    text-shadow:0 0 3px var(--parch),0 0 3px var(--parch),0 1px 2px rgba(0,0,0,.35);
+    transition:transform .15s ease;}
+  .lane-cog:hover{transform:scale(1.22);}
+  /* named ways — warm ink-brown highway with a pale casing; a mid-line label chip at tier C */
+  .way-label{display:none;font-family:'EB Garamond',serif;font-size:12.5px;font-weight:600;
+    color:#5a3210;background:rgba(243,236,215,.9);border:1px solid var(--line2);
+    border-radius:3px;padding:1px 7px;white-space:nowrap;pointer-events:auto;cursor:pointer;
+    box-shadow:0 1px 4px rgba(44,36,24,.3);transform:translate(-50%,-50%);}
+  .map-tier-c .way-label{display:inline-block;}
 
   @media (max-width:640px){
     header{padding:6px 10px;gap:8px;}
@@ -433,7 +459,7 @@
     </div>
     <div class="links">
       <a href="https://princexizor.ddns.net/" target="_blank" rel="noopener">Wiki&nbsp;↗</a>
-      <a href="https://sim.princexizor.ddns.net/" target="_blank" rel="noopener">Sim&nbsp;↗</a>
+      <a id="simLink" href="https://sim.princexizor.ddns.net/" target="_blank" rel="noopener">Sim&nbsp;↗</a>
     </div>
   </header>
   <div id="stage">
@@ -453,6 +479,12 @@
   var NZ=4, IMG_W=4390, IMG_H=2188, TILE_W=4608, TILE_H=2304;
   var WIKI_BASE='https://princexizor.ddns.net/';
   var RETINA=!!L.Browser.retina;
+
+  // ---- host-aware Sim link (spec WW): the ddns subdomain is dead off the live host.
+  // On the canon host keep it; anywhere else (GitHub Pages, localhost) reach the sim
+  // relatively — the atlas lives at <root>/maps-site/, so '../' lands on the sim.
+  (function(){var s=document.getElementById('simLink');
+    if(s&&!location.hostname.endsWith('princexizor.ddns.net'))s.setAttribute('href','../');})();
 
   // ---- meshed-world (spec MW §A) continuous-zoom constants ----
   // The atlas z0..~6 stays master; below it the world goes soft. Max zoom is managed
@@ -476,7 +508,10 @@
 
   // ---- panes (one per overlay tier; ordering via z-index) ----
   // realms sit below markers; route waypoints above the route line.
-  [['pRealm',410],['pTrail',412],['pRouteLine',415],['pCity',450],['pWater',618],
+  // WW panes: district strokes just over realm fills; sea lanes + named ways below the
+  // party route line, so the campaign's own path reads on top where they cross.
+  [['pRealm',410],['pDistrict',411],['pTrail',412],['pLane',413],['pWay',414],
+   ['pRouteLine',415],['pCity',450],['pWater',618],
    ['pMajor',620],['pMtn',622],['pSettle',624],['pMinor',626],['pOrigin',628],
    ['pFaction',630],['pRouteWp',640],['pCityPOI',650]].forEach(function(p){
     map.createPane(p[0]); map.getPane(p[0]).style.zIndex=p[1];
@@ -540,6 +575,35 @@
       updScale(); updTier();
     },180);
   });
+
+  // ---- Mac trackpad gestures (spec WW): Google/Apple-Maps wheel convention ----
+  // Leaflet's default wheel ALWAYS zooms; here trackpad two-finger scroll PANS instead,
+  // while real mouse wheels and macOS pinch (ctrl+wheel) zoom toward the cursor. The
+  // wheelish heuristic mirrors the sim's exactly (coarse/integer/x-less detents = a real
+  // wheel; fine mixed-axis streams = a trackpad). Zoom clamps to the LIVE min/max so the
+  // meshed-world dynamic caps hold; panBy honours maxBoundsViscosity on its own.
+  map.scrollWheelZoom.disable();
+  (function(){
+    var mc=map.getContainer();
+    mc.addEventListener('wheel',function(e){
+      e.preventDefault();
+      var dy=e.deltaY,dx=e.deltaX;
+      if(e.deltaMode===1){dy*=33;dx*=33;}else if(e.deltaMode===2){var h=map.getSize().y;dy*=h;dx*=h;}
+      var wheelish=e.deltaMode!==0||(dx===0&&Math.abs(dy)>=60&&Number.isInteger(dy));
+      if(!e.ctrlKey&&!wheelish){map.panBy([e.deltaX,e.deltaY],{animate:false});return;}
+      var k=e.ctrlKey?0.018:0.0045;                 // pinch ~4x hotter than a wheel detent
+      var step=Math.max(-1,Math.min(1,-dy*k));       // wheel up (dy<0) → zoom in
+      if(!step)return;
+      var z=map.getZoom(),
+          target=Math.max(map.getMinZoom(),Math.min(map.getMaxZoom(),z+step));
+      if(Math.abs(target-z)<1e-4)return;
+      var r=mc.getBoundingClientRect(),
+          ll=map.containerPointToLatLng(L.point(e.clientX-r.left,e.clientY-r.top));
+      var sn=map.options.zoomSnap; map.options.zoomSnap=0;  // preserve the fractional zoom
+      map.setZoomAround(ll,target,{animate:false});
+      map.options.zoomSnap=sn;
+    },{passive:false});
+  })();
 
   // ---- helpers ----
   function esc(s){return String(s==null?'':s)
@@ -842,6 +906,121 @@
         poly.on('mouseover',function(){poly.setStyle({fillOpacity:.42,weight:2.4});});
         poly.on('mouseout',function(){poly.setStyle({fillOpacity:.22,weight:1.5});});
         poly.on('click',function(){openRealm(name);});
+        g.addLayer(poly);
+      });
+    });
+    return g;
+  }
+
+  // ================= Ways & Waters (spec WW): lanes, roads, district borders ==========
+  // Sea lanes are conjectural ferry idioms ('invented'); named ways + district borders
+  // are traced from the atlas ('trace'). All three are WORLD-tier overlays that fade out
+  // with the rest as the reader descends to street tier (map-tier-d / chart-mode CSS).
+
+  // ---- sea lanes: fine dashed water-tone routes + a heading cog at the midpoint ----
+  function openLane(lane){
+    var h='<span class="card-type">Sea Lane</span>'+
+      '<h2 class="card-name">'+esc(lane.name)+provStar('invented')+'</h2>'+
+      provBlock('invented');
+    if(lane.ends&&lane.ends.length){
+      var parts=lane.ends.map(function(en){          // fly-to only where the port is charted
+        return MREF[fold(en)]?'<a class="co-link" data-lend="'+esc(en)+'">'+esc(en)+'</a>':esc(en);});
+      h+='<div class="co-line">Between '+parts.join(' and ')+'.</div>';
+    }
+    h+='<div class="card-lore"><p>'+esc(lane.note||'')+'</p></div>';
+    showPanel(h);
+    Array.prototype.forEach.call(panelBody.querySelectorAll('[data-lend]'),function(el){
+      el.addEventListener('click',function(){openPlaceByName(el.getAttribute('data-lend'));});});
+  }
+  function buildSeaLanes(data){
+    if(!data||!data.length)return null;
+    var g=L.layerGroup();
+    data.forEach(function(lane){
+      if(!lane.pts||lane.pts.length<2)return;
+      var sm=crSpline(lane.pts,16);
+      var latlngs=sm.map(function(c){return px(c[0],c[1]);});
+      var line=L.polyline(latlngs,{className:'lane-line',color:'#3a6478',weight:1.6,
+        opacity:.6,dashArray:'2 7',lineJoin:'round',lineCap:'round',pane:'pLane'});
+      line.bindTooltip(esc(lane.name),{sticky:true,className:'realm-tip',direction:'top'});
+      line.on('click',(function(l){return function(){openLane(l);};})(lane));
+      g.addLayer(line);
+      var mi=Math.floor(sm.length/2),
+          a=sm[Math.max(0,mi-1)],b=sm[Math.min(sm.length-1,mi+1)];
+      var ang=Math.atan2(b[0]-a[0],-(b[1]-a[1]))*180/Math.PI;   // clockwise from up, screen y-down
+      var icon=L.divIcon({className:'',iconSize:[18,18],iconAnchor:[9,9],
+        html:'<div class="lane-cog"><span style="display:block;transform:rotate('+
+          ang.toFixed(1)+'deg)">⛵︎</span></div>'});
+      var mk=L.marker(px(sm[mi][0],sm[mi][1]),{icon:icon,title:lane.name,pane:'pLane',riseOnHover:true});
+      mk.bindTooltip(esc(lane.name),{direction:'top',offset:[0,-9],className:'mk-tip',opacity:1});
+      mk.on('click',(function(l){return function(){openLane(l);};})(lane));
+      g.addLayer(mk);
+    });
+    return g;
+  }
+
+  // ---- named ways: warm ink-brown highway with a pale casing + a mid-line label chip ----
+  function openWay(way){
+    var h='<span class="card-type">Road</span>'+
+      '<h2 class="card-name">'+esc(way.name)+'</h2>'+
+      provBlock('trace')+
+      '<div class="card-lore"><p>'+esc(way.note||'')+'</p></div>';
+    if(way.wikiSlug)h+='<a class="card-wiki" href="'+esc(slugUrl(way.wikiSlug))+
+      '" target="_blank" rel="noopener">Read on the wiki →</a>';
+    showPanel(h);
+  }
+  function buildNamedWays(data){
+    if(!data||!data.length)return null;
+    var g=L.layerGroup();
+    data.forEach(function(way){
+      if(!way.pts||way.pts.length<2)return;
+      var sm=crSpline(way.pts,16);
+      var latlngs=sm.map(function(c){return px(c[0],c[1]);});
+      L.polyline(latlngs,{color:'#efe6cf',weight:5,opacity:.85,lineJoin:'round',
+        lineCap:'round',pane:'pWay',interactive:false}).addTo(g);   // casing
+      var road=L.polyline(latlngs,{color:'#6a4326',weight:2.4,opacity:.92,lineJoin:'round',
+        lineCap:'round',pane:'pWay'});
+      road.bindTooltip(esc(way.name),{sticky:true,className:'realm-tip',direction:'top'});
+      road.on('click',(function(w){return function(){openWay(w);};})(way));
+      g.addLayer(road);
+      var mi=Math.floor(sm.length/2);
+      var icon=L.divIcon({className:'',iconSize:null,iconAnchor:[0,0],
+        html:'<span class="way-label">'+esc(way.name)+'</span>'});
+      var mk=L.marker(px(sm[mi][0],sm[mi][1]),{icon:icon,title:way.name,pane:'pWay'});
+      mk.on('click',(function(w){return function(){openWay(w);};})(way));
+      g.addLayer(mk);
+    });
+    return g;
+  }
+
+  // ---- minor-region borders: dotted strokes (atlas idiom), traced + approximate ----
+  function openDistrict(name,note){
+    var page=WIKI[name]||WIKIFOLD[fold(name)]||null;   // exact/fold only — no fuzzy attach
+    var h='<span class="card-type">District</span>'+
+      '<h2 class="card-name">'+esc(name)+'</h2>'+provBlock('trace');
+    if(page){
+      var body=cleanWiki(page.content,page.title);
+      h+='<div class="card-lore">'+(body||'<p>'+esc(note||'')+'</p>')+'</div>';
+      h+='<a class="card-wiki" href="'+esc(wikiUrl(page))+'" target="_blank" rel="noopener">Read on the wiki →</a>';
+    }else h+='<div class="card-lore"><p>'+esc(note||'')+'</p></div>';
+    showPanel(h);
+  }
+  function buildDistricts(gj){
+    if(!gj||!gj.features||!gj.features.length)return null;
+    var g=L.layerGroup();
+    gj.features.forEach(function(f){
+      var name=(f.properties&&f.properties.name)||'',
+          note=(f.properties&&f.properties.note)||'',geom=f.geometry;
+      if(!geom)return;
+      var polys=geom.type==='MultiPolygon'?geom.coordinates:
+                geom.type==='Polygon'?[geom.coordinates]:[];
+      polys.forEach(function(rings){
+        var latlngs=rings.map(function(ring){return ring.map(function(c){return px(c[0],c[1]);});});
+        var poly=L.polygon(latlngs,{color:'#6a5c48',weight:1.2,opacity:.85,dashArray:'2 5',
+          fill:true,fillColor:'#6a5c48',fillOpacity:.03,pane:'pDistrict'});   // barely-there fill
+        if(name)poly.bindTooltip(esc(name),{sticky:true,className:'realm-tip',direction:'top'});
+        poly.on('mouseover',function(){poly.setStyle({weight:2,fillOpacity:.08});});
+        poly.on('mouseout',function(){poly.setStyle({weight:1.2,fillOpacity:.03});});
+        poly.on('click',(function(nm,nt){return function(){openDistrict(nm,nt);};})(name,note));
         g.addLayer(poly);
       });
     });
@@ -1203,10 +1382,12 @@
   // ---- provenance rendering (spec §C) ----
   function provBlock(prov,annals){
     if(prov==='canon')return '<div class="prov-arch">⚜ From the campaign archives</div>';
+    if(prov==='trace')return '<div class="prov-banner trace">⌖ traced from the atlas — course approximate.</div>';
     if(annals)return '<div class="prov-banner annals">✶ per the Annals’ telling.</div>';
     return '<div class="prov-banner">✶ Conjectural — a placeholder until the chronicles say more.</div>';
   }
-  function provStar(prov){return (prov&&prov!=='canon')?'<sup class="prov-star">✶</sup>':'';}
+  // only pure invention wears the ✶; 'trace' (surveyed-but-approximate) does not.
+  function provStar(prov){return prov==='invented'?'<sup class="prov-star">✶</sup>':'';}
 
   // ---- overlay cache (LRU) ----
   function lruPut(k,v){
@@ -1322,10 +1503,34 @@
     var dest=px(a.atlasX,a.atlasY);
     if(poiN){var wc=worldPOICoord(key,poiN); if(wc)dest=wc;}
     else closePanel();
-    map.flyTo(dest,target,{duration:1.4,easeLinearity:.25});
     setHash('#chart='+encodeURIComponent(key)+(poiN?'&poi='+poiN:''));
     if(poiN)map.once('moveend',function(){var p=poiByN(key,poiN);if(p)openWorldPOI(key,p);});
+    // Kick the fly one paint frame late so a just-generated 2048² plan's synchronous
+    // draw/JPEG-encode doesn't share the animation's opening tick — a cheap smoothness
+    // hedge. The GUARANTEE that a shared #chart=City link never strands the reader at
+    // the world view is ensureArrival() below, armed UNCONDITIONALLY (never nested in
+    // the rAF): flyTo is rAF-driven, so on a backgrounded/throttled tab the fly can
+    // never step — a net inside rAF would never arm either. setView(animate:false)
+    // needs no rAF, so an independent timer is what actually lands the view.
+    requestAnimationFrame(function(){map.flyTo(dest,target,{duration:1.4,easeLinearity:.25});});
+    ensureArrival(dest,target,0);
     return true;
+  }
+
+  // Safety net for the deep-zoom fly (see flyIntoCity): if the rAF-timed animation
+  // stalls or leaves the map in a stranded zoom-animation state, hard-land the view so
+  // a #chart=City deep link is never a coin-flip between arriving and marooning the
+  // reader at the world view with no error.
+  function ensureArrival(dest,target,tries){
+    setTimeout(function(){
+      if(CHART.on)return;                         // reader left for modal chart mode
+      if(map.getZoom()>=target-0.5){worldCityUpdate();return;} // arrived (allow easing slack)
+      map._animatingZoom=false;                   // clear a stranded zoom-anim flag, else _tryAnimatedZoom makes setView silently no-op
+      if(map._mapPane)map._mapPane.classList.remove('leaflet-zoom-anim'); // drop a lingering transition class before the hard transform
+      map.setView(dest,target,{animate:false});   // synchronous reset (no rAF) → fires moveend → the pending POI handler still catches it
+      worldCityUpdate();
+      if(map.getZoom()<target-0.5&&tries<2)ensureArrival(dest,target,tries+1);
+    },1700);
   }
 
   // ---- generator hook (spec §B calls this): register a real overlay or a canvas ----
@@ -1931,7 +2136,10 @@
     getJSON('data/chart-pois.json'),
     getJSON('data/location-art.json'),
     getJSON('data/city-anchors.json'),
-    getJSON('data/city-traits.json')
+    getJSON('data/city-traits.json'),
+    getJSON('data/sea-lanes.json'),
+    getJSON('data/named-ways.json'),
+    getJSON('data/minor-regions.geojson')
   ]).then(function(res){
     var markers=res[0]||[], wiki=res[1]||[], reviews=res[2]||[],
         route=res[3]||[], realms=res[4];
@@ -1974,13 +2182,27 @@
     overlays[' ⋯ Origin trails']=companyTrails;
     overlays['⛊ Faction seats']=factionBadges;
 
+    // ---- Ways & Waters (spec WW): master + three toggleable sublayers ----
+    var seaLanes=buildSeaLanes(res[12]);
+    var namedWays=buildNamedWays(res[13]);
+    var districtBorders=buildDistricts(res[14]);
+    var wwMaster=L.layerGroup();          // master handle (toggles lanes+ways together)
+    wwMaster.addTo(map);
+    if(seaLanes)seaLanes.addTo(map);      // default ON
+    if(namedWays)namedWays.addTo(map);    // default ON
+    // district borders stay OFF by default (specialist detail) — registered, not added
+    overlays['≈ Ways & Waters']=wwMaster;
+    if(seaLanes)overlays[' ⛵ Sea lanes']=seaLanes;
+    if(namedWays)overlays[' ⌖ Named ways']=namedWays;
+    if(districtBorders)overlays[' ◌ District borders']=districtBorders;
+
     addEraControl();
     layersCtrl=L.control.layers(null,overlays,{collapsed:window.innerWidth<=760,position:'topright'});
     layersCtrl.addTo(map);
     (function(){var lc=layersCtrl.getContainer&&layersCtrl.getContainer();
       if(!lc)return;var lg=L.DomUtil.create('div','prov-legend',
         lc.querySelector('.leaflet-control-layers-list')||lc);
-      lg.innerHTML='✶ = conjecture, refined as the archives grow.';})();
+      lg.innerHTML='✶ = conjecture · ⌖ = traced from the atlas, refined as the archives grow.';})();
     addJourneyControl();
     addScaleControl();
     addCompanyDock();                     // after scale → strip sits above the scale bar
@@ -2005,6 +2227,31 @@
       clearTimeout(_mSync);_mSync=setTimeout(function(){coordMaster(true);},0);}});
     map.on('overlayremove',function(e){if(e.layer===companyMaster){
       clearTimeout(_mSync);_mSync=setTimeout(function(){coordMaster(false);},0);}});
+
+    // Ways & Waters master mirrors the Company pattern: toggling it drives lanes + ways
+    // (districts stay off unless the reader opts in). Same deferred reconcile so it runs
+    // after Control.Layers finishes its own add/remove loop.
+    var _wwDistrictWasOn=false;   // remember reader's opt-in district state across a master OFF→ON
+    function coordWW(on){
+      if(on){
+        if(seaLanes&&!map.hasLayer(seaLanes))seaLanes.addTo(map);
+        if(namedWays&&!map.hasLayer(namedWays))namedWays.addTo(map);
+        if(_wwDistrictWasOn&&districtBorders&&!map.hasLayer(districtBorders))districtBorders.addTo(map);
+      }else{
+        // capture whether district borders were on BEFORE we remove them, so the master
+        // OFF→ON round trip restores them (lanes/ways always round-trip; districts are opt-in).
+        _wwDistrictWasOn=!!(districtBorders&&map.hasLayer(districtBorders));
+        if(seaLanes&&map.hasLayer(seaLanes))map.removeLayer(seaLanes);
+        if(namedWays&&map.hasLayer(namedWays))map.removeLayer(namedWays);
+        if(districtBorders&&map.hasLayer(districtBorders))map.removeLayer(districtBorders);
+      }
+      if(layersCtrl&&layersCtrl._update)layersCtrl._update();
+    }
+    var _wSync;
+    map.on('overlayadd',function(e){if(e.layer===wwMaster){
+      clearTimeout(_wSync);_wSync=setTimeout(function(){coordWW(true);},0);}});
+    map.on('overlayremove',function(e){if(e.layer===wwMaster){
+      clearTimeout(_wSync);_wSync=setTimeout(function(){coordWW(false);},0);}});
 
     updTier(); updScale(); worldOpacityUpdate(); worldCityUpdate(); handleHash();
     window.addEventListener('hashchange',handleHash);

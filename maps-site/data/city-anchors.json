@@ -195,5 +195,19 @@
    "side": "E",
    "distPx": 2
   }
+ },
+ "Sjefenhold": {
+  "atlasX": 2050.0,
+  "atlasY": 30.0,
+  "kind": "ruin",
+  "harbor": false,
+  "sea": null
+ },
+ "Kolens": {
+  "atlasX": 2162.0,
+  "atlasY": 54.0,
+  "kind": "town",
+  "harbor": false,
+  "sea": null
  }
 }

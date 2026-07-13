@@ -1,142 +1,232 @@
 {
- "_readme": "Refinement surface for the city generator (see spec-meshed-world.md §B/§C). Hand-edit any field to upgrade a city's generated plan without touching code: harbor/sea steer the shoreline, kind steers wall/extent, patron adds a temple POI, races/canonNotes are flavor text surfaced on cards. prov 'canon' = stated by a wiki page or the campaign chronicles directly about this place; prov 'invented' = either a total fabrication (generated inn names, most patrons) or a fact inferred from the Annals' own telling rather than the wiki (per the spec, these still count as invented and get the '✶ per the Annals' telling' banner). Sources: data/city-anchors.json, data/wiki-places.json, scratchpad/epeshu-canon.md, scratchpad/party-sources.md, scratchpad/session-logs.md.",
-
+ "_readme": "Refinement surface for the city generator (see spec-meshed-world.md §B/§C). Hand-edit any field to upgrade a city's generated plan without touching code: harbor/sea steer the shoreline, kind steers wall/extent, patron adds a temple POI, races/canonNotes are flavor text surfaced on cards. prov 'canon' = stated by a wiki page or the campaign chronicles directly about this place; prov 'invented' = either a total fabrication (generated inn names, most patrons) or a fact inferred from the Annals' own telling rather than the wiki (per the spec, these still count as invented and get the '✶ per the Annals' telling' banner). A race entry's prov covers only the PRESENCE of that people (canon when a wiki Inhabitants line names them); its optional 'noteProv' separately marks the reasoning in 'note' — set 'noteProv':'invented' when the note explains *why* they are present with detail the sources never give (e.g. Drāmūz: the wiki lists Horatines/Trogmunders but never says why). When 'noteProv' is absent the note inherits the entry's prov. Any future card rendering MUST honor noteProv per-note so an invented note earns its ✶ even on a canon-present race. Sources: data/city-anchors.json, data/wiki-places.json, scratchpad/epeshu-canon.md, scratchpad/party-sources.md, scratchpad/session-logs.md.",
  "Epēshu": {
   "name": "Epēshu",
   "kind": "capital",
   "harbor": true,
-  "sea": { "side": "SSW", "distPx": 10 },
-  "patron": { "name": "Thobrauk", "prov": "canon" },
+  "sea": {
+   "side": "SSW",
+   "distPx": 10
+  },
+  "patron": {
+   "name": "Thobrauk",
+   "prov": "canon"
+  },
   "wall": true,
   "races": [
-   { "name": "Patrin", "prov": "canon", "note": "The city's founding and ruling people." },
-   { "name": "Trogmunders", "prov": "canon", "note": "A sizeable population emigrated here from the Home Islands." }
+   {
+    "name": "Patrin",
+    "prov": "canon",
+    "note": "The city's founding and ruling people."
+   },
+   {
+    "name": "Trogmunders",
+    "prov": "canon",
+    "note": "A sizeable population emigrated here from the Home Islands."
+   }
   ],
   "canonNotes": [
-   { "text": "Called the Marble City; one of the eight Māgosh, and rules the Marble Gulf.", "prov": "canon" },
-   { "text": "A crumbling inner wall divides the older, richer inner city from its poorer outer districts.", "prov": "canon" },
-   { "text": "Harbor splits informally into Wood Quay (old, rotted, smugglers) and Whitestreet (marble-trade, modern).", "prov": "canon" },
-   { "text": "The Blue Temple, dedicated to Thobrauk, stands at the edge of Wood Quay.", "prov": "canon" },
-   { "text": "The Epēshīn Forum is the city's civic heart, ringed by the Curia, the Relkhonak, and the Māmban gardens.", "prov": "canon" },
-   { "text": "Rose to replace Lepon as the Marble Gulf's leading Māgos after the Sack of Lepon (745 A.B.).", "prov": "canon" },
-   { "text": "The party arrived here in the winter of 1374 A.B. and entered the Thūkīn Amphitheater's Games.", "prov": "canon" }
+   {
+    "text": "Called the Marble City; one of the eight Māgosh, and rules the Marble Gulf.",
+    "prov": "canon"
+   },
+   {
+    "text": "A crumbling inner wall divides the older, richer inner city from its poorer outer districts.",
+    "prov": "canon"
+   },
+   {
+    "text": "Harbor splits informally into Wood Quay (old, rotted, smugglers) and Whitestreet (marble-trade, modern).",
+    "prov": "canon"
+   },
+   {
+    "text": "The Blue Temple, dedicated to Thobrauk, stands at the edge of Wood Quay.",
+    "prov": "canon"
+   },
+   {
+    "text": "The Epēshīn Forum is the city's civic heart, ringed by the Curia, the Relkhonak, and the Māmban gardens.",
+    "prov": "canon"
+   },
+   {
+    "text": "Rose to replace Lepon as the Marble Gulf's leading Māgos after the Sack of Lepon (745 A.B.).",
+    "prov": "canon"
+   },
+   {
+    "text": "The party arrived here in the winter of 1374 A.B. and entered the Thūkīn Amphitheater's Games.",
+    "prov": "canon"
+   }
   ],
-  "inn": { "name": "The Black Barghest", "prov": "canon" }
+  "inn": {
+   "name": "The Black Barghest",
+   "prov": "canon"
+  }
  },
-
  "Sokundo": {
   "name": "Sokundo",
   "kind": "town",
   "harbor": true,
-  "sea": { "side": "WSW", "distPx": 2 },
-  "patron": { "name": "Laegos", "prov": "invented" },
+  "sea": {
+   "side": "WSW",
+   "distPx": 2
+  },
+  "patron": {
+   "name": "Laegos",
+   "prov": "invented"
+  },
   "wall": true,
   "races": [],
   "canonNotes": [],
   "inn": null
  },
-
  "Kanae": {
   "name": "Kanae",
   "kind": "village",
   "harbor": true,
-  "sea": { "side": "E", "distPx": 5 },
-  "patron": { "name": "Kurūgan", "prov": "invented" },
+  "sea": {
+   "side": "E",
+   "distPx": 5
+  },
+  "patron": {
+   "name": "Kurūgan",
+   "prov": "invented"
+  },
   "wall": false,
   "races": [],
   "canonNotes": [],
   "inn": null
  },
-
  "Tamaron": {
   "name": "Tamaron",
   "kind": "town",
   "harbor": true,
-  "sea": { "side": "E", "distPx": 2 },
-  "patron": { "name": "Laegos", "prov": "invented" },
+  "sea": {
+   "side": "E",
+   "distPx": 2
+  },
+  "patron": {
+   "name": "Laegos",
+   "prov": "invented"
+  },
   "wall": true,
   "races": [],
   "canonNotes": [
-   { "text": "One of the Māgosh of the Leponnian Peninsula, alongside Drāmūz and Epēshu.", "prov": "canon" },
-   { "text": "Remained loyal to the deposed empress Gimīlahar during the Nepotic Conspiracy, sheltering her forces in secret.", "prov": "canon" },
-   { "text": "The Road that Walks with the Sun runs through Tamaron on its way from Drāmūz to Cyrikon.", "prov": "canon" }
+   {
+    "text": "One of the Māgosh of the Leponnian Peninsula, alongside Drāmūz and Epēshu.",
+    "prov": "canon"
+   },
+   {
+    "text": "Remained loyal to the deposed empress Gimīlahar during the Nepotic Conspiracy, sheltering her forces in secret.",
+    "prov": "canon"
+   },
+   {
+    "text": "The Road that Walks with the Sun runs through Tamaron on its way from Drāmūz to Cyrikon.",
+    "prov": "canon"
+   }
   ],
   "inn": null
  },
-
  "Mago": {
   "name": "Mago",
   "kind": "village",
   "harbor": true,
-  "sea": { "side": "N", "distPx": 5 },
-  "patron": { "name": "Thobrauk", "prov": "invented" },
+  "sea": {
+   "side": "N",
+   "distPx": 5
+  },
+  "patron": {
+   "name": "Thobrauk",
+   "prov": "invented"
+  },
   "wall": false,
   "races": [],
   "canonNotes": [],
   "inn": null
  },
-
  "Aldorūs": {
   "name": "Aldorūs",
   "kind": "village",
   "harbor": false,
-  "sea": { "side": "NE", "distPx": 77 },
-  "patron": { "name": "Arbezmara", "prov": "invented" },
+  "sea": {
+   "side": "NE",
+   "distPx": 77
+  },
+  "patron": {
+   "name": "Arbezmara",
+   "prov": "invented"
+  },
   "wall": false,
   "races": [],
   "canonNotes": [
-   { "text": "Sits well inland on the Leponnian plateau, out of sight of the sea entirely.", "prov": "invented" }
+   {
+    "text": "Sits well inland on the Leponnian plateau, out of sight of the sea entirely.",
+    "prov": "invented"
+   }
   ],
   "inn": null
  },
-
  "Rēketis": {
   "name": "Rēketis",
   "kind": "village",
   "harbor": false,
-  "sea": { "side": "WSW", "distPx": 36 },
-  "patron": { "name": "Doremil", "prov": "invented" },
+  "sea": {
+   "side": "WSW",
+   "distPx": 36
+  },
+  "patron": {
+   "name": "Doremil",
+   "prov": "invented"
+  },
   "wall": false,
   "races": [],
   "canonNotes": [],
   "inn": null
  },
-
  "Āglaz": {
   "name": "Āglaz",
   "kind": "village",
   "harbor": true,
-  "sea": { "side": "S", "distPx": 11 },
-  "patron": { "name": "Arbezmara", "prov": "invented" },
+  "sea": {
+   "side": "S",
+   "distPx": 11
+  },
+  "patron": {
+   "name": "Arbezmara",
+   "prov": "invented"
+  },
   "wall": false,
   "races": [],
   "canonNotes": [],
   "inn": null
  },
-
  "Mīth Mīrdak": {
   "name": "Mīth Mīrdak",
   "kind": "village",
   "harbor": true,
-  "sea": { "side": "SW", "distPx": 8 },
-  "patron": { "name": "Kurūgan", "prov": "invented" },
+  "sea": {
+   "side": "SW",
+   "distPx": 8
+  },
+  "patron": {
+   "name": "Kurūgan",
+   "prov": "invented"
+  },
   "wall": false,
   "races": [],
   "canonNotes": [],
   "inn": null
  },
-
  "Pharzeban": {
   "name": "Pharzeban",
   "kind": "village",
   "harbor": false,
-  "sea": { "side": "WNW", "distPx": 59 },
+  "sea": {
+   "side": "WNW",
+   "distPx": 59
+  },
   "wall": false,
   "races": [],
   "canonNotes": [],
   "inn": null
  },
-
  "Sardil": {
   "name": "Sardil",
   "kind": "town",
@@ -145,127 +235,190 @@
   "wall": true,
   "races": [],
   "canonNotes": [
-   { "text": "Marks the inland edge of Leponnia Tanrīn, the imperial province of Tamaron's plateau country.", "prov": "canon" }
+   {
+    "text": "Marks the inland edge of Leponnia Tanrīn, the imperial province of Tamaron's plateau country.",
+    "prov": "canon"
+   }
   ],
   "inn": null
  },
-
  "Perōna": {
   "name": "Perōna",
   "kind": "village",
   "harbor": false,
-  "sea": { "side": "ENE", "distPx": 63 },
+  "sea": {
+   "side": "ENE",
+   "distPx": 63
+  },
   "wall": false,
   "races": [],
   "canonNotes": [],
   "inn": null
  },
-
  "Tarap": {
   "name": "Tarap",
   "kind": "village",
   "harbor": false,
-  "sea": { "side": "S", "distPx": 2 },
+  "sea": {
+   "side": "S",
+   "distPx": 2
+  },
   "wall": false,
   "races": [],
   "canonNotes": [],
   "inn": null
  },
-
  "Thalbaen": {
   "name": "Thalbaen",
   "kind": "village",
   "harbor": false,
-  "sea": { "side": "SW", "distPx": 8 },
+  "sea": {
+   "side": "SW",
+   "distPx": 8
+  },
   "wall": false,
   "races": [],
   "canonNotes": [],
   "inn": null
  },
-
  "Drāmūz": {
   "name": "Drāmūz",
   "kind": "town",
   "harbor": true,
-  "sea": { "side": "SW", "distPx": 6 },
+  "sea": {
+   "side": "SW",
+   "distPx": 6
+  },
   "wall": true,
   "races": [
-   { "name": "Patrin", "prov": "canon", "note": "The city's founding people." },
-   { "name": "Horatines", "prov": "canon", "note": "Drawn by trade across the nearby Azrāken." },
-   { "name": "Trogmunders", "prov": "canon", "note": "Present as in most White Sea ports." }
+   {
+    "name": "Patrin",
+    "prov": "canon",
+    "note": "The city's founding people.",
+    "noteProv": "invented"
+   },
+   {
+    "name": "Horatines",
+    "prov": "canon",
+    "note": "Drawn by trade across the nearby Azrāken.",
+    "noteProv": "invented"
+   },
+   {
+    "name": "Trogmunders",
+    "prov": "canon",
+    "note": "Present as in most White Sea ports.",
+    "noteProv": "invented"
+   }
   ],
   "canonNotes": [
-   { "text": "The wealthiest of the eight Māgosh, ringed by tin, gold, and silver mines that fund its public works and fleets.", "prov": "canon" },
-   { "text": "Its coinage is held to be the strongest in the Wide World; the city is known for bankers and creditors.", "prov": "canon" },
-   { "text": "The Road that Walks with the Sun begins here, running a thousand leagues to Nub-Nefer.", "prov": "canon" }
+   {
+    "text": "The wealthiest of the eight Māgosh, ringed by tin, gold, and silver mines that fund its public works and fleets.",
+    "prov": "canon"
+   },
+   {
+    "text": "Its coinage is held to be the strongest in the Wide World; the city is known for bankers and creditors.",
+    "prov": "canon"
+   },
+   {
+    "text": "The Road that Walks with the Sun begins here, running a thousand leagues to Nub-Nefer.",
+    "prov": "canon"
+   }
   ],
   "inn": null
  },
-
  "Medem": {
   "name": "Medem",
   "kind": "village",
   "harbor": false,
-  "sea": { "side": "SW", "distPx": 48 },
+  "sea": {
+   "side": "SW",
+   "distPx": 48
+  },
   "wall": false,
   "races": [],
   "canonNotes": [],
   "inn": null
  },
-
  "Shengo": {
   "name": "Shengo",
   "kind": "village",
   "harbor": false,
-  "sea": { "side": "E", "distPx": 2 },
+  "sea": {
+   "side": "E",
+   "distPx": 2
+  },
   "wall": false,
   "races": [],
   "canonNotes": [],
   "inn": null
  },
-
  "Kardunash": {
   "name": "Kardunash",
   "kind": "town",
   "harbor": true,
-  "sea": { "side": "W", "distPx": 14 },
+  "sea": {
+   "side": "W",
+   "distPx": 14
+  },
   "wall": true,
   "races": [],
   "canonNotes": [
-   { "text": "Traditionally marks Leponnia's eastern border, on the line drawn between Kardunash and Nhagi.", "prov": "canon" }
+   {
+    "text": "Traditionally marks Leponnia's eastern border, on the line drawn between Kardunash and Nhagi.",
+    "prov": "canon"
+   }
   ],
   "inn": null
  },
-
  "Rhup": {
   "name": "Rhup",
   "kind": "village",
   "harbor": false,
-  "sea": { "side": "N", "distPx": 16 },
+  "sea": {
+   "side": "N",
+   "distPx": 16
+  },
   "wall": false,
   "races": [],
   "canonNotes": [],
   "inn": null
  },
-
  "Lepon the Old": {
   "name": "Lepon the Old",
   "kind": "ruin",
   "harbor": false,
-  "sea": { "side": "E", "distPx": 2 },
+  "sea": {
+   "side": "E",
+   "distPx": 2
+  },
   "wall": false,
   "races": [
-   { "name": "Patrin", "prov": "canon", "note": "Its people before the sack; some fled to rival Epēshu after." }
+   {
+    "name": "Patrin",
+    "prov": "canon",
+    "note": "Its people before the sack; some fled to rival Epēshu after."
+   }
   ],
   "canonNotes": [
-   { "text": "Once a Māgos of the Patrin Empire, seated on the coast and on a nearby island fortress half a mile offshore.", "prov": "canon" },
-   { "text": "Sacked in 745 A.B. by the empress Gimīlahar, avenging the usurper Tōs-Gither's rebellion; its tallest buildings were burned and Tōs-Gither executed.", "prov": "canon" },
-   { "text": "Never recovered — deserted over time as its people left for Epēshu and its stones were carried off for other buildings.", "prov": "canon" },
-   { "text": "General Pebros of Epēshu's Conservative faction was camped among its ruins as of late 1374 A.B.", "prov": "canon" }
+   {
+    "text": "Once a Māgos of the Patrin Empire, seated on the coast and on a nearby island fortress half a mile offshore.",
+    "prov": "canon"
+   },
+   {
+    "text": "Sacked in 745 A.B. by the empress Gimīlahar, avenging the usurper Tōs-Gither's rebellion; its tallest buildings were burned and Tōs-Gither executed.",
+    "prov": "canon"
+   },
+   {
+    "text": "Never recovered — deserted over time as its people left for Epēshu and its stones were carried off for other buildings.",
+    "prov": "canon"
+   },
+   {
+    "text": "General Pebros of Epēshu's Conservative faction was camped among its ruins as of late 1374 A.B.",
+    "prov": "canon"
+   }
   ],
   "inn": null
  },
-
  "Summarch": {
   "name": "Summarch",
   "kind": "town",
@@ -273,17 +426,32 @@
   "sea": null,
   "wall": true,
   "races": [
-   { "name": "Westermen", "prov": "canon", "note": "Primary inhabitants; seat of the House of Regimen and later King Rennick." }
+   {
+    "name": "Westermen",
+    "prov": "canon",
+    "note": "Primary inhabitants; seat of the House of Regimen and later King Rennick."
+   }
   ],
   "canonNotes": [
-   { "text": "The Allhammers' seat, the Ninth House's own telling: capital of Westerland, built about High Hill and the Stony River.", "prov": "canon" },
-   { "text": "An outer wall rings the old Quarter; a separate inner wall guards the Seat atop High Hill.", "prov": "canon" },
-   { "text": "The Winehall, headquarters of the Allhammers, stands beside the Stony River.", "prov": "canon" },
-   { "text": "Site of the Siege of the Seat (1374 A.B.), where Rennick slew Selwin the Last and was proclaimed King of Westerland — the rebellion that broke the party from the Allhammers.", "prov": "canon" }
+   {
+    "text": "The Allhammers' seat, the Ninth House's own telling: capital of Westerland, built about High Hill and the Stony River.",
+    "prov": "canon"
+   },
+   {
+    "text": "An outer wall rings the old Quarter; a separate inner wall guards the Seat atop High Hill.",
+    "prov": "canon"
+   },
+   {
+    "text": "The Winehall, headquarters of the Allhammers, stands beside the Stony River.",
+    "prov": "canon"
+   },
+   {
+    "text": "Site of the Siege of the Seat (1374 A.B.), where Rennick slew Selwin the Last and was proclaimed King of Westerland — the rebellion that broke the party from the Allhammers.",
+    "prov": "canon"
+   }
   ],
   "inn": null
  },
-
  "Penthelon": {
   "name": "Penthelon",
   "kind": "village",
@@ -291,13 +459,62 @@
   "sea": null,
   "wall": false,
   "races": [
-   { "name": "Lakemen", "prov": "canon", "note": "Current inhabitants of the city." }
+   {
+    "name": "Lakemen",
+    "prov": "canon",
+    "note": "Current inhabitants of the city."
+   }
   ],
   "canonNotes": [
-   { "text": "Greatest city of the Umbadic Empire; originally founded by Lake-Elves before the Patrin conquered it.", "prov": "canon" },
-   { "text": "Set on the northern shore of the Five Fingers, rarely troubled by storm, famine, or drought, with waters rich in fish.", "prov": "canon" },
-   { "text": "Known for its piers.", "prov": "canon" }
+   {
+    "text": "Greatest city of the Umbadic Empire; originally founded by Lake-Elves before the Patrin conquered it.",
+    "prov": "canon"
+   },
+   {
+    "text": "Set on the northern shore of the Five Fingers, rarely troubled by storm, famine, or drought, with waters rich in fish.",
+    "prov": "canon"
+   },
+   {
+    "text": "Known for its piers.",
+    "prov": "canon"
+   }
   ],
   "inn": null
+ },
+ "Sjefenhold": {
+  "name": "Sjefenhold",
+  "kind": "ruin",
+  "harbor": false,
+  "sea": null,
+  "wall": false,
+  "races": [],
+  "canonNotes": [
+   {
+    "text": "Frösted Flækes' home village, and namesake of the Sjefenhold Special — destroyed some years past; the tale of its fall is his to tell. Its place on the chart is approximate.",
+    "prov": "canon"
+   },
+   {
+    "text": "Nearby stood Brandvik the Butcher's old house, which every child in the village believed haunted.",
+    "prov": "canon"
+   }
+  ]
+ },
+ "Kolens": {
+  "name": "Kolens",
+  "kind": "town",
+  "harbor": false,
+  "sea": null,
+  "wall": false,
+  "races": [],
+  "inn": {
+   "name": "The Kolens Connection",
+   "prov": "canon"
+  },
+  "canonNotes": [
+   {
+    "text": "A bustling riverside city in Diapremon, a country the atlas does not chart — its place here is approximate. Frösted Flækes was a renowned chef at its tavern, the Kolens Connection, famous for knife-throwing tricks between courses.",
+    "prov": "canon"
+   }
+  ]
  }
 }

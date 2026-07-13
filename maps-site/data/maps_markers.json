@@ -196,5 +196,17 @@
   "x": 1344,
   "y": 1769,
   "name": "Drāmūz"
+ },
+ {
+  "type": "Settlements",
+  "x": 2050.0,
+  "y": 30.0,
+  "name": "Sjefenhold"
+ },
+ {
+  "type": "Settlements",
+  "x": 2162.0,
+  "y": 54.0,
+  "name": "Kolens"
  }
 ]

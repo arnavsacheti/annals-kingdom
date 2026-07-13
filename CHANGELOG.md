@@ -4,6 +4,25 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.8.0-alpha.1] — 2026-07-13
+- The meshed world: one continuous zoom from continent to alleyway — the atlas fades
+  beneath you into real city plans (Epēshu with its 19 legend POIs, the Summarch
+  sketch) or seeded canon-informed generated plans for every other anchored town
+  (walls, gates, quays on true coastal bearings, ruin mode for Lepon), with dynamic
+  zoom depth, an "uncharted at this scale" treatment in open country, and honest
+  provenance everywhere: ⚜ archives / ⌖ traced / ✶ conjecture
+- Ways & Waters: four sea lanes with cog glyphs, the Road that Walks with the Sun and
+  the East-West Road as traced highways, seven Leponnian district borders (dotted,
+  off by default), all fading out on descent
+- Mac trackpad on the atlas: two-finger scroll pans, pinch and mouse wheels zoom
+  (mirrors the sim); host-aware Sim link (works on Pages/localhost)
+- Player canon: Sjefenhold (Frösted's ruined home village) and Kolens in Diapremon
+  with the Kolens Connection drawn into its generated plan; Frösted's card carries
+  the public arc of his backstory
+- Fixes from review: deep-link zoom stall (Leaflet animation stranding), Gulf
+  Crossing lane rerouted off the Mīth Mīrdak landmass, Ways master-toggle symmetry,
+  Drāmūz provenance mislabel, retina chart tiles at max zoom
+
 ## [0.7.1-alpha.3] — 2026-07-13
 - Mac trackpad gestures in the sim now follow the Apple/Google Maps convention:
   two-finger scroll PANS (pan previously had no gesture — only right-drag);
