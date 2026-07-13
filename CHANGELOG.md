@@ -4,6 +4,15 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.8.2-alpha.1] — 2026-07-13
+- Generated city plans now meld with the atlas: coastlines derived from the actual
+  map pixels beneath each footprint (printed labels filtered out; quays ray-cast onto
+  the true waterline), a parchment wash quiets the magnified ink under every plan
+  (real charts included), and a seeded irregular vignette dissolves the plan edges —
+  no more floating squares
+- Mobile emulation sweep: atlas verified at five form factors (320px–iPad, portrait
+  and landscape, DPR 2–3) with zero overflow and correct panel modes; two nits queued
+
 ## [0.8.1-alpha.1] — 2026-07-13
 - Every canon point is now visible: off-chart markers (Far North, Fell Mountains,
   Hoarland, Moonless Lands) pin to the map's edge with a direction chevron and

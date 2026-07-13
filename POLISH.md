@@ -10,23 +10,24 @@ non-conflicting item instead.
 
 ## Queue
 
-- [ ] **Terrain continuity (USER FLAG)** — generated plans must MELD with the atlas
-  under them, not float over it. (a) Derive each plan's land/water from the atlas
-  pixels beneath its footprint: sample the atlas tile region around the anchor,
-  classify land vs water by tint (the warmth threshold trick from the terrain lab),
-  and build the plan's land blob + coastline FROM that mask so the drawn coast
-  continues through the plan at the right angle and curve — replace the synthetic
-  compass-side shoreline. (b) Locally fade the atlas HARDER directly under the
-  footprint (radial patch on top of the global base-opacity ramp) so the magnified
-  printed town label/dot don't fight the plan. (c) Irregular seeded alpha vignette on
-  the canvas edge + tint the surround toward the sampled atlas hue, so the plan
-  dissolves instead of ending in a hard square (seen east of Kardunash/Drāmūz).
 - [ ] **Route continuity (USER FLAG)** — ways and routes should roughly line up with
   the plans: compute per-city approach bearings from every world polyline that ends at
   or passes within the footprint (party route, named ways, sea lanes → data pass over
   their pts), feed them into the generator so gates + main streets open on those
   bearings and quays face the lane; and let a short road/route stub persist into the
   street tier to the city edge so the connection reads visually.
+- [ ] **Cultural & historical texture (USER QUESTION → PASS)** — extend city traits +
+  generator with four canon-grounded dimensions: `biome` (reuse the melding pass's
+  atlas sampling for hue → wooded/arid/frost vegetation + ground tones, plus region-page
+  prose), `condition: thriving|faded|decayed|ruin` (Long Decline canon: faded imperial
+  towns get patched walls, roofless clusters, overgrown lots; Ion Ephel abandoned
+  c. 1060), `hinterlandOf` (Epēshu↔Pēshunor/Lamor influence canon: market-road
+  emphasis toward the port, outlying steads; ports get warehouse belts), and
+  race-informed style (Drāmūz Trogmunder blocks; Penthelon Lakemen stilt piers —
+  canon; Hord longhouses in the cold). Data pass first (sonnet, strict provenance:
+  canon vs ✶), then generator styles (opus). Also add canon anchors: Hordon
+  (1098,1686 — Epēshu's gulf rival), Clickerhall-by-Goblin-Hole (2608,277),
+  the Underwall remnant, Ion Ephel (Far South, ruin, edge-clamped).
 - [ ] **Epēshu roundel doubling** — the real chart has its own printed number badges
   and the engine adds live POI roundels ~28 px offset from them at depth. Suppress the
   seam: either align the engine markers to the printed badges exactly (per-POI pixel
@@ -45,6 +46,11 @@ non-conflicting item instead.
   beside the plan with a bridge or two, quays optional.
 - [ ] **Generated POI variety** — beyond market/temple/gate/docks/inn: seeded wells,
   shrines, yards, gallows, springs; kind-weighted; all ✶.
+- [ ] **Era control on small phones** — "The Atlas Through the Ages" panel eats ~1/3
+  of an iPhone SE viewport; collapse it to a single chip/button that expands on tap
+  below 640px (verified bulky in the 375×667 emulation sweep).
+- [ ] **Notch safe-areas** — add viewport-fit=cover + env(safe-area-inset-*) padding
+  on the header/dock so notched phones in landscape don't clip controls.
 - [ ] **Trackpad gesture feel** — after real-finger feedback: tune the sim's pan gain
   and the atlas handler's pinch sensitivity so both apps feel identical.
 - [ ] **Region-chart zoom-through** — evaluate footprint-anchoring the REGION MapArt
@@ -64,6 +70,13 @@ non-conflicting item instead.
 ## Done
 
 (check items off above and move them here with a one-line result + version)
+
+- [x] **Terrain continuity (USER FLAG)** — generated plans now derive land/water from
+  the atlas pixels beneath them (border-connected flood drops label ink; Kardunash's
+  coast continues on the true west; Sokundo follows the drawn strait over its authored
+  bearing); parchment wash under every plan kills the giant-label fight; seeded
+  irregular vignette ends the hard square edge. Deterministic, zero errors.
+  (v0.8.2-alpha.1)
 
 - [x] **Off-frame points visible (USER FLAG)** — clampToFrame at every render site;
   4 off-chart markers now edge-pinned with direction chevrons + "beyond the charted …"

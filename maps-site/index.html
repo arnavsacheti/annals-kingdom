@@ -371,7 +371,7 @@
   .chart-mode .dock,.chart-mode .scalebar{display:none!important;}
 
   /* ---- meshed world: street tier (spec MW §A) — world clutter fades OUT at depth ---- */
-  .leaflet-pCity-pane{transition:opacity .25s ease;}
+  .leaflet-pCity-pane,.leaflet-pCityWash-pane{transition:opacity .25s ease;}
   .map-tier-d .leaflet-pRealm-pane,.map-tier-d .leaflet-pTrail-pane,
   .map-tier-d .leaflet-pRouteLine-pane,.map-tier-d .leaflet-pWater-pane,
   .map-tier-d .leaflet-pMajor-pane,.map-tier-d .leaflet-pMtn-pane,
@@ -533,7 +533,7 @@
   // WW panes: district strokes just over realm fills; sea lanes + named ways below the
   // party route line, so the campaign's own path reads on top where they cross.
   [['pRealm',410],['pDistrict',411],['pTrail',412],['pLane',413],['pWay',414],
-   ['pRouteLine',415],['pCity',450],['pWater',618],
+   ['pRouteLine',415],['pCityWash',449],['pCity',450],['pWater',618],
    ['pMajor',620],['pMtn',622],['pSettle',624],['pMinor',626],['pOrigin',628],
    ['pFaction',630],['pRouteWp',640],['pCityPOI',650]].forEach(function(p){
     map.createPane(p[0]); map.getPane(p[0]).style.zIndex=p[1];
@@ -1410,7 +1410,7 @@
   // data/city-traits.json (traits) or add a real chart + call registerCityOverlay — no
   // code changes needed here.
   var CITY_ANCHORS={}, CITY_ANCHORS_FOLD={}, CITY_TRAITS={}, CITYREG={};
-  var CITYVIEW={name:null,overlay:null,poiLayer:null,poiOn:false};
+  var CITYVIEW={name:null,overlay:null,poiLayer:null,poiOn:false,wash:null};
   var overlayCache=new Map();               // name -> L.imageOverlay (LRU, cap 6)
 
   function log2(x){return Math.log(x)/Math.LN2;}
@@ -1504,13 +1504,48 @@
       if(m)openPlace(m);else openPlace({name:name});});
   }
 
+  // ---- under-plan parchment wash (terrain continuity §b) ----
+  // A soft radial patch toned to the sampled atlas land hue, ~1.7× the footprint,
+  // in a pane just UNDER pCity, riding the same overlayOpacity ramp — so the
+  // magnified printed town label/dot wash out under any active plan (real charts
+  // included) instead of fighting it.
+  var WASHC={};                              // key -> wash canvas dataURL
+  function washUrl(key){
+    if(WASHC[key])return WASHC[key];
+    var q=MASKQ[key],tn=(q&&q.s&&q.m&&q.m.land)||LAND_TAN;
+    var wc=document.createElement('canvas');wc.width=wc.height=256;
+    var wg=wc.getContext('2d');
+    var col=tn[0]+','+tn[1]+','+tn[2];
+    var rg=wg.createRadialGradient(128,128,0,128,128,128);
+    rg.addColorStop(0,'rgba('+col+',.94)');rg.addColorStop(.5,'rgba('+col+',.94)');
+    rg.addColorStop(.78,'rgba('+col+',.5)');rg.addColorStop(1,'rgba('+col+',0)');
+    wg.fillStyle=rg;wg.fillRect(0,0,256,256);
+    return WASHC[key]=wc.toDataURL();
+  }
+  function washMake(key,reg,a){
+    var box=cityBox(a,reg.w,reg.h),f=1.7;
+    var wb=L.latLngBounds(px(a.atlasX-box.hw*f,a.atlasY-box.hh*f),
+                          px(a.atlasX+box.hw*f,a.atlasY+box.hh*f));
+    var wo=L.imageOverlay(washUrl(key),wb,{pane:'pCityWash',opacity:0,interactive:false});
+    wo.addTo(map);
+    wo.setOpacity(overlayOpacity(map.getZoom()));
+    return wo;
+  }
+  function washRefresh(key){                 // sampled tone landed while on screen
+    if(CITYVIEW.name!==key||!CITYVIEW.wash)return;
+    map.removeLayer(CITYVIEW.wash);
+    CITYVIEW.wash=washMake(key,CITYREG[key],CITY_ANCHORS[key]);
+  }
+
   // ---- instantiate / GC the single active city overlay + its POIs ----
   function ensureCityOverlay(name){
     var key=name?cityAnchorKey(name):null;
     if(CITYVIEW.name===key)return;
     if(CITYVIEW.overlay&&map.hasLayer(CITYVIEW.overlay))map.removeLayer(CITYVIEW.overlay);
     if(CITYVIEW.poiLayer&&map.hasLayer(CITYVIEW.poiLayer))map.removeLayer(CITYVIEW.poiLayer);
+    if(CITYVIEW.wash&&map.hasLayer(CITYVIEW.wash))map.removeLayer(CITYVIEW.wash);
     CITYVIEW.name=null;CITYVIEW.overlay=null;CITYVIEW.poiLayer=null;CITYVIEW.poiOn=false;
+    CITYVIEW.wash=null;
     if(!key)return;
     var reg=CITYREG[key],a=CITY_ANCHORS[key]; if(!reg||!a)return;
     CITYVIEW.name=key;
@@ -1523,6 +1558,7 @@
     }
     ov.setOpacity(overlayOpacity(map.getZoom()));
     ov.addTo(map); CITYVIEW.overlay=ov;
+    CITYVIEW.wash=washMake(key,reg,a);
     var wp=buildWorldPOIs(key,reg,a);
     if(wp){CITYVIEW.poiLayer=wp;
       if(map.getZoom()>=8){wp.addTo(map);CITYVIEW.poiOn=true;}}
@@ -1540,6 +1576,7 @@
     var z=map.getZoom(), mc=map.getContainer();
     if(curBase&&curBase.setOpacity)curBase.setOpacity(baseOpacity(z));
     if(CITYVIEW.overlay)CITYVIEW.overlay.setOpacity(overlayOpacity(z));
+    if(CITYVIEW.wash)CITYVIEW.wash.setOpacity(overlayOpacity(z));
     mc.classList.toggle('map-tier-d',z>=Z_TIER_D);
     mc.classList.toggle('show-uncharted',z>6.8&&!CITYVIEW.name);
   }
@@ -1561,7 +1598,8 @@
   // ---- fly INTO a city (zoom-through; replaces modal chart for anchored cities) ----
   function flyIntoCity(name,poiN){
     var key=cityAnchorKey(name); if(!key)return false;
-    ensureCityGen(key);                            // generate the plan if not yet made
+    ensureCityGen(key);                            // kick the melded plan (async: tiles)
+    ensureCityGenNow(key);                         // deep links never wait: synthetic now
     var reg=CITYREG[key],a=CITY_ANCHORS[key]; if(!reg||!a)return false;
     if(CHART.on)exitChart();
     var cz=cityMaxZ(a,reg.w,reg.h);
@@ -1608,7 +1646,9 @@
     opts=opts||{};
     var url,w=opts.w,h=opts.h;
     if(typeof img==='string')url=img;
-    else if(img&&img.toDataURL){url=img.toDataURL('image/jpeg',0.92);
+    else if(img&&img.toDataURL){url=img.toDataURL('image/webp',0.85);
+      // Safari can't encode webp; png also keeps the vignette's alpha
+      if(url.indexOf('data:image/webp')!==0)url=img.toDataURL('image/png');
       w=w||img.width;h=h||img.height;}
     else if(img&&img.src){url=img.src;w=w||img.naturalWidth||img.width;
       h=h||img.naturalHeight||img.height;}
@@ -1652,7 +1692,7 @@
   function dirName(vx,vy){var a=(Math.atan2(vx,-vy)*180/Math.PI+360)%360;
     var names=['N','NE','E','SE','S','SW','W','NW'];return names[Math.round(a/45)%8];}
 
-  function genCityCanvas(name,t,a){
+  function genCityCanvas(name,t,a,mask){
     var seed=xmur3(name)(),R=mulberry32(seed);
     function rr(lo,hi){return lo+(hi-lo)*R();}
     function ri(lo,hi){return Math.floor(lo+(hi-lo+1)*R());}
@@ -1660,7 +1700,12 @@
     var S=GEN_SIZE, cv=document.createElement('canvas'); cv.width=S;cv.height=S;
     var g=cv.getContext('2d');
     var ruin=(t.kind==='ruin');
-    var GREEN='#6c7f5c', CREAM=ruin?'#e7dcc0':'#f0ead2', WATER='#7fa3a0';
+    // surround tinted toward the sampled atlas land hue (§c): the crossfade band
+    // then dissolves without a hue shift.
+    var LT=(mask&&mask.land)||LAND_TAN;
+    var GREEN='rgb('+Math.round(108+(LT[0]-108)*.55)+','+Math.round(127+(LT[1]-127)*.55)+
+      ','+Math.round(92+(LT[2]-92)*.55)+')';
+    var CREAM=ruin?'#e7dcc0':'#f0ead2', WATER='#7fa3a0';
     var BLD=ruin?['#b9a888','#ad9c7c','#c2b295','#a89878']
                 :['#c77b4e','#b86b41','#cf8659','#a85c3c','#bd7346','#d59468','#cbb98f'];
     var OUT=ruin?'#6b5c48':'#4a3b2a', INK='rgba(74,70,60,.55)';
@@ -1672,10 +1717,49 @@
     var coreR=S*kR, landR=coreR*1.55;
     var sea = (t.sea&&t.sea.side) ? t.sea.side : (t.harbor?pick(Object.keys(COMPASS)):null);
     var sv = sea?compassVec(sea):null;
+    if(t.harbor&&!(t.sea&&t.sea.side)&&mask&&mask.water&&mask.bear){
+      sv=mask.bear;sea=dirName(sv.x,sv.y);}    // side uncharted: face the true water
     var distPx = (t.sea&&t.sea.distPx!=null)?t.sea.distPx:8;
     var drawWater = !!sv && (t.harbor || distPx<=25);
+    // the atlas mask drives the coast when the patch holds real sea (§a); the
+    // synthetic compass shoreline below stays as the no-signal fallback.
+    var MK=(drawWater&&mask&&mask.water)?mask:null;
     var cx=S/2, cy=S/2;
     if(drawWater){cx-=sv.x*S*0.07; cy-=sv.y*S*0.07;}
+    var WD=null,wAt=null,rW=footR(a.kind),s4=null,wla=null;
+    if(MK){
+      // mask px (z5, canvas spans the central 4rW of the 5.4rW patch) → 4× thresholded
+      // stage → smooth 2048 alpha field; ONE field feeds the predicate, the fill and
+      // the coast rim so they can never disagree.
+      var mcv=document.createElement('canvas');mcv.width=mcv.height=MK.n;
+      var mg=mcv.getContext('2d'),mid=mg.createImageData(MK.n,MK.n);
+      for(var mi2=0;mi2<MK.n*MK.n;mi2++){mid.data[4*mi2]=127;mid.data[4*mi2+1]=163;
+        mid.data[4*mi2+2]=160;mid.data[4*mi2+3]=MK.m[mi2]?255:0;}
+      mg.putImageData(mid,0,0);
+      s4=document.createElement('canvas');s4.width=s4.height=512;
+      var g4=s4.getContext('2d',{willReadFrequently:true});
+      g4.imageSmoothingEnabled=true;
+      g4.drawImage(mcv,(a.atlasX-rW)*2-MK.ox,(a.atlasY-rW)*2-MK.oy,4*rW,4*rW,0,0,512,512);
+      var d4=g4.getImageData(0,0,512,512);
+      for(var p4=3;p4<512*512*4;p4+=4)d4.data[p4]=d4.data[p4]>=128?255:0;
+      g4.putImageData(d4,0,0);
+      wla=document.createElement('canvas');wla.width=wla.height=S;
+      var wlg=wla.getContext('2d',{willReadFrequently:true});
+      wlg.imageSmoothingEnabled=true;wlg.imageSmoothingQuality='high';
+      wlg.drawImage(s4,0,0,S,S);
+      var wfill=wlg.getImageData(0,0,S,S);
+      WD=wfill.data;
+      wAt=function(x,y){x=x<1?1:x>S-2?S-2:x|0;y=y<1?1:y>S-2?S-2:y|0;
+        return WD[(y*S+x)*4+3];};
+    }
+    function shoreHit(x0,y0,dx,dy){            // first land→water crossing on a ray
+      for(var s5=8;s5<S*0.75;s5+=4){var xx=x0+dx*s5,yy=y0+dy*s5;
+        if(xx<2||yy<2||xx>S-2||yy>S-2)return null;
+        if(wAt(xx,yy)>=128)return {x:x0+dx*(s5-2),y:y0+dy*(s5-2)};}
+      return null;}
+    function seaNormal(x,y){                   // outward (toward-water) unit vector
+      var d6=14,gx=wAt(x+d6,y)-wAt(x-d6,y),gy=wAt(x,y+d6)-wAt(x,y-d6);
+      var l=Math.hypot(gx,gy)||1;return {x:gx/l,y:gy/l};}
     // irregular land outline (radial lobes)
     var lobes=[];for(var li=0;li<6;li++)lobes.push({f:li+2,ph:R()*6.283,am:rr(.03,.11)});
     function blobR(base,ang){var m=1;for(var i=0;i<lobes.length;i++)m+=lobes[i].am*Math.sin(lobes[i].f*ang+lobes[i].ph);return base*m;}
@@ -1688,6 +1772,7 @@
     var swob=[];if(drawWater)for(var si=0;si<4;si++)swob.push({f:si+1,ph:R()*6.283,am:rr(.02,.06)});
     function shoreOff(s){var m=0;for(var i=0;i<swob.length;i++)m+=swob[i].am*Math.sin(swob[i].f*s/(S*0.3)+swob[i].ph);return shoreDist*(1+m);}
     function inWater(x,y){if(!drawWater)return false;
+      if(WD)return wAt(x,y)>=128;              // the atlas's own coast
       return (x-cx)*sv.x+(y-cy)*sv.y > shoreOff(((x-cx)*perp.x+(y-cy)*perp.y));}
 
     // ===== paint order =====
@@ -1722,7 +1807,12 @@
       var gr=coreR*(walled?0.9:1.15);
       gates.push({x:cx+Math.cos(ga)*gr,y:cy+Math.sin(ga)*gr,ang:ga,dir:dirName(Math.cos(ga),Math.sin(ga))});}
     var waterNode=null;
-    if(drawWater){waterNode={x:cx+sv.x*shoreDist*0.9,y:cy+sv.y*shoreDist*0.9};}
+    if(drawWater&&WD){
+      waterNode=shoreHit(cx,cy,sv.x,sv.y);
+      for(var wro=1;wro<=4&&!waterNode;wro++){ // sea bearing blocked: fan ±0.4, ±0.8
+        var ra2=Math.atan2(sv.y,sv.x)+(wro%2?1:-1)*Math.ceil(wro/2)*0.4;
+        waterNode=shoreHit(cx,cy,Math.cos(ra2),Math.sin(ra2));}
+    } else if(drawWater){waterNode={x:cx+sv.x*shoreDist*0.9,y:cy+sv.y*shoreDist*0.9};}
 
     // main roads: gate/waterfront → market, with a slight bend
     var roads=[]; var ends=gates.slice(); if(waterNode)ends.push(waterNode);
@@ -1826,32 +1916,52 @@
 
     // --- water on top (covers the sea side) + quays/jetties/moored boats ---
     if(drawWater){
-      var big=S*3, span=S*2.2;
-      g.beginPath();
-      var first=true;
-      for(var ws=-span;ws<=span;ws+=S*0.05){var off=shoreOff(ws);
-        var px1=cx+sv.x*off+perp.x*ws, py1=cy+sv.y*off+perp.y*ws;
-        if(first){g.moveTo(px1,py1);first=false;}else g.lineTo(px1,py1);}
-      g.lineTo(cx+sv.x*big+perp.x*span, cy+sv.y*big+perp.y*span);
-      g.lineTo(cx+sv.x*big-perp.x*span, cy+sv.y*big-perp.y*span);
-      g.closePath();g.fillStyle=WATER;g.fill();
+      if(WD){
+        // coast ink rim (land side): the water shape stamped 8× under the fill, so
+        // the drawn shoreline continues through the plan at the atlas's own curve.
+        var icv=document.createElement('canvas');icv.width=icv.height=S;
+        var ig=icv.getContext('2d');ig.imageSmoothingEnabled=true;
+        ig.drawImage(s4,0,0,S,S);
+        ig.globalCompositeOperation='source-in';
+        ig.fillStyle='rgba(74,70,60,.6)';ig.fillRect(0,0,S,S);
+        for(var oi=0;oi<8;oi++){var oa2=oi/8*Math.PI*2;
+          g.drawImage(icv,Math.cos(oa2)*3.5,Math.sin(oa2)*3.5);}
+        g.drawImage(wla,0,0);
+      } else {
+        var big=S*3, span=S*2.2;
+        g.beginPath();
+        var first=true;
+        for(var ws=-span;ws<=span;ws+=S*0.05){var off=shoreOff(ws);
+          var px1=cx+sv.x*off+perp.x*ws, py1=cy+sv.y*off+perp.y*ws;
+          if(first){g.moveTo(px1,py1);first=false;}else g.lineTo(px1,py1);}
+        g.lineTo(cx+sv.x*big+perp.x*span, cy+sv.y*big+perp.y*span);
+        g.lineTo(cx+sv.x*big-perp.x*span, cy+sv.y*big-perp.y*span);
+        g.closePath();g.fillStyle=WATER;g.fill();
+      }
       // island fortress for a sacked coast ruin (canon: Lepon's offshore fortress)
-      if(ruin){var ifx=cx+sv.x*(shoreDist+S*0.14),ify=cy+sv.y*(shoreDist+S*0.14);
+      if(ruin){var ifv=(WD&&waterNode)?seaNormal(waterNode.x,waterNode.y):sv,
+        ifo=(WD&&waterNode)?waterNode:{x:cx+sv.x*shoreDist,y:cy+sv.y*shoreDist};
+        var ifx=ifo.x+ifv.x*S*0.14,ify=ifo.y+ifv.y*S*0.14;
         g.beginPath();g.arc(ifx,ify,rr(28,40),0,6.283);g.fillStyle=CREAM;g.fill();
         g.strokeStyle=STONE_O;g.lineWidth=2;g.stroke();
         g.fillStyle=STONE;for(var isb=0;isb<5;isb++){g.fillRect(ifx+rr(-16,10),ify+rr(-16,10),rr(5,10),rr(5,10));}}
-      // quays + jetties along the waterfront
+      // quays + jetties on the true waterline nearest the charted sea bearing
       var nQ = t.harbor ? ri(3,5) : ri(1,2);
-      for(var qi=0;qi<nQ;qi++){var qs=rr(-coreR*.7,coreR*.7);
-        var qbx=cx+sv.x*shoreOff(qs)+perp.x*qs, qby=cy+sv.y*shoreOff(qs)+perp.y*qs;
+      for(var qi=0;qi<nQ;qi++){var qs=rr(-coreR*.7,coreR*.7),qb=null,qv=sv;
+        if(WD){var qa2=Math.atan2(sv.y,sv.x)+qs/(coreR*.7)*0.55;
+          qb=shoreHit(cx,cy,Math.cos(qa2),Math.sin(qa2));
+          if(!qb)continue;
+          qv=seaNormal(qb.x,qb.y);}
+        else qb={x:cx+sv.x*shoreOff(qs)+perp.x*qs,y:cy+sv.y*shoreOff(qs)+perp.y*qs};
         var qlen=rr(14,34);
-        g.save();g.translate(qbx,qby);g.rotate(Math.atan2(sv.y,sv.x));
+        g.save();g.translate(qb.x,qb.y);g.rotate(Math.atan2(qv.y,qv.x));
         g.fillStyle=STONE;g.strokeStyle=STONE_O;g.lineWidth=1.2;
         g.fillRect(0,-3,qlen,6);g.strokeRect(0,-3,qlen,6);g.restore();
         // moored boats as small dark dashes just off the quay tip
-        for(var mb=0;mb<ri(1,3);mb++){var mx2=qbx+sv.x*(qlen+rr(6,16))+perp.x*rr(-8,8),
-          my2=qby+sv.y*(qlen+rr(6,16))+perp.y*rr(-8,8);
-          g.save();g.translate(mx2,my2);g.rotate(Math.atan2(perp.y,perp.x)+rr(-.3,.3));
+        var qp={x:-qv.y,y:qv.x};
+        for(var mb=0;mb<ri(1,3);mb++){var mx2=qb.x+qv.x*(qlen+rr(6,16))+qp.x*rr(-8,8),
+          my2=qb.y+qv.y*(qlen+rr(6,16))+qp.y*rr(-8,8);
+          g.save();g.translate(mx2,my2);g.rotate(Math.atan2(qp.y,qp.x)+rr(-.3,.3));
           g.fillStyle='#5a4a36';g.beginPath();g.ellipse(0,0,rr(5,8),rr(1.6,2.6),0,0,6.283);g.fill();g.restore();}
       }
     }
@@ -1905,6 +2015,29 @@
         addPoi(cx+Math.cos(ea)*er,cy+Math.sin(ea)*er,ex.n,ex.d);}
     }
 
+    // --- seeded irregular edge vignette (§c): the plan dissolves at its boundary
+    // instead of ending in a hard square. destination-out needs the alpha kept at
+    // encode time (see registerCityOverlay). Drawn before the cartouche/watermark
+    // so that chrome stays crisp over the fade.
+    var vharm=[];for(var vh=0;vh<7;vh++)vharm.push({f:vh+2,ph:R()*6.283,am:rr(.012,.05)});
+    var vN=128,vgc2=document.createElement('canvas');vgc2.width=vgc2.height=vN;
+    var vgx=vgc2.getContext('2d'),vid=vgx.createImageData(vN,vN);
+    for(var vy=0;vy<vN;vy++)for(var vx=0;vx<vN;vx++){
+      var vdx=(vx+.5)/vN-.5,vdy=(vy+.5)/vN-.5;
+      var vr=Math.hypot(vdx,vdy),vth=Math.atan2(vdy,vdx),vw=0;
+      for(var vk=0;vk<7;vk++)vw+=vharm[vk].am*Math.sin(vharm[vk].f*vth+vharm[vk].ph);
+      var v0=0.385+vw,v1=0.485+vw*0.7,vu=(vr-v0)/(v1-v0);
+      vu=vu<0?0:vu>1?1:vu;
+      var va=vu*vu*(3-2*vu)*255;
+      if(va>4&&va<251){var vn2=Math.sin(vx*127.1+vy*311.7+seed%997)*43758.5453;
+        va+=(vn2-Math.floor(vn2)-.5)*70;va=va<0?0:va>255?255:va;}   // ragged, seeded
+      vid.data[(vy*vN+vx)*4+3]=va;}
+    vgx.putImageData(vid,0,0);
+    g.globalCompositeOperation='destination-out';
+    g.imageSmoothingEnabled=true;
+    g.drawImage(vgc2,0,0,S,S);
+    g.globalCompositeOperation='source-over';
+
     // --- title cartouche + baked hearsay watermark ---
     g.save();
     var ttl=name.toUpperCase(), sub=({capital:'a Māgos',town:'a walled town',village:'a village',ruin:'a ruin · sacked 745 A.B.'})[t.kind]||'';
@@ -1928,15 +2061,107 @@
     return {canvas:cv,w:S,h:S,pois:pois};
   }
 
-  // generate + register a city's plan on demand (deterministic; cached in CITYREG forever).
+  // ---- atlas-derived land/water mask (terrain continuity §a) ----
+  // Samples the z5 tiles under a city's footprint (world px ×2 = z5 px), classifies
+  // sea by parchment warmth (the atlas sea is grey-teal: r−b ≤ 54; land ≥ 60), treats
+  // dark ink as no-signal, box-blurs + rethresholds, and keeps only border-connected
+  // water so printed label glyphs never read as lakes. Pure fn of the tiles →
+  // deterministic per city; cached forever alongside the canvas it shapes.
+  var MASKQ={};                              // key -> {s,m,cbs,applied}
+  var LAND_TAN=[198,178,128];                // measured atlas land average (stable)
+  function buildCityMask(c,n,ox,oy){
+    var d=c.getImageData(0,0,n,n).data,N=n*n,i,x,y,k,s;
+    var wat=new Float32Array(N),wgt=new Float32Array(N);
+    for(i=0;i<N;i++){var r=d[4*i],gc2=d[4*i+1],b=d[4*i+2];
+      if(r*0.299+gc2*0.587+b*0.114>=110){wgt[i]=1;if(r-b<=54)wat[i]=1;}}
+    function blur(a){                        // separable box blur, radius 2, edge-clamped
+      var t=new Float32Array(N);
+      for(y=0;y<n;y++)for(x=0;x<n;x++){s=0;
+        for(k=-2;k<=2;k++){var xx=x+k;xx=xx<0?0:xx>=n?n-1:xx;s+=a[y*n+xx];}t[y*n+x]=s/5;}
+      for(x=0;x<n;x++)for(y=0;y<n;y++){s=0;
+        for(k=-2;k<=2;k++){var yy=y+k;yy=yy<0?0:yy>=n?n-1:yy;s+=t[yy*n+x];}a[y*n+x]=s/5;}
+    }
+    blur(wat);blur(wgt);
+    var m=new Uint8Array(N);
+    for(i=0;i<N;i++)m[i]=(wgt[i]>1e-3&&wat[i]/wgt[i]>=0.5)?1:0;
+    // keep only water connected to the patch border: real sea always enters from
+    // outside the footprint; interior blobs are label ink / jpeg noise.
+    var keep=new Uint8Array(N),st=[],p;
+    function push(ix){if(m[ix]&&!keep[ix]){keep[ix]=1;st.push(ix);}}
+    for(x=0;x<n;x++){push(x);push((n-1)*n+x);}
+    for(y=0;y<n;y++){push(y*n);push(y*n+n-1);}
+    while(st.length){p=st.pop();x=p%n;y=(p-x)/n;
+      if(x>0)push(p-1);if(x<n-1)push(p+1);if(y>0)push(p-n);if(y<n-1)push(p+n);}
+    var wf=0,lr=0,lg=0,lb=0,ln=0,cxs=0,cys=0;
+    for(i=0;i<N;i++){
+      if(keep[i]){wf++;x=i%n;cxs+=x;cys+=(i-x)/n;}
+      else if(wgt[i]>0.9&&!m[i]){lr+=d[4*i];lg+=d[4*i+1];lb+=d[4*i+2];ln++;}}
+    var land=ln?[Math.round(lr/ln),Math.round(lg/ln),Math.round(lb/ln)]:LAND_TAN;
+    var bear=null;
+    if(wf>=N*0.01){var vx=cxs/wf-(n-1)/2,vy=cys/wf-(n-1)/2,vl=Math.hypot(vx,vy);
+      if(vl>1)bear={x:vx/vl,y:vy/vl};}
+    return {n:n,ox:ox,oy:oy,m:keep,frac:wf/N,water:wf/N>=0.025,land:land,bear:bear};
+  }
+  function sampleCityMask(key,done){
+    var q=MASKQ[key];
+    if(q){if(q.s)done(q.m);else q.cbs.push(done);return;}
+    q=MASKQ[key]={s:0,m:null,cbs:[done],applied:false};
+    var a=CITY_ANCHORS[key],rW=footR(a.kind);
+    var ox=Math.round((a.atlasX-1.35*rW)*2),oy=Math.round((a.atlasY-1.35*rW)*2),
+        n=Math.round(5.4*rW);
+    var cv=document.createElement('canvas');cv.width=n;cv.height=n;
+    var c=cv.getContext('2d',{willReadFrequently:true});
+    c.fillStyle='rgb(198,178,128)';c.fillRect(0,0,n,n);  // absent tiles read as land
+    var tx0=Math.floor(ox/256),ty0=Math.floor(oy/256),
+        tx1=Math.floor((ox+n-1)/256),ty1=Math.floor((oy+n-1)/256);
+    var left=(tx1-tx0+1)*(ty1-ty0+1);
+    function one(){if(--left)return;
+      try{q.m=buildCityMask(c,n,ox,oy);}catch(e){q.m=null;}
+      q.s=1;var cbs=q.cbs;q.cbs=[];
+      cbs.forEach(function(f){try{f(q.m);}catch(e){}});}
+    for(var ty=ty0;ty<=ty1;ty++)for(var tx=tx0;tx<=tx1;tx++)(function(tx,ty){
+      var im=new Image();
+      im.onload=function(){c.drawImage(im,tx*256-ox,ty*256-oy);one();};
+      im.onerror=one;
+      im.src='tiles/5/'+tx+'/'+ty+'.jpg';
+    })(tx,ty);
+  }
+
+  // generate + register a city's plan on demand (deterministic; cached in CITYREG
+  // forever). Async-tolerant (§a): the atlas mask needs its tiles, so the melded
+  // plan lands when they do; registerCityOverlay hot-swaps if the city is on screen.
   function ensureCityGen(name){
     try{
-      var key=cityAnchorKey(name); if(!key||CITYREG[key])return;
-      var t=CITY_TRAITS[key], a=CITY_ANCHORS[key]; if(!t||!a)return;
-      var gen=genCityCanvas(key,t,a);
+      var key=cityAnchorKey(name); if(!key)return;
+      var a=CITY_ANCHORS[key]; if(!a)return;
+      if(MASKQ[key]&&MASKQ[key].applied)return;
+      sampleCityMask(key,function(m){
+        var q=MASKQ[key];
+        if(q.applied)return; q.applied=true;
+        delete WASHC[key];                     // re-tone the wash with the sampled hue
+        var t=CITY_TRAITS[key],reg=CITYREG[key];
+        if(t&&(!reg||reg.prov==='invented')){
+          var gen=genCityCanvas(key,t,a,m);
+          registerCityOverlay(key,gen.canvas,{prov:'invented',w:gen.w,h:gen.h,
+            pois:gen.pois,poiRef:{w:gen.w,h:gen.h}});
+        }
+        if(CITYVIEW.name===key)washRefresh(key);
+        if(!CHART.on)worldCityUpdate();        // a just-landed reg may deepen maxZoom
+      });
+    }catch(e){/* one bad city must never break the zoom/maxZoom pass */}
+  }
+  // synchronous fallback for flyIntoCity: a deep link must never wait on tiles —
+  // register the synthetic plan now; the melded one hot-swaps in when sampled.
+  function ensureCityGenNow(key){
+    try{
+      if(CITYREG[key])return;
+      var t=CITY_TRAITS[key],a=CITY_ANCHORS[key]; if(!t||!a)return;
+      var q=MASKQ[key],m=(q&&q.s)?q.m:null;
+      var gen=genCityCanvas(key,t,a,m);
       registerCityOverlay(key,gen.canvas,{prov:'invented',w:gen.w,h:gen.h,
         pois:gen.pois,poiRef:{w:gen.w,h:gen.h}});
-    }catch(e){/* one bad city must never break the zoom/maxZoom pass */}
+      if(m)q.applied=true;
+    }catch(e){}
   }
 
   // ---- one-time DOM + data wiring for the meshed world ----
