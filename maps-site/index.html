@@ -1627,12 +1627,21 @@
     mc.classList.toggle('show-uncharted',z>6.8&&!CITYVIEW.name);
   }
   // (b) nearest-city / instantiate / GC / dynamic maxZoom — zoomend+moveend ONLY.
+  var PREWARMED=new Set();
   function worldCityUpdate(){
     if(CHART.on)return;
     var z=map.getZoom();
     var cp=map.project(map.getCenter(),NZ);
     var near=nearestCity(cp.x,cp.y);
     if(near&&z>6.5)ensureCityGen(near.name);        // generate the nearest plan as we descend
+    else if(near&&z>5.6&&!CITYREG[near.name]&&!PREWARMED.has(near.name)){
+      // approaching: pre-bake the plan during idle so the crossfade never jank-draws
+      var fr=(FOOT_R[near.a.kind]||9)*6, dx=cp.x-near.a.atlasX, dy=cp.y-near.a.atlasY;
+      if(dx*dx+dy*dy<fr*fr){
+        PREWARMED.add(near.name);
+        (window.requestIdleCallback||function(f){setTimeout(f,180);})(function(){ensureCityGen(near.name);});
+      }
+    }
     var reg=near&&registryFor(near.name);
     var allowed=reg?cityMaxZ(near.a,reg.w,reg.h):Z_OPEN_MAX;
     allowed=Math.min(Z_STREET,allowed);

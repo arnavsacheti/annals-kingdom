@@ -49,6 +49,10 @@ three.js r128 via CDN, no build step). Themed to the owner's D&D campaign
   (`git push --follow-tags`). Only push at version cuts.
 - History: one commit per release on master (plus the base commits). `origin` is the
   owner's fork; `upstream` (emollick) is never pushed.
+- **Hotfix exception**: if urgent commits were pushed mid-cycle (user-facing data
+  fixes), the next cut's squash rewrites pushed history — push it with
+  `--force-with-lease` (solo fork, content-preserving) or squash only the unpushed
+  tail. Never leave the cut half-pushed.
 
 ## Process
 - Plan with the core model (specs with line anchors + acceptance criteria in the

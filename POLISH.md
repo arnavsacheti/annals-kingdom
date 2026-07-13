@@ -10,12 +10,6 @@ non-conflicting item instead.
 
 ## Queue
 
-- [ ] **Crossfade palette match** — sample the atlas terrain tone around each city
-  anchor and tint the generated surround toward it so the z6.8–7.8 fade band doesn't
-  shift hue.
-- [ ] **Overlay pre-warm** — first approach to a generated city can jank on the
-  synchronous 2048² draw. Pre-generate the nearest unbuilt city during idle (rIC) once
-  the camera is within ~6 footprints.
 - [ ] **Lake biome** — Penthelon is canonically on the Five Fingers LAKE, currently
   approximated as 'riverine'; add a lake enum (shore on the mask's water, no tide
   marks, fishing-stake rows) when the river mode lands.
@@ -48,6 +42,14 @@ non-conflicting item instead.
 ## Done
 
 (check items off above and move them here with a one-line result + version)
+
+- [x] **Crossfade palette match** — verified already delivered by the terrain-melding
+  run (§c surround tint toward the sampled atlas hue, in code at the vignette block);
+  no further change needed. (closed in run 9)
+- [x] **Overlay pre-warm** — approaching within six footprints below the descend
+  threshold now pre-bakes the city plan via requestIdleCallback; verified Kanae
+  pre-registered at z6.0 with distant cities untouched and instant overlay on
+  descent. (v0.9.5-alpha.1)
 
 - [x] **Addressable alleys** — lane graphs with T-junctions and two widths replace the
   jittered infill; every building fronts a walkable lane (gate → street → alley →

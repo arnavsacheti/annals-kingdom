@@ -4,6 +4,10 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.9.5-alpha.1] — 2026-07-13
+- City plans pre-bake during idle as you approach, so the first crossfade never
+  stutters on generation; release policy gains the hotfix-vs-squash exception
+
 ## [0.9.4-alpha.1] — 2026-07-13
 - Generated towns have real streets: a lane-graph pass with T-junctions and two lane
   widths replaces the scattered infill — every building fronts a walkable lane, the
