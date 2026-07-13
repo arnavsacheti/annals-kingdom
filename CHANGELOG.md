@@ -4,6 +4,10 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.8.6-alpha.1] — 2026-07-13
+- Zoom is now continuous — no more half-level jumps: free-form zoom everywhere,
+  quarter-step +/− buttons, and the vertical-fill floor sits within 1% of exact
+
 ## [0.8.5-alpha.1] — 2026-07-13
 - Epēshu's chart badges no longer double: POI coordinates now sit exactly on the
   cartographer's printed circles (detected + hand-measured), and the live markers

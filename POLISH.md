@@ -10,6 +10,21 @@ non-conflicting item instead.
 
 ## Queue
 
+- [ ] **All named cities anchored (USER FLAG)** — every named dot on the atlas gets a
+  generated plan. Lab work DONE: 306 undetected ring-dot towns found (recall verified
+  against all known anchors; scratchpad/dots_unnamed.json has (x,y,type)), and 13
+  transcription contact sheets rendered (scratchpad/dots-sheet-00..12.png, red circle
+  = the dot, label = index+coords). THE RUN: (1) transcribe each sheet — read the town
+  name printed beside each circled dot (diacritics matter: ā ē ī ō ū); mark SKIP for
+  false positives (letters, border dots, non-towns); (2) snap the four approximate
+  existing anchors (Shengo, Rhup, Hordon, Ion Ephel) to their detected dots; (3) add
+  all named dots to city-anchors/maps_markers/city-traits with kind village (or town
+  if the transcriber judges the label/glyph major), existence+position prov 'trace',
+  all else defaults (✶); marker reveal: new minor settlements at tier C only, in a
+  new sub-toggle "Lesser settlements" (default ON) so tier B doesn't flood; (4) known
+  big names (Cyrikon, Palagnon, Summarch-area towns) get canonNotes only where the
+  wiki actually attests. Double-ring major glyphs elsewhere remain a follow-up
+  (template-match; the three known majors are already anchored).
 - [ ] **Addressable alleys** — generated plans fake alleys as gaps between building
   cells. Add a true lane graph pass (minor streets branching between spokes/ring,
   buildings snapped to lane frontages) so the warren is traceable turn by turn.

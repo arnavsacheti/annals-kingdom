@@ -511,7 +511,7 @@
   // and the page bg matches, so blank/upscaled tiles beyond the ghost never read as void.
   var map=L.map('map',{crs:L.CRS.Simple,minZoom:0,maxZoom:Z_STREET,
     zoomControl:true,attributionControl:true,maxBoundsViscosity:1.0,
-    zoomSnap:.5,zoomDelta:.5,wheelPxPerZoomLevel:80,wheelDebounceTime:20,
+    zoomSnap:0,zoomDelta:.25,wheelPxPerZoomLevel:80,wheelDebounceTime:20,
     fadeAnimation:true});
   function px(x,y){return map.unproject([x,y],NZ);}
   var contentBounds=L.latLngBounds(px(0,0),px(IMG_W,IMG_H));
@@ -573,7 +573,7 @@
   function fillZoom(){
     var vh=map.getSize().y||map.getContainer().clientHeight||IMG_H;
     var z=NZ+Math.log(vh/IMG_H)/Math.LN2;   // IMG_H·2^(z−NZ) = vh
-    var snap=map.options.zoomSnap||0.5;
+    var snap=0.05;                          // fine quantum: near-exact fill, zoom itself is continuous
     return Math.ceil(z/snap)*snap;
   }
   var EPESHU=[1222,1404];                   // Leponnia/Epēshu — initial centre
@@ -1271,7 +1271,7 @@
   function fillZoomAt(h,atZoom){
     var vh=map.getSize().y||map.getContainer().clientHeight||h;
     var z=atZoom+Math.log(vh/h)/Math.LN2;
-    var snap=map.options.zoomSnap||0.5;
+    var snap=0.05;                          // fine quantum: near-exact fill, zoom itself is continuous
     return Math.ceil(z/snap)*snap;
   }
   function hvOf(h,re){var m=String(h||'').match(re);if(!m)return null;
