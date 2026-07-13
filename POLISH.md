@@ -10,10 +10,6 @@ non-conflicting item instead.
 
 ## Queue
 
-- [ ] **Epēshu roundel doubling** — the real chart has its own printed number badges
-  and the engine adds live POI roundels ~28 px offset from them at depth. Suppress the
-  seam: either align the engine markers to the printed badges exactly (per-POI pixel
-  nudge table) or fade engine roundels where the print already carries the number.
 - [ ] **Addressable alleys** — generated plans fake alleys as gaps between building
   cells. Add a true lane graph pass (minor streets branching between spokes/ring,
   buildings snapped to lane frontages) so the warren is traceable turn by turn.
@@ -55,6 +51,12 @@ non-conflicting item instead.
 ## Done
 
 (check items off above and move them here with a one-line result + version)
+
+- [x] **Epēshu roundel doubling** — all 19 POI coords corrected to the true printed
+  badge centers (blob detection for 9, contact-sheet measurement for 10 after an
+  int16 luminance overflow and tree-blob false matches were run down); live markers
+  are now invisible interactive halos over the print, revealed on hover. Deep-link
+  click targets land exactly. (v0.8.5-alpha.1)
 
 - [x] **Cultural & historical texture (USER QUESTION → PASS)** — 28 cities now carry
   biome/condition/hinterland with per-claim provenance (Hordon arid per canon's

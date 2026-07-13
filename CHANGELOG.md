@@ -4,6 +4,12 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.8.5-alpha.1] — 2026-07-13
+- Epēshu's chart badges no longer double: POI coordinates now sit exactly on the
+  cartographer's printed circles (detected + hand-measured), and the live markers
+  render as invisible halos that reveal on hover — the print carries the numbers,
+  the halo carries the interaction
+
 ## [0.8.4-alpha.1] — 2026-07-13
 - The towns stop being interchangeable: biome-aware plans (frost-pale Sjefenhold,
   arid Hordon per canon's own "semi-arid island", wooded Leponnian coasts), decay
