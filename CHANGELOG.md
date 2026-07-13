@@ -4,6 +4,13 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.9.0-alpha.1] — 2026-07-13
+- The full settlement census: every named ring-dot on the atlas is now an anchored,
+  searchable, descendable place — 167 towns transcribed from the map's own labels
+  (diacritics preserved) and integrated with "traced from the atlas" provenance,
+  revealed at street-approach zoom under a Lesser Settlements toggle; four existing
+  approximate anchors snapped to their true printed dots
+
 ## [0.8.6-alpha.1] — 2026-07-13
 - Zoom is now continuous — no more half-level jumps: free-form zoom everywhere,
   quarter-step +/− buttons, and the vertical-fill floor sits within 1% of exact

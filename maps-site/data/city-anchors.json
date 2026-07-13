@@ -1,7 +1,7 @@
 {
  "Epēshu": {
   "atlasX": 1236.1,
-  "atlasY": 1415.0,
+  "atlasY": 1415,
   "kind": "capital",
   "harbor": true,
   "sea": {
@@ -70,7 +70,7 @@
   }
  },
  "Āglaz": {
-  "atlasX": 1234.0,
+  "atlasX": 1234,
   "atlasY": 1554.6,
   "kind": "village",
   "harbor": true,
@@ -100,7 +100,7 @@
   }
  },
  "Sardil": {
-  "atlasX": 1484.0,
+  "atlasX": 1484,
   "atlasY": 1636.9,
   "kind": "town",
   "harbor": false,
@@ -137,7 +137,7 @@
   }
  },
  "Drāmūz": {
-  "atlasX": 1335.0,
+  "atlasX": 1335,
   "atlasY": 1733.8,
   "kind": "town",
   "harbor": true,
@@ -157,8 +157,8 @@
   }
  },
  "Shengo": {
-  "atlasX": 1419.4,
-  "atlasY": 1777.5,
+  "atlasX": 1453,
+  "atlasY": 1735,
   "kind": "village",
   "harbor": false,
   "sea": {
@@ -177,8 +177,8 @@
   }
  },
  "Rhup": {
-  "atlasX": 1552.7,
-  "atlasY": 1550.4,
+  "atlasX": 1566,
+  "atlasY": 1539,
   "kind": "village",
   "harbor": false,
   "sea": {
@@ -197,22 +197,22 @@
   }
  },
  "Sjefenhold": {
-  "atlasX": 2050.0,
-  "atlasY": 30.0,
+  "atlasX": 2050,
+  "atlasY": 30,
   "kind": "ruin",
   "harbor": false,
   "sea": null
  },
  "Kolens": {
-  "atlasX": 2162.0,
-  "atlasY": 54.0,
+  "atlasX": 2162,
+  "atlasY": 54,
   "kind": "town",
   "harbor": false,
   "sea": null
  },
  "Hordon": {
-  "atlasX": 1098,
-  "atlasY": 1686,
+  "atlasX": 1139,
+  "atlasY": 1730,
   "kind": "town",
   "harbor": true,
   "sea": null
@@ -225,11 +225,866 @@
   "sea": null
  },
  "Ion Ephel": {
-  "atlasX": 1307,
-  "atlasY": 2122,
+  "atlasX": 1339,
+  "atlasY": 2116,
   "kind": "ruin",
   "harbor": true,
+  "sea": null
+ },
+ "Māmīth Māgrīn (Kingly Mickleburg)": {
+  "atlasX": 734,
+  "atlasY": 17,
+  "kind": "town",
+  "harbor": false,
   "sea": null,
-  "approx": true
+  "prov": "trace"
+ },
+ "Feldspar": {
+  "atlasX": 1103,
+  "atlasY": 113,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Stony Ford": {
+  "atlasX": 591,
+  "atlasY": 183,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Harney": {
+  "atlasX": 522,
+  "atlasY": 195,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Bard's Hollow": {
+  "atlasX": 784,
+  "atlasY": 200,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Heron's House": {
+  "atlasX": 2456,
+  "atlasY": 301,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Iimak-nūs-Ion": {
+  "atlasX": 1165,
+  "atlasY": 335,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Karkōgael": {
+  "atlasX": 1117,
+  "atlasY": 365,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Bash Phaug": {
+  "atlasX": 1378,
+  "atlasY": 485,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Mākor": {
+  "atlasX": 984,
+  "atlasY": 487,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Iorundo": {
+  "atlasX": 1178,
+  "atlasY": 504,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Damoklir": {
+  "atlasX": 348,
+  "atlasY": 513,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Kamīdo": {
+  "atlasX": 974,
+  "atlasY": 516,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Zor Barāndo": {
+  "atlasX": 819,
+  "atlasY": 519,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Phumkha": {
+  "atlasX": 836,
+  "atlasY": 570,
+  "kind": "town",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Lendānak": {
+  "atlasX": 837,
+  "atlasY": 594,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Mīthrabash": {
+  "atlasX": 1288,
+  "atlasY": 595,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Zhomphek": {
+  "atlasX": 982,
+  "atlasY": 602,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Permūr": {
+  "atlasX": 311,
+  "atlasY": 602,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Eldae": {
+  "atlasX": 550,
+  "atlasY": 605,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Dargan": {
+  "atlasX": 785,
+  "atlasY": 611,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Aldrakhar": {
+  "atlasX": 1492,
+  "atlasY": 631,
+  "kind": "town",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Ītor Hāspira": {
+  "atlasX": 579,
+  "atlasY": 634,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Līrider Hana": {
+  "atlasX": 663,
+  "atlasY": 688,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Hemdok Laego": {
+  "atlasX": 1855,
+  "atlasY": 688,
+  "kind": "town",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Kash Ītor": {
+  "atlasX": 3022,
+  "atlasY": 691,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Atauk": {
+  "atlasX": 1084,
+  "atlasY": 697,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Ilongazoro": {
+  "atlasX": 839,
+  "atlasY": 707,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Pomos": {
+  "atlasX": 481,
+  "atlasY": 725,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Iet Ford": {
+  "atlasX": 1419,
+  "atlasY": 725,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Bash Dargis": {
+  "atlasX": 2154,
+  "atlasY": 727,
+  "kind": "town",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Paril": {
+  "atlasX": 889,
+  "atlasY": 735,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Ishin": {
+  "atlasX": 1015,
+  "atlasY": 746,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Pish": {
+  "atlasX": 864,
+  "atlasY": 750,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Tobit": {
+  "atlasX": 3211,
+  "atlasY": 756,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Palagnon": {
+  "atlasX": 1528,
+  "atlasY": 764,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Paga": {
+  "atlasX": 2014,
+  "atlasY": 767,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Ghōdar": {
+  "atlasX": 892,
+  "atlasY": 773,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Rūbril": {
+  "atlasX": 704,
+  "atlasY": 793,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Sau Taran": {
+  "atlasX": 191,
+  "atlasY": 812,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Lek Zagrok": {
+  "atlasX": 1366,
+  "atlasY": 835,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Hordon Mopher": {
+  "atlasX": 549,
+  "atlasY": 840,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Nembros": {
+  "atlasX": 931,
+  "atlasY": 847,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Lōt": {
+  "atlasX": 1967,
+  "atlasY": 861,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Leprekhōr": {
+  "atlasX": 362,
+  "atlasY": 871,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Karaphon": {
+  "atlasX": 1875,
+  "atlasY": 876,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Abila": {
+  "atlasX": 1211,
+  "atlasY": 883,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Ion Semthen": {
+  "atlasX": 757,
+  "atlasY": 901,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Mishimbril": {
+  "atlasX": 1659,
+  "atlasY": 904,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Philider": {
+  "atlasX": 188,
+  "atlasY": 916,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Taemon": {
+  "atlasX": 2828,
+  "atlasY": 929,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Zōr Iket": {
+  "atlasX": 1282,
+  "atlasY": 945,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Pandikaba": {
+  "atlasX": 2936,
+  "atlasY": 979,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Bēgroth Amar": {
+  "atlasX": 4066,
+  "atlasY": 996,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Gel": {
+  "atlasX": 376,
+  "atlasY": 999,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Thūkhon": {
+  "atlasX": 1310,
+  "atlasY": 1011,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Bash Nena": {
+  "atlasX": 1950,
+  "atlasY": 1011,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Hazad": {
+  "atlasX": 1406,
+  "atlasY": 1082,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Sember": {
+  "atlasX": 3428,
+  "atlasY": 1114,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Īngomes": {
+  "atlasX": 1792,
+  "atlasY": 1164,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Gehon Iepīr": {
+  "atlasX": 1466,
+  "atlasY": 1186,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Kezren": {
+  "atlasX": 2212,
+  "atlasY": 1226,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Azrīnet": {
+  "atlasX": 3357,
+  "atlasY": 1241,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Gehon Or": {
+  "atlasX": 1512,
+  "atlasY": 1247,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Rohodakos": {
+  "atlasX": 3157,
+  "atlasY": 1257,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Graes": {
+  "atlasX": 3617,
+  "atlasY": 1264,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Lokri": {
+  "atlasX": 3834,
+  "atlasY": 1272,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Ierem": {
+  "atlasX": 3458,
+  "atlasY": 1279,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Gārmīt": {
+  "atlasX": 3366,
+  "atlasY": 1285,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Malagnon": {
+  "atlasX": 1631,
+  "atlasY": 1287,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Ludo": {
+  "atlasX": 3552,
+  "atlasY": 1287,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Pel": {
+  "atlasX": 3306,
+  "atlasY": 1298,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Tamaron Mopher": {
+  "atlasX": 1774,
+  "atlasY": 1306,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Leshes": {
+  "atlasX": 1687,
+  "atlasY": 1321,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Darā": {
+  "atlasX": 3819,
+  "atlasY": 1329,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Aenid": {
+  "atlasX": 3312,
+  "atlasY": 1340,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Aegban": {
+  "atlasX": 2606,
+  "atlasY": 1343,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Pontoron": {
+  "atlasX": 3668,
+  "atlasY": 1351,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Authīr": {
+  "atlasX": 3554,
+  "atlasY": 1394,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Nūmeron": {
+  "atlasX": 2555,
+  "atlasY": 1424,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Nāron": {
+  "atlasX": 3367,
+  "atlasY": 1427,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Mhēlzi": {
+  "atlasX": 3442,
+  "atlasY": 1439,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Sārūmeron": {
+  "atlasX": 3257,
+  "atlasY": 1442,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Haedi": {
+  "atlasX": 3038,
+  "atlasY": 1444,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Urip": {
+  "atlasX": 3005,
+  "atlasY": 1504,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Daeskhon": {
+  "atlasX": 2962,
+  "atlasY": 1536,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Ion Nenīn": {
+  "atlasX": 3084,
+  "atlasY": 1547,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Gakapē": {
+  "atlasX": 2209,
+  "atlasY": 1606,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Arbezmara": {
+  "atlasX": 2288,
+  "atlasY": 1609,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Sāzhram": {
+  "atlasX": 2105,
+  "atlasY": 1612,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Azrūmil": {
+  "atlasX": 2415,
+  "atlasY": 1629,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Malau": {
+  "atlasX": 2843,
+  "atlasY": 1631,
+  "kind": "town",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Istīron": {
+  "atlasX": 1071,
+  "atlasY": 1632,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Bēgil": {
+  "atlasX": 1170,
+  "atlasY": 1635,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Nhagi": {
+  "atlasX": 1868,
+  "atlasY": 1650,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Laem": {
+  "atlasX": 2722,
+  "atlasY": 1653,
+  "kind": "town",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Cyrikon": {
+  "atlasX": 2573,
+  "atlasY": 1671,
+  "kind": "town",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Thārban": {
+  "atlasX": 2175,
+  "atlasY": 1674,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Sūl": {
+  "atlasX": 1986,
+  "atlasY": 1691,
+  "kind": "town",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Līrider": {
+  "atlasX": 943,
+  "atlasY": 1722,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Ghirīs": {
+  "atlasX": 2086,
+  "atlasY": 1723,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Nhin": {
+  "atlasX": 2632,
+  "atlasY": 1729,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Maeges": {
+  "atlasX": 1139,
+  "atlasY": 1730,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Gīr": {
+  "atlasX": 2398,
+  "atlasY": 1745,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Molider": {
+  "atlasX": 1209,
+  "atlasY": 1769,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Nagash": {
+  "atlasX": 2769,
+  "atlasY": 1816,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
+ },
+ "Mhikel Or": {
+  "atlasX": 2227,
+  "atlasY": 1834,
+  "kind": "village",
+  "harbor": false,
+  "sea": null,
+  "prov": "trace"
  }
 }

@@ -74,6 +74,10 @@
     width:24px;height:24px;font-size:15px;}
   .mk.t-minor .glyph{background:#efe3c6;color:var(--bronze);border-color:#a98a4c;
     width:18px;height:18px;font-size:11px;}
+  /* lesser (traced-census) settlements: smaller ⌂ glyph, quieter frame */
+  .mk.t-lesser .glyph{background:#f2e7cb;color:#5a3210;border-color:#8a5a2a;
+    width:14px;height:14px;font-size:9px;border-width:1px;}
+  .mk.t-lesser .lbl{font-size:12px;}
   .mk.t-water .glyph{background:#d8e4e6;color:var(--water);border-color:var(--water);}
   .mk.t-mtn .glyph{background:#e6ddc9;color:#6a4a24;border-color:#6a4a24;}
   .mk.t-major .lbl{font-size:14px;}
@@ -111,18 +115,19 @@
 
   /* ---- tier panes (fade reveal) ---- */
   .leaflet-pMajor-pane,.leaflet-pWater-pane,.leaflet-pSettle-pane,.leaflet-pMtn-pane,
-  .leaflet-pMinor-pane,.leaflet-pRealm-pane,.leaflet-pRouteLine-pane,.leaflet-pRouteWp-pane,
+  .leaflet-pMinor-pane,.leaflet-pLesser-pane,.leaflet-pRealm-pane,.leaflet-pRouteLine-pane,.leaflet-pRouteWp-pane,
   .leaflet-pLane-pane,.leaflet-pWay-pane,.leaflet-pDistrict-pane{
     transition:opacity .2s ease;}
   /* tier A (z0-1): major regions + seas only */
   .map-tier-a .leaflet-pSettle-pane,.map-tier-a .leaflet-pMtn-pane,
-  .map-tier-a .leaflet-pRealm-pane,.map-tier-a .leaflet-pMinor-pane,
+  .map-tier-a .leaflet-pRealm-pane,.map-tier-a .leaflet-pMinor-pane,.map-tier-a .leaflet-pLesser-pane,
   .map-tier-a .leaflet-pRouteLine-pane,.map-tier-a .leaflet-pRouteWp-pane,
   .map-tier-a .leaflet-pLane-pane,.map-tier-a .leaflet-pWay-pane,
   .map-tier-a .leaflet-pDistrict-pane{
     opacity:0;pointer-events:none;}
-  /* tier B (z2-3): + settlements, mountains, realm fills, route line, sea lanes, ways */
-  .map-tier-b .leaflet-pMinor-pane,.map-tier-b .leaflet-pRouteWp-pane,
+  /* tier B (z2-3): + settlements, mountains, realm fills, route line, sea lanes, ways.
+     Lesser (traced-census) settlements stay hidden here so tier B doesn't flood — tier C only. */
+  .map-tier-b .leaflet-pMinor-pane,.map-tier-b .leaflet-pLesser-pane,.map-tier-b .leaflet-pRouteWp-pane,
   .map-tier-b .leaflet-pDistrict-pane{
     opacity:0;pointer-events:none;}
   /* tier C (z4+): everything (incl. district borders) */
@@ -364,7 +369,7 @@
   .chart-mode .leaflet-pRealm-pane,.chart-mode .leaflet-pTrail-pane,
   .chart-mode .leaflet-pRouteLine-pane,.chart-mode .leaflet-pWater-pane,
   .chart-mode .leaflet-pMajor-pane,.chart-mode .leaflet-pMtn-pane,
-  .chart-mode .leaflet-pSettle-pane,.chart-mode .leaflet-pMinor-pane,
+  .chart-mode .leaflet-pSettle-pane,.chart-mode .leaflet-pMinor-pane,.chart-mode .leaflet-pLesser-pane,
   .chart-mode .leaflet-pOrigin-pane,.chart-mode .leaflet-pFaction-pane,
   .chart-mode .leaflet-pLane-pane,.chart-mode .leaflet-pWay-pane,
   .chart-mode .leaflet-pDistrict-pane,
@@ -377,7 +382,7 @@
   .map-tier-d .leaflet-pRealm-pane,.map-tier-d .leaflet-pTrail-pane,
   .map-tier-d .leaflet-pRouteLine-pane,.map-tier-d .leaflet-pWater-pane,
   .map-tier-d .leaflet-pMajor-pane,.map-tier-d .leaflet-pMtn-pane,
-  .map-tier-d .leaflet-pSettle-pane,.map-tier-d .leaflet-pMinor-pane,
+  .map-tier-d .leaflet-pSettle-pane,.map-tier-d .leaflet-pMinor-pane,.map-tier-d .leaflet-pLesser-pane,
   .map-tier-d .leaflet-pOrigin-pane,.map-tier-d .leaflet-pFaction-pane,
   .map-tier-d .leaflet-pLane-pane,.map-tier-d .leaflet-pWay-pane,
   .map-tier-d .leaflet-pDistrict-pane,
@@ -536,7 +541,7 @@
   // party route line, so the campaign's own path reads on top where they cross.
   [['pRealm',410],['pDistrict',411],['pTrail',412],['pLane',413],['pWay',414],
    ['pRouteLine',415],['pCityWash',449],['pCity',450],['pWater',618],
-   ['pMajor',620],['pMtn',622],['pSettle',624],['pMinor',626],['pOrigin',628],
+   ['pMajor',620],['pMtn',622],['pLesser',623],['pSettle',624],['pMinor',626],['pOrigin',628],
    ['pFaction',630],['pRouteWp',640],['pCityPOI',650]].forEach(function(p){
     map.createPane(p[0]); map.getPane(p[0]).style.zIndex=p[1];
   });
@@ -774,7 +779,8 @@
   function setHash(h){history.replaceState(null,'',location.pathname+location.search+h);}
 
   function openPlace(m){
-    var page=pageFor(m.name);
+    // traced-census 'lesser' settlements: exact-title wiki only (no fuzzy attach to short names)
+    var page=m.minor?(WIKI[m.name]||WIKIFOLD[fold(m.name)]||null):pageFor(m.name);
     var art=artFor(m.name), canon=detailKey(m.name);
     var akey=cityAnchorKey(m.name), reg=akey&&registryFor(akey), traits=akey&&CITY_TRAITS[akey];
     var flyCity=isFlyInCity(m.name);           // has an anchor + a registered overlay → descend
@@ -796,6 +802,7 @@
         if(!cp)h+=provBlock('invented',true);   // sim-derived → '✶ per the Annals’ telling.'
       }
     }
+    if(m.minor)h+=provBlock('trace');          // census dot: traced from the atlas, no chronicle claim
     if(page){
       var body=cleanWiki(page.content,m.name);
       h+='<div class="card-lore">'+(body||'<p>The chronicles record only the name.</p>')+'</div>';
@@ -869,7 +876,7 @@
     'Bodies of Water':{cls:'t-water',g:'≈',pane:'pWater'},
     'Mountains and Hills':{cls:'t-mtn',g:'▲',pane:'pMtn'}
   };
-  var LAYERS={};
+  var LAYERS={}, LESSER=L.layerGroup();   // LESSER: traced-census 'Lesser settlements' (tier C only)
 
   // tier boundary zooms, relative to the (viewport-dependent) fit zoom so tiers
   // A/B/C are all reachable within [minZoom,maxZoom]; the fit view sits in tier A
@@ -892,18 +899,21 @@
     MARKERS=data;
     data.forEach(function(m){
       var st=TYPE_STYLE[m.type]||{cls:'t-minor',g:'•',pane:'pMinor'};
+      var cls=st.cls,pane=st.pane;
+      if(m.minor){cls='t-lesser';pane='pLesser';}   // traced-census: own pane + smaller glyph
       var c=clampToFrame(m.x,m.y);
       m._edge=c.clamped?c.dir:null;
-      var gc=st.cls==='t-major'?12:st.cls==='t-minor'?9:11;   // glyph centre by size
+      var gc=cls==='t-major'?12:cls==='t-lesser'?7:cls==='t-minor'?9:11;   // glyph centre by size
       var icon=L.divIcon({className:'',iconSize:null,iconAnchor:[11,11],
-        html:'<div class="mk '+st.cls+(c.clamped?' edge':'')+'"><span class="glyph">'+st.g+'</span>'+
+        html:'<div class="mk '+cls+(c.clamped?' edge':'')+'"><span class="glyph">'+st.g+'</span>'+
              '<span class="lbl">'+esc(m.name)+'</span>'+
              (c.clamped?chevHtml(c.dir,gc,gc):'')+'</div>'});
-      var mk=L.marker(px(c.x,c.y),{icon:icon,title:m.name,pane:st.pane,riseOnHover:true});
+      var mk=L.marker(px(c.x,c.y),{icon:icon,title:m.name,pane:pane,riseOnHover:true});
       mk.bindTooltip(esc(m.name)+(c.clamped?edgeSuffix(c.dir):''),
         {direction:'right',offset:[12,0],className:'mk-tip',opacity:1});
       mk.on('click',function(){openPlace(m);});
       m._mk=mk; MREF[fold(m.name)]=m;
+      if(m.minor){LESSER.addLayer(mk);return;}
       if(!LAYERS[m.type])LAYERS[m.type]=L.layerGroup();
       LAYERS[m.type].addLayer(mk);
     });
@@ -1423,9 +1433,13 @@
     return CITY_ANCHORS_FOLD[fold(name)]||null;
   }
   function registryFor(name){var k=cityAnchorKey(name);return (k&&CITYREG[k])||null;}
-  // anchored + either a registered overlay OR generatable traits (spec §B) → descend.
-  function isFlyInCity(name){var k=cityAnchorKey(name);
-    return !!(k&&(CITYREG[k]||CITY_TRAITS[k]));}
+  // any anchored city is a meshed-world citizen: explicit traits, a registered overlay,
+  // or (census towns) a default plan generated from the anchor's own kind/harbor/sea → descend.
+  function isFlyInCity(name){return !!cityAnchorKey(name);}
+  // default traits for anchors lacking a data/city-traits entry ('defaults apply'): the
+  // anchor already carries the only fields genCityCanvas needs (kind/harbor/sea).
+  function traitsFor(key){var a=CITY_ANCHORS[key];
+    return CITY_TRAITS[key]||(a?{kind:a.kind,harbor:a.harbor,sea:a.sea}:null);}
 
   // footprint square in world px; the image (w×h) is aspect-fit into a 2r side box.
   function cityBox(a,w,h){var r=footR(a.kind),mx=Math.max(w,h);
@@ -2341,7 +2355,7 @@
         var q=MASKQ[key];
         if(q.applied)return; q.applied=true;
         delete WASHC[key];                     // re-tone the wash with the sampled hue
-        var t=CITY_TRAITS[key],reg=CITYREG[key];
+        var t=traitsFor(key),reg=CITYREG[key];
         if(t&&(!reg||reg.prov==='invented')){
           var gen=genCityCanvas(key,t,a,m);
           registerCityOverlay(key,gen.canvas,{prov:'invented',w:gen.w,h:gen.h,
@@ -2357,7 +2371,7 @@
   function ensureCityGenNow(key){
     try{
       if(CITYREG[key])return;
-      var t=CITY_TRAITS[key],a=CITY_ANCHORS[key]; if(!t||!a)return;
+      var a=CITY_ANCHORS[key],t=traitsFor(key); if(!t||!a)return;
       var q=MASKQ[key],m=(q&&q.s)?q.m:null;
       var gen=genCityCanvas(key,t,a,m);
       registerCityOverlay(key,gen.canvas,{prov:'invented',w:gen.w,h:gen.h,
@@ -2527,7 +2541,7 @@
     if(!list.length){sugEl.className='';sugEl.innerHTML='';return;}
     sugEl.innerHTML=list.map(function(m,i){
       return '<div class="sug" data-i="'+i+'"><span>'+esc(m.name)+'</span> '+
-        '<span class="st">'+esc(m.type)+'</span></div>';
+        '<span class="st">'+esc(m.minor?'Lesser settlement':m.type)+'</span></div>';
     }).join('');
     sugEl.className='on';
     Array.prototype.forEach.call(sugEl.children,function(el){
@@ -2547,7 +2561,9 @@
     var hits=[];
     if(CHART.on&&CHART.pois)CHART.pois.forEach(function(p){if(fold(p.name).indexOf(q)>=0)
       hits.push({name:p.name,type:'Point · '+CHART.name,_t:'poi',_poi:p,_chart:CHART.name});});
-    MARKERS.forEach(function(m){if(fold(m.name).indexOf(q)>=0)hits.push(m);});
+    // match name OR type words (so "settlement" surfaces settlements, incl. traced lesser ones)
+    MARKERS.forEach(function(m){var ty=m.minor?'lesser settlement':fold(m.type||'');
+      if(fold(m.name).indexOf(q)>=0||ty.indexOf(q)>=0)hits.push(m);});
     PARTY.forEach(function(p){if(fold(p.name).indexOf(q)>=0)
       hits.push({name:p.name,type:'Company',_t:'company'});});
     FACTIONS.forEach(function(f){if(fold(f.name).indexOf(q)>=0)
@@ -2658,7 +2674,9 @@
     var TL={'Settlements':'⌂ Settlements','Major Regions':'✦ Major Regions',
       'Minor Regions':'◆ Minor Regions','Bodies of Water':'≈ Bodies of Water',
       'Mountains and Hills':'▲ Mountains & Hills'};
-    order.forEach(function(t){if(LAYERS[t]){LAYERS[t].addTo(map);overlays[TL[t]]=LAYERS[t];}});
+    order.forEach(function(t){if(LAYERS[t]){LAYERS[t].addTo(map);overlays[TL[t]]=LAYERS[t];}
+      // indented sub-toggle beneath Settlements: traced-census lesser settlements, default ON
+      if(t==='Settlements'){LESSER.addTo(map);overlays[' ⌂ Lesser settlements']=LESSER;}});
 
     var realmLayer=buildRealms(realms);
     if(realmLayer){realmLayer.addTo(map);overlays['⚑ Realm Boundaries']=realmLayer;}

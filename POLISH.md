@@ -10,21 +10,9 @@ non-conflicting item instead.
 
 ## Queue
 
-- [ ] **All named cities anchored (USER FLAG)** — every named dot on the atlas gets a
-  generated plan. Lab work DONE: 306 undetected ring-dot towns found (recall verified
-  against all known anchors; scratchpad/dots_unnamed.json has (x,y,type)), and 13
-  transcription contact sheets rendered (scratchpad/dots-sheet-00..12.png, red circle
-  = the dot, label = index+coords). THE RUN: (1) transcribe each sheet — read the town
-  name printed beside each circled dot (diacritics matter: ā ē ī ō ū); mark SKIP for
-  false positives (letters, border dots, non-towns); (2) snap the four approximate
-  existing anchors (Shengo, Rhup, Hordon, Ion Ephel) to their detected dots; (3) add
-  all named dots to city-anchors/maps_markers/city-traits with kind village (or town
-  if the transcriber judges the label/glyph major), existence+position prov 'trace',
-  all else defaults (✶); marker reveal: new minor settlements at tier C only, in a
-  new sub-toggle "Lesser settlements" (default ON) so tier B doesn't flood; (4) known
-  big names (Cyrikon, Palagnon, Summarch-area towns) get canonNotes only where the
-  wiki actually attests. Double-ring major glyphs elsewhere remain a follow-up
-  (template-match; the three known majors are already anchored).
+- [ ] **Census follow-ups** — 13 low-confidence transcriptions excluded (re-shoot
+  wider crops + transcribe); double-ring major-city glyphs elsewhere on the atlas
+  (template-match with the known Epēshu/Tamaron/Drāmūz glyphs as templates).
 - [ ] **Addressable alleys** — generated plans fake alleys as gaps between building
   cells. Add a true lane graph pass (minor streets branching between spokes/ring,
   buildings snapped to lane frontages) so the warren is traceable turn by turn.
@@ -66,6 +54,13 @@ non-conflicting item instead.
 ## Done
 
 (check items off above and move them here with a one-line result + version)
+
+- [x] **All named cities anchored (USER FLAG)** — 306 detected dots transcribed by a
+  7-agent fan-out (167 towns high-confidence, 126 false positives skipped, 13 low-
+  confidence quarantined); all integrated with trace provenance, four approximate
+  anchors snapped to their true printed dots, "Lesser settlements" tier-C sub-toggle
+  keeps the continental view clean; Hemdok Laego descends onto a mask-true plan.
+  (v0.9.0-alpha.1)
 
 - [x] **Epēshu roundel doubling** — all 19 POI coords corrected to the true printed
   badge centers (blob detection for 9, contact-sheet measurement for 10 after an
