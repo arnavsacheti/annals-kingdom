@@ -1,0 +1,122 @@
+[
+ {
+  "name": "The Gulf Crossing",
+  "prov": "invented",
+  "note": "Epēshu and Hordon contest the Marble Gulf — the rivalry is canon; this lane is conjecture.",
+  "pts": [
+   [
+    1222,
+    1404
+   ],
+   [
+    1120,
+    1400
+   ],
+   [
+    1085,
+    1470
+   ],
+   [
+    1080,
+    1580
+   ],
+   [
+    1098,
+    1686
+   ]
+  ],
+  "ends": [
+   "Epēshu",
+   "Hordon"
+  ]
+ },
+ {
+  "name": "The North Coast Packet",
+  "prov": "invented",
+  "note": "Coasting trade between the Leponnian harbors, per the Annals' merchants.",
+  "pts": [
+   [
+    1222,
+    1404
+   ],
+   [
+    1320,
+    1398
+   ],
+   [
+    1440,
+    1418
+   ],
+   [
+    1521,
+    1465
+   ],
+   [
+    1600,
+    1520
+   ],
+   [
+    1658,
+    1532
+   ],
+   [
+    1691,
+    1568
+   ]
+  ],
+  "ends": [
+   "Epēshu",
+   "Mago"
+  ]
+ },
+ {
+  "name": "The Strait Run",
+  "prov": "invented",
+  "note": "Across the Great Chasmous strait to the Bībūnor shore.",
+  "pts": [
+   [
+    1658,
+    1532
+   ],
+   [
+    1672,
+    1440
+   ],
+   [
+    1660,
+    1320
+   ]
+  ],
+  "ends": [
+   "Tamaron",
+   "Leshes"
+  ]
+ },
+ {
+  "name": "The South Lane",
+  "prov": "invented",
+  "note": "Round the Gulf of Drāmūz.",
+  "pts": [
+   [
+    1335,
+    1734
+   ],
+   [
+    1390,
+    1792
+   ],
+   [
+    1460,
+    1818
+   ],
+   [
+    1525,
+    1820
+   ]
+  ],
+  "ends": [
+   "Drāmūz",
+   "Kardunash"
+  ]
+ }
+]

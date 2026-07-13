@@ -1,0 +1,199 @@
+{
+ "Epēshu": {
+  "atlasX": 1236.1,
+  "atlasY": 1415.0,
+  "kind": "capital",
+  "harbor": true,
+  "sea": {
+   "side": "SSW",
+   "distPx": 10
+  }
+ },
+ "Sokundo": {
+  "atlasX": 1477.7,
+  "atlasY": 1444.2,
+  "kind": "town",
+  "harbor": true,
+  "sea": {
+   "side": "WSW",
+   "distPx": 2
+  }
+ },
+ "Kanae": {
+  "atlasX": 1521.5,
+  "atlasY": 1482.7,
+  "kind": "village",
+  "harbor": true,
+  "sea": {
+   "side": "E",
+   "distPx": 5
+  }
+ },
+ "Tamaron": {
+  "atlasX": 1657.9,
+  "atlasY": 1548.3,
+  "kind": "town",
+  "harbor": true,
+  "sea": {
+   "side": "E",
+   "distPx": 2
+  }
+ },
+ "Mago": {
+  "atlasX": 1691.3,
+  "atlasY": 1581.7,
+  "kind": "village",
+  "harbor": true,
+  "sea": {
+   "side": "N",
+   "distPx": 5
+  }
+ },
+ "Aldorūs": {
+  "atlasX": 1448.6,
+  "atlasY": 1527.5,
+  "kind": "village",
+  "harbor": false,
+  "sea": {
+   "side": "NE",
+   "distPx": 77
+  }
+ },
+ "Rēketis": {
+  "atlasX": 1279.8,
+  "atlasY": 1551.5,
+  "kind": "village",
+  "harbor": false,
+  "sea": {
+   "side": "WSW",
+   "distPx": 36
+  }
+ },
+ "Āglaz": {
+  "atlasX": 1234.0,
+  "atlasY": 1554.6,
+  "kind": "village",
+  "harbor": true,
+  "sea": {
+   "side": "S",
+   "distPx": 11
+  }
+ },
+ "Mīth Mīrdak": {
+  "atlasX": 1164.2,
+  "atlasY": 1509.8,
+  "kind": "village",
+  "harbor": true,
+  "sea": {
+   "side": "SW",
+   "distPx": 8
+  }
+ },
+ "Pharzeban": {
+  "atlasX": 1306.9,
+  "atlasY": 1621.3,
+  "kind": "village",
+  "harbor": false,
+  "sea": {
+   "side": "WNW",
+   "distPx": 59
+  }
+ },
+ "Sardil": {
+  "atlasX": 1484.0,
+  "atlasY": 1636.9,
+  "kind": "town",
+  "harbor": false,
+  "sea": null
+ },
+ "Perōna": {
+  "atlasX": 1647.5,
+  "atlasY": 1631.7,
+  "kind": "village",
+  "harbor": false,
+  "sea": {
+   "side": "ENE",
+   "distPx": 63
+  }
+ },
+ "Tarap": {
+  "atlasX": 1251.7,
+  "atlasY": 1671.3,
+  "kind": "village",
+  "harbor": false,
+  "sea": {
+   "side": "S",
+   "distPx": 2
+  }
+ },
+ "Thalbaen": {
+  "atlasX": 1275.6,
+  "atlasY": 1702.5,
+  "kind": "village",
+  "harbor": false,
+  "sea": {
+   "side": "SW",
+   "distPx": 8
+  }
+ },
+ "Drāmūz": {
+  "atlasX": 1335.0,
+  "atlasY": 1733.8,
+  "kind": "town",
+  "harbor": true,
+  "sea": {
+   "side": "SW",
+   "distPx": 6
+  }
+ },
+ "Medem": {
+  "atlasX": 1396.5,
+  "atlasY": 1711.9,
+  "kind": "village",
+  "harbor": false,
+  "sea": {
+   "side": "SW",
+   "distPx": 48
+  }
+ },
+ "Shengo": {
+  "atlasX": 1419.4,
+  "atlasY": 1777.5,
+  "kind": "village",
+  "harbor": false,
+  "sea": {
+   "side": "E",
+   "distPx": 2
+  }
+ },
+ "Kardunash": {
+  "atlasX": 1524.6,
+  "atlasY": 1820.2,
+  "kind": "town",
+  "harbor": true,
+  "sea": {
+   "side": "W",
+   "distPx": 14
+  }
+ },
+ "Rhup": {
+  "atlasX": 1552.7,
+  "atlasY": 1550.4,
+  "kind": "village",
+  "harbor": false,
+  "sea": {
+   "side": "N",
+   "distPx": 16
+  }
+ },
+ "Lepon the Old": {
+  "atlasX": 1146.5,
+  "atlasY": 1420.2,
+  "kind": "ruin",
+  "harbor": false,
+  "sea": {
+   "side": "E",
+   "distPx": 2
+  }
+ }
+}

@@ -1,0 +1,65 @@
+[
+ {
+  "name": "Road that Walks with the Sun",
+  "prov": "trace",
+  "wikiSlug": "Locations/Regions/Patrinor/Road-that-Walks-with-the-Sun",
+  "note": "The great imperial highway; it passes through the Epēshīn Forum before turning east to Tamaron. Trace approximate.",
+  "pts": [
+   [
+    1222,
+    1404
+   ],
+   [
+    1300,
+    1432
+   ],
+   [
+    1400,
+    1452
+   ],
+   [
+    1500,
+    1492
+   ],
+   [
+    1590,
+    1522
+   ],
+   [
+    1658,
+    1548
+   ],
+   [
+    1755,
+    1562
+   ],
+   [
+    1868,
+    1588
+   ]
+  ]
+ },
+ {
+  "name": "The East-West Road",
+  "prov": "trace",
+  "note": "The road to Summarch, where the party first met the wendigo pack. Trace approximate.",
+  "pts": [
+   [
+    720,
+    155
+   ],
+   [
+    610,
+    140
+   ],
+   [
+    560,
+    105
+   ],
+   [
+    527,
+    66
+   ]
+  ]
+ }
+]

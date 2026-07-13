@@ -355,6 +355,47 @@
   .chart-mode .era-ctrl,.chart-mode .jrn-ctrl,.chart-mode .leaflet-control-layers,
   .chart-mode .dock,.chart-mode .scalebar{display:none!important;}
 
+  /* ---- meshed world: street tier (spec MW §A) — world clutter fades OUT at depth ---- */
+  .leaflet-pCity-pane{transition:opacity .25s ease;}
+  .map-tier-d .leaflet-pRealm-pane,.map-tier-d .leaflet-pTrail-pane,
+  .map-tier-d .leaflet-pRouteLine-pane,.map-tier-d .leaflet-pWater-pane,
+  .map-tier-d .leaflet-pMajor-pane,.map-tier-d .leaflet-pMtn-pane,
+  .map-tier-d .leaflet-pSettle-pane,.map-tier-d .leaflet-pMinor-pane,
+  .map-tier-d .leaflet-pOrigin-pane,.map-tier-d .leaflet-pFaction-pane,
+  .map-tier-d .leaflet-pRouteWp-pane{opacity:0!important;pointer-events:none;}
+
+  /* ---- uncharted treatment: parchment grain + corner watermark ---- */
+  .uncharted-grain{position:absolute;inset:0;pointer-events:none;z-index:350;opacity:0;
+    transition:opacity .5s ease;
+    background-image:radial-gradient(rgba(90,70,40,.10) 1px,transparent 1.5px);
+    background-size:6px 6px;}
+  .show-uncharted .uncharted-grain{opacity:.6;}
+  .uncharted-mark{position:absolute;right:14px;bottom:74px;pointer-events:none;z-index:655;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.4px;
+    color:#6a4326;background:rgba(243,236,215,.84);border:1px solid var(--line2);
+    border-radius:4px;padding:4px 9px;box-shadow:0 2px 8px rgba(44,36,24,.25);
+    opacity:0;transition:opacity .5s ease;}
+  .show-uncharted .uncharted-mark{opacity:.92;}
+  .chart-mode .uncharted-grain,.chart-mode .uncharted-mark{display:none!important;}
+
+  /* ---- provenance (spec MW §C): ✶ conjecture vs canon archives line ---- */
+  .prov-star{color:var(--rust);font-size:.68em;font-weight:700;margin-left:1px;
+    vertical-align:super;line-height:0;}
+  .prov-banner{font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.45;
+    color:#6a4326;background:rgba(138,98,36,.13);border:1px solid rgba(138,98,36,.4);
+    border-left:3px solid var(--bronze);border-radius:4px;padding:6px 10px;margin:4px 0 12px;}
+  .prov-banner.annals{color:#5a3210;border-left-color:var(--rust);
+    background:rgba(138,60,40,.11);}
+  .prov-arch{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);
+    letter-spacing:.3px;margin:4px 0 12px;font-style:italic;}
+  .city-traits{margin:4px 0 6px;}
+  .city-traits .ct-row{font-family:'Lora',serif;font-size:13.5px;color:var(--ink2);
+    margin:4px 0;line-height:1.5;}
+  .city-traits .ct-k{font-weight:600;color:var(--ink);}
+  .prov-legend{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);
+    padding:6px 8px 3px;border-top:1px solid var(--line);margin-top:2px;line-height:1.4;
+    letter-spacing:.2px;}
+
   @media (max-width:640px){
     header{padding:6px 10px;gap:8px;}
     header h1{font-size:16px;white-space:normal;flex:1 1 100%;text-align:center;}
@@ -413,10 +454,19 @@
   var WIKI_BASE='https://princexizor.ddns.net/';
   var RETINA=!!L.Browser.retina;
 
-  // detectRetina drops each base layer's effective maxZoom by 1 on HiDPI (6→5); the map's
-  // maxZoom must match, or zooms 5–6 render over blank parchment (and tierZoom('c') would
-  // land there). Cap the map to the deepest zoom the tiles actually render.
-  var map=L.map('map',{crs:L.CRS.Simple,minZoom:0,maxZoom:RETINA?5:6,
+  // ---- meshed-world (spec MW §A) continuous-zoom constants ----
+  // The atlas z0..~6 stays master; below it the world goes soft. Max zoom is managed
+  // dynamically per view centre (worldCityUpdate): Z_OPEN_MAX in open country, or a
+  // city's own cityMaxZ near its footprint, up to Z_STREET. TIER_CEIL keeps the A/B/C
+  // reveal tiers pinned to the OLD fixed ceiling so dynamic maxZoom can't jitter them.
+  var Z_STREET=11.5, Z_OPEN_MAX=8.0, Z_TIER_D=7.5;
+  var TIER_CEIL=RETINA?5:6;
+  var FOOT_R={capital:26,town:14,village:9,ruin:8};   // footprint radius, world px, by kind
+
+  // Map maxZoom starts at Z_STREET (soft ceiling); worldCityUpdate narrows it live.
+  // Base tiles upscale past maxNativeZoom into a faint parchment ghost (opacity ~0.12)
+  // and the page bg matches, so blank/upscaled tiles beyond the ghost never read as void.
+  var map=L.map('map',{crs:L.CRS.Simple,minZoom:0,maxZoom:Z_STREET,
     zoomControl:true,attributionControl:true,maxBoundsViscosity:1.0,
     zoomSnap:.5,zoomDelta:.5,wheelPxPerZoomLevel:80,wheelDebounceTime:20,
     fadeAnimation:true});
@@ -426,9 +476,9 @@
 
   // ---- panes (one per overlay tier; ordering via z-index) ----
   // realms sit below markers; route waypoints above the route line.
-  [['pRealm',410],['pTrail',412],['pRouteLine',415],['pWater',618],['pMajor',620],
-   ['pMtn',622],['pSettle',624],['pMinor',626],['pOrigin',628],['pFaction',630],
-   ['pRouteWp',640]].forEach(function(p){
+  [['pRealm',410],['pTrail',412],['pRouteLine',415],['pCity',450],['pWater',618],
+   ['pMajor',620],['pMtn',622],['pSettle',624],['pMinor',626],['pOrigin',628],
+   ['pFaction',630],['pRouteWp',640],['pCityPOI',650]].forEach(function(p){
     map.createPane(p[0]); map.getPane(p[0]).style.zIndex=p[1];
   });
 
@@ -438,7 +488,7 @@
   var ATTR='Agrakh Nīmilkad Utheg · the Tale of the Allhammers';
   function makeBase(path,deepZoom){
     return L.tileLayer(path+'{z}/{x}/{y}.jpg',{
-      minNativeZoom:0,maxNativeZoom:RETINA?deepZoom-1:deepZoom,maxZoom:6,
+      minNativeZoom:0,maxNativeZoom:RETINA?deepZoom-1:deepZoom,maxZoom:Z_STREET,
       tileSize:256,noWrap:true,bounds:tileBounds,detectRetina:true,keepBuffer:4,
       attribution:ATTR});
   }
@@ -452,6 +502,7 @@
   function setEra(k){
     if(!BASES[k]||BASES[k]===curBase)return;
     map.removeLayer(curBase); curBase=BASES[k]; curBase.addTo(map);
+    curBase.setOpacity(baseOpacity(map.getZoom()));   // ride the atlas fade at any zoom
     if(eraInputs)Array.prototype.forEach.call(eraInputs,function(i){i.checked=(i.value===k);});
   }
 
@@ -620,11 +671,25 @@
   function openPlace(m){
     var page=pageFor(m.name);
     var art=artFor(m.name), canon=detailKey(m.name);
+    var akey=cityAnchorKey(m.name), reg=akey&&registryFor(akey), traits=akey&&CITY_TRAITS[akey];
+    var flyCity=isFlyInCity(m.name);           // has an anchor + a registered overlay → descend
     var h=(art?'<div class="card-plate"><img class="card-art" src="'+esc(art)+'" alt=""></div>':'')+
       '<span class="card-type">'+esc(m.type||'Place')+'</span>'+
       '<h2 class="card-name">'+esc(m.name)+'</h2>';
-    if(canon)h+='<button class="chart-btn" data-chart="'+esc(canon)+'">⚘ View the chart of '+
+    if(flyCity)h+='<button class="chart-btn" data-descend="'+esc(akey)+'">⚘ Descend into '+
+      esc(akey)+'</button>';
+    else if(canon)h+='<button class="chart-btn" data-chart="'+esc(canon)+'">⚘ View the chart of '+
       esc(canon)+'</button>';
+    if(traits){                                // anchored city → provenance + patron line
+      // chart provenance: canon overlay → archives; else the plan is not yet surveyed
+      h+=(reg&&reg.prov==='canon')?provBlock('canon'):provBlock('invented');
+      if(traits.patron){var cp=traits.patron.prov==='canon';
+        h+='<div class="city-traits"><div class="ct-row"><span class="ct-k">Patron:</span> '+
+           esc(traits.patron.name)+(cp?'':provStar('invented'))+
+           ' — the city’s tutelary god.</div></div>';
+        if(!cp)h+=provBlock('invented',true);   // sim-derived → '✶ per the Annals’ telling.'
+      }
+    }
     if(page){
       var body=cleanWiki(page.content,m.name);
       h+='<div class="card-lore">'+(body||'<p>The chronicles record only the name.</p>')+'</div>';
@@ -637,6 +702,8 @@
     setHash('#place='+encodeURIComponent(m.name));
     var cbtn=panelBody.querySelector('[data-chart]');
     if(cbtn)cbtn.addEventListener('click',function(){enterChart(cbtn.getAttribute('data-chart'));});
+    var dbtn=panelBody.querySelector('[data-descend]');
+    if(dbtn)dbtn.addEventListener('click',function(){flyIntoCity(dbtn.getAttribute('data-descend'),0);});
   }
 
   function openRealm(name){
@@ -701,8 +768,8 @@
   // A/B/C are all reachable within [minZoom,maxZoom]; the fit view sits in tier A
   // and the range up to maxZoom is split into thirds.
   function tierZoom(t){
-    var range=map.getMaxZoom()-fitZoom;
-    if(range<=0)return fitZoom;
+    var range=TIER_CEIL-fitZoom;                 // pinned to the fixed atlas ceiling, not
+    if(range<=0)return fitZoom;                   // the live dynamic maxZoom (see constants)
     return t==='c'?fitZoom+2*range/3:t==='b'?fitZoom+range/3:fitZoom;
   }
   function revealZoom(type){
@@ -1012,10 +1079,12 @@
       CHART.save={hash:location.hash,center:map.getCenter(),zoom:map.getZoom(),
         minZoom:map.getMinZoom(),maxZoom:map.getMaxZoom(),maxBounds:map.options.maxBounds};
       map.removeLayer(curBase);
+      ensureCityOverlay(null);               // meshed-world overlay/POIs GC'd for the modal
       closePanel();                          // drop the place card; the chart is the view
       var mc=map.getContainer();
       mc.classList.add('chart-mode');
-      mc.classList.remove('map-tier-a','map-tier-b','map-tier-c','atlas-labels');
+      mc.classList.remove('map-tier-a','map-tier-b','map-tier-c','map-tier-d',
+        'atlas-labels','show-uncharted');
     }
     CHART.on=true; CHART.name=canon; CHART.def=def;
     var atZoom=def.kind==='tiles'?def.maxz:0; CHART.atZoom=atZoom;
@@ -1080,10 +1149,547 @@
     map.setView(s.center,s.zoom,{animate:false});
     map.options.zoomSnap=sn;
     map.setMaxBounds(s.maxBounds);
-    updTier(); updScale();
+    updTier(); updScale(); worldOpacityUpdate(); worldCityUpdate();  // re-establish meshed world
     if(!(s.hash&&/(?:place|company|faction)=/.test(s.hash)&&restorePanel(s.hash)))
       closePanel();
     CHART.save=null;
+  }
+
+  // ================= The meshed world (spec MW §A/§C): continuous zoom ================
+  // City footprints live in WORLD (atlas) coordinates. A city's chart — a real overlay
+  // or a canvas the generator (spec §B) hands to registerCityOverlay — spans its
+  // footprint square (aspect-preserved) and fades in as the atlas fades out. Provenance
+  // rides every card. REFINEMENT SURFACE: to upgrade a placeholder city, hand-edit
+  // data/city-traits.json (traits) or add a real chart + call registerCityOverlay — no
+  // code changes needed here.
+  var CITY_ANCHORS={}, CITY_ANCHORS_FOLD={}, CITY_TRAITS={}, CITYREG={};
+  var CITYVIEW={name:null,overlay:null,poiLayer:null,poiOn:false};
+  var overlayCache=new Map();               // name -> L.imageOverlay (LRU, cap 6)
+
+  function log2(x){return Math.log(x)/Math.LN2;}
+  function footR(kind){return FOOT_R[kind]!=null?FOOT_R[kind]:9;}
+  function cityAnchorKey(name){
+    if(name==null)return null;
+    if(CITY_ANCHORS[name])return name;
+    return CITY_ANCHORS_FOLD[fold(name)]||null;
+  }
+  function registryFor(name){var k=cityAnchorKey(name);return (k&&CITYREG[k])||null;}
+  // anchored + either a registered overlay OR generatable traits (spec §B) → descend.
+  function isFlyInCity(name){var k=cityAnchorKey(name);
+    return !!(k&&(CITYREG[k]||CITY_TRAITS[k]));}
+
+  // footprint square in world px; the image (w×h) is aspect-fit into a 2r side box.
+  function cityBox(a,w,h){var r=footR(a.kind),mx=Math.max(w,h);
+    var hw=r*w/mx, hh=r*h/mx;
+    return {hw:hw,hh:hh,x0:a.atlasX-hw,y0:a.atlasY-hh,x1:a.atlasX+hw,y1:a.atlasY+hh,
+            fw:2*hw,fh:2*hh};}
+  // native resolution sets the city's own deepest zoom (1 image px ≈ 1 screen px).
+  function cityMaxZ(a,w,h){var r=footR(a.kind),mx=Math.max(w,h);
+    return Math.min(Z_STREET,NZ+log2(mx/(2*r)));}
+
+  function baseOpacity(z){if(z<=6.2)return 1;if(z>=8)return 0.12;
+    return 1-(z-6.2)/1.8*0.88;}              // 1.0 → 0.12 across z6.2→8
+  function overlayOpacity(z){if(z<=6.8)return 0;if(z>=7.8)return 1;return z-6.8;}
+
+  function nearestCity(cx,cy){
+    var best=null,bd=Infinity,ba=null;
+    for(var k in CITY_ANCHORS){var a=CITY_ANCHORS[k];
+      var dx=a.atlasX-cx,dy=a.atlasY-cy,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<bd){bd=d;best=k;ba=a;}}
+    if(best&&bd<=3*footR(ba.kind))return {name:best,dist:bd,a:ba};   // ~3 footprint radii
+    return null;
+  }
+
+  // ---- provenance rendering (spec §C) ----
+  function provBlock(prov,annals){
+    if(prov==='canon')return '<div class="prov-arch">⚜ From the campaign archives</div>';
+    if(annals)return '<div class="prov-banner annals">✶ per the Annals’ telling.</div>';
+    return '<div class="prov-banner">✶ Conjectural — a placeholder until the chronicles say more.</div>';
+  }
+  function provStar(prov){return (prov&&prov!=='canon')?'<sup class="prov-star">✶</sup>':'';}
+
+  // ---- overlay cache (LRU) ----
+  function lruPut(k,v){
+    if(overlayCache.has(k))overlayCache.delete(k);
+    overlayCache.set(k,v);
+    while(overlayCache.size>6){var oldest=overlayCache.keys().next().value;
+      var ov=overlayCache.get(oldest);overlayCache.delete(oldest);
+      if(ov&&map.hasLayer(ov))map.removeLayer(ov);}
+  }
+
+  // ---- world POIs (image-space → world coords through the footprint transform) ----
+  function poiByN(name,n){var reg=registryFor(name);if(!reg||!reg.pois)return null;
+    for(var i=0;i<reg.pois.length;i++)if(reg.pois[i].n===n)return reg.pois[i];return null;}
+  function worldPOICoord(name,n){
+    var reg=registryFor(name),a=CITY_ANCHORS[cityAnchorKey(name)],p=poiByN(name,n);
+    if(!reg||!a||!p)return null;
+    var box=cityBox(a,reg.w,reg.h),pr=reg.poiRef||{w:reg.w,h:reg.h};
+    return px(box.x0+(p.x/pr.w)*box.fw, box.y0+(p.y/pr.h)*box.fh);
+  }
+  function buildWorldPOIs(name,reg,a){
+    if(!reg.pois||!reg.pois.length)return null;
+    var box=cityBox(a,reg.w,reg.h),pr=reg.poiRef||{w:reg.w,h:reg.h},g=L.layerGroup();
+    reg.pois.forEach(function(p){
+      var ll=px(box.x0+(p.x/pr.w)*box.fw, box.y0+(p.y/pr.h)*box.fh);
+      var icon=L.divIcon({className:'',iconSize:[22,22],iconAnchor:[11,11],
+        html:'<div class="poi-mk">'+p.n+'</div>'});
+      var mk=L.marker(ll,{icon:icon,title:p.name,pane:'pCityPOI',riseOnHover:true});
+      mk.bindTooltip(esc(p.name)+provStar(p.prov),
+        {direction:'top',offset:[0,-11],className:'mk-tip',opacity:1});
+      mk.on('click',function(){openWorldPOI(name,p);});
+      p._wmk=mk; g.addLayer(mk);
+    });
+    return g;
+  }
+  function openWorldPOI(name,p){
+    var prov=p.prov||'canon';
+    var h='<span class="card-type">'+esc(name)+' · Point '+p.n+'</span>'+
+      '<h2 class="card-name">'+esc(p.name)+provStar(prov)+'</h2>'+
+      provBlock(prov)+
+      '<div class="card-lore"><p>'+esc(p.d||'')+'</p></div>'+
+      '<a class="co-link" data-backcity="1">Part of '+esc(name)+' — back to the city ↗</a>';
+    showPanel(h);
+    setHash('#chart='+encodeURIComponent(name)+'&poi='+p.n);
+    var b=panelBody.querySelector('[data-backcity]');
+    if(b)b.addEventListener('click',function(){var m=MREF[fold(name)];
+      if(m)openPlace(m);else openPlace({name:name});});
+  }
+
+  // ---- instantiate / GC the single active city overlay + its POIs ----
+  function ensureCityOverlay(name){
+    var key=name?cityAnchorKey(name):null;
+    if(CITYVIEW.name===key)return;
+    if(CITYVIEW.overlay&&map.hasLayer(CITYVIEW.overlay))map.removeLayer(CITYVIEW.overlay);
+    if(CITYVIEW.poiLayer&&map.hasLayer(CITYVIEW.poiLayer))map.removeLayer(CITYVIEW.poiLayer);
+    CITYVIEW.name=null;CITYVIEW.overlay=null;CITYVIEW.poiLayer=null;CITYVIEW.poiOn=false;
+    if(!key)return;
+    var reg=CITYREG[key],a=CITY_ANCHORS[key]; if(!reg||!a)return;
+    CITYVIEW.name=key;
+    var ov=overlayCache.get(key);
+    if(!ov){
+      var box=cityBox(a,reg.w,reg.h);
+      var cb=L.latLngBounds(px(box.x0,box.y0),px(box.x1,box.y1));
+      ov=L.imageOverlay(reg.url,cb,{pane:'pCity',opacity:0,interactive:false,attribution:ATTR});
+      lruPut(key,ov);
+    }
+    ov.setOpacity(overlayOpacity(map.getZoom()));
+    ov.addTo(map); CITYVIEW.overlay=ov;
+    var wp=buildWorldPOIs(key,reg,a);
+    if(wp){CITYVIEW.poiLayer=wp;
+      if(map.getZoom()>=8){wp.addTo(map);CITYVIEW.poiOn=true;}}
+  }
+  function setCityPOIVisible(on){
+    if(!CITYVIEW.poiLayer)return;
+    if(on&&!CITYVIEW.poiOn){CITYVIEW.poiLayer.addTo(map);CITYVIEW.poiOn=true;}
+    else if(!on&&CITYVIEW.poiOn){map.removeLayer(CITYVIEW.poiLayer);CITYVIEW.poiOn=false;}
+  }
+
+  // ---- the two per-frame passes ----
+  // (a) opacity/tier-d/watermark — rides the live 'zoom' event for a smooth crossfade.
+  function worldOpacityUpdate(){
+    if(CHART.on)return;
+    var z=map.getZoom(), mc=map.getContainer();
+    if(curBase&&curBase.setOpacity)curBase.setOpacity(baseOpacity(z));
+    if(CITYVIEW.overlay)CITYVIEW.overlay.setOpacity(overlayOpacity(z));
+    mc.classList.toggle('map-tier-d',z>=Z_TIER_D);
+    mc.classList.toggle('show-uncharted',z>6.8&&!CITYVIEW.name);
+  }
+  // (b) nearest-city / instantiate / GC / dynamic maxZoom — zoomend+moveend ONLY.
+  function worldCityUpdate(){
+    if(CHART.on)return;
+    var z=map.getZoom();
+    var cp=map.project(map.getCenter(),NZ);
+    var near=nearestCity(cp.x,cp.y);
+    if(near&&z>6.5)ensureCityGen(near.name);        // generate the nearest plan as we descend
+    var reg=near&&registryFor(near.name);
+    var allowed=reg?cityMaxZ(near.a,reg.w,reg.h):Z_OPEN_MAX;
+    allowed=Math.min(Z_STREET,allowed);
+    if(Math.abs(map.getMaxZoom()-allowed)>0.001)map.setMaxZoom(allowed); // Leaflet eases down
+    ensureCityOverlay((reg&&z>6.5)?near.name:null);
+    setCityPOIVisible(z>=8);
+  }
+
+  // ---- fly INTO a city (zoom-through; replaces modal chart for anchored cities) ----
+  function flyIntoCity(name,poiN){
+    var key=cityAnchorKey(name); if(!key)return false;
+    ensureCityGen(key);                            // generate the plan if not yet made
+    var reg=CITYREG[key],a=CITY_ANCHORS[key]; if(!reg||!a)return false;
+    if(CHART.on)exitChart();
+    var cz=cityMaxZ(a,reg.w,reg.h);
+    if(map.getMaxZoom()<cz)map.setMaxZoom(cz);   // permit the deep zoom before flying
+    ensureCityOverlay(key);                        // eager: fades in DURING the descent
+    var target=Math.max(map.getZoom(),cz-0.5);
+    var dest=px(a.atlasX,a.atlasY);
+    if(poiN){var wc=worldPOICoord(key,poiN); if(wc)dest=wc;}
+    else closePanel();
+    map.flyTo(dest,target,{duration:1.4,easeLinearity:.25});
+    setHash('#chart='+encodeURIComponent(key)+(poiN?'&poi='+poiN:''));
+    if(poiN)map.once('moveend',function(){var p=poiByN(key,poiN);if(p)openWorldPOI(key,p);});
+    return true;
+  }
+
+  // ---- generator hook (spec §B calls this): register a real overlay or a canvas ----
+  // img: URL string | HTMLCanvasElement | HTMLImageElement. opts: {prov,provText,w,h,
+  // poiRef,pois}. Canvas/image dims are read if w/h omitted.
+  function registerCityOverlay(name,img,opts){
+    opts=opts||{};
+    var url,w=opts.w,h=opts.h;
+    if(typeof img==='string')url=img;
+    else if(img&&img.toDataURL){url=img.toDataURL('image/jpeg',0.92);
+      w=w||img.width;h=h||img.height;}
+    else if(img&&img.src){url=img.src;w=w||img.naturalWidth||img.width;
+      h=h||img.naturalHeight||img.height;}
+    else return false;
+    var key=cityAnchorKey(name)||name;
+    CITYREG[key]={url:url,w:w,h:h,prov:opts.prov||'invented',provText:opts.provText||null,
+      poiRef:opts.poiRef||null,pois:opts.pois||null};
+    overlayCache.delete(key);
+    if(CITYVIEW.name===key){CITYVIEW.name=null;ensureCityOverlay(key);} // hot-swap if viewing
+    return true;
+  }
+
+  // ================= The city generator (spec MW §B): plausible plans everywhere ========
+  // Every anchored city WITHOUT a real chart gets a seeded, deterministic plan (mulberry32
+  // of the city name — the same city every visit) rendered to a canvas, then handed to
+  // registerCityOverlay via the SAME footprint/overlay path as the real charts. Everything
+  // it invents (streets, POIs, inn names) is provenance 'invented' → the ✶ banner + the
+  // baked "drawn from hearsay" watermark. REFINEMENT SURFACE: hand-editing a city's traits
+  // in data/city-traits.json (harbor/sea → shore, kind → wall/extent, patron → temple) or
+  // adding a real chart to detail-charts.json + an overlay upgrades a city with NO code
+  // change here — this generator is only the placeholder until the archives say more.
+  var GEN_SIZE=2048;
+  var COMPASS={N:0,NNE:22.5,NE:45,ENE:67.5,E:90,ESE:112.5,SE:135,SSE:157.5,
+    S:180,SSW:202.5,SW:225,WSW:247.5,W:270,WNW:292.5,NW:315,NNW:337.5};
+  // seeded RNG: xmur3 string-hash seeds a mulberry32 stream (pure fn of the name).
+  function xmur3(s){var h=1779033703^s.length;
+    for(var i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19;}
+    return function(){h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);
+      return (h^=h>>>16)>>>0;};}
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;
+    var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;
+    return ((t^t>>>14)>>>0)/4294967296;};}
+  // in-voice inn names (echo the canon "Black Barghest").
+  var INN_ADJ=['Copper','Salt','Black','Grey','Old','Broken','Gilded','Iron','Red','Green',
+    'Silver','Amber','Weeping','Crooked','Drowned','Brazen','White','Ashen'];
+  var INN_NOUN=['Krake','Elk','Barghest','Anchor','Oar','Lantern','Gull','Hart','Drake',
+    'Kettle','Crown','Antler','Heron','Coin','Whale','Spar','Cormorant','Sturgeon','Bell'];
+
+  function compassVec(side){var d=COMPASS[side];if(d==null)return null;
+    var r=d*Math.PI/180;return {x:Math.sin(r),y:-Math.cos(r)};}   // screen y-down: N=up
+  function dirName(vx,vy){var a=(Math.atan2(vx,-vy)*180/Math.PI+360)%360;
+    var names=['N','NE','E','SE','S','SW','W','NW'];return names[Math.round(a/45)%8];}
+
+  function genCityCanvas(name,t,a){
+    var seed=xmur3(name)(),R=mulberry32(seed);
+    function rr(lo,hi){return lo+(hi-lo)*R();}
+    function ri(lo,hi){return Math.floor(lo+(hi-lo+1)*R());}
+    function pick(ar){return ar[Math.floor(R()*ar.length)];}
+    var S=GEN_SIZE, cv=document.createElement('canvas'); cv.width=S;cv.height=S;
+    var g=cv.getContext('2d');
+    var ruin=(t.kind==='ruin');
+    var GREEN='#6c7f5c', CREAM=ruin?'#e7dcc0':'#f0ead2', WATER='#7fa3a0';
+    var BLD=ruin?['#b9a888','#ad9c7c','#c2b295','#a89878']
+                :['#c77b4e','#b86b41','#cf8659','#a85c3c','#bd7346','#d59468','#cbb98f'];
+    var OUT=ruin?'#6b5c48':'#4a3b2a', INK='rgba(74,70,60,.55)';
+    var ROAD=ruin?'#e0d5b8':'#f6f1e0', STONE='#b8a884', STONE_O='#6b5c48';
+    var TREE=['#4a5c38','#55663f','#5f7148'], SAGE='#cdd6b0';
+
+    // --- extent / center (shifted a touch off the sea so more land shows) ---
+    var kR={capital:0.34,town:0.26,village:0.17,ruin:0.24}[t.kind]||0.2;
+    var coreR=S*kR, landR=coreR*1.55;
+    var sea = (t.sea&&t.sea.side) ? t.sea.side : (t.harbor?pick(Object.keys(COMPASS)):null);
+    var sv = sea?compassVec(sea):null;
+    var distPx = (t.sea&&t.sea.distPx!=null)?t.sea.distPx:8;
+    var drawWater = !!sv && (t.harbor || distPx<=25);
+    var cx=S/2, cy=S/2;
+    if(drawWater){cx-=sv.x*S*0.07; cy-=sv.y*S*0.07;}
+    // irregular land outline (radial lobes)
+    var lobes=[];for(var li=0;li<6;li++)lobes.push({f:li+2,ph:R()*6.283,am:rr(.03,.11)});
+    function blobR(base,ang){var m=1;for(var i=0;i<lobes.length;i++)m+=lobes[i].am*Math.sin(lobes[i].f*ang+lobes[i].ph);return base*m;}
+    function inLand(x,y){var dx=x-cx,dy=y-cy,ang=Math.atan2(dy,dx);
+      return dx*dx+dy*dy < blobR(landR,ang)*blobR(landR,ang);}
+
+    // shore geometry (perpendicular to sea dir, wobbled)
+    var perp = sv?{x:-sv.y,y:sv.x}:null;
+    var shoreDist = drawWater ? (coreR*0.55 + Math.min(distPx,25)*S*0.006) : 0;
+    var swob=[];if(drawWater)for(var si=0;si<4;si++)swob.push({f:si+1,ph:R()*6.283,am:rr(.02,.06)});
+    function shoreOff(s){var m=0;for(var i=0;i<swob.length;i++)m+=swob[i].am*Math.sin(swob[i].f*s/(S*0.3)+swob[i].ph);return shoreDist*(1+m);}
+    function inWater(x,y){if(!drawWater)return false;
+      return (x-cx)*sv.x+(y-cy)*sv.y > shoreOff(((x-cx)*perp.x+(y-cy)*perp.y));}
+
+    // ===== paint order =====
+    g.fillStyle=GREEN;g.fillRect(0,0,S,S);
+    // cream settled land
+    g.beginPath();
+    for(var ai=0;ai<=64;ai++){var ang=ai/64*Math.PI*2,r=blobR(landR,ang);
+      var x=cx+Math.cos(ang)*r,y=cy+Math.sin(ang)*r; if(ai===0)g.moveTo(x,y);else g.lineTo(x,y);}
+    g.closePath();g.fillStyle=CREAM;g.fill();
+
+    // outlying gridded fields (light sage) on the settled fringe
+    var nFields=ruin?ri(1,2):ri(2,4);
+    for(var fi=0;fi<nFields;fi++){
+      var fa=R()*Math.PI*2, fr=coreR*rr(1.05,1.4);
+      var fx=cx+Math.cos(fa)*fr, fy=cy+Math.sin(fa)*fr;
+      if(!inLand(fx,fy)||inWater(fx,fy))continue;
+      var fw=rr(70,150),fh=rr(60,130);
+      g.save();g.translate(fx,fy);g.rotate(rr(-.3,.3));
+      g.fillStyle=SAGE;g.fillRect(-fw/2,-fh/2,fw,fh);
+      g.strokeStyle='rgba(120,130,90,.5)';g.lineWidth=1;
+      for(var gx=-fw/2;gx<fw/2;gx+=rr(16,26)){g.beginPath();g.moveTo(gx,-fh/2);g.lineTo(gx,fh/2);g.stroke();}
+      for(var gy=-fh/2;gy<fh/2;gy+=rr(16,26)){g.beginPath();g.moveTo(-fw/2,gy);g.lineTo(fw/2,gy);g.stroke();}
+      g.restore();
+    }
+
+    // --- nodes: market square, gates, waterfront ---
+    var sq={x:cx+rr(-coreR*.12,coreR*.12), y:cy+rr(-coreR*.12,coreR*.12)};
+    var walled = t.wall && !ruin;
+    var nGates = walled ? (t.kind==='capital'?4:3) : (ruin?0:ri(3,4));
+    var gates=[], gate0=R()*Math.PI*2;
+    for(var gi=0;gi<nGates;gi++){var ga=gate0+gi/nGates*Math.PI*2+rr(-.25,.25);
+      var gr=coreR*(walled?0.9:1.15);
+      gates.push({x:cx+Math.cos(ga)*gr,y:cy+Math.sin(ga)*gr,ang:ga,dir:dirName(Math.cos(ga),Math.sin(ga))});}
+    var waterNode=null;
+    if(drawWater){waterNode={x:cx+sv.x*shoreDist*0.9,y:cy+sv.y*shoreDist*0.9};}
+
+    // main roads: gate/waterfront → market, with a slight bend
+    var roads=[]; var ends=gates.slice(); if(waterNode)ends.push(waterNode);
+    ends.forEach(function(e){var mx=(e.x+sq.x)/2+rr(-coreR*.12,coreR*.12),
+      my=(e.y+sq.y)/2+rr(-coreR*.12,coreR*.12);
+      roads.push([{x:e.x,y:e.y},{x:mx,y:my},{x:sq.x,y:sq.y}]);});
+    // a ring road for walled cores
+    if(walled){var ringR=coreR*rr(.55,.7),ring=[];
+      for(var ri2=0;ri2<=48;ri2++){var ra=ri2/48*Math.PI*2;
+        ring.push({x:cx+Math.cos(ra)*ringR*(1+.05*Math.sin(3*ra)),y:cy+Math.sin(ra)*ringR*(1+.05*Math.cos(2*ra))});}
+      roads.push(ring);}
+    var roadHalf=S*0.009;
+    function distSeg(px0,py0,ax,ay,bx,by){var dx=bx-ax,dy=by-ay,l2=dx*dx+dy*dy;
+      var tt=l2?((px0-ax)*dx+(py0-ay)*dy)/l2:0; tt=tt<0?0:tt>1?1:tt;
+      var qx=ax+tt*dx,qy=ay+tt*dy;return Math.sqrt((px0-qx)*(px0-qx)+(py0-qy)*(py0-qy));}
+    function nearRoad(x,y){for(var i=0;i<roads.length;i++){var r=roads[i];
+      for(var j=0;j<r.length-1;j++)if(distSeg(x,y,r[j].x,r[j].y,r[j+1].x,r[j+1].y)<roadHalf)return true;}
+      return false;}
+
+    // reserved rects (square, temple) keep buildings off civic ground
+    var reserved=[];
+    var sqSz=coreR*rr(.14,.2); reserved.push({x:sq.x,y:sq.y,w:sqSz,h:sqSz});
+    var temple=null;
+    if(t.patron&&!ruin){var te=gates.length?gates[ri(0,gates.length-1)]:{x:cx,y:cy};
+      var tx=(te.x+sq.x)/2, ty=(te.y+sq.y)/2, tw=coreR*rr(.16,.22), th=tw*rr(.6,.8);
+      temple={x:tx,y:ty,w:tw,h:th}; reserved.push({x:tx,y:ty,w:tw*1.1,h:th*1.1});}
+    function inReserved(x,y){for(var i=0;i<reserved.length;i++){var q=reserved[i];
+      if(Math.abs(x-q.x)<q.w/2&&Math.abs(y-q.y)<q.h/2)return true;}return false;}
+
+    // --- building infill: jittered grid of tiny terracotta blocks, clipped to land ---
+    var step=({capital:15,town:16,village:17,ruin:20})[t.kind]||16;
+    var denseR=coreR*(ruin?1.0:1.12);
+    for(var by=cy-landR;by<cy+landR;by+=step){
+      for(var bx=cx-landR;bx<cx+landR;bx+=step){
+        var jx=bx+rr(-step*.35,step*.35), jy=by+rr(-step*.35,step*.35);
+        if(!inLand(jx,jy)||inWater(jx,jy)||nearRoad(jx,jy)||inReserved(jx,jy))continue;
+        var dc=Math.sqrt((jx-cx)*(jx-cx)+(jy-cy)*(jy-cy));
+        var dens = dc<denseR ? 1 : Math.max(0,1-(dc-denseR)/(landR-denseR));
+        if(R()>dens*(ruin?0.5:0.94))continue;   // thins toward the fringe / sparse ruin
+        var bw=rr(5,11),bh=rr(5,11),rot=rr(-.25,.25);
+        g.save();g.translate(jx,jy);g.rotate(rot);
+        if(ruin){g.fillStyle='rgba(150,140,120,.25)';g.fillRect(-bw/2,-bh/2,bw,bh);
+          g.strokeStyle=OUT;g.lineWidth=1.1;g.strokeRect(-bw/2,-bh/2,bw,bh);}
+        else{g.fillStyle=pick(BLD);g.fillRect(-bw/2,-bh/2,bw,bh);
+          g.strokeStyle=OUT;g.lineWidth=0.8;g.strokeRect(-bw/2,-bh/2,bw,bh);
+          if(R()<0.3){g.fillStyle=pick(BLD);g.fillRect(-bw/2+bw*.55,-bh/2,bw*.5,bh);}}
+        g.restore();
+      }
+    }
+
+    // --- tree clusters ---
+    var nTrees=ruin?ri(10,16):ri(8,20);
+    for(var ti=0;ti<nTrees;ti++){var ta=R()*Math.PI*2,tr=coreR*rr(.2,1.45);
+      var txx=cx+Math.cos(ta)*tr,tyy=cy+Math.sin(ta)*tr;
+      if(!inLand(txx,tyy)||inWater(txx,tyy))continue;
+      var blobs=ri(3,6);
+      for(var tb=0;tb<blobs;tb++){g.fillStyle=pick(TREE);
+        g.beginPath();g.arc(txx+rr(-14,14),tyy+rr(-14,14),rr(6,12),0,6.283);g.fill();}
+    }
+
+    // --- main roads (pale corridor already cream; stroke a faint centre line) ---
+    roads.forEach(function(r){g.beginPath();g.moveTo(r[0].x,r[0].y);
+      for(var i=1;i<r.length;i++)g.lineTo(r[i].x,r[i].y);
+      g.strokeStyle=ROAD;g.lineWidth=roadHalf*1.5;g.lineCap='round';g.lineJoin='round';g.stroke();
+      g.strokeStyle=INK;g.lineWidth=1;g.stroke();});
+
+    // --- wall + towers + gates (or broken arcs for a ruin) ---
+    if(walled){
+      var rings=(t.kind==='capital')?[coreR*0.5,coreR*0.92]:[coreR*0.9];
+      rings.forEach(function(wr,rix){
+        var gateA=gates.map(function(gg){return gg.ang;});
+        for(var wa=0;wa<Math.PI*2;wa+=0.02){
+          var open=false;for(var gk=0;gk<gateA.length;gk++){var da=Math.abs(((wa-gateA[gk]+Math.PI)%(Math.PI*2))-Math.PI);if(da<0.09){open=true;break;}}
+          if(open)continue;
+          var wob=1+.03*Math.sin(5*wa+rix);
+          var x1=cx+Math.cos(wa)*wr*wob,y1=cy+Math.sin(wa)*wr*wob;
+          var x2=cx+Math.cos(wa+0.02)*wr*wob,y2=cy+Math.sin(wa+0.02)*wr*wob;
+          g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);
+          g.strokeStyle=STONE_O;g.lineWidth=rix===rings.length-1?5:3.2;g.stroke();
+        }
+        var nTow=rix===rings.length-1?ri(8,12):ri(5,7);
+        for(var to=0;to<nTow;to++){var toa=to/nTow*Math.PI*2;
+          g.beginPath();g.arc(cx+Math.cos(toa)*wr,cy+Math.sin(toa)*wr,4.5,0,6.283);
+          g.fillStyle=STONE;g.fill();g.strokeStyle=STONE_O;g.lineWidth=1.4;g.stroke();}
+      });
+    } else if(ruin){
+      var arcs=ri(3,5),wr2=coreR*0.85;
+      for(var arci=0;arci<arcs;arci++){var a0=R()*Math.PI*2,a1=a0+rr(.4,1.0);
+        g.beginPath();g.arc(cx,cy,wr2*rr(.9,1.05),a0,a1);
+        g.strokeStyle=STONE_O;g.lineWidth=rr(3,5.5);g.stroke();
+        // a fallen span just outside
+        var fa2=(a0+a1)/2;g.save();g.translate(cx+Math.cos(fa2)*wr2*1.1,cy+Math.sin(fa2)*wr2*1.1);
+        g.rotate(fa2+rr(-.6,.6));g.fillStyle=STONE;g.strokeStyle=STONE_O;g.lineWidth=1.2;
+        g.fillRect(-rr(8,16),-4,rr(16,32),8);g.strokeRect(-rr(8,16),-4,rr(16,32),8);g.restore();}
+      // rubble stipple
+      g.fillStyle='rgba(107,92,72,.5)';
+      for(var rs=0;rs<900;rs++){var rsa=R()*Math.PI*2,rsr=coreR*rr(.1,1.1);
+        var rx=cx+Math.cos(rsa)*rsr,ry=cy+Math.sin(rsa)*rsr;
+        if(inLand(rx,ry)&&!inWater(rx,ry)){g.beginPath();g.arc(rx,ry,rr(.6,1.6),0,6.283);g.fill();}}
+    }
+
+    // --- water on top (covers the sea side) + quays/jetties/moored boats ---
+    if(drawWater){
+      var big=S*3, span=S*2.2;
+      g.beginPath();
+      var first=true;
+      for(var ws=-span;ws<=span;ws+=S*0.05){var off=shoreOff(ws);
+        var px1=cx+sv.x*off+perp.x*ws, py1=cy+sv.y*off+perp.y*ws;
+        if(first){g.moveTo(px1,py1);first=false;}else g.lineTo(px1,py1);}
+      g.lineTo(cx+sv.x*big+perp.x*span, cy+sv.y*big+perp.y*span);
+      g.lineTo(cx+sv.x*big-perp.x*span, cy+sv.y*big-perp.y*span);
+      g.closePath();g.fillStyle=WATER;g.fill();
+      // island fortress for a sacked coast ruin (canon: Lepon's offshore fortress)
+      if(ruin){var ifx=cx+sv.x*(shoreDist+S*0.14),ify=cy+sv.y*(shoreDist+S*0.14);
+        g.beginPath();g.arc(ifx,ify,rr(28,40),0,6.283);g.fillStyle=CREAM;g.fill();
+        g.strokeStyle=STONE_O;g.lineWidth=2;g.stroke();
+        g.fillStyle=STONE;for(var isb=0;isb<5;isb++){g.fillRect(ifx+rr(-16,10),ify+rr(-16,10),rr(5,10),rr(5,10));}}
+      // quays + jetties along the waterfront
+      var nQ = t.harbor ? ri(3,5) : ri(1,2);
+      for(var qi=0;qi<nQ;qi++){var qs=rr(-coreR*.7,coreR*.7);
+        var qbx=cx+sv.x*shoreOff(qs)+perp.x*qs, qby=cy+sv.y*shoreOff(qs)+perp.y*qs;
+        var qlen=rr(14,34);
+        g.save();g.translate(qbx,qby);g.rotate(Math.atan2(sv.y,sv.x));
+        g.fillStyle=STONE;g.strokeStyle=STONE_O;g.lineWidth=1.2;
+        g.fillRect(0,-3,qlen,6);g.strokeRect(0,-3,qlen,6);g.restore();
+        // moored boats as small dark dashes just off the quay tip
+        for(var mb=0;mb<ri(1,3);mb++){var mx2=qbx+sv.x*(qlen+rr(6,16))+perp.x*rr(-8,8),
+          my2=qby+sv.y*(qlen+rr(6,16))+perp.y*rr(-8,8);
+          g.save();g.translate(mx2,my2);g.rotate(Math.atan2(perp.y,perp.x)+rr(-.3,.3));
+          g.fillStyle='#5a4a36';g.beginPath();g.ellipse(0,0,rr(5,8),rr(1.6,2.6),0,0,6.283);g.fill();g.restore();}
+      }
+    }
+
+    // --- temple precinct (drawn over infill) ---
+    if(temple){g.save();g.translate(temple.x,temple.y);
+      g.fillStyle='#d8cba6';g.strokeStyle=STONE_O;g.lineWidth=1.6;
+      g.fillRect(-temple.w/2,-temple.h/2,temple.w,temple.h);
+      g.strokeRect(-temple.w/2,-temple.h/2,temple.w,temple.h);
+      var cw=temple.w*.5,ch=temple.h*.55;g.fillStyle='#c9b98f';
+      g.fillRect(-cw/2,-ch/2,cw,ch);g.strokeRect(-cw/2,-ch/2,cw,ch);
+      g.fillStyle=STONE_O;   // colonnade dots
+      for(var col=-temple.w/2+6;col<temple.w/2-4;col+=8){
+        g.beginPath();g.arc(col,-temple.h/2+4,1.6,0,6.283);g.fill();
+        g.beginPath();g.arc(col,temple.h/2-4,1.6,0,6.283);g.fill();}
+      g.restore();}
+
+    // --- market square paving (subtle) ---
+    g.save();g.translate(sq.x,sq.y);g.fillStyle=ruin?'rgba(200,190,160,.4)':'#e9e0c4';
+    g.strokeStyle=INK;g.lineWidth=1;g.fillRect(-sqSz/2,-sqSz/2,sqSz,sqSz);
+    g.strokeRect(-sqSz/2,-sqSz/2,sqSz,sqSz);g.restore();
+
+    // ===== POIs (all provenance 'invented'; rendered as world roundels by the engine) =====
+    var pois=[], pn=0;
+    function addPoi(x,y,nm,d){pn++;pois.push({n:pn,name:nm,x:x,y:y,d:d,prov:'invented'});}
+    if(ruin){
+      addPoi(sq.x,sq.y,'The Fallen Forum','Where the seat of the old Māgos once stood; only pavings and toppled columns remain.');
+      var bh0=gates.length?gates[0]:{x:cx+coreR*.4,y:cy};
+      addPoi(cx+rr(-coreR*.2,coreR*.2),cy+rr(-coreR*.2,coreR*.2),'The Burned Hall','A roofless shell, its stones blackened; said to be the tallest of those the empress put to the torch.');
+      if(drawWater)addPoi(cx+sv.x*(shoreDist+S*0.14),cy+sv.y*(shoreDist+S*0.14),'The Island Fortress','A ruined keep on its island, half a mile offshore; the sea has taken the causeway.');
+      addPoi(cx+Math.cos(gate0)*coreR*.85,cy+Math.sin(gate0)*coreR*.85,'The Broken Gate','A gap in the fallen wall where a gatehouse once barred the road.');
+    } else {
+      addPoi(sq.x,sq.y,'The Market Square','The town’s market; stalls crowd the paving on fair-days, or so the road-talk runs.');
+      if(temple)addPoi(temple.x,temple.y,'Temple of '+t.patron.name,'A precinct kept to '+t.patron.name+', the city’s tutelary god — its columns face the square.');
+      if(drawWater&&waterNode)addPoi(waterNode.x,waterNode.y,t.harbor?'The Quays':'The Waterside','Stone quays and moored craft along the '+(sea||'shore').toLowerCase()+' water.');
+      if(walled&&gates.length){var gg2=gates[0];addPoi(gg2.x,gg2.y,'The '+gg2.dir+' Gate','A gate in the town wall, where the road passes within.');}
+      var innName='The '+pick(INN_ADJ)+' '+pick(INN_NOUN);
+      var ia=R()*Math.PI*2,ir=coreR*rr(.25,.5);
+      addPoi(cx+Math.cos(ia)*ir,cy+Math.sin(ia)*ir,innName,innName+' — a travellers’ house near the square, by the reckoning of those who pass through.');
+      var odd=pick([{n:'The Old Well',d:'An old well of worn stone, its water counted sweet.'},
+        {n:'The Wayshrine',d:'A small roadside shrine, its offerings renewed by no one anyone can name.'},
+        {n:'The Standing Stone',d:'A single weathered stone, older than the streets that grew about it.'}]);
+      var oa=R()*Math.PI*2,or=coreR*rr(.3,.7);
+      addPoi(cx+Math.cos(oa)*or,cy+Math.sin(oa)*or,odd.n,odd.d);
+      // floor of 4 POIs (spec §B): a bare village gains a second landmark
+      if(pois.length<4){var ex=pick([
+        {n:'The Common Green',d:'Open ground where the village gathers and beasts are penned on market-day.'},
+        {n:'The Crossroads',d:'Where the roads meet and part; a worn waystone marks the turnings.'},
+        {n:'The Old Bridge',d:'A low span of dressed stone over the brook that waters the fields.'}]);
+        var ea=R()*Math.PI*2,er=coreR*rr(.35,.6);
+        addPoi(cx+Math.cos(ea)*er,cy+Math.sin(ea)*er,ex.n,ex.d);}
+    }
+
+    // --- title cartouche + baked hearsay watermark ---
+    g.save();
+    var ttl=name.toUpperCase(), sub=({capital:'a Māgos',town:'a walled town',village:'a village',ruin:'a ruin · sacked 745 A.B.'})[t.kind]||'';
+    g.font='bold 42px Georgia, "Times New Roman", serif';
+    var tw2=g.measureText(ttl).width, bxw=Math.max(tw2+40,220), bxh=76;
+    g.fillStyle='rgba(243,236,215,.92)';g.strokeStyle='#24435e';g.lineWidth=3;
+    g.fillRect(28,28,bxw,bxh);g.strokeRect(28,28,bxw,bxh);
+    g.fillStyle='#1e3a52';g.textBaseline='alphabetic';
+    g.fillText(ttl,44,74);
+    g.font='italic 20px Georgia, serif';g.fillStyle='#5a4a36';g.fillText(sub,45,98);
+    g.restore();
+    g.save();
+    g.font='19px "IBM Plex Mono", monospace';
+    var wm='✶ drawn from hearsay — awaiting a true survey';
+    var wmw=g.measureText(wm).width;
+    g.fillStyle='rgba(243,236,215,.9)';g.strokeStyle='rgba(138,98,36,.5)';g.lineWidth=1.5;
+    g.fillRect(28,S-58,wmw+28,38);g.strokeRect(28,S-58,wmw+28,38);
+    g.fillStyle='#6a4326';g.fillText(wm,42,S-33);
+    g.restore();
+
+    return {canvas:cv,w:S,h:S,pois:pois};
+  }
+
+  // generate + register a city's plan on demand (deterministic; cached in CITYREG forever).
+  function ensureCityGen(name){
+    try{
+      var key=cityAnchorKey(name); if(!key||CITYREG[key])return;
+      var t=CITY_TRAITS[key], a=CITY_ANCHORS[key]; if(!t||!a)return;
+      var gen=genCityCanvas(key,t,a);
+      registerCityOverlay(key,gen.canvas,{prov:'invented',w:gen.w,h:gen.h,
+        pois:gen.pois,poiRef:{w:gen.w,h:gen.h}});
+    }catch(e){/* one bad city must never break the zoom/maxZoom pass */}
+  }
+
+  // ---- one-time DOM + data wiring for the meshed world ----
+  function meshedWorldInit(anchors,traits){
+    if(anchors)for(var k in anchors){if(k==='_readme')continue;
+      CITY_ANCHORS[k]=anchors[k];}
+    // two extra anchors sourced from maps_markers (spec §A.2)
+    CITY_ANCHORS['Summarch']={atlasX:523,atlasY:58,kind:'town',harbor:false,sea:null};
+    CITY_ANCHORS['Penthelon']={atlasX:1941,atlasY:747,kind:'village',harbor:true,sea:null};
+    for(var kk in CITY_ANCHORS)CITY_ANCHORS_FOLD[fold(kk)]=kk;
+    if(traits)for(var t in traits){if(t==='_readme')continue;CITY_TRAITS[t]=traits[t];}
+
+    // real charts (canon) — Epēshu's 19 POIs reproject through the footprint transform.
+    var eref=DETAIL['Epēshu']||{w:3914,h:4200};
+    registerCityOverlay('Epēshu','art/overlay-Epeshu.jpg',{prov:'canon',w:2863,h:3072,
+      poiRef:{w:eref.w,h:eref.h},
+      pois:(POIS['Epēshu']||[]).map(function(p){
+        return {n:p.n,name:p.name,x:p.x,y:p.y,d:p.d,prov:'canon'};})});
+    registerCityOverlay('Summarch','art/overlay-Summarch.jpg',{prov:'canon',w:644,h:597});
+
+    // grain + corner watermark for uncharted country (siblings of the map-pane)
+    var mc=map.getContainer();
+    var grain=document.createElement('div'); grain.className='uncharted-grain';
+    var mark=document.createElement('div'); mark.className='uncharted-mark';
+    mark.textContent='✶ uncharted at this scale';
+    mc.appendChild(grain); mc.appendChild(mark);
   }
 
   // ---- The Company strip (experiment D) + Groups button, docked bottom-left ----
@@ -1284,15 +1890,22 @@
   }
   map.on('zoomend',updTier);
   map.on('zoom zoomend moveend',updScale);
+  // meshed world: opacity/tier-d/watermark ride the LIVE 'zoom' (smooth crossfade);
+  // nearest-city / instantiate / GC / setMaxZoom only on zoomend+moveend (never mid-fly).
+  map.on('zoom zoomend moveend',worldOpacityUpdate);
+  map.on('zoomend moveend',worldCityUpdate);
 
   // ---- deep link (#place=Name) ----
   function hashVal(re){var m=String(location.hash||'').match(re);if(!m)return null;
     try{return decodeURIComponent(m[1]);}catch(_){return m[1];}}
   function handleHash(){
     var ch=hashVal(/chart=([^&]+)/);
-    if(ch){var poi=hashVal(/[?&]poi=(\d+)/);
-      if(!(CHART.on&&CHART.name===detailKey(ch)))enterChart(ch,poi?+poi:0);
-      else if(poi)selectPOI(CHART.name,+poi);
+    if(ch){var poi=hashVal(/[?&]poi=(\d+)/); poi=poi?+poi:0;
+      if(isFlyInCity(ch)){                    // city chart → fly into the world overlay
+        if(CHART.on)exitChart();
+        flyIntoCity(ch,poi);
+      }else if(!(CHART.on&&CHART.name===detailKey(ch)))enterChart(ch,poi);
+      else if(poi)selectPOI(CHART.name,poi);
       return;}
     if(CHART.on)exitChart();                  // hash left the chart → leave chart mode
     var c=hashVal(/company=([^&]+)/); if(c){openCompanyByName(c,true);return;}
@@ -1316,7 +1929,9 @@
     getJSON('data/factions.json'),
     getJSON('data/detail-charts.json'),
     getJSON('data/chart-pois.json'),
-    getJSON('data/location-art.json')
+    getJSON('data/location-art.json'),
+    getJSON('data/city-anchors.json'),
+    getJSON('data/city-traits.json')
   ]).then(function(res){
     var markers=res[0]||[], wiki=res[1]||[], reviews=res[2]||[],
         route=res[3]||[], realms=res[4];
@@ -1329,6 +1944,8 @@
     FACTIONS.forEach(function(f){FMREF[fold(f.name)]=f;});
     Object.keys(DETAIL).forEach(function(k){DETAILFOLD[fold(k)]=k;});
     Object.keys(LOCART).forEach(function(k){LOCARTFOLD[fold(k)]=LOCART[k];});
+
+    meshedWorldInit(res[10],res[11]);      // anchors + traits + real overlays (before handleHash)
 
     buildMarkers(markers);
 
@@ -1360,6 +1977,10 @@
     addEraControl();
     layersCtrl=L.control.layers(null,overlays,{collapsed:window.innerWidth<=760,position:'topright'});
     layersCtrl.addTo(map);
+    (function(){var lc=layersCtrl.getContainer&&layersCtrl.getContainer();
+      if(!lc)return;var lg=L.DomUtil.create('div','prov-legend',
+        lc.querySelector('.leaflet-control-layers-list')||lc);
+      lg.innerHTML='✶ = conjecture, refined as the archives grow.';})();
     addJourneyControl();
     addScaleControl();
     addCompanyDock();                     // after scale → strip sits above the scale bar
@@ -1385,7 +2006,7 @@
     map.on('overlayremove',function(e){if(e.layer===companyMaster){
       clearTimeout(_mSync);_mSync=setTimeout(function(){coordMaster(false);},0);}});
 
-    updTier(); updScale(); handleHash();
+    updTier(); updScale(); worldOpacityUpdate(); worldCityUpdate(); handleHash();
     window.addEventListener('hashchange',handleHash);
 
     window.ATLAS={map:map,markers:MARKERS,party:PARTY,factions:FACTIONS,ready:true,
@@ -1397,7 +2018,11 @@
       era:setEra, journey:startJourney, stopJourney:stopJourney,
       openRealm:openRealm, close:closePanel,
       chart:function(n,poi){return enterChart(n,poi||0);}, exitChart:exitChart,
-      chartOn:function(){return CHART.on;}};
+      chartOn:function(){return CHART.on;},
+      // meshed world (spec MW): descend into a city + the generator's overlay hook
+      descend:function(n,poi){return flyIntoCity(n,poi||0);},
+      registerCityOverlay:registerCityOverlay,
+      cityAnchors:CITY_ANCHORS, cityReg:CITYREG, cityTraits:CITY_TRAITS};
   });
 })();
 </script>

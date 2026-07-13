@@ -4,6 +4,11 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.7.1-alpha.1] — 2026-07-13
+- GitHub Pages deployment: every push to master publishes the sim at
+  arnavsacheti.github.io/annals-kingdom/ and the atlas at /maps-site/ —
+  zero-cost demo hosting (public repo), no DDNS required for feedback rounds
+
 ## [0.7.0-alpha.1] — 2026-07-12
 - Detail charts from the wiki's MapArt: 15 locations open an in-depth chart from
   their place card (Epēshu's 3914×4200 city plan tiled to native zoom; the Seat,
