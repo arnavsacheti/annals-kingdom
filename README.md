@@ -59,7 +59,7 @@ See [DEPLOY.md](DEPLOY.md). Campaign wiki: [princexizor.ddns.net](https://prince
 | Desktop | Touch |
 |---|---|
 | drag to orbit | one finger orbits |
-| wheel / trackpad scroll or pinch to zoom | pinch zooms |
+| two-finger scroll pans · pinch or mouse wheel zooms | pinch zooms, drag pans |
 | right-drag to pan | two fingers pan |
 | double-click to travel | double-tap travels |
 | click to inspect | tap inspects |

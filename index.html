@@ -5897,11 +5897,13 @@ function initInput(){
   el.addEventListener('wheel', e => {
     e.preventDefault();
     CAM.lastInput = performance.now(); CAM.intro = false;
-    // scale by delta magnitude: a mouse wheel clicks in ~120px steps, a trackpad
-    // streams dozens of small events per second — sign-stepping made trackpads slam
-    let dy = e.deltaY;
-    if(e.deltaMode === 1) dy *= 33; else if(e.deltaMode === 2) dy *= innerHeight;
-    // trackpad pinch arrives as ctrl+wheel with small deltas: give it more gain
+    let dy = e.deltaY, dx = e.deltaX;
+    if(e.deltaMode === 1){ dy *= 33; dx *= 33; } else if(e.deltaMode === 2){ dy *= innerHeight; dx *= innerHeight; }
+    // a real mouse wheel clicks in coarse, integer, x-less detents; a trackpad streams
+    // fine mixed-axis deltas. Wheels and pinch (ctrl+wheel) zoom; trackpad two-finger
+    // scroll PANS — the Apple/Google Maps convention (pan had no gesture before).
+    const wheelish = e.deltaMode !== 0 || (dx === 0 && Math.abs(dy) >= 60 && Number.isInteger(dy));
+    if(!e.ctrlKey && !wheelish){ panBy(-dx, -dy); return; }
     const step = clamp(dy * (e.ctrlKey ? 0.0028 : 0.00048), -0.09, 0.09);
     if(step < 0){
       const hit = groundHit(e.clientX, e.clientY);

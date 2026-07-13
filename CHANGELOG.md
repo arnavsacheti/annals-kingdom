@@ -4,6 +4,12 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.7.1-alpha.3] — 2026-07-13
+- Mac trackpad gestures in the sim now follow the Apple/Google Maps convention:
+  two-finger scroll PANS (pan previously had no gesture — only right-drag);
+  pinch and real mouse wheels zoom toward the cursor (delta heuristic)
+- Atlas gets the mirror treatment in the next site build
+
 ## [0.7.1-alpha.2] — 2026-07-13
 - Sim ↔ atlas cross-links: an "⚘ Atlas" chip in the sim's top bar (host-aware:
   relative on Pages/localhost, subdomain in production); the atlas's Sim link
