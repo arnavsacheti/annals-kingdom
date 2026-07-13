@@ -1012,6 +1012,11 @@
       line.bindTooltip(esc(lane.name),{sticky:true,className:'realm-tip',direction:'top'});
       line.on('click',(function(l){return function(){openLane(l);};})(lane));
       g.addLayer(line);
+      var laneHit=L.polyline(latlngs,{color:'#000',weight:16,opacity:0.01,
+        lineJoin:'round',lineCap:'round',pane:'pLane'});
+      laneHit.bindTooltip(esc(lane.name),{sticky:true,className:'realm-tip',direction:'top'});
+      laneHit.on('click',(function(l){return function(){openLane(l);};})(lane));
+      g.addLayer(laneHit);
       var mi=Math.floor(sm.length/2),
           a=sm[Math.max(0,mi-1)],b=sm[Math.min(sm.length-1,mi+1)];
       var ang=Math.atan2(b[0]-a[0],-(b[1]-a[1]))*180/Math.PI;   // clockwise from up, screen y-down
@@ -1050,6 +1055,11 @@
       road.bindTooltip(esc(way.name),{sticky:true,className:'realm-tip',direction:'top'});
       road.on('click',(function(w){return function(){openWay(w);};})(way));
       g.addLayer(road);
+      var wayHit=L.polyline(latlngs,{color:'#000',weight:16,opacity:0.01,
+        lineJoin:'round',lineCap:'round',pane:'pWay'});
+      wayHit.bindTooltip(esc(way.name),{sticky:true,className:'realm-tip',direction:'top'});
+      wayHit.on('click',(function(w2){return function(){openWay(w2);};})(way));
+      g.addLayer(wayHit);
       var mi=Math.floor(sm.length/2);
       var icon=L.divIcon({className:'',iconSize:null,iconAnchor:[0,0],
         html:'<span class="way-label">'+esc(way.name)+'</span>'});
@@ -1376,7 +1386,7 @@
     // controls: title cartouche (topright) + Back to the Wide World (topleft, under zoom)
     var TitleC=L.Control.extend({options:{position:'topright'},onAdd:function(){
       var d=L.DomUtil.create('div','chart-title');
-      d.innerHTML='<div class="ct-name">'+esc(canon)+'</div><div class="ct-sub">City Chart</div>';
+      d.innerHTML='<div class="ct-name">'+esc(canon)+'</div><div class="ct-sub">'+esc((CHART.def&&CHART.def.label)||'Chart')+'</div>';
       L.DomEvent.disableClickPropagation(d);return d;}});
     var BackC=L.Control.extend({options:{position:'topleft'},onAdd:function(){
       var d=L.DomUtil.create('div','chart-back');
@@ -1999,7 +2009,8 @@
     var step=({capital:15,town:16,village:17,ruin:20})[t.kind]||16;
     var denseR=coreR*(ruin?1.0:1.12);
     var trogA=trogmund?R()*6.283:0;   // seat of the Trogmunder quarter (no rng unless present)
-    for(var by=cy-landR;by<cy+landR;by+=step){
+    var lanes=[],laneW=roadHalf*0.6,alleyW=roadHalf*0.34;   // minor lane graph (non-ruin); stroked with the primaries below
+    if(ruin) for(var by=cy-landR;by<cy+landR;by+=step){   // ruins keep the scattered infill (Lepon stays byte-identical) — NOT lane-graphed
       for(var bx=cx-landR;bx<cx+landR;bx+=step){
         var jx=bx+rr(-step*.35,step*.35), jy=by+rr(-step*.35,step*.35);
         if(!inLand(jx,jy)||inWater(jx,jy)||nearRoad(jx,jy)||inReserved(jx,jy))continue;
@@ -2030,6 +2041,75 @@
             if(R()<0.3){g.fillStyle=pick(BLD);g.fillRect(-bw/2+bw*.55,-bh/2,bw*.5,bh);}}}
         g.restore();
       }
+    } else {
+      // ---- lane graph: minor streets/alleys branch off the primaries, and buildings
+      // snap to their frontages so gate→street→alley→door reads turn by turn ----
+      var lstep=Math.max(12,coreR*0.03);
+      var wallR=walled?(t.kind==='capital'?coreR*0.9:coreR*0.88):1e9, stopR=Math.min(wallR,denseR);
+      var LGS=Math.max(10,coreR*0.055), occ={};   // coarse lane-occupancy grid → O(1) junction test
+      function markOcc(x,y){occ[((x/LGS)|0)+':'+((y/LGS)|0)]=1;}
+      function occNear(x,y){var gx=(x/LGS)|0,gy=(y/LGS)|0;
+        return occ[gx+':'+gy]||occ[(gx+1)+':'+gy]||occ[(gx-1)+':'+gy]||occ[gx+':'+(gy+1)]||occ[gx+':'+(gy-1)];}
+      roads.forEach(function(r){for(var i=0;i<r.length-1;i++){var A=r[i],B=r[i+1],
+        dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy)||1,n=Math.max(1,(L/LGS)|0);
+        for(var s=0;s<=n;s++)markOcc(A.x+dx*s/n,A.y+dy*s/n);}});   // rasterize primaries so lanes T into them
+      // seed branch points along the primaries (inside the built extent only)
+      var maxLanes=({capital:80,town:52,village:26})[t.kind]||42, grown=0, budget=maxLanes*22, tot=0, queue=[];
+      roads.forEach(function(r){for(var i=0;i<r.length-1;i++){var A=r[i],B=r[i+1],
+        dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy); if(L<1)continue;
+        var ux=dx/L,uy=dy/L,nx=-uy,ny=ux, spc=coreR*rr(.14,.22);
+        for(var d=rr(spc*.3,spc); d<L; d+=(spc=coreR*rr(.14,.22))){
+          var px=A.x+ux*d, py=A.y+uy*d;
+          if(Math.hypot(px-cx,py-cy)>stopR*0.9||!inLand(px,py)||inWater(px,py)||inReserved(px,py))continue;
+          var side=R()<0.5?1:-1, ja=rr(-.5,.5), hx=nx*side, hy=ny*side, ca=Math.cos(ja),sa=Math.sin(ja);
+          queue.push({x:px+nx*side*(roadHalf+3),y:py+ny*side*(roadHalf+3),
+            hx:hx*ca-hy*sa,hy:hx*sa+hy*ca,st:R()<0.42,br:ri(0,2),cb:rr(-.05,.05)});
+        }}});
+      while(queue.length&&grown<maxLanes&&tot<budget){var sd=queue.shift();
+        var pts=[{x:sd.x,y:sd.y}],ang=Math.atan2(sd.hy,sd.hx),x=sd.x,y=sd.y,br=sd.br,age=0,maxS=sd.st?ri(10,20):ri(6,13);
+        markOcc(x,y);
+        for(var s2=0;s2<maxS;s2++){ang+=rr(-.2,.2)+sd.cb;   // gentle seeded curvature
+          var ax=x+Math.cos(ang)*lstep, ay=y+Math.sin(ang)*lstep;
+          if(!inLand(ax,ay)||inWater(ax,ay)||inReserved(ax,ay))break;   // stop at built extent / water / civic ground
+          if(Math.hypot(ax-cx,ay-cy)>stopR)break;                       // stop at the wall circuit / extent
+          if(age>=3&&occNear(ax,ay)){pts.push({x:ax,y:ay});break;}      // meet a lane/primary → T-junction, stop
+          x=ax;y=ay;age++;tot++;pts.push({x:x,y:y});markOcc(x,y);
+          if(br>0&&s2>2&&R()<0.16&&(grown+queue.length)<maxLanes){       // branch once or twice
+            var ba=ang+(R()<0.5?1:-1)*rr(0.85,1.3);
+            queue.push({x:x,y:y,hx:Math.cos(ba),hy:Math.sin(ba),st:false,br:br-1,cb:rr(-.05,.05)});br--;}}
+        if(pts.length>=2){lanes.push({pts:pts,street:sd.st});grown++;}}
+      // buildings snap to lane frontages: rows on both sides, deeper rows sparser → no orphans
+      function placeBld(px,py,rot){var bw=rr(5,11),bh=rr(5,11);
+        g.save();g.translate(px,py);g.rotate(rot);
+        var roofless=condRoof>0&&R()<condRoof;   // faded/decayed: roofless shell (thriving: no rng)
+        if(roofless){g.strokeStyle=OUT;g.lineWidth=0.9;g.strokeRect(-bw/2,-bh/2,bw,bh);}
+        else if(goblinish&&R()<0.55){var mr=(bw+bh)/4+1;   // Goblin/Dwarf burrow: round mound + hill-door
+          g.fillStyle=pick(BLD);g.beginPath();g.ellipse(0,0,mr,mr*.82,0,0,6.283);g.fill();
+          g.strokeStyle=OUT;g.lineWidth=0.8;g.stroke();
+          g.fillStyle='#4a3b2a';g.beginPath();g.arc(0,mr*.35,mr*.42,Math.PI,2*Math.PI,true);g.fill();}
+        else{var trog=trogmund&&Math.abs(((Math.atan2(py-cy,px-cx)-trogA+Math.PI)%(2*Math.PI))-Math.PI)<0.7;
+          g.fillStyle=pick(BLD);
+          if(trog&&g.roundRect){g.beginPath();g.roundRect(-bw/2,-bh/2,bw,bh,Math.min(bw,bh)*.4);g.fill();
+            g.strokeStyle=OUT;g.lineWidth=0.8;g.stroke();}
+          else{g.fillRect(-bw/2,-bh/2,bw,bh);g.strokeStyle=OUT;g.lineWidth=0.8;g.strokeRect(-bw/2,-bh/2,bw,bh);}
+          if(R()<0.3){g.fillStyle=pick(BLD);g.fillRect(-bw/2+bw*.55,-bh/2,bw*.5,bh);}}
+        g.restore();}
+      var bOcc={}, BGS=Math.max(5,coreR*0.016), setb=3, rowGap=Math.max(9,coreR*0.03), builtLim=denseR+coreR*0.06;
+      function takeCell(x,y){var k=((x/BGS)|0)+':'+((y/BGS)|0);if(bOcc[k])return false;bOcc[k]=1;return true;}
+      var fronts=[];   // primaries deepest blocks; streets two rows; alleys one
+      roads.forEach(function(r){fronts.push({pts:r,half:roadHalf,rows:3});});
+      lanes.forEach(function(l){fronts.push({pts:l.pts,half:l.street?laneW:alleyW,rows:l.street?2:1});});
+      fronts.forEach(function(f){var pts=f.pts;
+        for(var i=0;i<pts.length-1;i++){var A=pts[i],B=pts[i+1],dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy); if(L<2)continue;
+          var ux=dx/L,uy=dy/L,nx=-uy,ny=ux, ba=Math.atan2(uy,ux);
+          for(var d=rr(2,12); d<L; d+=rr(8,13)){var bx0=A.x+ux*d, by0=A.y+uy*d;
+            for(var sg=-1;sg<=1;sg+=2)for(var row=0;row<f.rows;row++){
+              if(R()>(row===0?0.9:row===1?0.5:0.22))continue;   // frontage dense, depth sparser
+              if(condSkip>0&&R()<condSkip)continue;   // Long-Decline: gap-toothed frontage (thriving: no rng)
+              var off=f.half+setb+row*rowGap+rr(-2,3);
+              var jx=bx0+nx*sg*off+ux*rr(-3,3), jy=by0+ny*sg*off+uy*rr(-3,3);
+              if(Math.hypot(jx-cx,jy-cy)>builtLim||!inLand(jx,jy)||inWater(jx,jy)||inReserved(jx,jy)||!takeCell(jx,jy))continue;
+              placeBld(jx,jy,ba+rr(-.16,.16));}}}});   // footprint aligned to its lane
     }
 
     // --- tree clusters ---
@@ -2042,6 +2122,13 @@
         g.beginPath();g.arc(txx+rr(-14,14),tyy+rr(-14,14),rr(6,12),0,6.283);g.fill();}
     }
 
+    // --- minor lanes (drawn under the primaries): streets = pale corridor + faint ink,
+    // alleys = a narrow, fainter line. Empty for ruins → no-op. ---
+    lanes.forEach(function(l){var p=l.pts;g.beginPath();g.moveTo(p[0].x,p[0].y);
+      for(var i=1;i<p.length;i++)g.lineTo(p[i].x,p[i].y);
+      if(l.street){g.strokeStyle=ROAD;g.lineWidth=laneW*1.5;g.lineCap='round';g.lineJoin='round';g.stroke();
+        g.strokeStyle=INK;g.lineWidth=0.9;g.stroke();}
+      else{g.strokeStyle='rgba(74,70,60,.3)';g.lineWidth=Math.max(1.1,alleyW*0.9);g.lineCap='round';g.lineJoin='round';g.stroke();}});
     // --- main roads (pale corridor already cream; stroke a faint centre line) ---
     roads.forEach(function(r){g.beginPath();g.moveTo(r[0].x,r[0].y);
       for(var i=1;i<r.length;i++)g.lineTo(r[i].x,r[i].y);

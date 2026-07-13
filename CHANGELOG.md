@@ -4,6 +4,15 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.9.4-alpha.1] — 2026-07-13
+- Generated towns have real streets: a lane-graph pass with T-junctions and two lane
+  widths replaces the scattered infill — every building fronts a walkable lane, the
+  warren is traceable gate to door; ruins untouched byte-for-byte
+- Roads and sea lanes are tappable: wide invisible hit-targets over every line
+  (verified: tapping the Sun Road opens its thousand-league card)
+- Chart cartouches speak their type: the Seat is a BUILDING PLAN, the Nīmlad diagram
+  a COSMOLOGY — nothing calls itself a city that isn't
+
 ## [0.9.3-alpha.2] — 2026-07-13
 - The Sun Road now follows its canon: Drāmūz to Cyrikon by Lepon, Epēshu, Tamaron,
   and Bōlkhar, hugging the coast (mask-validated through Leponnia) — no more

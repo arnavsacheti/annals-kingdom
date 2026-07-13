@@ -10,9 +10,6 @@ non-conflicting item instead.
 
 ## Queue
 
-- [ ] **Addressable alleys** — generated plans fake alleys as gaps between building
-  cells. Add a true lane graph pass (minor streets branching between spokes/ring,
-  buildings snapped to lane frontages) so the warren is traceable turn by turn.
 - [ ] **Crossfade palette match** — sample the atlas terrain tone around each city
   anchor and tint the generated surround toward it so the z6.8–7.8 fade band doesn't
   shift hue.
@@ -51,6 +48,14 @@ non-conflicting item instead.
 ## Done
 
 (check items off above and move them here with a one-line result + version)
+
+- [x] **Addressable alleys** — lane graphs with T-junctions and two widths replace the
+  jittered infill; every building fronts a walkable lane (gate → street → alley →
+  door); ruins byte-identical, determinism proven at both async stages. (v0.9.4-alpha.1)
+- [x] **Line tap targets + chart labels (USER FLAG)** — 16px invisible hit-lines over
+  ways and lanes (click verified opening the Sun Road card); chart cartouches read
+  their typed label (the Seat says BUILDING PLAN, not CITY CHART). Shipped alongside
+  the Sun Road canon re-trace and the chart curation. (v0.9.4-alpha.1)
 
 - [x] **Census follow-ups** — wide-crop re-read of the 13 quarantined names recovered
   4 towns (Netho, Nīs Garnata, Ūmak-nūs-Ion, Nhandar Khezīn; Ītor Hāspira was already
