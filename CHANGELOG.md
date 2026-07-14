@@ -4,6 +4,12 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.9.8-alpha.1] — 2026-07-13
+- Generated towns gained small institutions worth tapping: springs, wash-stones,
+  plague-stones, beacon posts — and every proper town now keeps one weightier
+  fixture (a gallows hill, a horse fair, a tithe-barn, a muster ground, or a
+  counting-house), all honestly ✶
+
 ## [0.9.7-alpha.1] — 2026-07-13
 - Penthelon stands on the Five Fingers at last: its anchor (which floated mid-lake at
   the wiki marker's position) snapped to the charted shore, the lake biome landed,

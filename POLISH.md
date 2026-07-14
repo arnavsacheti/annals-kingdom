@@ -10,8 +10,6 @@ non-conflicting item instead.
 
 ## Queue
 
-- [ ] **Generated POI variety** — beyond market/temple/gate/docks/inn: seeded wells,
-  shrines, yards, gallows, springs; kind-weighted; all ✶.
 - [ ] **Era control on small phones** — "The Atlas Through the Ages" panel eats ~1/3
   of an iPhone SE viewport; collapse it to a single chip/button that expands on tap
   below 640px (verified bulky in the 375×667 emulation sweep).
@@ -36,6 +34,11 @@ non-conflicting item instead.
 ## Done
 
 (check items off above and move them here with a one-line result + version)
+
+- [x] **Generated POI variety** — oddity pool widened to eight (springs, wash-stones,
+  tithe-yards, beacon posts, plague-stones…) and towns gain one civic institution
+  (gallows hill, horse fair, tithe-barn, muster ground, counting-house); all ✶,
+  ruin branch untouched. (v0.9.8-alpha.1)
 
 - [x] **Lake biome** — Penthelon's footprint anchor was floating IN the Five Fingers
   (wiki marker position; 14% land); snapped to the charted shore, biome 'lake' set

@@ -2446,9 +2446,24 @@
       addPoi(inx,iny,innName,innName+' — a travellers’ house near the square'+(goblinish?', delved into the hillside as is the custom under the Wall':'')+', by the reckoning of those who pass through.');
       var odd=pick([{n:'The Old Well',d:'An old well of worn stone, its water counted sweet.'},
         {n:'The Wayshrine',d:'A small roadside shrine, its offerings renewed by no one anyone can name.'},
-        {n:'The Standing Stone',d:'A single weathered stone, older than the streets that grew about it.'}]);
+        {n:'The Standing Stone',d:'A single weathered stone, older than the streets that grew about it.'},
+        {n:'The Spring',d:'A clear spring rising among mossed stones; the town draws its luck from it.'},
+        {n:'The Wash-Stones',d:'Flat stones at the water-ditch where the washing is beaten and the news is traded.'},
+        {n:'The Tithe-Yard',d:'A walled yard where the harvest-tithe is weighed, counted, and grumbled over.'},
+        {n:'The Beacon Post',d:'A tarred beacon on its post, unlit in living memory — kept ready all the same.'},
+        {n:'The Plague-Stone',d:'A hollowed boundary stone where coins were once left in vinegar; old habits keep it clean.'}]);
       var oa=R()*Math.PI*2,or=coreR*rr(.3,.7);
       addPoi(cx+Math.cos(oa)*or,cy+Math.sin(oa)*or,odd.n,odd.d);
+      // towns carry one weightier institution besides (kind-weighted; all conjecture)
+      if(t.kind==='town'||t.kind==='capital'){
+        var civ=pick([{n:'The Gallows Hill',d:'A bare rise beyond the houses where the town’s justice is done and crows keep the ledger.'},
+          {n:'The Horse Fair',d:'A trampled ground that fills with dealers, dust, and dishonesty each season.'},
+          {n:'The Tithe-Barn',d:'A long barn of the town’s stores, its doors bound in iron and its ledger jealously kept.'},
+          {n:'The Muster Ground',d:'A flat field where the levies drill badly and swear well.'},
+          {n:'The Counting-House',d:'Where the town’s tolls and weights are argued into the record.'}]);
+        var ca2=R()*Math.PI*2,cr2=coreR*rr(.45,.8);
+        addPoi(cx+Math.cos(ca2)*cr2,cy+Math.sin(ca2)*cr2,civ.n,civ.d);
+      }
       // floor of 4 POIs (spec §B): a bare village gains a second landmark
       if(pois.length<4){var ex=pick([
         {n:'The Common Green',d:'Open ground where the village gathers and beasts are penned on market-day.'},
