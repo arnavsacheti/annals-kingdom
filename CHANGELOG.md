@@ -4,6 +4,19 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.9.11-alpha.1] — 2026-07-13
+- Every settlement pin now sits on the cartographer's own ring-dot: the whole atlas
+  was swept with a matched-glyph detector and all 121 markers audited one-to-one —
+  110 verified or snapped exact (35 had drifted 5–69 px in transcription), Hordon's
+  double-ring ◉ measured by hand, and five false auto-matches (letter-o's and
+  neighbours' dots) caught by eye and rejected
+- Census pins no longer double the print: like Epēshu's chart badges, the printed ○
+  and name carry the display and the live marker is an invisible halo — hover for
+  the bronze ring, tap to open the card; pins clamped to the frame's edge stay visible
+- The sweep found the map holds more towns than the census: six printed settlements
+  have no marker yet (Parli, Mūmakon, Ilongazoro, Ūgdon, Kroton, Tōron) and Pish's
+  label is unfindable at its recorded place — a census second pass is queued
+
 ## [0.9.10-alpha.1] — 2026-07-13
 - Census pins sit exactly on their ring-dots (per-size icon anchors; the reported
   offset was mostly a stale deploy plus a 4px anchor nit, both gone)

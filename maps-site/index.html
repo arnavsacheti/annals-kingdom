@@ -74,10 +74,17 @@
     width:24px;height:24px;font-size:15px;}
   .mk.t-minor .glyph{background:#efe3c6;color:var(--bronze);border-color:#a98a4c;
     width:18px;height:18px;font-size:11px;}
-  /* lesser (traced-census) settlements: smaller ⌂ glyph, quieter frame */
-  .mk.t-lesser .glyph{background:#f2e7cb;color:#5a3210;border-color:#8a5a2a;
-    width:14px;height:14px;font-size:9px;border-width:1px;}
-  .mk.t-lesser .lbl{font-size:12px;}
+  /* lesser (traced-census) settlements: the printed ○ carries the town; the live
+     glyph is only an interactive halo over the print (edge-clamped ones stay visible) */
+  .mk.t-lesser .glyph{width:20px;height:20px;background:transparent;color:transparent;
+    border:2px solid rgba(239,230,207,0);box-shadow:none;
+    transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;}
+  .mk.t-lesser .glyph:hover{transform:scale(1.18);border-color:rgba(169,138,76,.95);
+    box-shadow:0 0 0 3px rgba(44,36,24,.30), 0 1px 5px rgba(0,0,0,.35);}
+  .atlas-labels .mk.t-lesser .lbl{display:none;}
+  .mk.t-lesser.edge .glyph{background:#f2e7cb;color:#5a3210;border:1px solid #8a5a2a;
+    box-shadow:0 1px 3px rgba(0,0,0,.35);}
+  .atlas-labels .mk.t-lesser.edge .lbl{display:inline;}
   .mk.t-water .glyph{background:#d8e4e6;color:var(--water);border-color:var(--water);}
   .mk.t-mtn .glyph{background:#e6ddc9;color:#6a4a24;border-color:#6a4a24;}
   .mk.t-major .lbl{font-size:14px;}
@@ -915,7 +922,7 @@
       if(m.minor){cls='t-lesser';pane='pLesser';}   // traced-census: own pane + smaller glyph
       var c=clampToFrame(m.x,m.y);
       m._edge=c.clamped?c.dir:null;
-      var gc=cls==='t-major'?12:cls==='t-lesser'?7:cls==='t-minor'?9:11;   // glyph centre by size
+      var gc=cls==='t-major'?12:cls==='t-lesser'?10:cls==='t-minor'?9:11;   // glyph centre by size
       var icon=L.divIcon({className:'',iconSize:null,iconAnchor:[gc,gc],
         html:'<div class="mk '+cls+(c.clamped?' edge':'')+'"><span class="glyph">'+st.g+'</span>'+
              '<span class="lbl">'+esc(m.name)+'</span>'+

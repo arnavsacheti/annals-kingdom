@@ -41,7 +41,22 @@ non-conflicting item instead.
 - [ ] **Sim ↔ atlas continuity** — matching deep-link vocabulary both ways
   (sim `#goto=` ↔ atlas `#chart=`), so cross-links can land on the same place.
 
+- [ ] **Census second pass — orphan dots & unmarkered towns** — the snapping lab
+  exposed 28 strong unclaimed ring-dots incl. six PRINTED towns with no marker at all
+  (Parli, Mūmakon, Ilongazoro, Ūgdon, Kroton, Tōron) and one marker whose label is
+  unfindable at its coords (Pish — likely a mis-transcription in that dense cluster).
+  Transcribe the orphans' labels, add markers, resolve Pish. Artifacts: lab_orphans.json,
+  lab_assign.json, lab_ncc_r1.npy in the session scratchpad.
+
 ## Done
+
+- [x] **Pins on the printed ○'s (USER FLAG)** — matched-glyph NCC detection over the
+  whole atlas; all 121 settlement markers audited one-to-one against detected dots:
+  110 snapped exact (35 were off by 5–69px — census transcription drift), Hordon's
+  double-ring ◉ measured by hand, 5 bad auto-matches (letter-'o'/neighbour thefts)
+  caught and rejected in the crop audit. Census pins are now print-riding halos
+  (Epēshu-badge idiom): the print carries the town, hover reveals a bronze ring;
+  edge-clamped pins stay visible; majors untouched. (v0.9.11-alpha.1)
 
 (check items off above and move them here with a one-line result + version)
 
