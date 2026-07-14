@@ -192,6 +192,10 @@
   .era-ctrl label{display:flex;align-items:center;gap:8px;font-size:14px;padding:3px 3px;
     cursor:pointer;border-radius:3px;}
   .era-ctrl label:hover{background:var(--panel2);}
+  .era-ctrl .era-title{cursor:pointer;user-select:none;white-space:nowrap;}
+  .era-ctrl .era-caret{color:var(--muted);font-size:12px;}
+  .era-ctrl.era-collapsed label{display:none;}
+  .era-ctrl.era-collapsed{padding:5px 10px;}
   .era-ctrl input{accent-color:var(--rust);cursor:pointer;margin:0;}
 
   /* ---- journey control ---- */
@@ -2723,15 +2727,24 @@
         var d=L.DomUtil.create('div','era-ctrl');
         d.setAttribute('role','radiogroup');
         d.setAttribute('aria-label','The Atlas Through the Ages');
-        d.innerHTML='<div class="era-title">The Atlas Through the Ages</div>'+
+        d.className+=' era-collapsed';
+        d.innerHTML='<div class="era-title" role="button" tabindex="0" title="The Atlas Through the Ages">'+
+          '<span class="era-cur">Modern</span> <span class="era-caret">▾</span></div>'+
           '<label><input type="radio" name="era" value="modern" autocomplete="off"> Modern (1374 A.B.)</label>'+
           '<label><input type="radio" name="era" value="war" autocomplete="off"> War of the Patrons (1124–1133)</label>'+
           '<label><input type="radio" name="era" value="imperial" autocomplete="off"> Imperial (the golden age)</label>';
         L.DomEvent.disableClickPropagation(d);
         L.DomEvent.disableScrollPropagation(d);
         d.addEventListener('change',function(e){
-          if(e.target&&e.target.name==='era')setEra(e.target.value);
+          if(e.target&&e.target.name==='era'){setEra(e.target.value);
+            var lbl={modern:'Modern',war:'War of the Patrons',imperial:'Imperial'}[e.target.value]||e.target.value;
+            var cur=d.querySelector('.era-cur'); if(cur)cur.textContent=lbl;
+            d.classList.add('era-collapsed');}
         });
+        var tt=d.querySelector('.era-title');
+        function eraToggle(){d.classList.toggle('era-collapsed');}
+        tt.addEventListener('click',eraToggle);
+        tt.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();eraToggle();}});
         // force the default regardless of browser form-state restoration
         d.querySelector('input[value="modern"]').checked=true;
         eraInputs=d.querySelectorAll('input[name=era]');
@@ -2966,7 +2979,7 @@
     if(districtBorders)overlays[' ◌ District borders']=districtBorders;
 
     addEraControl();
-    layersCtrl=L.control.layers(null,overlays,{collapsed:window.innerWidth<=760,position:'topright'});
+    layersCtrl=L.control.layers(null,overlays,{collapsed:true,position:'topright'});   // compact icon; expands on hover/tap
     layersCtrl.addTo(map);
     (function(){var lc=layersCtrl.getContainer&&layersCtrl.getContainer();
       if(!lc)return;var lg=L.DomUtil.create('div','prov-legend',

@@ -10,9 +10,6 @@ non-conflicting item instead.
 
 ## Queue
 
-- [ ] **Era control on small phones** — "The Atlas Through the Ages" panel eats ~1/3
-  of an iPhone SE viewport; collapse it to a single chip/button that expands on tap
-  below 640px (verified bulky in the 375×667 emulation sweep).
 - [ ] **Notch safe-areas** — add viewport-fit=cover + env(safe-area-inset-*) padding
   on the header/dock so notched phones in landscape don't clip controls.
 - [ ] **Trackpad gesture feel** — after real-finger feedback: tune the sim's pan gain
@@ -34,6 +31,11 @@ non-conflicting item instead.
 ## Done
 
 (check items off above and move them here with a one-line result + version)
+
+- [x] **Layers panel intrusiveness (USER FLAG) + era control** — the 16-row layers
+  panel now collapses to the standard icon on all sizes (expands on hover/tap), and
+  the era panel is a compact current-age chip that expands on tap and re-folds after
+  a pick. (v0.9.9-alpha.1)
 
 - [x] **Generated POI variety** — oddity pool widened to eight (springs, wash-stones,
   tithe-yards, beacon posts, plague-stones…) and towns gain one civic institution

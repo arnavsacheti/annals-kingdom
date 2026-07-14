@@ -4,6 +4,11 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.9.9-alpha.1] — 2026-07-13
+- The controls got out of the map's way: the layers panel collapses to its icon
+  (hover or tap to open), and the era switcher is now a small chip showing the
+  current age that expands only when you want to time-travel
+
 ## [0.9.8-alpha.1] — 2026-07-13
 - Generated towns gained small institutions worth tapping: springs, wash-stones,
   plague-stones, beacon posts — and every proper town now keeps one weightier
