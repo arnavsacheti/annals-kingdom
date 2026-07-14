@@ -727,9 +727,9 @@
   ],
   "inn": null,
   "biome": {
-   "value": "riverine",
-   "prov": "invented",
-   "note": "Approximated: Penthelon's own page sets it on the shore of the Five Fingers, a lake system rich with fish — closest available category to a true lake-shore, not a literal river."
+   "value": "lake",
+   "prov": "canon",
+   "note": "On the Five Fingers — the piers of Penthelon; lake enum replaces the earlier riverine approximation."
   },
   "condition": {
    "value": "thriving",

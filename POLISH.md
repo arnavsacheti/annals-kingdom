@@ -10,9 +10,6 @@ non-conflicting item instead.
 
 ## Queue
 
-- [ ] **Lake biome** — Penthelon is canonically on the Five Fingers LAKE, currently
-  approximated as 'riverine'; add a lake enum (shore on the mask's water, no tide
-  marks, fishing-stake rows) when the river mode lands.
 - [ ] **Generated POI variety** — beyond market/temple/gate/docks/inn: seeded wells,
   shrines, yards, gallows, springs; kind-weighted; all ✶.
 - [ ] **Era control on small phones** — "The Atlas Through the Ages" panel eats ~1/3
@@ -39,6 +36,11 @@ non-conflicting item instead.
 ## Done
 
 (check items off above and move them here with a one-line result + version)
+
+- [x] **Lake biome** — Penthelon's footprint anchor was floating IN the Five Fingers
+  (wiki marker position; 14% land); snapped to the charted shore, biome 'lake' set
+  (canon), and lake styling added: fishing-stake rows in the shallows joining the
+  Lakemen stilt-piers. The mask supplies the true lakeshore. (v0.9.7-alpha.1)
 
 - [x] **Riverside cities** — seeded winding rivers rasterized into the shared water
   field (lanes, buildings, fields, and rubble all stop at the banks automatically);

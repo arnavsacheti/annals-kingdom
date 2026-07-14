@@ -4,6 +4,11 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.9.7-alpha.1] — 2026-07-13
+- Penthelon stands on the Five Fingers at last: its anchor (which floated mid-lake at
+  the wiki marker's position) snapped to the charted shore, the lake biome landed,
+  and the Lakemen shallows carry stilt-piers, moored boats, and fishing-stake rows
+
 ## [0.9.6-alpha.1] — 2026-07-13
 - Rivers flow through the generated towns that canon gives them: Kolens' river winds
   through its plan under two bridges with the Kolens Connection on the bank, and the

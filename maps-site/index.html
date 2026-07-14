@@ -2330,6 +2330,21 @@
           g.save();g.translate(mx2,my2);g.rotate(Math.atan2(qp.y,qp.x)+rr(-.3,.3));
           g.fillStyle='#5a4a36';g.beginPath();g.ellipse(0,0,rr(5,8),rr(1.6,2.6),0,0,6.283);g.fill();g.restore();}
       }
+      // lake biome: fishing-stake rows in the shallows (seeded; only lake cities draw)
+      if(biome==='lake'&&drawWater&&waterNode){
+        var nRow=ri(3,5);
+        for(var fr2=0;fr2<nRow;fr2++){
+          var fa=Math.atan2(waterNode.y-cy,waterNode.x-cx)+rr(-0.9,0.9);
+          var fd=rr(30,90), fx0=waterNode.x+Math.cos(fa)*fd, fy0=waterNode.y+Math.sin(fa)*fd;
+          if(!inWater(fx0,fy0))continue;
+          var fdir=rr(0,Math.PI), fn=ri(4,8);
+          g.fillStyle='#4a3520';
+          for(var fk=0;fk<fn;fk++){
+            var sx2=fx0+Math.cos(fdir)*fk*7, sy2=fy0+Math.sin(fdir)*fk*7;
+            if(inWater(sx2,sy2))g.fillRect(sx2-1,sy2-1,2,2.6);
+          }
+        }
+      }
       // Lakemen stilt-pier rows reaching out over the water (canon: Penthelon of the Five Fingers)
       if(lakemen){var nP=ri(4,7);
         for(var pi=0;pi<nP;pi++){var pb2=null,pvv=sv;
@@ -2607,7 +2622,7 @@
       CITY_ANCHORS[k]=anchors[k];}
     // two extra anchors sourced from maps_markers (spec §A.2)
     CITY_ANCHORS['Summarch']={atlasX:523,atlasY:58,kind:'town',harbor:false,sea:null};
-    CITY_ANCHORS['Penthelon']={atlasX:1941,atlasY:747,kind:'village',harbor:true,sea:null};
+    CITY_ANCHORS['Penthelon']={atlasX:1962,atlasY:644,kind:'village',harbor:true,sea:null}; // footprint on the charted Five Fingers shore (wiki marker floats in the lake)
     for(var kk in CITY_ANCHORS)CITY_ANCHORS_FOLD[fold(kk)]=kk;
     if(traits)for(var t in traits){if(t==='_readme')continue;CITY_TRAITS[t]=traits[t];}
 
