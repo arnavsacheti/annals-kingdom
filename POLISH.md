@@ -13,9 +13,6 @@ non-conflicting item instead.
 - [ ] **Lake biome** — Penthelon is canonically on the Five Fingers LAKE, currently
   approximated as 'riverine'; add a lake enum (shore on the mask's water, no tide
   marks, fishing-stake rows) when the river mode lands.
-- [ ] **Riverside cities** — Kolens is canon 'riverside' but the generator only knows
-  seas: add a river mode (traits `river: {side}`), a winding watercourse through or
-  beside the plan with a bridge or two, quays optional.
 - [ ] **Generated POI variety** — beyond market/temple/gate/docks/inn: seeded wells,
   shrines, yards, gallows, springs; kind-weighted; all ✶.
 - [ ] **Era control on small phones** — "The Atlas Through the Ages" panel eats ~1/3
@@ -42,6 +39,12 @@ non-conflicting item instead.
 ## Done
 
 (check items off above and move them here with a one-line result + version)
+
+- [x] **Riverside cities** — seeded winding rivers rasterized into the shared water
+  field (lanes, buildings, fields, and rubble all stop at the banks automatically);
+  bridges where primaries cross; market/gates/temple nudged to dry ground; the
+  Kolens Connection placed on its riverbank; Ion Ephel's Tungril hugs the ruin
+  toward the sea. Controls byte-identical. (v0.9.6-alpha.1)
 
 - [x] **Crossfade palette match** — verified already delivered by the terrain-melding
   run (§c surround tint toward the sampled atlas hue, in code at the vignette block);

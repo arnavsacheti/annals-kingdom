@@ -1897,12 +1897,65 @@
     function inLand(x,y){var dx=x-cx,dy=y-cy,ang=Math.atan2(dy,dx);
       return dx*dx+dy*dy < blobR(landR,ang)*blobR(landR,ang);}
 
+    // ---- river (traits.river — canon riverside; Kolens 'through', Ion Ephel 'beside'):
+    // a winding watercourse rasterized into the water predicate BEFORE lanes and
+    // buildings, so lane growth stops at the banks and nothing lands in the stream.
+    // Every rng draw is RV-guarded → riverless cities stay byte-identical.
+    var RV=t.river||null, RD=null, RVD=null, rvPts=null, rvCv=null, rvW0=0, rvNearest=null;
+    function rAt(x,y){x=x<1?1:x>S-2?S-2:x|0;y=y<1?1:y>S-2?S-2:y|0;
+      return RD?RD[(y*S+x)*4+3]:0;}
+    function rvNear(x,y,m){if(!RD)return false;
+      if(rAt(x,y)>=128)return true;
+      for(var k8=0;k8<8;k8++){var a8=k8/8*Math.PI*2;
+        if(rAt(x+Math.cos(a8)*m,y+Math.sin(a8)*m)>=128)return true;}
+      return false;}
+    if(RV){
+      var rvBeside=RV.mode==='beside';
+      var rvFa=(rvBeside&&sv)?Math.atan2(sv.y,sv.x)+rr(-.35,.35):R()*Math.PI*2; // beside a coast: flow meets the sea
+      var rvAx={x:Math.cos(rvFa),y:Math.sin(rvFa)}, rvPp={x:-rvAx.y,y:rvAx.x};
+      var rvSide=R()<0.5?1:-1;
+      var rvOff0=rvBeside?rvSide*coreR*rr(1.05,1.3):rvSide*S*rr(.05,.1); // flank hug | past/near the centre
+      var rvCx=cx+rvPp.x*rvOff0, rvCy=cy+rvPp.y*rvOff0;
+      var rvNb=ri(2,4), rvHarm=[];                                       // 2–4 gentle seeded bends
+      for(var rvi=0;rvi<rvNb;rvi++)rvHarm.push({f:(rvi+1)*rr(.7,1.05),ph:R()*6.283,am:S*rr(.045,.085)/(rvi+1)});
+      var rvMe=function(u5){var o5=0;for(var i5=0;i5<rvHarm.length;i5++)
+        o5+=rvHarm[i5].am*Math.sin(rvHarm[i5].f*u5*Math.PI+rvHarm[i5].ph);return o5;};
+      var rvOc=rvMe(0), rvWb=S*rr(.016,.023), rvWph=R()*6.283;
+      rvW0=rvWb; rvPts=[];
+      for(var rvU=-1.15;rvU<=1.151;rvU+=0.02)
+        rvPts.push({x:rvCx+rvAx.x*rvU*S*0.8+rvPp.x*(rvMe(rvU)-rvOc),
+                    y:rvCy+rvAx.y*rvU*S*0.8+rvPp.y*(rvMe(rvU)-rvOc),
+                    w:rvWb*(1+0.22*Math.sin(rvU*3.1+rvWph))});          // slight width variation
+      rvNearest=function(x,y){var b6=rvPts[0],bd6=1e9;
+        for(var i6=0;i6<rvPts.length;i6++){var d6b=Math.hypot(rvPts[i6].x-x,rvPts[i6].y-y);
+          if(d6b<bd6){bd6=d6b;b6=rvPts[i6];}}return b6;};
+      var rvBand=function(q7,pad){var pL=[],pR7=[],i7;
+        for(i7=0;i7<rvPts.length;i7++){var A7=rvPts[i7],
+          B7=rvPts[Math.min(i7+1,rvPts.length-1)],C7=rvPts[Math.max(i7-1,0)],
+          dx7=B7.x-C7.x,dy7=B7.y-C7.y,l7=Math.hypot(dx7,dy7)||1,h7=A7.w/2+pad;
+          pL.push({x:A7.x-dy7/l7*h7,y:A7.y+dx7/l7*h7});
+          pR7.push({x:A7.x+dy7/l7*h7,y:A7.y-dx7/l7*h7});}
+        q7.beginPath();q7.moveTo(pL[0].x,pL[0].y);
+        for(i7=1;i7<pL.length;i7++)q7.lineTo(pL[i7].x,pL[i7].y);
+        for(i7=pR7.length-1;i7>=0;i7--)q7.lineTo(pR7[i7].x,pR7[i7].y);
+        q7.closePath();q7.fill();};
+      rvCv=document.createElement('canvas');rvCv.width=rvCv.height=S;    // visual band
+      var rvG=rvCv.getContext('2d',{willReadFrequently:true});
+      rvG.fillStyle=WATER;rvBand(rvG,0);
+      RVD=rvG.getImageData(0,0,S,S).data;
+      var rvFv=document.createElement('canvas');rvFv.width=rvFv.height=S; // predicate band (+bank setback)
+      var rvFg=rvFv.getContext('2d',{willReadFrequently:true});
+      rvFg.fillStyle='#fff';rvBand(rvFg,5);
+      RD=rvFg.getImageData(0,0,S,S).data;
+    }
+
     // shore geometry (perpendicular to sea dir, wobbled)
     var perp = sv?{x:-sv.y,y:sv.x}:null;
     var shoreDist = drawWater ? (coreR*0.55 + Math.min(distPx,25)*S*0.006) : 0;
     var swob=[];if(drawWater)for(var si=0;si<4;si++)swob.push({f:si+1,ph:R()*6.283,am:rr(.02,.06)});
     function shoreOff(s){var m=0;for(var i=0;i<swob.length;i++)m+=swob[i].am*Math.sin(swob[i].f*s/(S*0.3)+swob[i].ph);return shoreDist*(1+m);}
-    function inWater(x,y){if(!drawWater)return false;
+    function inWater(x,y){if(RD&&rAt(x,y)>=128)return true;   // the river band unions in
+      if(!drawWater)return false;
       if(WD)return wAt(x,y)>=128;              // the atlas's own coast
       return (x-cx)*sv.x+(y-cy)*sv.y > shoreOff(((x-cx)*perp.x+(y-cy)*perp.y));}
 
@@ -1942,6 +1995,12 @@
 
     // --- nodes: market square, gates, waterfront ---
     var sq={x:cx+rr(-coreR*.12,coreR*.12), y:cy+rr(-coreR*.12,coreR*.12)};
+    if(RV){var sqT=0;                                  // keep the square off the stream
+      while(sqT++<24&&rvNear(sq.x,sq.y,coreR*0.15))
+        sq={x:cx+rr(-coreR*.18,coreR*.18),y:cy+rr(-coreR*.18,coreR*.18)};
+      if(rvNear(sq.x,sq.y,coreR*0.15)){var sqN=rvNearest(sq.x,sq.y),
+        sqvx=sq.x-sqN.x,sqvy=sq.y-sqN.y,sqvl=Math.hypot(sqvx,sqvy)||1;
+        sq.x=sqN.x+sqvx/sqvl*(sqN.w/2+coreR*0.22);sq.y=sqN.y+sqvy/sqvl*(sqN.w/2+coreR*0.22);}}
     var walled = t.wall && !ruin;
     var nGates = walled ? (t.kind==='capital'?4:3) : (ruin?0:ri(3,4));
     var gr=coreR*(walled?0.9:1.15);
@@ -1965,6 +2024,10 @@
       if(!hinterGate||bestd3>0.6){hinterGate=mkGate(hb,true);gates.push(hinterGate);}
       else hinterGate.appr=true;
       hinterGate.hinter=true;}
+    // river cities: walk any gate out of the stream (rng-free; a bearing shifts a hair)
+    if(RV)gates.forEach(function(gg){for(var gT=0;gT<16&&rvNear(gg.x,gg.y,14);gT++){
+      gg.ang+=0.12;gg.x=cx+Math.cos(gg.ang)*gr;gg.y=cy+Math.sin(gg.ang)*gr;
+      gg.dir=dirName(Math.cos(gg.ang),Math.sin(gg.ang));}});
     // sea-approach bias (route continuity §): prefer the lane's arrival bearing (nearest the
     // charted sea side) for the waterfront, but the mask stays authoritative — shoreHit still
     // lands on the true waterline; if that bearing is dry, fall back to the compass side.
@@ -2010,6 +2073,7 @@
     var temple=null;
     if(t.patron&&!ruin){var te=gates.length?gates[ri(0,gates.length-1)]:{x:cx,y:cy};
       var tx=(te.x+sq.x)/2, ty=(te.y+sq.y)/2, tw=coreR*rr(.16,.22), th=tw*rr(.6,.8);
+      if(RV)for(var tT=0;tT<12&&rvNear(tx,ty,tw*0.75);tT++){tx+=(sq.x-tx)*0.3;ty+=(sq.y-ty)*0.3;} // dry ground
       temple={x:tx,y:ty,w:tw,h:th}; reserved.push({x:tx,y:ty,w:tw*1.1,h:th*1.1});}
     function inReserved(x,y){for(var i=0;i<reserved.length;i++){var q=reserved[i];
       if(Math.abs(x-q.x)<q.w/2&&Math.abs(y-q.y)<q.h/2)return true;}return false;}
@@ -2203,6 +2267,19 @@
         if(inLand(rx,ry)&&!inWater(rx,ry)){g.beginPath();g.arc(rx,ry,rr(.6,1.6),0,6.283);g.fill();}}
     }
 
+    // --- river band + ink rim (the mask shoreline's own 8-stamp treatment), drawn
+    // under the sea block so a rivermouth melds into the charted coast (Ion Ephel) ---
+    if(RV){
+      var rvIc=document.createElement('canvas');rvIc.width=rvIc.height=S;
+      var rvIg=rvIc.getContext('2d');
+      rvIg.drawImage(rvCv,0,0);
+      rvIg.globalCompositeOperation='source-in';
+      rvIg.fillStyle='rgba(74,70,60,.6)';rvIg.fillRect(0,0,S,S);
+      for(var rvo=0;rvo<8;rvo++){var rva=rvo/8*Math.PI*2;
+        g.drawImage(rvIc,Math.cos(rva)*3.5,Math.sin(rva)*3.5);}
+      g.drawImage(rvCv,0,0);
+    }
+
     // --- water on top (covers the sea side) + quays/jetties/moored boats ---
     if(drawWater){
       if(WD){
@@ -2269,6 +2346,45 @@
           g.fillRect(plen-3,-hw/2,hw,hw);g.strokeRect(plen-3,-hw/2,hw,hw);g.restore();}}
     }
 
+    // --- bridges: a deck where the primary ways cross the river (max 2; nearest the
+    // square first). Ruins get the bare stream — no bridges, no river quays. ---
+    if(RV&&!ruin){
+      var rvVis=function(x,y){x=x<1?1:x>S-2?S-2:x|0;y=y<1?1:y>S-2?S-2:y|0;
+        return RVD[(y*S+x)*4+3]>=128;};
+      var xings=[];
+      var scanPoly=function(pts){for(var i9=0;i9<pts.length-1;i9++){
+        var A9=pts[i9],B9=pts[i9+1],dx9=B9.x-A9.x,dy9=B9.y-A9.y,L9=Math.hypot(dx9,dy9);
+        if(L9<2)continue;
+        var ux9=dx9/L9,uy9=dy9/L9,in9=false,e9=null;
+        for(var d9=0;d9<=L9;d9+=3){var px9=A9.x+ux9*d9,py9=A9.y+uy9*d9;
+          if(rvVis(px9,py9)){if(!in9){in9=true;e9={x:px9,y:py9};}}
+          else if(in9){in9=false;
+            xings.push({x:(e9.x+px9)/2,y:(e9.y+py9)/2,ux:ux9,uy:uy9,
+              len:Math.hypot(px9-e9.x,py9-e9.y)});}}}};
+      roads.forEach(scanPoly);
+      if(hinterGate)scanPoly([{x:sq.x,y:sq.y},{x:hinterGate.x,y:hinterGate.y},
+        {x:cx+Math.cos(hinterGate.ang)*S*0.62,y:cy+Math.sin(hinterGate.ang)*S*0.62}]);
+      if(!xings.length)lanes.forEach(function(l9){scanPoly(l9.pts);});
+      xings=xings.filter(function(q9){return q9.len<rvW0*2.4;});   // skip near-parallel grazes
+      xings.sort(function(a9,b9){return Math.hypot(a9.x-sq.x,a9.y-sq.y)-Math.hypot(b9.x-sq.x,b9.y-sq.y);});
+      var decks=[];
+      xings.forEach(function(q9){if(decks.length>=2)return;
+        for(var i9=0;i9<decks.length;i9++)
+          if(Math.hypot(decks[i9].x-q9.x,decks[i9].y-q9.y)<rvW0*2.5)return;
+        decks.push(q9);});
+      decks.forEach(function(q9){var hl9=q9.len/2+8,hw9=roadHalf*1.15;
+        g.save();g.translate(q9.x,q9.y);g.rotate(Math.atan2(q9.uy,q9.ux));
+        g.fillStyle=ROAD;g.fillRect(-hl9,-hw9,hl9*2,hw9*2);               // deck
+        g.strokeStyle=OUT;g.lineWidth=2;
+        g.beginPath();g.moveTo(-hl9,-hw9);g.lineTo(hl9,-hw9);
+        g.moveTo(-hl9,hw9);g.lineTo(hl9,hw9);g.stroke();                  // side casings
+        g.beginPath();g.moveTo(-hl9,-hw9);g.lineTo(-hl9-7,-hw9-6);
+        g.moveTo(-hl9,hw9);g.lineTo(-hl9-7,hw9+6);
+        g.moveTo(hl9,-hw9);g.lineTo(hl9+7,-hw9-6);
+        g.moveTo(hl9,hw9);g.lineTo(hl9+7,hw9+6);g.stroke();               // splayed ends
+        g.restore();});
+    }
+
     // --- temple precinct (drawn over infill) ---
     if(temple){g.save();g.translate(temple.x,temple.y);
       g.fillStyle='#d8cba6';g.strokeStyle=STONE_O;g.lineWidth=1.6;
@@ -2306,8 +2422,13 @@
       if(drawWater&&waterNode)addPoi(waterNode.x,waterNode.y,lakemen?'The Stilt-Wharves':(t.harbor?'The Quays':'The Waterside'),lakemen?'Rows of Lakemen piers on their stilts, reaching out over the water; the folk here live half on land and half above the shallows.':'Stone quays and moored craft along the '+(sea||'shore').toLowerCase()+' water.');
       if(walled&&gates.length){var gg2=gates[0];addPoi(gg2.x,gg2.y,'The '+gg2.dir+' Gate','A gate in the town wall, where the road passes within.');}
       var innName='The '+pick(INN_ADJ)+' '+pick(INN_NOUN);
+      if(t.inn&&t.inn.name)innName=t.inn.name;   // canon inn keeps its name (picks above kept: determinism)
       var ia=R()*Math.PI*2,ir=coreR*rr(.25,.5);
-      addPoi(cx+Math.cos(ia)*ir,cy+Math.sin(ia)*ir,innName,innName+' — a travellers’ house near the square'+(goblinish?', delved into the hillside as is the custom under the Wall':'')+', by the reckoning of those who pass through.');
+      var inx=cx+Math.cos(ia)*ir, iny=cy+Math.sin(ia)*ir;
+      if(RV&&t.inn){var ibp=rvNearest(sq.x,sq.y),               // riverside inn: the bank nearest the square
+        ivx=sq.x-ibp.x,ivy=sq.y-ibp.y,ivl=Math.hypot(ivx,ivy)||1;
+        inx=ibp.x+ivx/ivl*(ibp.w/2+26);iny=ibp.y+ivy/ivl*(ibp.w/2+26);}
+      addPoi(inx,iny,innName,innName+' — a travellers’ house near the square'+(goblinish?', delved into the hillside as is the custom under the Wall':'')+', by the reckoning of those who pass through.');
       var odd=pick([{n:'The Old Well',d:'An old well of worn stone, its water counted sweet.'},
         {n:'The Wayshrine',d:'A small roadside shrine, its offerings renewed by no one anyone can name.'},
         {n:'The Standing Stone',d:'A single weathered stone, older than the streets that grew about it.'}]);

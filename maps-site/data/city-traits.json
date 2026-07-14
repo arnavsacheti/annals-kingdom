@@ -798,6 +798,11 @@
    "value": "thriving",
    "prov": "canon",
    "note": "This file's own canonNote calls it 'a bustling riverside city.'"
+  },
+  "river": {
+   "mode": "through",
+   "prov": "canon",
+   "note": "A bustling riverside city — the river is canon; its course through the plan is conjecture."
   }
  },
  "Hordon": {
@@ -931,6 +936,11 @@
    "value": "ruin",
    "prov": "canon",
    "note": "Founded c. 910 A.B., abandoned c. 1060 A.B., per the timeline."
+  },
+  "river": {
+   "mode": "beside",
+   "prov": "canon",
+   "note": "At the mouth of the Tungril into the White Sea."
   }
  }
 }
