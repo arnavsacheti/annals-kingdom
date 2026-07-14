@@ -192,6 +192,9 @@
   .era-ctrl label{display:flex;align-items:center;gap:8px;font-size:14px;padding:3px 3px;
     cursor:pointer;border-radius:3px;}
   .era-ctrl label:hover{background:var(--panel2);}
+  .rate-chip{float:right;font-family:'IBM Plex Mono',monospace;font-size:13px;
+    color:#7a5b17;background:#f4e9c9;border:1px solid #cdb37a;border-radius:4px;
+    padding:2px 8px;margin-left:8px;}
   .era-ctrl .era-title{cursor:pointer;user-select:none;white-space:nowrap;}
   .era-ctrl .era-caret{color:var(--muted);font-size:12px;}
   .era-ctrl.era-collapsed label{display:none;}
@@ -788,8 +791,13 @@
     var art=artFor(m.name), canon=detailKey(m.name);
     var akey=cityAnchorKey(m.name), reg=akey&&registryFor(akey), traits=akey&&CITY_TRAITS[akey];
     var flyCity=isFlyInCity(m.name);           // has an anchor + a registered overlay → descend
+    var rv=REVIEWS[m.name]||[];
+    var rchip='';
+    if(rv.length){var avg=rv.reduce(function(a,r2){return a+r2.stars;},0)/rv.length;
+      rchip='<span class="rate-chip" title="'+rv.length+' traveller review'+(rv.length>1?'s':'')+'">'+
+        avg.toFixed(1)+' ★</span>';}
     var h=(art?'<div class="card-plate"><img class="card-art" src="'+esc(art)+'" alt=""></div>':'')+
-      '<span class="card-type">'+esc(m.type||'Place')+'</span>'+
+      '<span class="card-type">'+esc(m.type||'Place')+'</span>'+rchip+
       '<h2 class="card-name">'+esc(m.name)+'</h2>';
     if(m._edge)h+=edgeLine('This place lies',m._edge);
     if(flyCity)h+='<button class="chart-btn" data-descend="'+esc(akey)+'">⚘ Descend into '+
@@ -908,7 +916,7 @@
       var c=clampToFrame(m.x,m.y);
       m._edge=c.clamped?c.dir:null;
       var gc=cls==='t-major'?12:cls==='t-lesser'?7:cls==='t-minor'?9:11;   // glyph centre by size
-      var icon=L.divIcon({className:'',iconSize:null,iconAnchor:[11,11],
+      var icon=L.divIcon({className:'',iconSize:null,iconAnchor:[gc,gc],
         html:'<div class="mk '+cls+(c.clamped?' edge':'')+'"><span class="glyph">'+st.g+'</span>'+
              '<span class="lbl">'+esc(m.name)+'</span>'+
              (c.clamped?chevHtml(c.dir,gc,gc):'')+'</div>'});

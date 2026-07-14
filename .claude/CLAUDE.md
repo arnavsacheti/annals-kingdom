@@ -12,6 +12,9 @@ three.js r128 via CDN, no build step). Themed to the owner's D&D campaign
 - Atlas: `PatrinorModern.png` (4390×2188) in iCloud
   `Documents/DnD (Do Not Disturb)/Allhammers_PlayerPacket/Maps and Visual Aids/Maps/`.
   Wiki Leaflet markers use lat = pixels from the BOTTOM edge, long = pixels from left.
+  CARTOGRAPHIC KEY (user-confirmed): DOTTED lines = major roadways; SOLID black lines
+  = rivers. Ring-dots ○ = settlements (◉ double-ring = Māgosh-class); dark discs with
+  numerals = city-chart legend badges.
 - Fixed facts: pantheon = the nine **Kembar** (Thobrauk, Arbezmara, Hesphek, Doremil,
   Kurūgan, Bēlkar, Mālgal, Laegos, + the unworshipped Mad One); years counted
   **After the Binding**, campaign present = **1374 A.B.**; party is in **Epēshu, the

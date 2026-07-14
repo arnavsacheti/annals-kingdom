@@ -4,6 +4,15 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.9.10-alpha.1] — 2026-07-13
+- Census pins sit exactly on their ring-dots (per-size icon anchors; the reported
+  offset was mostly a stale deploy plus a 4px anchor nit, both gone)
+- Places with traveller reviews wear their average in the card's corner — Summarch
+  scores an honest 2.3 ★ from those who were imprisoned there
+- Cartographic key recorded from the mapmaker: dotted lines are major roadways,
+  solid black lines are rivers; the full road-network extraction is the queue's
+  top item with the lab groundwork banked
+
 ## [0.9.9-alpha.1] — 2026-07-13
 - The controls got out of the map's way: the layers panel collapses to its icon
   (hover or tap to open), and the era switcher is now a small chip showing the

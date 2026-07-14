@@ -10,6 +10,19 @@ non-conflicting item instead.
 
 ## Queue
 
+- [ ] **Traced road network (USER FLAG)** — extract the atlas's dotted lines (canon:
+  dotted = major roadways, solid black = rivers) into splines: render as the true
+  road layer, snap the named ways to them, and feed approach bearings. Lab groundwork
+  banked in scratchpad: road_dots.npy (856 solid-dot candidates), traced-roads-v3.json
+  (41 partial chains), roads-overlay-v3.png. LEARNINGS: text i-dots/periods chain like
+  roads (mask text components first — implemented, works); dots on hatched realm
+  tints merge with the stripes and vanish (needs local contrast normalization or
+  matched filtering per-direction before component detection); chain radius 26/42 with
+  direction coherence ≥0.55 works where dots survive. ALSO per the same canon: the
+  "District borders" layer traced dotted lines as boundaries — they are ROADS
+  (relabel/retire the layer when the network ships), and any way-trace that followed a
+  SOLID line was following a river (audit the East-West Road trace).
+
 - [ ] **Notch safe-areas** — add viewport-fit=cover + env(safe-area-inset-*) padding
   on the header/dock so notched phones in landscape don't clip controls.
 - [ ] **Trackpad gesture feel** — after real-finger feedback: tune the sim's pan gain
