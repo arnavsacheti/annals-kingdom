@@ -74,17 +74,16 @@
     width:24px;height:24px;font-size:15px;}
   .mk.t-minor .glyph{background:#efe3c6;color:var(--bronze);border-color:#a98a4c;
     width:18px;height:18px;font-size:11px;}
-  /* lesser (traced-census) settlements: the printed ○ carries the town; the live
-     glyph is only an interactive halo over the print (edge-clamped ones stay visible) */
-  .mk.t-lesser .glyph{width:20px;height:20px;background:transparent;color:transparent;
-    border:2px solid rgba(239,230,207,0);box-shadow:none;
-    transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;}
-  .mk.t-lesser .glyph:hover{transform:scale(1.18);border-color:rgba(169,138,76,.95);
-    box-shadow:0 0 0 3px rgba(44,36,24,.30), 0 1px 5px rgba(0,0,0,.35);}
+  /* lesser (traced-census) settlements: live pins echo the cartographer's own
+     ○ (town) / ◉ (Māgosh-class) glyphs, and swell as the hand nears (see proximity) */
+  .mk.t-lesser .glyph{width:16px;height:16px;background:#e3d3ac;border:1.8px solid #2c2418;
+    color:transparent;box-shadow:0 1px 2px rgba(0,0,0,.25);
+    transition:transform .12s ease,border-color .12s ease,box-shadow .12s ease;}
+  .mk.t-lesser.mag .glyph{width:20px;height:20px;
+    background:radial-gradient(circle,#2c2418 0 3.5px,#e3d3ac 4.6px 100%);border-width:2px;}
+  .mk.t-lesser .glyph:hover{border-color:#c9a227;
+    box-shadow:0 0 0 2px rgba(201,162,39,.30),0 1px 4px rgba(0,0,0,.3);}
   .atlas-labels .mk.t-lesser .lbl{display:none;}
-  .mk.t-lesser.edge .glyph{background:#f2e7cb;color:#5a3210;border:1px solid #8a5a2a;
-    box-shadow:0 1px 3px rgba(0,0,0,.35);}
-  .atlas-labels .mk.t-lesser.edge .lbl{display:inline;}
   .mk.t-water .glyph{background:#d8e4e6;color:var(--water);border-color:var(--water);}
   .mk.t-mtn .glyph{background:#e6ddc9;color:#6a4a24;border-color:#6a4a24;}
   .mk.t-major .lbl{font-size:14px;}
@@ -919,10 +918,10 @@
     data.forEach(function(m){
       var st=TYPE_STYLE[m.type]||{cls:'t-minor',g:'•',pane:'pMinor'};
       var cls=st.cls,pane=st.pane;
-      if(m.minor){cls='t-lesser';pane='pLesser';}   // traced-census: own pane + smaller glyph
+      if(m.minor){cls='t-lesser'+(m.mag?' mag':'');pane='pLesser';}   // traced-census: own pane + smaller glyph (◉ for Māgosh-class)
       var c=clampToFrame(m.x,m.y);
       m._edge=c.clamped?c.dir:null;
-      var gc=cls==='t-major'?12:cls==='t-lesser'?10:cls==='t-minor'?9:11;   // glyph centre by size
+      var gc=cls==='t-major'?12:cls.indexOf('t-lesser')===0?(m.mag?10:8):cls==='t-minor'?9:11;   // glyph centre by size
       var icon=L.divIcon({className:'',iconSize:null,iconAnchor:[gc,gc],
         html:'<div class="mk '+cls+(c.clamped?' edge':'')+'"><span class="glyph">'+st.g+'</span>'+
              '<span class="lbl">'+esc(m.name)+'</span>'+
@@ -937,6 +936,30 @@
       LAYERS[m.type].addLayer(mk);
     });
   }
+
+  // lesser pins swell as the cursor nears — a proximity 'lens' over the printed ○/◉,
+  // rAF-throttled so the mousemove flood collapses to one paint per frame (LESSER only)
+  (function(){
+    var mc=map.getContainer(),pend=null,raf=0;
+    function apply(){
+      raf=0; if(!pend)return; var p=pend; pend=null;
+      LESSER.eachLayer(function(l){
+        var ic=l._icon; if(!ic)return;
+        var g=ic.querySelector('.glyph'); if(!g)return;
+        var cp=map.latLngToContainerPoint(l.getLatLng());
+        var d=Math.hypot(cp.x-p.x,cp.y-p.y);
+        g.style.transform=d>=140?'':'scale('+(1+0.55*(1-d/140)).toFixed(3)+')';
+      });
+    }
+    mc.addEventListener('mousemove',function(e){
+      pend=map.mouseEventToContainerPoint(e);
+      if(!raf)raf=requestAnimationFrame(apply);
+    });
+    mc.addEventListener('mouseleave',function(){
+      pend=null; if(raf){cancelAnimationFrame(raf);raf=0;}
+      LESSER.eachLayer(function(l){var ic=l._icon;if(ic){var g=ic.querySelector('.glyph');if(g)g.style.transform='';}});
+    });
+  })();
 
   function buildRoute(pts){
     if(!pts||!pts.length)return null;

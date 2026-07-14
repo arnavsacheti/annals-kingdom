@@ -41,14 +41,27 @@ non-conflicting item instead.
 - [ ] **Sim ↔ atlas continuity** — matching deep-link vocabulary both ways
   (sim `#goto=` ↔ atlas `#chart=`), so cross-links can land on the same place.
 
-- [ ] **Census second pass — orphan dots & unmarkered towns** — the snapping lab
-  exposed 28 strong unclaimed ring-dots incl. six PRINTED towns with no marker at all
-  (Parli, Mūmakon, Ilongazoro, Ūgdon, Kroton, Tōron) and one marker whose label is
-  unfindable at its coords (Pish — likely a mis-transcription in that dense cluster).
-  Transcribe the orphans' labels, add markers, resolve Pish. Artifacts: lab_orphans.json,
-  lab_assign.json, lab_ncc_r1.npy in the session scratchpad.
+- [ ] **Census second pass — orphan ○ dots & unmarkered towns** — the snapping lab
+  exposed ~28 strong unclaimed ring-dots incl. printed towns with no marker at all
+  (Parli, Mūmakon, Ilongazoro, Ūgdon, Kroton, Tōron; Tasta and Nhandar visible bare
+  by Gizalīs) and one marker whose label is unfindable at its coords (Pish — likely a
+  mis-transcription in that dense cluster). Transcribe the orphans' labels, add
+  markers, resolve Pish. The ◉ major-city sweep is DONE (15 found, 10 added
+  v0.9.12); only ○ towns remain. Artifacts: lab_orphans.json, lab_assign.json,
+  lab_ncc_r1.npy in the session scratchpad. Consider whether ◉ majors should reveal
+  a tier earlier than lesser towns.
 
 ## Done
+
+- [x] **Pins as the cartographer's own idiom (USER FLAG)** — census pins visible
+  again: tan disc with black ink border for towns, larger disc with inner black dot
+  for ◉ major cities; they grow reactively as the hand nears (rAF proximity, 140px
+  falloff) and the border turns gold under the cursor. A ◉ template sweep (from
+  Hordon's hand-measured glyph) found all 15 double-ring majors: ten had NO marker
+  and were added (Alensis City, Sepos, Līm Haub, Tamaron, Bōlkhar, Gizalīs, Ākat,
+  Kurūgnon, Nub-Nefer, Men-Nehet — names read from the print), five known capitals
+  snapped exactly to their printed ◉ (Epēshu, Summarch, Penthelon, Hordon, Cyrikon).
+  (v0.9.12-alpha.1)
 
 - [x] **Pins on the printed ○'s (USER FLAG)** — matched-glyph NCC detection over the
   whole atlas; all 121 settlement markers audited one-to-one against detected dots:

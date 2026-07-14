@@ -4,6 +4,18 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.9.12-alpha.1] — 2026-07-13
+- Census pins wear the cartographer's own idiom and are visible again: a tan disc
+  with black ink border for towns, larger with an inner black dot for ◉ major
+  cities; pins grow reactively as the hand draws near and their border turns gold
+  under the cursor
+- The double-ring census: a ◉ glyph sweep found all fifteen major cities on the
+  atlas — ten had no marker at all and now stand (Alensis City, Sepos, Līm Haub,
+  Tamaron, Bōlkhar, Gizalīs, Ākat, Kurūgnon, and the Lash-river cities Nub-Nefer
+  and Men-Nehet, every name read from the print), and five known capitals snapped
+  exactly onto their printed glyphs (Epēshu, Summarch, Penthelon, Hordon, Cyrikon)
+- Cartographic key extended per the mapmaker: ◉ double-ring = major city
+
 ## [0.9.11-alpha.1] — 2026-07-13
 - Every settlement pin now sits on the cartographer's own ring-dot: the whole atlas
   was swept with a matched-glyph detector and all 121 markers audited one-to-one —

@@ -55,15 +55,17 @@
  },
  {
   "type": "Settlements",
-  "x": 523,
-  "y": 58,
-  "name": "Summarch"
+  "x": 542,
+  "y": 52,
+  "name": "Summarch",
+  "mag": true
  },
  {
   "type": "Settlements",
-  "x": 1941,
-  "y": 747,
-  "name": "Penthelon"
+  "x": 1942,
+  "y": 755,
+  "name": "Penthelon",
+  "mag": true
  },
  {
   "type": "Minor Regions",
@@ -121,9 +123,10 @@
  },
  {
   "type": "Settlements",
-  "x": 1222,
-  "y": 1404,
-  "name": "Epēshu"
+  "x": 1236,
+  "y": 1417,
+  "name": "Epēshu",
+  "mag": true
  },
  {
   "type": "Minor Regions",
@@ -213,7 +216,8 @@
   "type": "Settlements",
   "x": 1124,
   "y": 1690,
-  "name": "Hordon"
+  "name": "Hordon",
+  "mag": true
  },
  {
   "type": "Settlements",
@@ -901,10 +905,11 @@
  },
  {
   "type": "Settlements",
-  "x": 2573,
-  "y": 1671,
+  "x": 2568,
+  "y": 1663,
   "name": "Cyrikon",
-  "minor": true
+  "minor": true,
+  "mag": true
  },
  {
   "type": "Settlements",
@@ -1003,5 +1008,85 @@
   "y": 1632,
   "name": "Nhandar Khezīn",
   "minor": true
+ },
+ {
+  "type": "Settlements",
+  "x": 321,
+  "y": 840,
+  "name": "Alensis City",
+  "minor": true,
+  "mag": true
+ },
+ {
+  "type": "Settlements",
+  "x": 891,
+  "y": 543,
+  "name": "Sepos",
+  "minor": true,
+  "mag": true
+ },
+ {
+  "type": "Settlements",
+  "x": 1199,
+  "y": 689,
+  "name": "Līm Haub",
+  "minor": true,
+  "mag": true
+ },
+ {
+  "type": "Settlements",
+  "x": 1659,
+  "y": 1556,
+  "name": "Tamaron",
+  "minor": true,
+  "mag": true
+ },
+ {
+  "type": "Settlements",
+  "x": 2027,
+  "y": 1648,
+  "name": "Bōlkhar",
+  "minor": true,
+  "mag": true
+ },
+ {
+  "type": "Settlements",
+  "x": 2889,
+  "y": 1585,
+  "name": "Gizalīs",
+  "minor": true,
+  "mag": true
+ },
+ {
+  "type": "Settlements",
+  "x": 3191,
+  "y": 1346,
+  "name": "Ākat",
+  "minor": true,
+  "mag": true
+ },
+ {
+  "type": "Settlements",
+  "x": 3729,
+  "y": 1292,
+  "name": "Kurūgnon",
+  "minor": true,
+  "mag": true
+ },
+ {
+  "type": "Settlements",
+  "x": 4354,
+  "y": 1113,
+  "name": "Nub-Nefer",
+  "minor": true,
+  "mag": true
+ },
+ {
+  "type": "Settlements",
+  "x": 4367,
+  "y": 1178,
+  "name": "Men-Nehet",
+  "minor": true,
+  "mag": true
  }
 ]
