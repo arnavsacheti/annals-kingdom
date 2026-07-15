@@ -22,6 +22,12 @@ three.js r128 via CDN, no build step). Themed to the owner's D&D campaign
   **Tamar** causes a daily "dark hour" eclipse. Lamor and Pēshunor are REGIONS, not towns.
 - Default seed `epeshu` loads the Leponnia realm through `window.CUSTOM_MAP_DATA`
   (see `buildEpeshuMapData()`); the wiki atlas is authoritative for its geography.
+- Language: the DM's Classical Patrinaic dictionary (PolyGlot save) lives in
+  `lexicon/PatrinaicRevamp.pgd`; `tools/pgd2lexicon.js` extracts `lexicon/patrinaic.json`
+  (full lexicon + etymology links) and, with `--emit-js`, the curated
+  `PATRINAIC_ROOTS`/`PATRINAIC_SUFS` block embedded in `index.html` (regenerate, don't
+  hand-edit). Procedural place names compose real roots + attested affixes; reserved
+  canon words (e.g. Nīmlad 'earth') are excluded in the tool.
 
 ## Hard rules
 - **Determinism**: world gen is a pure function of the seed. Generation/sim code uses
