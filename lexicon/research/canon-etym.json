@@ -1,0 +1,73 @@
+{
+  "_readme": "Etymologies for canon Leponnia/world toponyms, grounded ONLY in lexicon/patrinaic.json (words[] ids cited in 'src'). Names not listed here (Kanae, Rhup, Mago, Sardil, Perōna, Tarap, Thalbaen, Drāmūz, Medem, Shengo, Kardunash, Rēketis, Āglaz, Epēshu, Leponnia, Lamor, Pēshunor) had no full-coverage attested decomposition and were deliberately omitted rather than forced — see out-A/report.md for what partial/structural evidence exists on those (esp. Epēshu/Pēshunor sharing an unattested 'Pēshu' element, and Leponnia's '-ia' not being an attested suffix). 'confidence' follows the spec rubric: high = every morpheme attested and the join follows the affix's coded connector rule; medium = plausible but one part needed an unattested variant (vowel length, an irregular final consonant, etc).",
+
+  "Sokundo": {
+    "etym": "white-stone",
+    "parts": "Sok 'whiten, bleach, brighten' (id 940) + Undo 'stone, rock' (id 756)",
+    "confidence": "high",
+    "note": "Bare concatenation, no connector needed (Sok is consonant-final): Sok+Undo = Sokundo, letter for letter. Reads as an adjective+noun compound ('bleached-stone', i.e. pale/marble stone) — fits a harbor town in the Marble City's hinterland."
+  },
+
+  "Pharzeban": {
+    "etym": "gilt-place",
+    "parts": "Pharze 'to gild' (id 919, verb) + -ban 'place where the verb/noun occurs' (id 715)",
+    "confidence": "high",
+    "note": "-ban never takes a connector regardless of stem shape (per the coded PATRINAIC_SUFS table), so Pharze+ban = Pharzeban exactly. Distinct from the unrelated root 'Pharaz' (gold, id 914) that the campaign's other gold-words derive from — Pharzeban is built on the verb 'to gild', not the noun 'gold', so the closer gloss is 'gilded place' rather than 'gold place'."
+  },
+
+  "Aldorūs": {
+    "etym": "the height",
+    "parts": "Aldor 'high, tall, upper' (id 1034) + -us abstract-noun suffix (id 1074)",
+    "confidence": "medium",
+    "note": "Aldor is consonant-final so concatenates bare (Aldor+us). The one ungrounded step: -us is pronounced with a short u (ʊs) in the dictionary but Aldorūs shows a long ū — an unattested vowel-lengthening at the seam, not silently normalized here."
+  },
+
+  "Tamaron": {
+    "etym": "moon-land",
+    "parts": "Tamar 'moon, the gas giant' (id 1685) + -(n)or 'land' (archaic, id 603)",
+    "confidence": "medium",
+    "note": "Tamar is consonant-final, so the coded connector rule predicts the BARE suffix (no inserted n): Tamar+or = 'Tamaror', not 'Tamaron'. The attested comparandum for the bare rule is Patrinor (Patrin+or, both consonant-final, matches exactly — see below). Tamaron's final -n is therefore an irregular/unattested form, flagged rather than smoothed over. Root identification (Tamar 'moon') is otherwise unambiguous and thematically apt: Tamaron is a coastal town under the gas giant that is 'visible at all times of the day and night' per the dictionary's own Tamar entry."
+  },
+
+  "Mīth Mīrdak": {
+    "etym": "town of toil's end",
+    "parts": "Mīth 'town, fortified town, fortress' (id 1646, literal whole-word) + [Mīrdak ≈ Mir 'work, toil, labor' (id 1735) + Dak 'kill, thwart, stop, check' (id 1114)]",
+    "confidence": "medium",
+    "note": "Mīth alone is a literal, exact dictionary headword (high confidence on its own — the settlement name is transparently '[the] Mīth [called] Mīrdak', the same generic-plus-qualifier pattern as 'Fort X'). The qualifier 'Mīrdak' is only medium: Mir is short-i (mɪɾ) in the dictionary but Mīrdak shows long ī (unattested lengthening, same pattern as Aldorūs), and 'toil-stop' is an interpretive gloss (could as easily read 'a labor that was thwarted' — a mine or works abandoned). An equally valid alternative is that 'Mīrdak' is simply a proper/personal name with no internal compositional meaning; see report.md open questions."
+  },
+
+  "Patrinor": {
+    "etym": "Patrin-land",
+    "parts": "Patrin 'of/relating to Patrinor, the Patrin people' (id 1832) + -(n)or 'land' (archaic, id 603) — AND the whole word 'Patrinor' is independently a dictionary headword (id 1833, 'the coastal region where the Patrin peoples reside')",
+    "confidence": "high",
+    "note": "Doubly grounded: it's both a literal lexicon entry and a clean compositional derivation. Patrin is consonant-final ('n'), so the connector rule predicts the bare suffix -or with no inserted n: Patrin+or = Patrinor, an exact letter-for-letter match. This is the clearest confirmation in the whole dataset of the 'bare suffix after a consonant-final stem' half of the -(n)or connector rule (Azrū+g+os is the dictionary's vowel-final comparandum; Patrinor is the consonant-final one)."
+  },
+
+  "Māgosh": {
+    "etym": "of the city-states",
+    "parts": "the inanimate/oblique declension of Māgos 'city-state, city' (id 1640) — its own paradigm is given as 'Māgos, Māgosh, Māger, Māgreth (inan.)'",
+    "confidence": "high",
+    "note": "Not root+affix compounding at all — Māgosh is simply an attested inflected FORM of the common noun Māgos, already glossed 'a major Patrin city that with its surrounding territory forms an ind[ependent state]'. This is a clean, literal match for the game's usage of Māgosh as the network/class of the 15 major city-states."
+  },
+
+  "Nīmlad": {
+    "etym": "(literal — 'earth, world')",
+    "parts": "Nīmlad is itself a dictionary headword (id 1426), pluralia tantum: 'Nīmlad, Nīmlar, Nīmilthad'",
+    "confidence": "high",
+    "note": "Not a decomposition — the world's own name IS the lexicon's word for 'Earth, World, Globe... Sky and Sea'. Included for completeness since it's on the toponym list, but note per CLAUDE.md this is the one reserved canon word the procedural generator's root list deliberately excludes, so it should stay hand-fixed rather than being re-derived."
+  },
+
+  "Lepon": {
+    "etym": "storm's middle",
+    "parts": "(L)ē 'between, in the middle of' (id 970, with its documented conditional initial L) + Pon 'storm, tempest, gale' (id 1400)",
+    "confidence": "medium",
+    "note": "The dictionary marks this root's initial consonant as conditional — '(L)ē' — meaning the bare form is Ē and the L surfaces in certain environments; that L~zero alternation is directly attested, which is unusual supporting evidence for a toponym. The catch: the attested pronunciation of this root is long ē (leː), but Lepon shows short e — an unflagged vowel-shortening, so this stays medium rather than high. Gloss 'storm's middle / eye of the storm' is evocative for the old capital sacked in 745 A.B., but is an interpretive stretch, not a certainty."
+  },
+
+  "Aura-Hōth": {
+    "etym": "roaring foot(hills)",
+    "parts": "Aur 'din, clamor, uproar, roar, warcry' (id 880) + Hoth 'leg, foot' (id 1256) or Hoth 'below, under, beneath' (id 979)",
+    "confidence": "medium",
+    "note": "Both halves are attested nouns, but Hoth is short o (xɔtʰ) in the dictionary while the canon spelling shows long ō (Hōth) — an unflagged vowel-lengthening, same pattern seen elsewhere. The hyphenated, double-capitalized form ('Aura-Hōth', not a fused single word) is also unlike every other fused compound found in this study (Sokundo, Pharzeban, the ety[]-internal compounds), which raises the alternative reading that these are two separate proper names traditionally spoken together rather than one true compound — see report.md open questions."
+  }
+}

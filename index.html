@@ -104,6 +104,7 @@ canvas{display:block;touch-action:none}
 #chronScroll[data-f="trade"] .ce:not(.realm):not(.year){display:none}
 #chronScroll[data-f="fates"] .ce:not(.fate):not(.flavor):not(.myth):not(.year){display:none}
 .ce.myth{color:#4a2a5c}
+.pat{font-style:italic;border-bottom:1px dotted #8a7856;cursor:help}
 
 /* beat card + watch mode */
 #beatCard{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:22;max-width:520px;
@@ -591,14 +592,23 @@ const NAME = (()=>{
   const riverSuf = ['water','run','fen','wash','race','flow'];
   return {
     place(r, grand){
-      let n, et, guard = 0;
+      let n, et, guard = 0, bad;
       do {
-        const ro = pick(r, PATRINAIC_ROOTS), sf = pick(r, grand ? PATRINAIC_SUFS.grand : PATRINAIC_SUFS.common);
-        n = ro[0] + (/[aeiouāēīōū]$/i.test(ro[0]) ? sf[1] : '') + sf[0];
-        et = sf[2].replace('%', ro[1]);
+        bad = false;
+        // ~1 in 3 non-grand names mint two-root compounds (Sokundo = Sok+Undo); grand names stay root+affix
+        if(!grand && pick(r,[0,0,1])){
+          const a = pick(r, PATRINAIC_ROOTS), b = pick(r, PATRINAIC_ROOTS);
+          n = a[0] + b[0].toLowerCase(); et = a[1] + '-' + b[1];   // fused like canon Sokundo (Sok+Undo)
+          // reject unattested seams: same root, vowel|vowel hiatus, or over-long
+          bad = a[0]===b[0] || (/[aeiouāēīōū]$/i.test(a[0]) && /^[aeiouāēīōū]/i.test(b[0])) || n.length>10;
+        } else {
+          const ro = pick(r, PATRINAIC_ROOTS), sf = pick(r, grand ? PATRINAIC_SUFS.grand : PATRINAIC_SUFS.common);
+          n = ro[0] + (/[aeiouāēīōū]$/i.test(ro[0]) ? sf[1] : '') + sf[0];
+          et = sf[2].replace('%', ro[1]);
+        }
         guard++;
-        // reject echoes (Torban+ban, Laego+g+os) and rerolls of a taken name
-      } while((NAME.used.has(n) || /(..)\1/.test(n.toLowerCase())) && guard < 40);
+        // reject bad seams, echoes of period 2 or 3 (Laego+g+os, Iedban+ban), and rerolls of a taken name
+      } while((bad || NAME.used.has(n) || /(..|...)\1/.test(n.toLowerCase())) && guard < 40);
       NAME.used.add(n);
       NAME.etym.set(n, et);
       return n;
@@ -1181,7 +1191,7 @@ function genSettlements(){
     sets.forEach(s => s.patron = pick(R2, KEMBAR));   // every charter under a Kembar god (draw kept intact for determinism)
     sets.forEach((s,i) => {   // canon overrides applied AFTER the draw so the RNG stream is untouched
       const d = window.CUSTOM_MAP_DATA.settlements[i];
-      if(d){ if(d.patron) s.patron = d.patron; if(d.templeName) s.templeName = d.templeName; if(d.cityLabels) s.cityLabels = d.cityLabels; }
+      if(d){ if(d.patron) s.patron = d.patron; if(d.templeName) s.templeName = d.templeName; if(d.cityLabels) s.cityLabels = d.cityLabels; if(d.etym) NAME.etym.set(s.name, d.etym); }
     });
     sets.forEach(s => {
       s.y = hAt(s.x, s.z);
@@ -3257,15 +3267,30 @@ function chron(cls, text, x, z, pri){
   while(sc.children.length > 150) sc.removeChild(sc.firstChild);
   if(pinned) sc.scrollTop = sc.scrollHeight;
 }
+// Patrinaic chronicle glosses — curated from lexicon/patrinaic.json (see out-A/chronicle-gloss.json);
+// [conWord, gloss, IPA]. Con-words may be lowercased as common nouns mid-sentence (macrons preserved).
+const PATW = {
+  thar:   ['Thar','Winter','tʰaɾ'],       arberus:['Arbērus','Feast','aɾbeːɾʊs'],
+  simus:  ['Simūs','Eclipse','sɪmuːs'],   nak:    ['Nāk','War','naːk'],
+  laego:  ['Laego','Peace','laɪgɔ'],      gurum:  ['Gurum','Good Death','gʊɾʊm'],
+  martum: ['Mārtum','Throne','maːɾtʊm'],  tonshar:['Tonshar','Dragon','tɔnʃaɾ'],
+  hezban: ['Hezban','Treasury','çɛzban']
+};
+const PAT = (k, con) => { const w = PATW[k]; return '<i class="pat" title="Patrinaic ‧ '+w[1]+' ['+w[2]+']">'+(con||w[0])+'</i>'; };
 const T = {
-  opening(){ return 'Here begin the Annals of '+W.realmName+'. The realm counts '+fmt(Math.round(W.realmPop))+' souls in '+W.settlements.length+' places of habitation, and '+(W.crownTitle ? 'the '+W.crownTitle+'’s treasury holds ' : 'the crown holds ')+fmt(Math.round(W.treasury))+' gold marks.'; },
+  opening(){
+    // procedural realms carry an old-tongue gloss in apposition; the Epēshu realm has no etym entry and renders unchanged
+    const rn = NAME.etym.has(W.realmName)
+      ? W.realmName+' — <i class="pat" title="Patrinaic ‧ '+NAME.etym.get(W.realmName)+'">“'+NAME.etym.get(W.realmName)+'” in the old tongue</i> —'
+      : W.realmName;
+    return 'Here begin the Annals of '+rn+'. The realm counts '+fmt(Math.round(W.realmPop))+' souls in '+W.settlements.length+' places of habitation, and '+(W.crownTitle ? 'the '+W.crownTitle+'’s treasury holds ' : 'the crown holds ')+fmt(Math.round(W.treasury))+' gold marks.'; },
   year(y){ return 'Here begins the Year '+(YEAR_AB+y)+' A.B.'; },
   winter(R){ return pick(R,[
     'Winter closes the passes; the granaries are weighed and found '+(pick(R,['full enough','lighter than hoped','heavy with grain'])) + '.',
-    'The first snows came, and the roads grew quiet.',
+    PAT('thar','Thar')+', the flood-season, is come; the first snows fell, and the roads grew quiet.',
     'The Mad One’s cold came down out of the north, and the first snows with it; the roads grew quiet.']); },
   harvest(q){
-    if(q > 1.25) return 'The harvest was bountiful beyond memory; Mālgal the Shepherd was generous, and the granaries of '+W.realmName+' groan with grain.';
+    if(q > 1.25) return 'The harvest was bountiful beyond memory; Mālgal the Shepherd was generous, and the granaries of '+W.realmName+' groan with grain — the realm keeps an '+PAT('arberus','arbērus')+', a feast, in his honour.';
     if(q > 1.05) return 'A good harvest was brought in across the realm, and there was singing on the wagons.';
     if(q > 0.85) return 'The harvest was fair — no more, no less — and the reeves marked their tallies.';
     if(q > 0.7)  return 'A meagre harvest this year; the millers grind close and say little.';
@@ -3299,12 +3324,12 @@ const T = {
     s.name+' grows; the smell of fresh-cut timber hangs over its yards.']); },
   migration(a, b){ return 'Families took the road from '+a.name+' to '+b.name+', seeking fuller boards.'; },
   prosper(s){ return s.name+' prospers; its market hums from matins to dusk.'; },
-  treasury(n){ return 'The crown’s coffers passed '+fmt(n)+' gold marks; the clerks bought new ink.'; },
+  treasury(n){ return 'The crown’s '+PAT('hezban','hezban')+' — its treasury — passed '+fmt(n)+' gold marks; the clerks bought new ink.'; },
   flavor(R){ return pick(R,[
     'Barghests were heard beyond the wood’s eaves, and the shepherds slept badly.',
-    'The dark hour ran a breath longer today; the Lektān watched Tamar and said nothing.',
+    'The '+PAT('simus','simūs')+' — the world’s nap, while Tamar crosses the sun — ran a breath longer today; the Lektān watched and said nothing.',
     'A Trogmunder pedlar came up from the Home Islands selling ribbons and lies, and did fair trade in both.',
-    'An old man in the capital swears the river spoke his name in the old Paternic. He is much discussed.',
+    'An old man in the capital swears the river spoke his name in the old Patrinaic. He is much discussed.',
     'The roads were dry and the carters made good time all this month, and travellers thanked Bēlkar.',
     'Purple Tamar hung heavy over the afternoon, and the bells kept their hours by its shadow.']); }
 };
@@ -3829,15 +3854,15 @@ function tryGrowBuildings(s, n){
 
 /* ---------- politics: the crown, the houses, and their wars ---------- */
 Object.assign(T, {
-  reign(n){ return 'Here begin the years of ' + monarchTitle(n) + '.'; },
-  crownDied(n, cause){ return monarchTitle(n) + ' died ' + cause + ', aged ' + Math.floor(n.age) + '. The realm holds its breath.'; },
+  reign(n){ return 'Here begin the years of ' + monarchTitle(n) + ', come now to the ' + PAT('martum','mārtum') + ', the throne of the realm.'; },
+  crownDied(n, cause){ const good = n.age >= 60 && cause.indexOf('blade') < 0 && cause.indexOf('poison') < 0; return monarchTitle(n) + ' died ' + cause + ', aged ' + Math.floor(n.age) + (good ? ' — a '+PAT('gurum','gurum')+', the good death owed a long reign' : '') + '. The realm holds its breath.'; },
   died(n, cause){ return nName(n) + (n.role ? ', ' + n.role + ',' : '') + ' died ' + cause + ', aged ' + Math.floor(n.age) + '.'; },
   born(kid, father){ return 'A child, ' + kid.given + ', was born to ' + nName(father) + '; the bells were rung.'; },
   wed(a, b){ return nName(a) + ' was wed to ' + nName(b) + '; there was feasting, and the wine ran short.'; },
   regency(heir, regent){ return 'The heir, ' + heir.given + ', is not yet of age. ' + nName(regent) + ' rules as regent, and the great houses watch.'; },
   crisis(){ return 'The crown lies unclaimed — no heir of the blood survives. The great houses eye the empty throne.'; },
   councilCrown(n){ return 'Finding no better road, the council of houses has offered the crown to ' + nName(n) + '.'; },
-  warDeclared(rebels, spark){ return rebels.map(houseName).join(' and ') + ' ' + (rebels.length > 1 ? 'have' : 'has') + ' raised banners against the crown — ' + spark + '. It is war.'; },
+  warDeclared(rebels, spark){ return rebels.map(houseName).join(' and ') + ' ' + (rebels.length > 1 ? 'have' : 'has') + ' raised banners against the crown — ' + spark + '. It is ' + PAT('nak','nāk') + ', open war.'; },
   battle(win, lose, site, cas){ return pick(W.rng.hist, [
     'Battle was joined near ' + site + ': the banners of ' + win + ' broke ' + lose + ', and some ' + cas + ' men were left on the field.',
     'At ' + site + ' the host of ' + lose + ' was thrown back by ' + win + '; the crows were well fed.']); },
@@ -3849,7 +3874,7 @@ Object.assign(T, {
     : s.name + ' has yielded to ' + side + ' and flies new colors.'; },
   peaceRebelWin(n){ return 'The war is done. The old line is cast down, and ' + monarchTitle(n) + ' takes the throne by right of arms.'; },
   peaceCrownWin(hi){ return 'The rising is broken. ' + houseName(hi) + ' is stripped of seat and name, its sigil struck from the rolls.'; },
-  peaceExhaust(){ return 'Peace, of a grey sort: both sides bled white and neither gained a yard. The scribes call it victory anyway.'; },
+  peaceExhaust(){ return 'A '+PAT('laego','laego')+' of a grey sort — peace, but only because both sides bled white and neither gained a yard. The scribes call it victory anyway.'; },
   assassinated(n){ return monarchTitle(n) + ' was found dead at first light — a blade in the dark. No man was caught; every man is suspected.'; },
   riot(s){ return 'Bread riots in ' + s.name + '; stalls burned before order was whipped home.'; },
   grudge(a, b){ return houseName(a) + ' nurses a grudge against ' + houseName(b) + '; there are cold words at feasts.'; }
@@ -5246,7 +5271,7 @@ function wakeDragon(day){
   D.state = 'outbound'; D.phaseStart = day; D.phaseDur = 1.2;
   D.target = W.settlements[0];
   ensureDragonMesh();
-  chron('myth', D.name+' is awake — a child of Laegos, loosed upon the realm. Shepherds on the high pastures saw wings against the stars, and did not stay to count them.', W.peak.x, W.peak.z, 10);
+  chron('myth', D.name+' is awake — a '+PAT('tonshar','tonshar')+', a dragon of the old brood, a child of Laegos loosed upon the realm. Shepherds on the high pastures saw wings against the stars, and did not stay to count them.', W.peak.x, W.peak.z, 10);
 }
 function advanceDragon(day){
   const D = W.dragon, R = W.rng.hist, t = D.target;
@@ -7475,6 +7500,7 @@ function buildEpeshuMapData(){
       {name:'the Thūkīn Amphitheater', gridX:186, gridZ:184, kind:'label'},
       {name:'Bangeph Rock', gridX:163, gridZ:154, kind:'spike'}
     ],
+    // etymologies grounded in lexicon/patrinaic.json; Tamaron's -n is irregular (expected -or), kept as canon
     settlements: [
       {name:'Epēshu', kind:'capital', gridX:169, gridZ:168, pop:2600, harbor:true, patron:'Thobrauk',
         templeName:'the Blue Temple of Thobrauk',
@@ -7489,15 +7515,15 @@ function buildEpeshuMapData(){
           {name:'Kohabron', dx:210, dz:25},
           {name:'Old Quarry Lot', dx:180, dz:-175}
         ]},
-      {name:'Sokundo', kind:'town', gridX:401, gridZ:196, pop:780, harbor:true},
+      {name:'Sokundo', kind:'town', gridX:401, gridZ:196, pop:780, harbor:true, etym:'white-stone'},
       {name:'Kanae', kind:'village', gridX:443, gridZ:233, pop:320, harbor:true},
-      {name:'Tamaron', kind:'town', gridX:574, gridZ:296, pop:880, harbor:true},
+      {name:'Tamaron', kind:'town', gridX:574, gridZ:296, pop:880, harbor:true, etym:'moon-land'},
       {name:'Mago', kind:'village', gridX:606, gridZ:328, pop:260, harbor:true},
-      {name:'Aldorūs', kind:'village', gridX:373, gridZ:276, pop:300},
+      {name:'Aldorūs', kind:'village', gridX:373, gridZ:276, pop:300, etym:'the height'},
       {name:'Rēketis', kind:'village', gridX:211, gridZ:299, pop:280},
       {name:'Āglaz', kind:'village', gridX:167, gridZ:302, pop:310, harbor:true},
-      {name:'Mīth Mīrdak', kind:'village', gridX:100, gridZ:259, pop:220, harbor:true},
-      {name:'Pharzeban', kind:'village', gridX:237, gridZ:366, pop:250},
+      {name:'Mīth Mīrdak', kind:'village', gridX:100, gridZ:259, pop:220, harbor:true, etym:'the town of Mīrdak'},
+      {name:'Pharzeban', kind:'village', gridX:237, gridZ:366, pop:250, etym:'gilt-place'},
       {name:'Sardil', kind:'town', gridX:407, gridZ:381, pop:760},
       {name:'Perōna', kind:'village', gridX:564, gridZ:376, pop:270},
       {name:'Tarap', kind:'village', gridX:184, gridZ:414, pop:200},
