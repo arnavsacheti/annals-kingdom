@@ -163,7 +163,7 @@
 (function(){
   "use strict";
   var PAGE=80;
-  var WORDS=[], BYID={}, PARENTS={}, CHILDREN={};
+  var WORDS=[], BYID={}, PARENTS={}, CHILDREN={}, EXTERNAL={};
   var order=[];            // sorted array of ids for browsing
   var filtered=[];         // current filtered id list
   var visible=PAGE;        // how many of filtered are rendered
@@ -194,6 +194,10 @@
       if(!BYID[p]||!BYID[c])return;
       (CHILDREN[p]=CHILDREN[p]||[]).push(c);
       (PARENTS[c]=PARENTS[c]||[]).push(p);
+    });
+    (data.ext||[]).forEach(function(e){   // [childId, ancestorWord, originTongue, gloss]
+      if(!BYID[e[0]])return;
+      (EXTERNAL[e[0]]=EXTERNAL[e[0]]||[]).push(e);
     });
     order=WORDS.slice().sort(function(a,b){
       return a._con<b._con?-1:a._con>b._con?1:a.id-b.id;
@@ -300,13 +304,25 @@
     def.appendChild(fmtDef(w.def));
     body.appendChild(def);
 
-    var par=PARENTS[w.id]||[], chi=CHILDREN[w.id]||[];
-    if(par.length||chi.length){
+    var par=PARENTS[w.id]||[], chi=CHILDREN[w.id]||[], ext=EXTERNAL[w.id]||[];
+    if(par.length||chi.length||ext.length){
       var ety=document.createElement('div');ety.className='ety';
       if(par.length)ety.appendChild(etyRow('From',par));
+      ext.forEach(function(e){ety.appendChild(extRow(e));});
       if(chi.length)ety.appendChild(etyRow('Derived',chi));
       body.appendChild(ety);
     }
+  }
+
+  function extRow(e){
+    var row=document.createElement('div');row.className='ety-row';
+    var lab=document.createElement('span');lab.className='lab';lab.textContent='Origin';
+    row.appendChild(lab);
+    row.appendChild(document.createTextNode((e[2]||'an elder tongue')+' '));
+    var em=document.createElement('em');em.textContent=e[1];
+    row.appendChild(em);
+    if(e[3])row.appendChild(document.createTextNode(' ‘'+e[3]+'’'));
+    return row;
   }
 
   function fmtDef(text){

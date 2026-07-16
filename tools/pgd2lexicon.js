@@ -53,10 +53,24 @@ function parse(xml){
       def: stripHtml(tag(w, 'definition'))
     });
   }
+  // internal relations: <...Relation>parentId<...Child>id</...> (one relation may list many children)
   const ety = [];
-  const er = /<EtymologyInternalRelation>(\d+)<EtymologyInternalChild>(\d+)<\/EtymologyInternalChild><\/EtymologyInternalRelation>/g;
-  while((m = er.exec(xml))) ety.push([+m[1], +m[2]]);
-  return { lang, saved: tag(xml, 'DictSaveDate'), words, ety };
+  const er = /<EtymologyInternalRelation>(\d+)([\s\S]*?)<\/EtymologyInternalRelation>/g;
+  while((m = er.exec(xml))){
+    const parent = +m[1];
+    let c, cr = /<EtymologyInternalChild>(\d+)<\/EtymologyInternalChild>/g;
+    while((c = cr.exec(m[2]))) ety.push([parent, +c[1]]);
+  }
+  // external parents (ancestor tongues, e.g. Proto-Paternic): [childId, word, origin, gloss]
+  const ext = [];
+  const xr = /<EtymologyChildToExternalsNode>(\d+)([\s\S]*?)<\/EtymologyChildToExternalsNode>/g;
+  while((m = xr.exec(xml))){
+    const child = +m[1];
+    let e, en = /<EtymologyExternalWordNode>([\s\S]*?)<\/EtymologyExternalWordNode>/g;
+    while((e = en.exec(m[2])))
+      ext.push([child, tag(e[1], 'EtymologyExternalWordValue'), tag(e[1], 'EtymologyExternalWordOrigin'), tag(e[1], 'EtymologyExternalWordDefinition')]);
+  }
+  return { lang, saved: tag(xml, 'DictSaveDate'), words, ety, ext };
 }
 
 // ---- toponym curation: real roots the sim may compound into place names ----
@@ -101,8 +115,9 @@ function emitJs(lang, roots){
     `const PATRINAIC_ROOTS = [`, lines.join(',\n'), `];`,
     `// attested derivational affixes: [suffix, connector-if-vowel-final, gloss-pattern]`,
     `// -(g)os 'land of' · -(n)or (archaic) 'land of' · -ban 'place of' · -ila diminutive`,
+    `// -(i)on 'town' is DM-attested (Tamar+ion → Tamaron), absent from the PolyGlot save`,
     `const PATRINAIC_SUFS = { grand: [['os','g','%-land'],['or','n','%-land']],`,
-    `                         common: [['ban','','%-stead'],['ila','','little %'],['os','g','%-land']] };`
+    `                         common: [['ban','','%-stead'],['ila','','little %'],['os','g','%-land'],['on','i','%-town']] };`
   ].join('\n');
 }
 
@@ -115,6 +130,6 @@ if(flag === '--emit-js'){
   console.log(emitJs(dict.lang, roots));
 } else {
   const out = path.join(path.dirname(pgdPath), 'patrinaic.json');
-  fs.writeFileSync(out, JSON.stringify({ lang: dict.lang, saved: dict.saved, words: dict.words, ety: dict.ety }, null, 1));
-  console.error(`${dict.lang}: ${dict.words.length} words, ${dict.ety.length} etymology links, ${roots.length} toponym roots → ${out}`);
+  fs.writeFileSync(out, JSON.stringify({ lang: dict.lang, saved: dict.saved, words: dict.words, ety: dict.ety, ext: dict.ext }, null, 1));
+  console.error(`${dict.lang}: ${dict.words.length} words, ${dict.ety.length} internal + ${dict.ext.length} external etymology links, ${roots.length} toponym roots → ${out}`);
 }

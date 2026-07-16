@@ -584,8 +584,9 @@ const PATRINAIC_ROOTS = [
 ];
 // attested derivational affixes: [suffix, connector-if-vowel-final, gloss-pattern]
 // -(g)os 'land of' · -(n)or (archaic) 'land of' · -ban 'place of' · -ila diminutive
+// -(i)on 'town' is DM-attested (Tamar+ion → Tamaron), absent from the PolyGlot save
 const PATRINAIC_SUFS = { grand: [['os','g','%-land'],['or','n','%-land']],
-                         common: [['ban','','%-stead'],['ila','','little %'],['os','g','%-land']] };
+                         common: [['ban','','%-stead'],['ila','','little %'],['os','g','%-land'],['on','i','%-town']] };
 const NAME = (()=>{
   // rivers keep their translated common names; settlements bear the old tongue
   const riverPre = ['Red','Copper','Grey','Swan','Watch','Riving','Still','Salt','Cold','White','Reed','Deep'];
@@ -607,8 +608,9 @@ const NAME = (()=>{
           et = sf[2].replace('%', ro[1]);
         }
         guard++;
-        // reject bad seams, echoes of period 2 or 3 (Laego+g+os, Iedban+ban), and rerolls of a taken name
-      } while((bad || NAME.used.has(n) || /(..|...)\1/.test(n.toLowerCase())) && guard < 40);
+        // reject bad seams, gloss tautologies (Mīth+on 'town-town'), echoes of period 2 or 3
+        // (Laego+g+os, Iedban+ban), and rerolls of a taken name
+      } while((bad || /\b(\w+)[- ]\1\b/.test(et) || NAME.used.has(n) || /(..|...)\1/.test(n.toLowerCase())) && guard < 40);
       NAME.used.add(n);
       NAME.etym.set(n, et);
       return n;
@@ -3329,7 +3331,7 @@ const T = {
     'Barghests were heard beyond the wood’s eaves, and the shepherds slept badly.',
     'The '+PAT('simus','simūs')+' — the world’s nap, while Tamar crosses the sun — ran a breath longer today; the Lektān watched and said nothing.',
     'A Trogmunder pedlar came up from the Home Islands selling ribbons and lies, and did fair trade in both.',
-    'An old man in the capital swears the river spoke his name in the old Patrinaic. He is much discussed.',
+    'An old man in the capital swears the river spoke his name in the old Paternic. He is much discussed.',
     'The roads were dry and the carters made good time all this month, and travellers thanked Bēlkar.',
     'Purple Tamar hung heavy over the afternoon, and the bells kept their hours by its shadow.']); }
 };
@@ -7500,7 +7502,8 @@ function buildEpeshuMapData(){
       {name:'the Thūkīn Amphitheater', gridX:186, gridZ:184, kind:'label'},
       {name:'Bangeph Rock', gridX:163, gridZ:154, kind:'spike'}
     ],
-    // etymologies grounded in lexicon/patrinaic.json; Tamaron's -n is irregular (expected -or), kept as canon
+    // etymologies grounded in lexicon/patrinaic.json + DM rulings (lexicon/research/dm-rulings.md);
+    // Epēshu is a pre-Patrin substrate name and stays unglossed
     settlements: [
       {name:'Epēshu', kind:'capital', gridX:169, gridZ:168, pop:2600, harbor:true, patron:'Thobrauk',
         templeName:'the Blue Temple of Thobrauk',
@@ -7517,12 +7520,12 @@ function buildEpeshuMapData(){
         ]},
       {name:'Sokundo', kind:'town', gridX:401, gridZ:196, pop:780, harbor:true, etym:'white-stone'},
       {name:'Kanae', kind:'village', gridX:443, gridZ:233, pop:320, harbor:true},
-      {name:'Tamaron', kind:'town', gridX:574, gridZ:296, pop:880, harbor:true, etym:'moon-land'},
+      {name:'Tamaron', kind:'town', gridX:574, gridZ:296, pop:880, harbor:true, etym:'moon-town'},
       {name:'Mago', kind:'village', gridX:606, gridZ:328, pop:260, harbor:true},
       {name:'Aldorūs', kind:'village', gridX:373, gridZ:276, pop:300, etym:'the height'},
       {name:'Rēketis', kind:'village', gridX:211, gridZ:299, pop:280},
       {name:'Āglaz', kind:'village', gridX:167, gridZ:302, pop:310, harbor:true},
-      {name:'Mīth Mīrdak', kind:'village', gridX:100, gridZ:259, pop:220, harbor:true, etym:'the town of Mīrdak'},
+      {name:'Mīth Mirdānak', kind:'village', gridX:100, gridZ:259, pop:220, harbor:true, etym:'the town of the artisans'},
       {name:'Pharzeban', kind:'village', gridX:237, gridZ:366, pop:250, etym:'gilt-place'},
       {name:'Sardil', kind:'town', gridX:407, gridZ:381, pop:760},
       {name:'Perōna', kind:'village', gridX:564, gridZ:376, pop:270},
