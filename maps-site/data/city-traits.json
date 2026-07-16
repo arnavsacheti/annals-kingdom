@@ -301,8 +301,8 @@
    "prov": "annals"
   }
  },
- "Mīth Mīrdak": {
-  "name": "Mīth Mīrdak",
+ "Mīth Mirdānak": {
+  "name": "Mīth Mirdānak",
   "kind": "village",
   "harbor": true,
   "sea": {
@@ -320,7 +320,7 @@
   "biome": {
    "value": "wooded",
    "prov": "invented",
-   "note": "Leponnia's coasts are forested; not stated for Mīth Mīrdak itself."
+   "note": "Leponnia's coasts are forested; not stated for Mīth Mirdānak itself."
   },
   "condition": {
    "value": "faded",

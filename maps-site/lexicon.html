@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Utheg Patrinaikad — the Old Tongue of Nīmlad</title>
+<link rel="icon" href="data:,"/>
+<style>
+  :root{
+    --parch:#e9dcc0; --parch2:#efe6cf; --panel:#f3ecd7; --panel2:#e7dabb;
+    --ink:#2c2418; --ink2:#4a3f2c; --muted:#6e5f43;
+    --line:#c7b58c; --line2:#b09a6c;
+    --rust:#8a3c28; --bronze:#8a6224; --water:#3a6478; --moss:#5a6b34;
+    --serif:'EB Garamond',Georgia,'Times New Roman',serif;
+    --body:'Lora',Georgia,'Times New Roman',serif;
+    --mono:'IBM Plex Mono','Courier New',monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;min-height:100%;background:var(--parch);color:var(--ink);
+    font-family:var(--body);}
+  body{
+    background-image:
+      radial-gradient(circle at 20% 15%,rgba(138,98,36,.05),transparent 45%),
+      radial-gradient(circle at 82% 78%,rgba(138,60,40,.05),transparent 42%);}
+  #app{display:flex;flex-direction:column;min-height:100vh;}
+
+  header{position:sticky;top:0;z-index:50;
+    padding:10px 16px 12px;background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border-bottom:2px solid var(--line2);box-shadow:0 2px 8px rgba(44,36,24,.25);}
+  .hrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  header h1{font-family:var(--serif);font-weight:600;font-size:24px;
+    margin:0;letter-spacing:.3px;color:var(--ink);white-space:nowrap;
+    text-shadow:0 1px 0 rgba(255,255,255,.4);}
+  header h1 .em{color:var(--rust);font-style:italic;font-weight:400;}
+  .search-wrap{flex:1 1 240px;max-width:420px;min-width:150px;}
+  #search{width:100%;padding:9px 12px;border:1px solid var(--line2);
+    background:var(--parch2);color:var(--ink);border-radius:4px;
+    font-family:var(--body);font-size:15px;outline:none;}
+  #search:focus{border-color:var(--bronze);box-shadow:0 0 0 2px rgba(138,98,36,.2);}
+  #search::placeholder{color:var(--muted);font-style:italic;}
+  .links{display:flex;gap:10px;margin-left:auto;}
+  .links a{font-family:var(--serif);font-size:15px;color:var(--ink);
+    text-decoration:none;padding:6px 12px;border:1px solid var(--line2);
+    border-radius:4px;background:var(--parch2);white-space:nowrap;transition:.15s;}
+  .links a:hover{background:var(--rust);color:#f5ecd6;border-color:var(--rust);}
+
+  .subrow{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:10px;}
+  .filters{display:flex;gap:6px;}
+  .filters button{font-family:var(--mono);font-size:11px;text-transform:uppercase;
+    letter-spacing:.7px;padding:5px 12px;border:1px solid var(--line2);border-radius:3px;
+    background:var(--parch2);color:var(--ink2);cursor:pointer;transition:.12s;}
+  .filters button:hover{border-color:var(--bronze);}
+  .filters button[aria-pressed="true"]{background:var(--bronze);color:#f5ecd6;
+    border-color:var(--bronze);}
+  .count{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--muted);
+    margin-left:auto;}
+  .count b{font-style:normal;color:var(--ink2);font-weight:600;}
+
+  main{flex:1 1 auto;max-width:900px;width:100%;margin:0 auto;padding:18px 16px 60px;}
+  .intro{font-family:var(--body);font-size:14.5px;color:var(--ink2);line-height:1.6;
+    margin:0 0 18px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);
+    border-left:4px solid var(--bronze);border-radius:5px;}
+  .intro em{color:var(--muted);}
+
+  ul#list{list-style:none;margin:0;padding:0;}
+  li.entry{background:var(--panel);border:1px solid var(--line);border-radius:6px;
+    margin-bottom:8px;overflow:hidden;box-shadow:0 1px 2px rgba(44,36,24,.10);}
+  li.entry.affix{border-left:4px solid var(--water);}
+  li.entry.word{border-left:4px solid var(--bronze);}
+  .ehead{width:100%;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+    text-align:left;background:none;border:none;cursor:pointer;
+    padding:12px 16px;font-family:var(--body);color:var(--ink);}
+  .ehead:hover{background:var(--parch2);}
+  .ehead:focus-visible{outline:2px solid var(--bronze);outline-offset:-2px;}
+  .con{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);
+    line-height:1.1;flex:0 0 auto;}
+  li.entry.affix .con{color:var(--water);}
+  .pron{font-family:var(--mono);font-size:12.5px;color:var(--muted);flex:0 0 auto;}
+  .gloss{font-family:var(--body);font-size:14.5px;color:var(--ink2);flex:1 1 160px;
+    font-style:italic;min-width:0;}
+  .kind-tag{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;
+    letter-spacing:.8px;padding:2px 7px;border-radius:3px;color:#f5ecd6;flex:0 0 auto;
+    align-self:center;}
+  .kind-tag.affix{background:var(--water);}
+  .kind-tag.word{background:var(--bronze);}
+  .caret{flex:0 0 auto;align-self:center;color:var(--muted);font-size:13px;
+    transition:transform .15s;font-family:var(--mono);}
+  .ehead[aria-expanded="true"] .caret{transform:rotate(90deg);}
+
+  .ebody{display:none;padding:2px 16px 16px;border-top:1px dashed var(--line2);
+    margin-top:0;}
+  li.entry.open .ebody{display:block;}
+  .def{font-family:var(--body);font-size:15px;color:var(--ink);line-height:1.65;
+    margin:12px 0 4px;}
+  .def .note{color:var(--muted);font-style:italic;}
+  .ety{margin-top:12px;display:flex;flex-direction:column;gap:6px;}
+  .ety-row{font-family:var(--body);font-size:14px;color:var(--ink2);line-height:1.5;}
+  .ety-row .lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;
+    letter-spacing:.8px;color:var(--muted);margin-right:6px;}
+  a.xref{color:var(--rust);cursor:pointer;text-decoration:none;font-weight:600;
+    font-family:var(--serif);font-size:16px;border-bottom:1px dotted rgba(138,60,40,.4);}
+  a.xref:hover{border-bottom-color:var(--rust);background:rgba(138,60,40,.06);}
+  a.xref:focus-visible{outline:2px solid var(--rust);outline-offset:2px;border-radius:2px;}
+
+  li.entry.flash{animation:flash 1.4s ease-out;}
+  @keyframes flash{0%{box-shadow:0 0 0 0 rgba(138,98,36,.55);}
+    60%{box-shadow:0 0 0 6px rgba(138,98,36,.10);}
+    100%{box-shadow:0 1px 2px rgba(44,36,24,.10);}}
+
+  .more-wrap{text-align:center;margin-top:16px;}
+  #moreBtn{font-family:var(--serif);font-size:16px;color:var(--ink);
+    padding:9px 26px;border:1px solid var(--line2);border-radius:4px;
+    background:var(--panel);cursor:pointer;transition:.15s;}
+  #moreBtn:hover{background:var(--rust);color:#f5ecd6;border-color:var(--rust);}
+  .empty{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--muted);
+    text-align:center;padding:50px 0;}
+
+  footer{padding:14px 16px;background:var(--panel2);border-top:1px solid var(--line2);
+    font-family:var(--serif);font-size:13px;color:var(--muted);
+    text-align:center;font-style:italic;letter-spacing:.2px;}
+
+  @media(max-width:560px){
+    header h1{font-size:20px;white-space:normal;}
+    .con{font-size:20px;}
+    .count{margin-left:0;width:100%;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="hrow">
+      <h1>Utheg Patrinaikad <span class="em">— the Old Tongue</span></h1>
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="Search the lexicon — con-word, gloss, or meaning…"
+          autocomplete="off" spellcheck="false" aria-label="Search the lexicon"/>
+      </div>
+      <div class="links">
+        <a href="index.html">Atlas&nbsp;↩</a>
+        <a href="https://princexizor.ddns.net/" target="_blank" rel="noopener">Wiki&nbsp;↗</a>
+      </div>
+    </div>
+    <div class="subrow">
+      <div class="filters" role="group" aria-label="Filter by kind">
+        <button id="fAll" aria-pressed="true">All</button>
+        <button id="fWords" aria-pressed="false">Words</button>
+        <button id="fAffix" aria-pressed="false">Affixes</button>
+      </div>
+      <div class="count" id="count" aria-live="polite"></div>
+    </div>
+  </header>
+  <main>
+    <p class="intro">The recorded lexicon of <em>Classical Patrinaic</em>, the old speech of Nīmlad,
+      as set down by the loremasters. Search is blind to macrons and case — type
+      <em>azru</em> to find <em>Azrū-</em>. Open an entry to read its full meaning and the roots
+      it was raised from.</p>
+    <ul id="list"></ul>
+    <div class="more-wrap"><button id="moreBtn" style="display:none">Show more</button></div>
+  </main>
+  <footer>The Annals of Nīmlad · Classical Patrinaic lexicon after the Binding · Tale of the Allhammers</footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  var PAGE=80;
+  var WORDS=[], BYID={}, PARENTS={}, CHILDREN={}, EXTERNAL={};
+  var order=[];            // sorted array of ids for browsing
+  var filtered=[];         // current filtered id list
+  var visible=PAGE;        // how many of filtered are rendered
+  var expanded={};         // id -> true
+  var kind="all";          // all | word | affix
+  var query="";
+  var listEl=document.getElementById('list');
+  var moreBtn=document.getElementById('moreBtn');
+  var countEl=document.getElementById('count');
+  var searchEl=document.getElementById('search');
+
+  function norm(s){
+    return (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'')
+      .replace(/[()]/g,'').toLowerCase();
+  }
+  function nf(n){return n.toLocaleString('en-US');}
+  function isAffix(w){return /^-/.test(w.con.trim());}
+
+  function build(data){
+    WORDS=data.words||[];
+    WORDS.forEach(function(w){
+      w._con=norm(w.con); w._loc=norm(w.loc); w._def=norm(w.def);
+      w._affix=isAffix(w);
+      BYID[w.id]=w;
+    });
+    (data.ety||[]).forEach(function(pair){
+      var p=pair[0], c=pair[1];
+      if(!BYID[p]||!BYID[c])return;
+      (CHILDREN[p]=CHILDREN[p]||[]).push(c);
+      (PARENTS[c]=PARENTS[c]||[]).push(p);
+    });
+    (data.ext||[]).forEach(function(e){   // [childId, ancestorWord, originTongue, gloss]
+      if(!BYID[e[0]])return;
+      (EXTERNAL[e[0]]=EXTERNAL[e[0]]||[]).push(e);
+    });
+    order=WORDS.slice().sort(function(a,b){
+      return a._con<b._con?-1:a._con>b._con?1:a.id-b.id;
+    }).map(function(w){return w.id;});
+    apply();
+  }
+
+  function apply(){
+    var q=norm(query.trim());
+    var res=[];
+    for(var i=0;i<order.length;i++){
+      var w=BYID[order[i]];
+      if(kind==="word"&&w._affix)continue;
+      if(kind==="affix"&&!w._affix)continue;
+      if(q){
+        var rank=-1;
+        if(w._con.indexOf(q)===0)rank=0;
+        else if(w._con.indexOf(q)>=0)rank=1;
+        else if(w._loc.indexOf(q)>=0)rank=2;
+        else if(w._def.indexOf(q)>=0)rank=3;
+        if(rank<0)continue;
+        res.push([rank,w.id]);
+      }else{
+        res.push([0,w.id]);
+      }
+    }
+    if(q){
+      res.sort(function(a,b){
+        if(a[0]!==b[0])return a[0]-b[0];
+        return BYID[a[1]]._con<BYID[b[1]]._con?-1:1;
+      });
+    }
+    filtered=res.map(function(r){return r[1];});
+    visible=PAGE;
+    render();
+  }
+
+  function render(){
+    var total=WORDS.length;
+    var shown=Math.min(visible,filtered.length);
+    listEl.textContent='';
+    if(!filtered.length){
+      var e=document.createElement('div');
+      e.className='empty';
+      e.textContent='No entry of the old tongue answers to that.';
+      listEl.appendChild(e);
+    }else{
+      var frag=document.createDocumentFragment();
+      for(var i=0;i<shown;i++)frag.appendChild(row(BYID[filtered[i]]));
+      listEl.appendChild(frag);
+    }
+    moreBtn.style.display=(shown<filtered.length)?'':'none';
+    moreBtn.textContent='Show more ('+nf(filtered.length-shown)+' remaining)';
+    // count readout
+    var affixN=WORDS.filter(function(w){return w._affix;}).length;
+    var msg;
+    if(!query&&kind==="all"){
+      msg='<b>'+nf(total)+'</b> words of the old tongue';
+    }else if(kind==="affix"&&!query){
+      msg='<b>'+nf(affixN)+'</b> productive affixes';
+    }else{
+      msg='<b>'+nf(filtered.length)+'</b> of '+nf(total)+' entries';
+    }
+    countEl.innerHTML=msg;
+  }
+
+  function row(w){
+    var li=document.createElement('li');
+    li.className='entry '+(w._affix?'affix':'word')+(expanded[w.id]?' open':'');
+    li.id='e'+w.id;
+
+    var head=document.createElement('button');
+    head.className='ehead';
+    head.setAttribute('aria-expanded',expanded[w.id]?'true':'false');
+    head.setAttribute('aria-controls','b'+w.id);
+
+    var con=document.createElement('span');con.className='con';con.textContent=w.con;
+    var pron=document.createElement('span');pron.className='pron';
+    if(w.pron)pron.textContent='/'+w.pron+'/';
+    var gloss=document.createElement('span');gloss.className='gloss';gloss.textContent=w.loc||'';
+    var tag=document.createElement('span');
+    tag.className='kind-tag '+(w._affix?'affix':'word');
+    tag.textContent=w._affix?'affix':'word';
+    var caret=document.createElement('span');caret.className='caret';caret.textContent='▸';
+
+    head.appendChild(con);
+    if(w.pron)head.appendChild(pron);
+    head.appendChild(gloss);
+    head.appendChild(tag);
+    head.appendChild(caret);
+    head.addEventListener('click',function(){toggle(w.id);});
+
+    var body=document.createElement('div');
+    body.className='ebody';body.id='b'+w.id;
+    if(expanded[w.id])fillBody(body,w);
+    li.appendChild(head);
+    li.appendChild(body);
+    return li;
+  }
+
+  function fillBody(body,w){
+    body.textContent='';
+    var def=document.createElement('div');def.className='def';
+    def.appendChild(fmtDef(w.def));
+    body.appendChild(def);
+
+    var par=PARENTS[w.id]||[], chi=CHILDREN[w.id]||[], ext=EXTERNAL[w.id]||[];
+    if(par.length||chi.length||ext.length){
+      var ety=document.createElement('div');ety.className='ety';
+      if(par.length)ety.appendChild(etyRow('From',par));
+      ext.forEach(function(e){ety.appendChild(extRow(e));});
+      if(chi.length)ety.appendChild(etyRow('Derived',chi));
+      body.appendChild(ety);
+    }
+  }
+
+  function extRow(e){
+    var row=document.createElement('div');row.className='ety-row';
+    var lab=document.createElement('span');lab.className='lab';lab.textContent='Origin';
+    row.appendChild(lab);
+    row.appendChild(document.createTextNode((e[2]||'an elder tongue')+' '));
+    var em=document.createElement('em');em.textContent=e[1];
+    row.appendChild(em);
+    if(e[3])row.appendChild(document.createTextNode(' ‘'+e[3]+'’'));
+    return row;
+  }
+
+  function fmtDef(text){
+    return document.createTextNode(text||'');
+  }
+
+  function etyRow(label,ids){
+    var row=document.createElement('div');row.className='ety-row';
+    var lab=document.createElement('span');lab.className='lab';lab.textContent=label;
+    row.appendChild(lab);
+    var seen={};
+    ids.forEach(function(id,idx){
+      if(seen[id])return;seen[id]=1;
+      var w=BYID[id];if(!w)return;
+      if(idx>0&&row.childNodes.length>1)row.appendChild(document.createTextNode('  ·  '));
+      var a=document.createElement('a');
+      a.className='xref';a.href='#e'+id;a.textContent=w.con;
+      a.setAttribute('role','link');
+      a.title=w.loc||'';
+      a.addEventListener('click',function(ev){ev.preventDefault();jump(id);});
+      row.appendChild(a);
+    });
+    return row;
+  }
+
+  function toggle(id,keepOpen){
+    expanded[id]=keepOpen?true:!expanded[id];
+    var li=document.getElementById('e'+id);
+    if(!li)return;
+    var head=li.querySelector('.ehead');
+    var body=li.querySelector('.ebody');
+    if(expanded[id]){
+      li.classList.add('open');head.setAttribute('aria-expanded','true');
+      if(!body.childNodes.length)fillBody(body,BYID[id]);
+    }else{
+      li.classList.remove('open');head.setAttribute('aria-expanded','false');
+    }
+  }
+
+  function jump(id){
+    var w=BYID[id];if(!w)return;
+    // clear filters so the target is guaranteed reachable
+    if(query||kind!=="all"){
+      query="";searchEl.value="";
+      kind="all";setPressed();
+      apply();
+    }
+    // ensure the target is within the rendered window
+    var idx=filtered.indexOf(id);
+    if(idx<0){
+      // shouldn't happen after clearing, but guard anyway
+      filtered.unshift(id);idx=0;
+    }
+    if(idx>=visible){visible=idx+1;render();}
+    expanded[id]=true;
+    // re-render to reflect expansion state, then locate & scroll
+    toggle(id,true);
+    var li=document.getElementById('e'+id);
+    if(li){
+      li.scrollIntoView({behavior:'smooth',block:'center'});
+      li.classList.remove('flash');void li.offsetWidth;li.classList.add('flash');
+      var head=li.querySelector('.ehead');if(head)head.focus({preventScroll:true});
+    }
+  }
+
+  function setPressed(){
+    document.getElementById('fAll').setAttribute('aria-pressed',kind==="all");
+    document.getElementById('fWords').setAttribute('aria-pressed',kind==="word");
+    document.getElementById('fAffix').setAttribute('aria-pressed',kind==="affix");
+  }
+
+  // ---- events ----
+  var t;
+  searchEl.addEventListener('input',function(){
+    clearTimeout(t);
+    t=setTimeout(function(){query=searchEl.value;apply();},90);
+  });
+  document.getElementById('fAll').addEventListener('click',function(){kind="all";setPressed();apply();});
+  document.getElementById('fWords').addEventListener('click',function(){kind="word";setPressed();apply();});
+  document.getElementById('fAffix').addEventListener('click',function(){kind="affix";setPressed();apply();});
+  moreBtn.addEventListener('click',function(){
+    visible+=PAGE;render();
+    if(filtered.length>visible-PAGE){
+      var el=listEl.children[visible-PAGE];if(el)el.querySelector('.ehead').focus({preventScroll:true});
+    }
+  });
+
+  // ---- load ----
+  fetch('data/lexicon.json').then(function(r){
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    return r.json();
+  }).then(function(d){
+    build(d);
+    window.LEXICON={words:WORDS,jump:jump,byId:BYID};
+    document.documentElement.setAttribute('data-ready','1');
+  }).catch(function(err){
+    listEl.innerHTML='<div class="empty">The lexicon could not be read ('+err.message+').</div>';
+    console.error('lexicon load failed',err);
+  });
+})();
+</script>
+</body>
+</html>
