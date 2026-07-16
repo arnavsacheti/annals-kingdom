@@ -4,6 +4,30 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.10.0-alpha.1] — 2026-07-16
+- The realm learns its own tongue: the DM's Classical Patrinaic dictionary (PolyGlot
+  save, 1,365 words) lives in `lexicon/`, extracted by the new zero-dependency
+  `tools/pgd2lexicon.js` — including the full etymology web (1,848 internal
+  derivations plus 355 external origins naming the family: Proto-Paternic,
+  Proto-Patrinaic, Ghahuric, Bibunic, Old Gemenite, Sārmathic, Unknown Substrate)
+- Procedural places are named in real Patrinaic: 109 curated roots compose with
+  attested affixes (-(g)os/-(n)or 'land', -ban 'stead', -ila diminutive, and the
+  DM-attested -(i)on 'town' behind canon Tamaron) and as fused two-root compounds
+  on the canon Sokundo model (Gimīldrāg 'star-wolf', Bashazru 'tower-sea') — with
+  vowel-hiatus, echo, and gloss-tautology rejection; every minted name keeps its
+  meaning, shown in the settlement inspector, and same seed still forges the
+  identical world
+- The Leponnia realm's groundable names carry canon etymologies (Sokundo
+  'white-stone', Tamaron 'moon-town', Pharzeban 'gilt-place', Aldorūs 'the height');
+  per DM ruling Mīth Mīrdak is corrected to Mīth Mirdānak 'the town of the
+  artisans', and Epēshu stays unglossed as a pre-Patrin substrate name
+- The chronicle speaks a restrained old tongue with hover glosses: thar the
+  flood-winter, the simūs dark-hour, nāk and laego for war and peace, gurum the
+  good death, the mārtum, the tonshar, the hezban
+- The maps site gains a Lexicon page: searchable (macron-blind), IPA, expandable
+  definitions, clickable etymology cross-references and ancestor-tongue origins
+- Linguistic groundwork and DM rulings archived under `lexicon/research/`
+
 ## [0.9.12-alpha.1] — 2026-07-13
 - Census pins wear the cartographer's own idiom and are visible again: a tan disc
   with black ink border for towns, larger with an inner black dot for ◉ major
