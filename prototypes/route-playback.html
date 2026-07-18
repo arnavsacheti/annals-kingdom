@@ -1,0 +1,471 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Annals — party-route playback prototype</title>
+<!-- Route-playback prototype (Spec I): the party's journey replayed over the atlas.
+     Research (docs/research/map-interface-design.md) found no published prior art for
+     narrative route playback on a fantasy campaign map, so this invents the pattern:
+     a dotted route that solidifies behind a travelling marker, transport controls with
+     a distance-uniform scrubber, chapter jumps, dwell pauses + side cards at each stop,
+     an aria-live narration line, reduced-motion leg-by-leg teleport, and URL-hash resume.
+     Standalone; Leaflet 1.9.4 via the same CDN tags maps-site/index.html uses; tiles and
+     coordinate convention mirror maps-site (CRS.Simple, atlas px via unproject at NZ). -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<style>
+  :root{
+    --parch:#e9e0c9; --ink:#2a2118; --bronze:#7a5a34; --bronze-lo:#5a3f24;
+    --bronze-hi:#a9803f; --panel:#1b1712; --panel-2:#241d15; --edge:#3a2f21;
+    --dim:#c9b892; --gold:#e7c983; --route:#4a3721; --trav:#c23a1e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--panel);color:var(--dim);
+    font:14px/1.45 "Iowan Old Style",Georgia,"Times New Roman",serif;overflow:hidden}
+  #map{position:absolute;inset:0 0 116px 0;background:#20242b}
+  .leaflet-container{background:#20242b}
+
+  /* ---- route + traveller marker glyphs ---- */
+  .pip{display:flex;align-items:center;justify-content:center;width:22px;height:22px;
+    border-radius:50%;background:var(--parch);color:var(--ink);border:2px solid var(--bronze-lo);
+    font:700 12px/1 Georgia,serif;box-shadow:0 1px 3px rgba(0,0,0,.5);cursor:pointer}
+  .pip.visited{background:var(--gold);border-color:var(--bronze)}
+  .pip.here{background:var(--trav);color:#fff;border-color:#f0d9a0;
+    box-shadow:0 0 0 3px rgba(231,201,131,.5)}
+  .trav{width:0;height:0}
+  .trav-dot{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;
+    background:var(--trav);border:3px solid #f4e9c9;box-shadow:0 1px 6px rgba(0,0,0,.6)}
+  .trav-dot::after{content:"";position:absolute;inset:-9px;border-radius:50%;
+    border:2px solid rgba(194,58,30,.45)}
+
+  /* ---- chapter rail (left) ---- */
+  #chapters{position:absolute;left:12px;top:12px;bottom:128px;width:236px;z-index:600;
+    background:rgba(20,17,12,.92);border:1px solid var(--edge);border-radius:8px;
+    display:flex;flex-direction:column;overflow:hidden;backdrop-filter:blur(2px)}
+  #chapters h2{margin:0;padding:10px 13px;font-size:12px;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--edge)}
+  #chapList{list-style:none;margin:0;padding:5px;overflow:auto;flex:1}
+  #chapList button{display:block;width:100%;text-align:left;background:none;border:0;
+    color:var(--dim);padding:7px 9px;border-radius:5px;cursor:pointer;font:inherit;line-height:1.25}
+  #chapList button .cn{color:var(--bronze-hi);font-weight:700;margin-right:7px}
+  #chapList button .cs{display:block;font-size:11px;color:#8f7f63;margin-top:1px}
+  #chapList button:hover{background:rgba(122,90,52,.22)}
+  #chapList button[aria-current="true"]{background:rgba(122,90,52,.4);color:var(--gold)}
+
+  /* ---- waypoint card (right) ---- */
+  #card{position:absolute;right:12px;top:12px;width:300px;z-index:600;
+    background:rgba(20,17,12,.94);border:1px solid var(--edge);border-radius:8px;
+    padding:15px 17px;box-shadow:0 6px 22px rgba(0,0,0,.5);
+    transition:opacity .3s,transform .3s}
+  #card[hidden]{display:none}
+  #card.dim{opacity:.55;transform:scale(.99)}
+  #card .kicker{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--bronze-hi)}
+  #card h3{margin:3px 0 8px;font-size:20px;color:var(--gold);line-height:1.15}
+  #card p{margin:0;color:var(--dim);font-size:13.5px}
+
+  /* ---- transport bar (bottom) ---- */
+  #bar{position:absolute;left:0;right:0;bottom:0;height:116px;z-index:650;
+    background:linear-gradient(180deg,#1b1712,#120e0a);border-top:1px solid var(--edge);
+    display:flex;flex-direction:column;padding:8px 14px 10px}
+  #narration{min-height:20px;font-size:13px;color:var(--gold);padding:0 2px 4px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #narration:empty::before{content:"Press play to begin the chronicle.";color:#7c6c50}
+  #scrubRow{display:flex;align-items:center;gap:11px;padding:2px 0 8px}
+  #scrub{flex:1;height:20px;cursor:pointer;accent-color:var(--bronze-hi)}
+  #tstamp{font-variant-numeric:tabular-nums;font-size:12px;color:#9a8a6c;min-width:78px;text-align:right}
+  #btnRow{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  #bar button{background:var(--panel-2);color:var(--parch);border:1px solid var(--edge);
+    border-radius:6px;padding:7px 11px;cursor:pointer;font:inherit;line-height:1;
+    display:inline-flex;align-items:center;gap:6px}
+  #bar button:hover{background:var(--bronze-lo);border-color:var(--bronze)}
+  #bar button:active{transform:translateY(1px)}
+  #play{min-width:104px;justify-content:center;background:var(--bronze-lo);border-color:var(--bronze);font-weight:700}
+  #bar .sp{flex:1}
+  #bar label{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--dim);white-space:nowrap}
+  #bar select{background:var(--panel-2);color:var(--parch);border:1px solid var(--edge);
+    border-radius:6px;padding:6px 7px;font:inherit;cursor:pointer}
+  #bar input[type=checkbox]{width:15px;height:15px;accent-color:var(--bronze-hi);cursor:pointer}
+
+  /* ---- focus-visible everywhere ---- */
+  #bar button:focus-visible,#bar select:focus-visible,#bar input:focus-visible,
+  #chapList button:focus-visible,.pip:focus-visible,#scrub:focus-visible{
+    outline:3px solid var(--gold);outline-offset:2px}
+  /* hint chip */
+  #hint{position:absolute;left:50%;bottom:126px;transform:translateX(-50%);z-index:640;
+    background:rgba(20,17,12,.9);border:1px solid var(--edge);border-radius:20px;
+    padding:5px 14px;font-size:11.5px;color:#9a8a6c;pointer-events:none}
+  @media (max-width:720px){#chapters,#card{display:none}}
+</style>
+
+<div id="map" role="region" aria-label="Map of the Wide World — the party's route across Nīmlad"></div>
+
+<nav id="chapters" aria-label="Chapters of the journey">
+  <h2>The Journey</h2>
+  <ul id="chapList"></ul>
+</nav>
+
+<aside id="card" hidden aria-labelledby="cardName">
+  <div class="kicker" id="cardKick"></div>
+  <h3 id="cardName"></h3>
+  <p id="cardNote"></p>
+</aside>
+
+<div id="hint">Space play/pause &middot; &larr;/&rarr; step &middot; Home/End</div>
+
+<div id="bar">
+  <div id="narration" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div id="scrubRow">
+    <input id="scrub" type="range" min="0" max="1000" step="1" value="0"
+           aria-label="Journey progress" aria-valuetext="Start">
+    <span id="tstamp">0% &middot; start</span>
+  </div>
+  <div id="btnRow">
+    <button id="prev" title="Previous waypoint (Left arrow)" aria-label="Previous waypoint">&#9664;&#9612; Prev</button>
+    <button id="play" aria-label="Play" aria-pressed="false">&#9654; Play</button>
+    <button id="next" title="Next waypoint (Right arrow)" aria-label="Next waypoint">Next &#9612;&#9654;</button>
+    <label>Speed
+      <select id="speed" aria-label="Playback speed">
+        <option value="0.5">0.5&times;</option>
+        <option value="1" selected>1&times;</option>
+        <option value="2">2&times;</option>
+        <option value="4">4&times;</option>
+      </select>
+    </label>
+    <span class="sp"></span>
+    <label><input id="reduce" type="checkbox"> Reduced motion</label>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+"use strict";
+(function(){
+  // ---- atlas geometry, mirrored from maps-site/index.html ----
+  var NZ=4, IMG_W=4390, IMG_H=2188, TILE_W=4608, TILE_H=2304;
+  var TRAVEL_Z=5.5;            // follow zoom: ~one waypoint neighbourhood fills the view
+  var PPS=260;                 // atlas px/sec traversed at 1x (tuned so the run reads ~unhurried)
+  var DWELL=1200;              // ms paused on arrival at 1x (scaled by 1/speed)
+  var LEG_PAUSE=650;           // ms between teleport legs in reduced-motion mode at 1x
+
+  var map=L.map('map',{crs:L.CRS.Simple,minZoom:2,maxZoom:8,zoomSnap:0,zoomDelta:.5,
+    zoomControl:true,attributionControl:true,maxBoundsViscosity:1.0,fadeAnimation:true});
+  map.getContainer().setAttribute('role','application');
+  function px(x,y){return map.unproject([x,y],NZ);}
+  var contentBounds=L.latLngBounds(px(0,0),px(IMG_W,IMG_H));
+  var tileBounds=L.latLngBounds(px(0,0),px(TILE_W,TILE_H));
+
+  // Base tiles: same construction as maps-site (native z0..5, upscale above).
+  var RETINA=!!L.Browser.retina;
+  L.tileLayer('../maps-site/tiles/{z}/{x}/{y}.jpg',{
+    minNativeZoom:0,maxNativeZoom:RETINA?4:5,maxZoom:8,tileSize:256,noWrap:true,
+    bounds:tileBounds,detectRetina:true,keepBuffer:4,
+    attribution:'Agrakh N&#x12b;milkad Utheg &middot; the Tale of the Allhammers'}).addTo(map);
+  map.setMaxBounds(contentBounds);
+
+  // panes: dotted base route below the solidified trail, pips above both, traveller top
+  [['pRoute',410],['pTrail',411],['pPip',420],['pTrav',430]].forEach(function(p){
+    map.createPane(p[0]); map.getPane(p[0]).style.zIndex=p[1];
+  });
+
+  var reduceMq=window.matchMedia('(prefers-reduced-motion: reduce)');
+  var $=function(id){return document.getElementById(id);};
+
+  // ---- state ----
+  var WP=[];            // waypoints (raw json)
+  var PATH=[];          // densified nodes: {ll, px:[x,y], dist, wp:idx|-1}
+  var STOPS=[];         // subset of PATH with wp>=0 (12 chapter anchors, in order)
+  var TOTAL=0;          // total path length (atlas px)
+  var st={d:0, playing:false, speed:1, dwellUntil:0, lastFrame:0, lastArrived:-1};
+  var forceReduced=false;
+  function reduced(){return forceReduced||reduceMq.matches;}
+
+  // layers (built after data loads)
+  var routeLine, trailLine, pips=[], trav;
+
+  fetch('../maps-site/data/party-route.json').then(function(r){return r.json();}).then(build)
+    .catch(function(e){console.error('route load failed',e);});
+
+  function build(data){
+    WP=data;
+    // Flatten into one polyline. A waypoint's `via` are the points on the path that
+    // LEAD to it, so each leg is [prevStop, ...wp.via, wp].
+    var acc=0, prev=null;
+    function push(x,y,wpIdx){
+      var node={px:[x,y], ll:px(x,y), wp:wpIdx};
+      if(prev){ acc+=Math.hypot(x-prev[0],y-prev[1]); }
+      node.dist=acc; prev=[x,y]; PATH.push(node);
+      if(wpIdx>=0)STOPS.push(node);
+    }
+    WP.forEach(function(w,i){
+      if(i>0 && w.via) w.via.forEach(function(v){push(v[0],v[1],-1);});
+      push(w.x,w.y,i);
+    });
+    TOTAL=acc;
+
+    // dotted base route (atlas idiom) + solidifying trail over the visited portion
+    var lls=PATH.map(function(n){return n.ll;});
+    routeLine=L.polyline(lls,{pane:'pRoute',color:'#4a3721',weight:3,opacity:.9,
+      dashArray:'1 9',lineCap:'round'}).addTo(map);
+    trailLine=L.polyline([],{pane:'pTrail',color:'#a9803f',weight:4,opacity:.95,
+      lineCap:'round'}).addTo(map);
+
+    // numbered pips
+    STOPS.forEach(function(n,i){
+      var m=L.marker(n.ll,{pane:'pPip',keyboard:true,title:WP[i].name,
+        icon:L.divIcon({className:'',iconSize:[22,22],
+          html:'<div class="pip" role="button" tabindex="0" aria-label="Jump to '+
+            esc(WP[i].name)+', session '+WP[i].session+'">'+(i+1)+'</div>'})}).addTo(map);
+      m.on('click',function(){jumpTo(i);});
+      m._pipIdx=i; pips.push(m);
+    });
+
+    // traveller
+    trav=L.marker(PATH[0].ll,{pane:'pTrav',interactive:false,zIndexOffset:1000,
+      icon:L.divIcon({className:'trav',iconSize:[0,0],html:'<div class="trav-dot"></div>'})}).addTo(map);
+
+    buildChapters();
+    map.setView(PATH[0].ll, TRAVEL_Z, {animate:false});
+
+    // resume from #t= if present, else sit at the start
+    var t0=hashT();
+    setD(t0!=null? t0*TOTAL : 0, {snap:true});
+    arriveIfAtStop(true);
+
+    window.RP={ // debug/verify surface
+      setT:function(t){pause();setD(t*TOTAL,{snap:true});arriveIfAtStop(true);},
+      state:function(){return {d:st.d,t:st.d/TOTAL,playing:st.playing,speed:st.speed,
+        reduced:reduced(),arrived:st.lastArrived,total:TOTAL,stops:STOPS.length,
+        travLL:[trav.getLatLng().lat,trav.getLatLng().lng]};},
+      stops:STOPS.map(function(s){return s.dist/TOTAL;}),
+      ready:true
+    };
+    requestAnimationFrame(frame);
+  }
+
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+  // ---- geometry helpers ----
+  function llAt(d){
+    d=Math.max(0,Math.min(TOTAL,d));
+    for(var i=1;i<PATH.length;i++){
+      if(PATH[i].dist>=d){
+        var a=PATH[i-1],b=PATH[i],span=b.dist-a.dist||1,f=(d-a.dist)/span;
+        return L.latLng(a.ll.lat+(b.ll.lat-a.ll.lat)*f, a.ll.lng+(b.ll.lng-a.ll.lng)*f);
+      }
+    }
+    return PATH[PATH.length-1].ll;
+  }
+  function trailUpTo(d){
+    var out=[];
+    for(var i=0;i<PATH.length;i++){ if(PATH[i].dist<=d)out.push(PATH[i].ll); else break; }
+    out.push(llAt(d));
+    return out;
+  }
+  function nextStopAfter(d){for(var i=0;i<STOPS.length;i++)if(STOPS[i].dist>d+0.5)return STOPS[i];return null;}
+  function prevStopBefore(d){for(var i=STOPS.length-1;i>=0;i--)if(STOPS[i].dist<d-0.5)return STOPS[i];return null;}
+  function stopIndexAt(d){for(var i=0;i<STOPS.length;i++)if(Math.abs(STOPS[i].dist-d)<0.5)return i;return -1;}
+
+  // ---- core position setter ----
+  function setD(d, opt){
+    opt=opt||{};
+    st.d=Math.max(0,Math.min(TOTAL,d));
+    var ll=llAt(st.d);
+    trav.setLatLng(ll);
+    trailLine.setLatLngs(trailUpTo(st.d));
+    // pip visited state
+    for(var i=0;i<STOPS.length;i++){
+      var el=pips[i].getElement()&&pips[i].getElement().firstChild;
+      if(!el)continue;
+      el.classList.toggle('visited', STOPS[i].dist<=st.d+0.5);
+      el.classList.remove('here');
+    }
+    var si=stopIndexAt(st.d);
+    if(si>=0){var pe=pips[si].getElement()&&pips[si].getElement().firstChild; if(pe)pe.classList.add('here');}
+    follow(ll, !opt.snap && !reduced());
+    syncScrub();
+    writeHash();
+  }
+  function follow(ll, animate){
+    var b=map.getBounds().pad(-0.28);        // pan only when the traveller leaves the central safe-zone
+    if(!b.contains(ll)) map.panTo(ll,{animate:animate,duration:.6});
+  }
+
+  // ---- arrival / narration / card ----
+  function arriveIfAtStop(force){
+    var si=stopIndexAt(st.d);
+    if(si<0)return;
+    if(!force && si===st.lastArrived)return;
+    st.lastArrived=si;
+    showCard(si); narrate(si); markChapter(si);
+  }
+  function showCard(i){
+    var w=WP[i];
+    $('cardKick').textContent='Session '+w.session+(dupName(i)?' · return':'');
+    $('cardName').textContent=w.name;
+    $('cardNote').textContent=w.note;
+    var c=$('card'); c.hidden=false; c.classList.remove('dim');
+  }
+  function dupName(i){for(var j=0;j<i;j++)if(WP[j].name===WP[i].name)return true;return false;}
+  function firstSentence(s){var m=/^[\s\S]*?[.!?](\s|$)/.exec(s);return m?m[0].trim():s;}
+  function narrate(i){
+    var w=WP[i];
+    $('narration').textContent='Session '+w.session+' — '+w.name+': '+firstSentence(w.note);
+  }
+  function markChapter(i){
+    Array.prototype.forEach.call($('chapList').querySelectorAll('button'),function(b,k){
+      b.setAttribute('aria-current', k===i?'true':'false');
+      if(k===i)b.scrollIntoView({block:'nearest'});
+    });
+  }
+
+  // ---- chapter rail ----
+  function buildChapters(){
+    var ul=$('chapList');
+    WP.forEach(function(w,i){
+      var li=document.createElement('li');
+      var b=document.createElement('button');
+      b.type='button'; b.setAttribute('aria-current','false');
+      b.innerHTML='<span class="cn">'+(i+1)+'</span>'+esc(w.name)+
+        '<span class="cs">Session '+w.session+'</span>';
+      b.addEventListener('click',function(){jumpTo(i);});
+      li.appendChild(b); ul.appendChild(li);
+    });
+  }
+
+  // ---- transport actions ----
+  function play(){
+    if(st.d>=TOTAL-0.5) setD(0,{snap:true});   // replay from the top when finished
+    st.playing=true; st.dwellUntil=0; st.lastFrame=performance.now();
+    reflectPlay();
+    if(reduced()) reducedStep();
+  }
+  function pause(){ st.playing=false; clearTimeout(st._rtimer); reflectPlay(); }
+  function toggle(){ st.playing?pause():play(); }
+  function reflectPlay(){
+    var b=$('play');
+    b.innerHTML=st.playing?'&#10073;&#10073; Pause':'&#9654; Play';
+    b.setAttribute('aria-label',st.playing?'Pause':'Play');
+    b.setAttribute('aria-pressed',st.playing?'true':'false');
+  }
+  function jumpTo(i){                          // chapter/pip click -> land on that stop
+    pause(); setD(STOPS[i].dist,{snap:true}); st.lastArrived=-1; arriveIfAtStop(true);
+  }
+  function stepNext(){
+    var n=nextStopAfter(st.d);
+    pause();
+    if(n){ setD(n.dist,{snap:true}); st.lastArrived=-1; arriveIfAtStop(true); }
+  }
+  function stepPrev(){
+    var p=prevStopBefore(st.d);
+    pause();
+    if(p){ setD(p.dist,{snap:true}); st.lastArrived=-1; arriveIfAtStop(true); }
+  }
+
+  // ---- continuous animation (motion-full) ----
+  function frame(now){
+    if(st.playing && !reduced()){
+      var dt=now-st.lastFrame; if(dt>120)dt=120;   // clamp after tab-away
+      if(now>=st.dwellUntil){
+        var nd=st.d + st.speed*PPS*(dt/1000);
+        var n=nextStopAfter(st.d);
+        if(n && nd>=n.dist){                        // reached a waypoint -> snap + dwell
+          nd=n.dist; setD(nd); arriveIfAtStop();
+          st.dwellUntil=now + DWELL/st.speed;
+        } else if(nd>=TOTAL){                        // journey's end
+          setD(TOTAL); arriveIfAtStop(); st.playing=false; reflectPlay();
+        } else {
+          setD(nd);
+        }
+      }
+    }
+    st.lastFrame=now;
+    requestAnimationFrame(frame);
+  }
+
+  // ---- reduced-motion playback: teleport leg by leg, dwelling at each ----
+  function reducedStep(){
+    if(!st.playing)return;
+    var n=nextStopAfter(st.d);
+    if(!n){ st.playing=false; reflectPlay(); return; }
+    setD(n.dist,{snap:true}); arriveIfAtStop();
+    st._rtimer=setTimeout(reducedStep, (DWELL+LEG_PAUSE)/st.speed);
+  }
+
+  // ---- scrubber ----
+  function syncScrub(){
+    var t=TOTAL?st.d/TOTAL:0;
+    var s=$('scrub'); s.value=Math.round(t*1000);
+    var pct=Math.round(t*100);
+    var si=stopIndexAt(st.d);
+    var label=si>=0?WP[si].name:'leg '+legLabel(st.d);
+    $('tstamp').innerHTML=pct+'% · '+esc(label);
+    s.setAttribute('aria-valuetext',pct+' percent, '+label);
+  }
+  function legLabel(d){
+    var p=prevStopBefore(d), n=nextStopAfter(d);
+    if(!p)return '1';
+    var pi=STOPS.indexOf(p);
+    return (pi+1)+'→'+(n?STOPS.indexOf(n)+1:pi+1);
+  }
+
+  // ---- URL hash resume (#t=0..1) ----
+  var hashTimer;
+  function writeHash(){
+    clearTimeout(hashTimer);
+    hashTimer=setTimeout(function(){
+      var t=(TOTAL?st.d/TOTAL:0).toFixed(4);
+      history.replaceState(null,'','#t='+t);
+    },120);
+  }
+  function hashT(){
+    var m=/[#&]t=([0-9.]+)/.exec(location.hash);
+    if(!m)return null; var v=parseFloat(m[1]); return isFinite(v)?Math.max(0,Math.min(1,v)):null;
+  }
+
+  // ---- wiring ----
+  $('play').addEventListener('click',toggle);
+  $('next').addEventListener('click',stepNext);
+  $('prev').addEventListener('click',stepPrev);
+  $('speed').addEventListener('change',function(){
+    st.speed=parseFloat(this.value);
+    if(st.playing && reduced()){ clearTimeout(st._rtimer); reducedStep(); }
+  });
+  $('reduce').addEventListener('change',function(){
+    forceReduced=this.checked;
+    if(st.playing){ pause(); play(); }              // restart under the new mode
+  });
+  var scrubbing=false;
+  $('scrub').addEventListener('input',function(){
+    if(!scrubbing){ pause(); scrubbing=true; }
+    st.lastArrived=-1;
+    setD(parseInt(this.value,10)/1000*TOTAL,{snap:true});
+    arriveIfAtStop();                               // show card if a scrub lands on a stop
+    $('card').classList.add('dim');
+  });
+  $('scrub').addEventListener('change',function(){ scrubbing=false; });
+
+  document.addEventListener('keydown',function(e){
+    var t=e.target, tag=t&&t.tagName;
+    if(tag==='INPUT'&&t.type==='range'){            // let the range own its own arrows
+      if(e.key===' '){e.preventDefault();toggle();}
+      return;
+    }
+    if(tag==='SELECT'||tag==='TEXTAREA'||(tag==='INPUT'&&t.type!=='checkbox'))return;
+    switch(e.key){
+      case ' ': case 'Spacebar': e.preventDefault(); toggle(); break;
+      case 'ArrowRight': e.preventDefault(); stepNext(); break;
+      case 'ArrowLeft': e.preventDefault(); stepPrev(); break;
+      case 'Home': e.preventDefault(); jumpTo(0); break;
+      case 'End': e.preventDefault(); jumpTo(STOPS.length-1); break;
+    }
+  });
+  // keyboard-activated pips (they are role=button in a divIcon)
+  map.getContainer().addEventListener('keydown',function(e){
+    var el=e.target;
+    if(el&&el.classList&&el.classList.contains('pip')&&(e.key==='Enter'||e.key===' ')){
+      e.preventDefault();
+      var m=pips.find(function(p){var g=p.getElement();return g&&g.firstChild===el;});
+      if(m)jumpTo(m._pipIdx);
+    }
+  });
+})();
+</script>

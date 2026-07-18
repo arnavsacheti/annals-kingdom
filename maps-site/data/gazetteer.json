@@ -1,0 +1,1101 @@
+[
+ {
+  "name": "Abila",
+  "kind": "Settlements",
+  "x": 1211,
+  "y": 884
+ },
+ {
+  "name": "Aegban",
+  "kind": "Settlements",
+  "x": 2606,
+  "y": 1344
+ },
+ {
+  "name": "Aenid",
+  "kind": "Settlements",
+  "x": 3312,
+  "y": 1341
+ },
+ {
+  "name": "Āglaz",
+  "kind": "village",
+  "x": 1234,
+  "y": 1554.6
+ },
+ {
+  "name": "Ākat",
+  "kind": "Settlements",
+  "x": 3191,
+  "y": 1346
+ },
+ {
+  "name": "Aldorūs",
+  "kind": "village",
+  "x": 1448.6,
+  "y": 1527.5,
+  "etym": "the height",
+  "lex": "aldor"
+ },
+ {
+  "name": "Aldrakhar",
+  "kind": "Settlements",
+  "x": 1478,
+  "y": 633
+ },
+ {
+  "name": "Aldronde",
+  "kind": "Bodies of Water",
+  "x": 3872,
+  "y": 628,
+  "wiki": "Locations/Bodies-of-Water/Aldronde"
+ },
+ {
+  "name": "Alensis",
+  "kind": "Major Regions",
+  "x": 316,
+  "y": 759,
+  "wiki": "Locations/Regions/Rhusagos/Alensis"
+ },
+ {
+  "name": "Alensis City",
+  "kind": "Settlements",
+  "x": 321,
+  "y": 840
+ },
+ {
+  "name": "Arbezmara",
+  "kind": "Settlements",
+  "x": 2288,
+  "y": 1610
+ },
+ {
+  "name": "Atauk",
+  "kind": "Settlements",
+  "x": 1084,
+  "y": 698
+ },
+ {
+  "name": "Authīr",
+  "kind": "Settlements",
+  "x": 3554,
+  "y": 1395
+ },
+ {
+  "name": "Azrīnet",
+  "kind": "Settlements",
+  "x": 3357,
+  "y": 1242
+ },
+ {
+  "name": "Azrūmil",
+  "kind": "Settlements",
+  "x": 2415,
+  "y": 1629
+ },
+ {
+  "name": "Bard's Hollow",
+  "kind": "Settlements",
+  "x": 784,
+  "y": 201
+ },
+ {
+  "name": "Bash Dargis",
+  "kind": "Settlements",
+  "x": 2172,
+  "y": 742
+ },
+ {
+  "name": "Bash Nena",
+  "kind": "Settlements",
+  "x": 1950,
+  "y": 1012
+ },
+ {
+  "name": "Bash Phaug",
+  "kind": "Settlements",
+  "x": 1410,
+  "y": 498
+ },
+ {
+  "name": "Bēgil",
+  "kind": "Settlements",
+  "x": 1170,
+  "y": 1636
+ },
+ {
+  "name": "Bēgroth Amar",
+  "kind": "Settlements",
+  "x": 4082,
+  "y": 1010
+ },
+ {
+  "name": "Bībūnor",
+  "kind": "Minor Regions",
+  "x": 1601,
+  "y": 1262,
+  "wiki": "Locations/Regions/Rhusagos/Bībūnor"
+ },
+ {
+  "name": "Bōlkhar",
+  "kind": "Settlements",
+  "x": 2027,
+  "y": 1648
+ },
+ {
+  "name": "Clickerhall-by-Goblin-Hole",
+  "kind": "Settlements",
+  "x": 2608,
+  "y": 266
+ },
+ {
+  "name": "Cyrikon",
+  "kind": "Settlements",
+  "x": 2568,
+  "y": 1663
+ },
+ {
+  "name": "Daeskhon",
+  "kind": "Settlements",
+  "x": 2961,
+  "y": 1537
+ },
+ {
+  "name": "Damoklir",
+  "kind": "Settlements",
+  "x": 417,
+  "y": 516
+ },
+ {
+  "name": "Darā",
+  "kind": "Settlements",
+  "x": 3808,
+  "y": 1330
+ },
+ {
+  "name": "Dargan",
+  "kind": "Settlements",
+  "x": 750,
+  "y": 635
+ },
+ {
+  "name": "Drāgīnor",
+  "kind": "Minor Regions",
+  "x": 3095,
+  "y": 1224,
+  "wiki": "Locations/Regions/Rhusagos/Drāgīnor"
+ },
+ {
+  "name": "Drāmūz",
+  "kind": "Settlements",
+  "x": 1344,
+  "y": 1769,
+  "wiki": "Locations/Settlements/Patrinor/Drāmūz"
+ },
+ {
+  "name": "Eldae",
+  "kind": "Settlements",
+  "x": 550,
+  "y": 606
+ },
+ {
+  "name": "Empheros",
+  "kind": "Major Regions",
+  "x": 1758,
+  "y": 738,
+  "wiki": "Locations/Regions/Rhusagos/Empheros"
+ },
+ {
+  "name": "Epēshu",
+  "kind": "Settlements",
+  "x": 1236,
+  "y": 1417,
+  "wiki": "Locations/Settlements/Patrinor/Epēshu"
+ },
+ {
+  "name": "Far Mountains",
+  "kind": "Mountains and Hills",
+  "x": 3148,
+  "y": 2134,
+  "wiki": "Locations/Mountains-and-Hills/Far-Mountains"
+ },
+ {
+  "name": "Far North",
+  "kind": "Major Regions",
+  "x": 1826,
+  "y": -92,
+  "wiki": "Locations/Regions/Far-North/Far-North"
+ },
+ {
+  "name": "Far South",
+  "kind": "Major Regions",
+  "x": 2353.3,
+  "y": 2160,
+  "wiki": "Locations/Regions/Far-South/Far-South"
+ },
+ {
+  "name": "Feldspar",
+  "kind": "Settlements",
+  "x": 1103,
+  "y": 114
+ },
+ {
+  "name": "Fell Mountains",
+  "kind": "Mountains and Hills",
+  "x": 782,
+  "y": -93,
+  "wiki": "Locations/Mountains-and-Hills/Fell-Mountains"
+ },
+ {
+  "name": "Gakapē",
+  "kind": "Settlements",
+  "x": 2197,
+  "y": 1619
+ },
+ {
+  "name": "Gārmīt",
+  "kind": "Settlements",
+  "x": 3366,
+  "y": 1286
+ },
+ {
+  "name": "Garnatos",
+  "kind": "Major Regions",
+  "x": 3288,
+  "y": 1048,
+  "wiki": "Locations/Regions/Rhusagos/Garnatos"
+ },
+ {
+  "name": "Gehon Iepīr",
+  "kind": "Settlements",
+  "x": 1483,
+  "y": 1217
+ },
+ {
+  "name": "Gehon Or",
+  "kind": "Settlements",
+  "x": 1540,
+  "y": 1261
+ },
+ {
+  "name": "Gel",
+  "kind": "Settlements",
+  "x": 364,
+  "y": 1000
+ },
+ {
+  "name": "Ghirīs",
+  "kind": "Settlements",
+  "x": 2086,
+  "y": 1724
+ },
+ {
+  "name": "Ghōdar",
+  "kind": "Settlements",
+  "x": 916,
+  "y": 784
+ },
+ {
+  "name": "Gīr",
+  "kind": "Settlements",
+  "x": 2398,
+  "y": 1746
+ },
+ {
+  "name": "Gizalīs",
+  "kind": "Settlements",
+  "x": 2889,
+  "y": 1585
+ },
+ {
+  "name": "Graes",
+  "kind": "Settlements",
+  "x": 3617,
+  "y": 1265
+ },
+ {
+  "name": "Great Chasmous Sea",
+  "kind": "Bodies of Water",
+  "x": 1940.8,
+  "y": 1505.4,
+  "wiki": "Locations/Bodies-of-Water/Great-Chasmous-Sea"
+ },
+ {
+  "name": "Green Sea",
+  "kind": "Bodies of Water",
+  "x": 3040,
+  "y": 815,
+  "wiki": "Locations/Bodies-of-Water/Green-Sea"
+ },
+ {
+  "name": "Haedi",
+  "kind": "Settlements",
+  "x": 3038,
+  "y": 1444
+ },
+ {
+  "name": "Harney",
+  "kind": "Settlements",
+  "x": 508,
+  "y": 207
+ },
+ {
+  "name": "Hazad",
+  "kind": "Settlements",
+  "x": 1405,
+  "y": 1083
+ },
+ {
+  "name": "Hemdok Laego",
+  "kind": "Settlements",
+  "x": 1872,
+  "y": 700
+ },
+ {
+  "name": "Heron's House",
+  "kind": "Settlements",
+  "x": 2456,
+  "y": 302
+ },
+ {
+  "name": "Hoarland",
+  "kind": "Minor Regions",
+  "x": 2088,
+  "y": -94,
+  "wiki": "Locations/Regions/Far-North/Hoarland"
+ },
+ {
+  "name": "Home Islands",
+  "kind": "Major Regions",
+  "x": 500,
+  "y": 2160,
+  "wiki": "Locations/Regions/Far-South/Home-Islands/Home-Islands"
+ },
+ {
+  "name": "Horat",
+  "kind": "Major Regions",
+  "x": 1053,
+  "y": 1786,
+  "wiki": "Locations/Regions/Patrinor/Horat"
+ },
+ {
+  "name": "Hordon",
+  "kind": "Settlements",
+  "x": 1124,
+  "y": 1690
+ },
+ {
+  "name": "Hordon Mopher",
+  "kind": "Settlements",
+  "x": 535,
+  "y": 869
+ },
+ {
+  "name": "Ierem",
+  "kind": "Settlements",
+  "x": 3458,
+  "y": 1280
+ },
+ {
+  "name": "Iet Ford",
+  "kind": "Settlements",
+  "x": 1398,
+  "y": 707
+ },
+ {
+  "name": "Iimak-nūs-Ion",
+  "kind": "Settlements",
+  "x": 1165,
+  "y": 336
+ },
+ {
+  "name": "Ilongazoro",
+  "kind": "Settlements",
+  "x": 839,
+  "y": 708
+ },
+ {
+  "name": "Īngomes",
+  "kind": "Settlements",
+  "x": 1792,
+  "y": 1165
+ },
+ {
+  "name": "Ion Ephel",
+  "kind": "Settlements",
+  "x": 1311,
+  "y": 2130
+ },
+ {
+  "name": "Ion Nenīn",
+  "kind": "Settlements",
+  "x": 3084,
+  "y": 1548
+ },
+ {
+  "name": "Ion Semthen",
+  "kind": "Settlements",
+  "x": 757,
+  "y": 902
+ },
+ {
+  "name": "Iorundo",
+  "kind": "Settlements",
+  "x": 1178,
+  "y": 505
+ },
+ {
+  "name": "Ishin",
+  "kind": "Settlements",
+  "x": 1015,
+  "y": 746
+ },
+ {
+  "name": "Istīron",
+  "kind": "Settlements",
+  "x": 1071,
+  "y": 1633
+ },
+ {
+  "name": "Ītor Hāspira",
+  "kind": "Settlements",
+  "x": 579,
+  "y": 635
+ },
+ {
+  "name": "Kamīdo",
+  "kind": "Settlements",
+  "x": 974,
+  "y": 518
+ },
+ {
+  "name": "Kanae",
+  "kind": "village",
+  "x": 1521.5,
+  "y": 1482.7
+ },
+ {
+  "name": "Karaphon",
+  "kind": "Settlements",
+  "x": 1875,
+  "y": 877
+ },
+ {
+  "name": "Kardunash",
+  "kind": "town",
+  "x": 1524.6,
+  "y": 1820.2
+ },
+ {
+  "name": "Karkōgael",
+  "kind": "Settlements",
+  "x": 1117,
+  "y": 366
+ },
+ {
+  "name": "Kash Ītor",
+  "kind": "Settlements",
+  "x": 3022,
+  "y": 692
+ },
+ {
+  "name": "Kezren",
+  "kind": "Settlements",
+  "x": 2212,
+  "y": 1227
+ },
+ {
+  "name": "Khōrgos",
+  "kind": "Major Regions",
+  "x": 1943.1,
+  "y": 312.8,
+  "wiki": "Locations/Regions/Rhusagos/Khōrgos"
+ },
+ {
+  "name": "Kolens",
+  "kind": "Settlements",
+  "x": 2162,
+  "y": 54
+ },
+ {
+  "name": "Kurūgnon",
+  "kind": "Settlements",
+  "x": 3729,
+  "y": 1292
+ },
+ {
+  "name": "Laem",
+  "kind": "Settlements",
+  "x": 2722,
+  "y": 1654
+ },
+ {
+  "name": "Lek Zagrok",
+  "kind": "Settlements",
+  "x": 1402,
+  "y": 848
+ },
+ {
+  "name": "Lendānak",
+  "kind": "Settlements",
+  "x": 822,
+  "y": 594
+ },
+ {
+  "name": "Lepon",
+  "kind": "Settlements",
+  "x": 1145,
+  "y": 1427,
+  "wiki": "Locations/Settlements/Patrinor/Lepon"
+ },
+ {
+  "name": "Lepon the Old",
+  "kind": "ruin",
+  "x": 1146.5,
+  "y": 1420.2
+ },
+ {
+  "name": "Leponnia",
+  "kind": "Major Regions",
+  "x": 1401,
+  "y": 1618,
+  "wiki": "Locations/Regions/Patrinor/Leponnia"
+ },
+ {
+  "name": "Leprekhōr",
+  "kind": "Settlements",
+  "x": 364,
+  "y": 883
+ },
+ {
+  "name": "Leshes",
+  "kind": "Settlements",
+  "x": 1686,
+  "y": 1322
+ },
+ {
+  "name": "Līm Haub",
+  "kind": "Settlements",
+  "x": 1199,
+  "y": 689
+ },
+ {
+  "name": "Līrider",
+  "kind": "Settlements",
+  "x": 984,
+  "y": 1710
+ },
+ {
+  "name": "Līrider Hana",
+  "kind": "Settlements",
+  "x": 668,
+  "y": 701
+ },
+ {
+  "name": "Lokri",
+  "kind": "Settlements",
+  "x": 3834,
+  "y": 1273
+ },
+ {
+  "name": "Lōt",
+  "kind": "Settlements",
+  "x": 1967,
+  "y": 862
+ },
+ {
+  "name": "Ludo",
+  "kind": "Settlements",
+  "x": 3552,
+  "y": 1288
+ },
+ {
+  "name": "Maeges",
+  "kind": "Settlements",
+  "x": 1139,
+  "y": 1731
+ },
+ {
+  "name": "Mago",
+  "kind": "village",
+  "x": 1691.3,
+  "y": 1581.7
+ },
+ {
+  "name": "Mākh Abath",
+  "kind": "Major Regions",
+  "x": 3988.1,
+  "y": 1719.9,
+  "wiki": "Locations/Regions/Patrinor/Mākh-Abath"
+ },
+ {
+  "name": "Mākor",
+  "kind": "Settlements",
+  "x": 984,
+  "y": 488
+ },
+ {
+  "name": "Malagnon",
+  "kind": "Settlements",
+  "x": 1631,
+  "y": 1288
+ },
+ {
+  "name": "Malau",
+  "kind": "Settlements",
+  "x": 2843,
+  "y": 1632
+ },
+ {
+  "name": "Māmīth Māgrīn (Kingly Mickleburg)",
+  "kind": "Settlements",
+  "x": 734,
+  "y": 18
+ },
+ {
+  "name": "Medem",
+  "kind": "village",
+  "x": 1396.5,
+  "y": 1711.9
+ },
+ {
+  "name": "Men-Nehet",
+  "kind": "Settlements",
+  "x": 4367,
+  "y": 1178
+ },
+ {
+  "name": "Mhēlzi",
+  "kind": "Settlements",
+  "x": 3442,
+  "y": 1440
+ },
+ {
+  "name": "Mhikel Or",
+  "kind": "Settlements",
+  "x": 2227,
+  "y": 1835
+ },
+ {
+  "name": "Mishimbril",
+  "kind": "Settlements",
+  "x": 1659,
+  "y": 905
+ },
+ {
+  "name": "Mīth Mirdānak",
+  "kind": "village",
+  "x": 1164.2,
+  "y": 1509.8,
+  "etym": "the town of the artisans",
+  "lex": "mīth"
+ },
+ {
+  "name": "Mīthrabash",
+  "kind": "Settlements",
+  "x": 1288,
+  "y": 596
+ },
+ {
+  "name": "Molider",
+  "kind": "Settlements",
+  "x": 1209,
+  "y": 1770
+ },
+ {
+  "name": "Moonless Lands",
+  "kind": "Major Regions",
+  "x": -174.9,
+  "y": 1441.3,
+  "wiki": "Locations/Regions/Moonless-Lands/Moonless-Lands"
+ },
+ {
+  "name": "Mountain Wall",
+  "kind": "Mountains and Hills",
+  "x": 2676,
+  "y": 206,
+  "wiki": "Locations/Mountains-and-Hills/Mountain-Wall"
+ },
+ {
+  "name": "Nagash",
+  "kind": "Settlements",
+  "x": 2769,
+  "y": 1817
+ },
+ {
+  "name": "Nāron",
+  "kind": "Settlements",
+  "x": 3367,
+  "y": 1428
+ },
+ {
+  "name": "Nembros",
+  "kind": "Settlements",
+  "x": 931,
+  "y": 848
+ },
+ {
+  "name": "Nenog",
+  "kind": "Minor Regions",
+  "x": 2371.3,
+  "y": 909.8,
+  "wiki": "Locations/Regions/Rhusagos/Nenog"
+ },
+ {
+  "name": "Netho",
+  "kind": "Settlements",
+  "x": 2896,
+  "y": 988
+ },
+ {
+  "name": "Nhagi",
+  "kind": "Settlements",
+  "x": 1868,
+  "y": 1651
+ },
+ {
+  "name": "Nhandar Khezīn",
+  "kind": "Settlements",
+  "x": 2516,
+  "y": 1632
+ },
+ {
+  "name": "Nhin",
+  "kind": "Settlements",
+  "x": 2632,
+  "y": 1730
+ },
+ {
+  "name": "Nīs Garnata",
+  "kind": "Settlements",
+  "x": 3333,
+  "y": 1147
+ },
+ {
+  "name": "Nub-Nefer",
+  "kind": "Settlements",
+  "x": 4354,
+  "y": 1113
+ },
+ {
+  "name": "Nūmeron",
+  "kind": "Settlements",
+  "x": 2555,
+  "y": 1425
+ },
+ {
+  "name": "Paerāndas",
+  "kind": "Minor Regions",
+  "x": 1337,
+  "y": 1335,
+  "wiki": "Locations/Regions/Patrinor/Paerāndas"
+ },
+ {
+  "name": "Paga",
+  "kind": "Settlements",
+  "x": 2061,
+  "y": 817
+ },
+ {
+  "name": "Palagnon",
+  "kind": "Settlements",
+  "x": 1528,
+  "y": 765
+ },
+ {
+  "name": "Pandikaba",
+  "kind": "Settlements",
+  "x": 2926,
+  "y": 981
+ },
+ {
+  "name": "Pārāgōl",
+  "kind": "Minor Regions",
+  "x": 2478.5,
+  "y": 1063.4,
+  "wiki": "Locations/Regions/Rhusagos/Pārāgōl"
+ },
+ {
+  "name": "Paril",
+  "kind": "Settlements",
+  "x": 889,
+  "y": 736
+ },
+ {
+  "name": "Pel",
+  "kind": "Settlements",
+  "x": 3295,
+  "y": 1300
+ },
+ {
+  "name": "Penthelon",
+  "kind": "Settlements",
+  "x": 1942,
+  "y": 755,
+  "wiki": "Locations/Settlements/Rhusagos/Penthelon"
+ },
+ {
+  "name": "Permūr",
+  "kind": "Settlements",
+  "x": 364,
+  "y": 604
+ },
+ {
+  "name": "Perōna",
+  "kind": "village",
+  "x": 1647.5,
+  "y": 1631.7
+ },
+ {
+  "name": "Phagal",
+  "kind": "Minor Regions",
+  "x": 2641,
+  "y": 1369,
+  "wiki": "Locations/Regions/Patrinor/Phagal"
+ },
+ {
+  "name": "Pharzeban",
+  "kind": "village",
+  "x": 1306.9,
+  "y": 1621.3,
+  "etym": "gilt-place",
+  "lex": "pharze"
+ },
+ {
+  "name": "Philider",
+  "kind": "Settlements",
+  "x": 246,
+  "y": 918
+ },
+ {
+  "name": "Phumkha",
+  "kind": "Settlements",
+  "x": 836,
+  "y": 571
+ },
+ {
+  "name": "Pish",
+  "kind": "Settlements",
+  "x": 864,
+  "y": 750
+ },
+ {
+  "name": "Pomos",
+  "kind": "Settlements",
+  "x": 481,
+  "y": 725
+ },
+ {
+  "name": "Pontoron",
+  "kind": "Settlements",
+  "x": 3735,
+  "y": 1359
+ },
+ {
+  "name": "Rēketis",
+  "kind": "village",
+  "x": 1279.8,
+  "y": 1551.5
+ },
+ {
+  "name": "Relkor",
+  "kind": "Major Regions",
+  "x": 612.4,
+  "y": 267.5,
+  "wiki": "Locations/Regions/Rhusagos/Relkor"
+ },
+ {
+  "name": "Rhup",
+  "kind": "village",
+  "x": 1566,
+  "y": 1539
+ },
+ {
+  "name": "Rohodakos",
+  "kind": "Settlements",
+  "x": 3157,
+  "y": 1258
+ },
+ {
+  "name": "Rūbril",
+  "kind": "Settlements",
+  "x": 704,
+  "y": 794
+ },
+ {
+  "name": "Sardil",
+  "kind": "town",
+  "x": 1484,
+  "y": 1636.9
+ },
+ {
+  "name": "Sargāzat",
+  "kind": "Major Regions",
+  "x": 968,
+  "y": 634.9,
+  "wiki": "Locations/Regions/Rhusagos/Sargāzat"
+ },
+ {
+  "name": "Sārūmeron",
+  "kind": "Settlements",
+  "x": 3257,
+  "y": 1443
+ },
+ {
+  "name": "Sau Taran",
+  "kind": "Settlements",
+  "x": 191,
+  "y": 813
+ },
+ {
+  "name": "Sāzhram",
+  "kind": "Settlements",
+  "x": 2105,
+  "y": 1613
+ },
+ {
+  "name": "Sember",
+  "kind": "Settlements",
+  "x": 3428,
+  "y": 1115
+ },
+ {
+  "name": "Sepos",
+  "kind": "Settlements",
+  "x": 891,
+  "y": 543
+ },
+ {
+  "name": "Shengo",
+  "kind": "village",
+  "x": 1453,
+  "y": 1735
+ },
+ {
+  "name": "Sjefenhold",
+  "kind": "Settlements",
+  "x": 2050,
+  "y": 30
+ },
+ {
+  "name": "Sokundo",
+  "kind": "town",
+  "x": 1477.7,
+  "y": 1444.2,
+  "etym": "white-stone",
+  "lex": "sok"
+ },
+ {
+  "name": "Stony Ford",
+  "kind": "Settlements",
+  "x": 611,
+  "y": 172
+ },
+ {
+  "name": "Sūl",
+  "kind": "Settlements",
+  "x": 1960,
+  "y": 1694
+ },
+ {
+  "name": "Summarch",
+  "kind": "Settlements",
+  "x": 542,
+  "y": 52,
+  "wiki": "Locations/Settlements/Rhusagos/Summarch"
+ },
+ {
+  "name": "Taemon",
+  "kind": "Settlements",
+  "x": 2828,
+  "y": 930
+ },
+ {
+  "name": "Tamaron",
+  "kind": "Settlements",
+  "x": 1659,
+  "y": 1556,
+  "etym": "moon-town",
+  "lex": "tamar"
+ },
+ {
+  "name": "Tamaron Mopher",
+  "kind": "Settlements",
+  "x": 1774,
+  "y": 1308
+ },
+ {
+  "name": "Tarap",
+  "kind": "village",
+  "x": 1251.7,
+  "y": 1671.3
+ },
+ {
+  "name": "Thalbaen",
+  "kind": "village",
+  "x": 1275.6,
+  "y": 1702.5
+ },
+ {
+  "name": "Thārban",
+  "kind": "Settlements",
+  "x": 2175,
+  "y": 1675
+ },
+ {
+  "name": "Thūkhon",
+  "kind": "Settlements",
+  "x": 1309,
+  "y": 1013
+ },
+ {
+  "name": "Tobit",
+  "kind": "Settlements",
+  "x": 3211,
+  "y": 757
+ },
+ {
+  "name": "Tungril",
+  "kind": "Bodies of Water",
+  "x": 1483,
+  "y": 2169,
+  "wiki": "Locations/Bodies-of-Water/Tungril"
+ },
+ {
+  "name": "Ūmak-nūs-Ion",
+  "kind": "Settlements",
+  "x": 1126,
+  "y": 323
+ },
+ {
+  "name": "Urip",
+  "kind": "Settlements",
+  "x": 3005,
+  "y": 1503
+ },
+ {
+  "name": "White Sea",
+  "kind": "Bodies of Water",
+  "x": 616.6,
+  "y": 1384.7,
+  "wiki": "Locations/Bodies-of-Water/White-Sea"
+ },
+ {
+  "name": "Zhomphek",
+  "kind": "Settlements",
+  "x": 1046,
+  "y": 610
+ },
+ {
+  "name": "Zor Barāndo",
+  "kind": "Settlements",
+  "x": 819,
+  "y": 520
+ },
+ {
+  "name": "Zōr Iket",
+  "kind": "Settlements",
+  "x": 1269,
+  "y": 958
+ }
+]

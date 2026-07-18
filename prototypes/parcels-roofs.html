@@ -1,0 +1,679 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Annals — parcels + roofs prototype</title>
+<!-- Geometry prototype (Spec E): mock town -> street blocks (raster flood-fill) ->
+     skeleton-offset strip parcels (+repair) -> inset footprints -> straight-skeleton
+     hip roofs. Deterministic from seed (mulberry32). Ports later into index.html's
+     town generator. Standalone; three.js r128 via the sim's CDN tag. -->
+<style>
+  html,body{margin:0;height:100%;background:#20242b;color:#d8cdb4;font:13px/1.4 system-ui,sans-serif;overflow:hidden}
+  #bar{position:fixed;top:0;left:0;right:0;height:44px;display:flex;gap:14px;align-items:center;
+       padding:0 14px;background:#171a20;border-bottom:1px solid #333;z-index:5}
+  #bar label{display:flex;gap:5px;align-items:center;white-space:nowrap;color:#a99}
+  #bar input[type=text]{width:120px;background:#0d0f13;color:#e7dcc0;border:1px solid #444;border-radius:4px;padding:3px 6px;font:inherit}
+  #bar input[type=range]{width:88px}
+  #bar output{color:#e7dcc0;min-width:26px;display:inline-block}
+  #bar button{background:#5a3f24;color:#f0e4c8;border:1px solid #7a5a34;border-radius:4px;padding:5px 12px;cursor:pointer;font:inherit}
+  #bar button:hover{background:#6b4c2c}
+  #wrap{position:absolute;top:44px;left:0;right:0;bottom:0;display:flex}
+  #left,#right{position:relative;flex:1;min-width:0}
+  #left{border-right:1px solid #333;background:#e9e0c9}
+  #c2d{display:block;width:100%;height:100%}
+  #right{background:#afc4d8}
+  #stats{position:absolute;left:8px;bottom:8px;background:rgba(12,14,18,.82);color:#d8cdb4;
+         padding:7px 10px;border-radius:5px;font-size:12px;white-space:pre;pointer-events:none;z-index:3}
+  #legend{position:absolute;right:8px;top:8px;background:rgba(12,14,18,.72);padding:6px 9px;border-radius:5px;font-size:11px;z-index:3;line-height:1.6}
+  #legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+</style>
+
+<div id="bar">
+  <label>seed <input id="seed" type="text" value="allhammers"></label>
+  <label>lot depth <input id="depth" type="range" min="7" max="20" step="1" value="12"><output id="depthO">12</output>m</label>
+  <label>lot width <input id="width" type="range" min="6" max="16" step="1" value="9"><output id="widthO">9</output>m</label>
+  <label>roof pitch <input id="pitch" type="range" min="20" max="90" step="5" value="55"><output id="pitchO">0.55</output></label>
+  <button id="regen">regen</button>
+</div>
+<div id="wrap">
+  <div id="left"><canvas id="c2d"></canvas><div id="legend">
+    <div><i style="background:#7a5230"></i>street</div>
+    <div><i style="background:#c9b98e;border:1px solid #555"></i>parcel</div>
+    <div><i style="background:#d98a2b"></i>repaired</div>
+    <div><i style="background:#c0392b"></i>rejected</div>
+    <div><i style="background:#6f9a5a"></i>courtyard</div>
+    <div><i style="background:#7ba05a"></i>garden (unbuilt)</div>
+    <div><i style="background:#8f8f8f"></i>plaza</div>
+    <div><i style="background:#fff;border:1px solid #555"></i>roof ridge</div>
+  </div></div>
+  <div id="right"><div id="stats">…</div></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+"use strict";
+/* ---------------------------------------------------------------- rng + math */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hashSeed(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+const TAU=Math.PI*2;
+function dist(a,b){return Math.hypot(a.x-b.x,a.z-b.z);}
+function area2(p){let s=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];s+=a.x*b.z-b.x*a.z;}return s/2;}
+function centroid(p){let x=0,z=0;for(const q of p){x+=q.x;z+=q.z;}return{x:x/p.length,z:z/p.length};}
+function pointInPoly(pt,poly){let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];
+  if(((a.z>pt.z)!==(b.z>pt.z))&&(pt.x<(b.x-a.x)*(pt.z-a.z)/(b.z-a.z)+a.x))c=!c;}return c;}
+function quadArea(q){return Math.abs(area2(q));}
+// corner-cut smoothing (Chaikin); closed=ring
+function chaikin(pts,iters,closed){
+  for(let it=0;it<iters;it++){
+    const out=[];const n=pts.length;
+    if(!closed)out.push(pts[0]);
+    const lim=closed?n:n-1;
+    for(let i=0;i<lim;i++){const a=pts[i],b=pts[(i+1)%n];
+      out.push({x:a.x*0.75+b.x*0.25,z:a.z*0.75+b.z*0.25});
+      out.push({x:a.x*0.25+b.x*0.75,z:a.z*0.25+b.z*0.75});}
+    if(!closed)out.push(pts[n-1]);
+    pts=out;
+  }
+  return pts;
+}
+// Douglas-Peucker on a closed ring: rotate to an extreme point, simplify open chain, re-close.
+function dpClosed(ring,eps){
+  if(ring.length<4)return ring.slice();
+  // start at an extreme (guaranteed corner); open chain of n distinct pts, endpoints
+  // adjacent around the ring so the DP baseline is non-degenerate.
+  let k=0;for(let i=1;i<ring.length;i++)if(ring[i].x<ring[k].x||(ring[i].x===ring[k].x&&ring[i].z<ring[k].z))k=i;
+  const chain=[];for(let i=0;i<ring.length;i++)chain.push(ring[(k+i)%ring.length]);
+  return dp(chain,eps);
+}
+function dp(pts,eps){
+  if(pts.length<3)return pts.slice();
+  const keep=new Array(pts.length).fill(false);keep[0]=keep[pts.length-1]=true;
+  const stack=[[0,pts.length-1]];
+  while(stack.length){const[a,b]=stack.pop();let md=-1,mi=-1;
+    const A=pts[a],B=pts[b],dx=B.x-A.x,dz=B.z-A.z,L=Math.hypot(dx,dz)||1;
+    for(let i=a+1;i<b;i++){const P=pts[i];const d=Math.abs((P.x-A.x)*dz-(P.z-A.z)*dx)/L;if(d>md){md=d;mi=i;}}
+    if(md>eps){keep[mi]=true;stack.push([a,mi],[mi,b]);}}
+  const out=[];for(let i=0;i<pts.length;i++)if(keep[i])out.push(pts[i]);return out;
+}
+
+/* --------------------------------------------------------------- 1. mock town */
+// Same shape index.html builds: central market square, radial spokes, ring streets.
+function genTown(seed){
+  const R=mulberry32(hashSeed(seed));
+  const rr=(a,b)=>a+R()*(b-a);
+  const boundaryR=145, sq=13;               // square half-extent ~13m -> 26m plaza
+  const streets=[];
+  const nSpokes=5+Math.floor(R()*4);        // 5..8
+  const base=R()*TAU;
+  for(let i=0;i<nSpokes;i++){
+    const a=base+i/nSpokes*TAU+rr(-0.22,0.22);
+    const r0=sq+3, r1=boundaryR-3;
+    const mx=Math.cos(a)*(r0+r1)/2+rr(-16,16), mz=Math.sin(a)*(r0+r1)/2+rr(-16,16);
+    const pts=chaikin([{x:Math.cos(a)*r0,z:Math.sin(a)*r0},{x:mx,z:mz},{x:Math.cos(a)*r1,z:Math.sin(a)*r1}],2,false);
+    streets.push({pts,w:6});
+  }
+  const nRings=1+(R()<0.65?1:0);            // 1..2
+  for(let k=0;k<nRings;k++){
+    const rad0=boundaryR*(0.4+0.28*k), ph=R()*TAU, ring=[];
+    for(let i=0;i<24;i++){const a=i/24*TAU;ring.push({x:Math.cos(a)*rad0*(1+0.10*Math.sin(a*3+ph)),z:Math.sin(a)*rad0*(1+0.10*Math.sin(a*3+ph))});}
+    streets.push({pts:chaikin(ring,2,true),w:5.5,closed:true});
+  }
+  // bounding ring so the outer wedge blocks are closed
+  {const ring=[];for(let i=0;i<64;i++){const a=i/64*TAU;ring.push({x:Math.cos(a)*boundaryR,z:Math.sin(a)*boundaryR});}
+   streets.push({pts:ring,w:6,closed:true});}
+  // market-square border streets (encloses the central plaza block)
+  streets.push({pts:[{x:-sq,z:-sq},{x:sq,z:-sq},{x:sq,z:sq},{x:-sq,z:sq}],w:6,closed:true,square:true});
+  return {streets,boundaryR,sq,wallH:3+R()*2};
+}
+
+/* --------------------------------------------------- 2. blocks via raster fill */
+// RASTER APPROACH: stamp streets to a 2px/m grid, flood-fill free regions,
+// Moore-trace each interior component, Douglas-Peucker simplify. Robust vs.
+// half-edge face walks on the noisy chaikin polylines.
+const SCALE=2;                              // px per metre
+function extractBlocks(town){
+  const dom=town.boundaryR+10, W=Math.ceil(dom*2*SCALE), H=W;
+  const w2p=(x)=> (x+dom)*SCALE;
+  const p2w=(p)=> p/SCALE-dom;
+  const mask=new Uint8Array(W*H);           // 1 = street
+  const stampDisc=(cx,cy,r)=>{const r2=r*r,x0=Math.max(0,Math.floor(cx-r)),x1=Math.min(W-1,Math.ceil(cx+r)),
+      y0=Math.max(0,Math.floor(cy-r)),y1=Math.min(H-1,Math.ceil(cy+r));
+    for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const dx=x-cx,dy=y-cy;if(dx*dx+dy*dy<=r2)mask[y*W+x]=1;}};
+  for(const st of town.streets){
+    const r=(st.w/2)*SCALE, pts=st.pts, n=pts.length, lim=st.closed?n:n-1;
+    for(let i=0;i<lim;i++){const a=pts[i],b=pts[(i+1)%n];
+      const ax=w2p(a.x),ay=w2p(a.z),bx=w2p(b.x),by=w2p(b.z);
+      const L=Math.hypot(bx-ax,by-ay),steps=Math.max(1,Math.ceil(L));
+      for(let s=0;s<=steps;s++){const t=s/steps;stampDisc(ax+(bx-ax)*t,ay+(by-ay)*t,r);}}
+  }
+  // flood fill free pixels (4-conn); label components, note border-touching (exterior)
+  const lab=new Int32Array(W*H).fill(-1);
+  const comps=[];                            // {id,count,border}
+  const stack=[];
+  for(let sy=0;sy<H;sy++)for(let sx=0;sx<W;sx++){
+    const idx=sy*W+sx;if(mask[idx]||lab[idx]>=0)continue;
+    const id=comps.length;let count=0,border=false;stack.length=0;stack.push(idx);lab[idx]=id;
+    while(stack.length){const p=stack.pop();count++;const px=p%W,py=(p-px)/W;
+      if(px===0||py===0||px===W-1||py===H-1)border=true;
+      const nb=[p-1,p+1,p-W,p+W],ok=[px>0,px<W-1,py>0,py<H-1];
+      for(let d=0;d<4;d++){if(!ok[d])continue;const q=nb[d];if(!mask[q]&&lab[q]<0){lab[q]=id;stack.push(q);}}}
+    comps.push({id,count,border});
+  }
+  const blocks=[];
+  for(const c of comps){
+    if(c.border)continue;                    // exterior
+    if(c.count<240)continue;                  // <60 m^2 sliver
+    const ring=moore(lab,W,H,c.id);
+    if(!ring||ring.length<4)continue;
+    let poly=ring.map(p=>({x:p2w(p.x),z:p2w(p.y)}));
+    poly=dpClosed(poly,2.0);
+    if(poly.length<3)continue;
+    if(Math.abs(area2(poly))<60)continue;
+    if(area2(poly)<0)poly.reverse();          // force CCW
+    blocks.push({poly,cx:centroid(poly)});
+  }
+  return blocks;
+}
+// Moore-neighbour boundary tracing (clockwise) of one 8-fat component -> pixel-centre ring
+function moore(lab,W,H,id){
+  let sx=-1,sy=-1;
+  outer:for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(lab[y*W+x]===id){sx=x;sy=y;break outer;}
+  if(sx<0)return null;
+  const IN=(x,y)=>x>=0&&y>=0&&x<W&&y<H&&lab[y*W+x]===id;
+  const CW=[[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]];
+  const ring=[{x:sx,y:sy}];
+  let px=sx,py=sy, bdx=-1,bdy=0;             // backtrack = west (outside, s is leftmost in top row)
+  const maxIt=8*(W+H)*4;let it=0;
+  const startX=sx,startY=sy;let firstStep=null;
+  while(it++<maxIt){
+    let bi=0;for(let k=0;k<8;k++)if(CW[k][0]===bdx&&CW[k][1]===bdy){bi=k;break;}
+    let found=false;
+    for(let s=1;s<=8;s++){const k=(bi+s)%8;const nx=px+CW[k][0],ny=py+CW[k][1];
+      if(IN(nx,ny)){const pk=(k+7)%8;bdx=CW[pk][0]-0;bdy=CW[pk][1]-0; // backtrack = prev checked (outside)
+        // recompute backtrack as offset from the new pixel back toward previous
+        bdx=px-nx;bdy=py-ny;
+        px=nx;py=ny;found=true;
+        if(firstStep===null)firstStep=px*100000+py;
+        break;}}
+    if(!found)break;                          // isolated pixel
+    if(px===startX&&py===startY&&ring.length>2&&firstStep!==null){break;}
+    ring.push({x:px,y:py});
+    if(ring.length>maxIt)break;
+  }
+  return ring;
+}
+
+/* --------------------------------------------- 3. skeleton-offset strip parcels */
+// For each block edge: strips of ~lotWidth cut perpendicular, extending inward by
+// lotDepth. Repair: reject area<40% nominal / aspect>4:1 / degenerate, merge slivers
+// into the previous lot on the same edge.
+// Claim raster (shared across all blocks): stamps every ACCEPTED lot so no two lots
+// (hence no two footprints) can overlap. Same 2px/m grid the block extractor used.
+// On thin blocks the opposite frontage's depth is clamped to the unclaimed cells,
+// or the lot is rejected if its frontage is already claimed.
+function makeClaim(town){
+  const dom=town.boundaryR+10, W=Math.ceil(dom*2*SCALE), H=W;
+  return {mask:new Uint8Array(W*H),W,H,dom};
+}
+function claimGet(cm,x,z){
+  const px=(x+cm.dom)*SCALE|0, pz=(z+cm.dom)*SCALE|0;
+  if(px<0||pz<0||px>=cm.W||pz>=cm.H)return 1;   // out of domain = blocked
+  return cm.mask[pz*cm.W+px];
+}
+function claimSet(cm,x,z){
+  const px=(x+cm.dom)*SCALE|0, pz=(z+cm.dom)*SCALE|0;
+  if(px<0||pz<0||px>=cm.W||pz>=cm.H)return;
+  cm.mask[pz*cm.W+px]=1;
+}
+function claimStampLot(cm,lot){
+  const {A,ux,uz,nx,nz,t0,t1,depth}=lot;
+  for(let a=t0;a<=t1+1e-6;a+=0.35)for(let dd=0;dd<=depth+1e-6;dd+=0.35)
+    claimSet(cm,A.x+ux*a+nx*dd,A.z+uz*a+nz*dd);
+}
+// deepest unclaimed build depth for the strip [t0..t1] pushing along n (0 if frontage claimed)
+function claimMaxDepth(cm,A,ux,uz,nx,nz,t0,t1,maxD){
+  const wlen=t1-t0, inset=Math.min(0.6,wlen*0.2), a0=t0+inset, a1=t1-inset;
+  const nS=Math.max(2,Math.ceil((a1-a0)/0.5));
+  let d=0;
+  for(let dd=0.4;dd<=maxD+1e-6;dd+=0.4){
+    let hit=false;
+    for(let s=0;s<=nS;s++){const a=a0+(a1-a0)*s/nS;
+      if(claimGet(cm,A.x+ux*a+nx*dd,A.z+uz*a+nz*dd)){hit=true;break;}}
+    if(hit)break;
+    d=dd;
+  }
+  return d;
+}
+function makeParcels(block,cfg,claim){
+  const poly=block.poly, lots=[], rejected=[];
+  const nominal=cfg.lotWidth*cfg.lotDepth;
+  let accepted=0,repaired=0;
+  for(let e=0;e<poly.length;e++){
+    const A=poly[e],B=poly[(e+1)%poly.length];
+    const dx=B.x-A.x,dz=B.z-A.z,L=Math.hypot(dx,dz);
+    if(L<cfg.lotWidth*0.5)continue;
+    const ux=dx/L,uz=dz/L;
+    let nx=-uz,nz=ux;                          // inward normal (verified below)
+    if(!pointInPoly({x:(A.x+B.x)/2+nx*0.6,z:(A.z+B.z)/2+nz*0.6},poly)){nx=-nx;nz=-nz;}
+    const cnt=Math.max(1,Math.round(L/cfg.lotWidth));
+    const w=L/cnt;
+    let prev=null;                             // last lot pushed for this edge (for merge)
+    for(let k=0;k<cnt;k++){
+      const lot=buildLot(A,ux,uz,nx,nz,k*w,(k+1)*w,cfg.lotDepth,poly,claim);
+      const v=lotValid(lot,nominal);
+      if(v){lot.status='accepted';lots.push(lot);accepted++;prev=lot;claimStampLot(claim,lot);}
+      else if(prev){                           // merge sliver into previous lot
+        prev.t1=lot.t1;rebuildLot(prev,A,ux,uz,nx,nz,cfg.lotDepth,poly,claim);
+        if(prev.status==='accepted'){accepted--;repaired++;}
+        prev.status='repaired';claimStampLot(claim,prev);
+      } else {lot.status='rejected';rejected.push(lot);}
+    }
+  }
+  // courtyard = block inset by lotDepth (render only; skip if degenerate/concave)
+  let courtyard=insetPolygon(poly,cfg.lotDepth);
+  if(courtyard&&(courtyard.length<3||Math.abs(area2(courtyard))<25))courtyard=null;
+  return {lots,rejected,courtyard,accepted,repaired,rejectedN:rejected.length};
+}
+function buildLot(A,ux,uz,nx,nz,t0,t1,depth,poly,claim){
+  const lot={A,ux,uz,nx,nz,t0,t1,depth};rebuildLot(lot,A,ux,uz,nx,nz,depth,poly,claim);return lot;
+}
+function rebuildLot(lot,A,ux,uz,nx,nz,depth,poly,claim){
+  const {t0,t1}=lot;
+  const p0={x:A.x+ux*t0,z:A.z+uz*t0}, p1={x:A.x+ux*t1,z:A.z+uz*t1};
+  let d=depth;
+  for(let i=0;i<6;i++){                        // clamp depth so inner edge stays inside block
+    const q0={x:p0.x+nx*d,z:p0.z+nz*d}, q1={x:p1.x+nx*d,z:p1.z+nz*d};
+    if(pointInPoly(q0,poly)&&pointInPoly(q1,poly))break;
+    d*=0.72;if(d<2){d=2;break;}
+  }
+  // Split the block fairly between opposite frontages: cast a ray inward to the far
+  // wall (local thickness T) and cap at T/2 — but only when both halves stay viable
+  // (>=MINDEPTH). On thinner blocks skip the cap so ONE frontage takes the full depth
+  // (a single terrace row) rather than starving both sides into rejects.
+  const tm=(t0+t1)/2, mx=A.x+ux*tm, mz=A.z+uz*tm;
+  let T=60;for(let dd=0.5;dd<=60;dd+=0.5){if(!pointInPoly({x:mx+nx*dd,z:mz+nz*dd},poly)){T=dd;break;}}
+  if(T*0.5>=MINDEPTH&&T*0.5<d)d=T*0.5;
+  if(claim){const dc=claimMaxDepth(claim,A,ux,uz,nx,nz,t0,t1,d);if(dc<d)d=dc;} // clamp to unclaimed cells
+  lot.depth=d;
+  lot.q=[p0,p1,{x:p1.x+nx*d,z:p1.z+nz*d},{x:p0.x+nx*d,z:p0.z+nz*d}];  // CCW-ish rect
+  lot.w=t1-t0;
+}
+// A viable lot: enough frontage + depth for a real (possibly narrow terrace) house.
+// Absolute floors, not a fraction of nominal, so claim-clamped terraces still pass.
+const MINDEPTH=2.8, MINWIDTH=3.5;
+function lotValid(lot,nominal){
+  if(lot.depth<MINDEPTH||lot.w<MINWIDTH)return false;
+  if(quadArea(lot.q)<14)return false;
+  const aspect=Math.max(lot.w,lot.depth)/Math.max(1e-3,Math.min(lot.w,lot.depth));
+  if(aspect>4.5)return false;
+  return true;
+}
+// inset a (convex-ish) polygon by d: offset each edge inward, intersect neighbours
+function insetPolygon(poly,d){
+  const n=poly.length,lines=[];
+  for(let i=0;i<n;i++){const A=poly[i],B=poly[(i+1)%n];const dx=B.x-A.x,dz=B.z-A.z,L=Math.hypot(dx,dz)||1;
+    let nx=-dz/L,nz=dx/L;
+    if(!pointInPoly({x:(A.x+B.x)/2+nx*0.5,z:(A.z+B.z)/2+nz*0.5},poly)){nx=-nx;nz=-nz;}
+    lines.push({px:A.x+nx*d,pz:A.z+nz*d,dx:dx/L,dz:dz/L});}
+  const out=[];
+  for(let i=0;i<n;i++){const a=lines[(i+n-1)%n],b=lines[i];
+    const det=a.dx*b.dz-a.dz*b.dx;if(Math.abs(det)<1e-6)return null;
+    const t=((b.px-a.px)*b.dz-(b.pz-a.pz)*b.dx)/det;
+    out.push({x:a.px+a.dx*t,z:a.pz+a.dz*t});}
+  if(area2(out)<0)return null;                 // flipped -> collapsed inset
+  return out;
+}
+
+/* ------------------------------------------------ 4. footprints (inset ~1m rect) */
+// strip lots are rectangles in (u,n); inset stays a rectangle. Fallback: frame rect.
+// depthFrac (0.6..1) scales the built depth; the building fronts the street so the
+// leftover depth reads as a rear garden/yard.
+function footprint(lot,depthFrac){
+  const {A,ux,uz,nx,nz,t0,t1,depth}=lot, m=1;
+  const w=t1-t0;
+  const bd=Math.max(2.0,(depthFrac||1)*depth-2*m);   // built depth after front/back margins
+  if(w>2*m+1.5&&bd>1.5&&depth>2*m+1.5){
+    const a0=t0+m,a1=t1-m,d0=m,d1=Math.min(depth-m,m+bd);
+    return {rect:true,corners:[
+      {x:A.x+ux*a0+nx*d0,z:A.z+uz*a0+nz*d0},
+      {x:A.x+ux*a1+nx*d0,z:A.z+uz*a1+nz*d0},
+      {x:A.x+ux*a1+nx*d1,z:A.z+uz*a1+nz*d1},
+      {x:A.x+ux*a0+nx*d1,z:A.z+uz*a0+nz*d1}]};
+  }
+  // fallback: largest rect aligned to frontage that fits the shrunk lot
+  const s=0.72,cx=(t0+t1)/2,dh=depth/2;
+  return {rect:true,corners:[
+    {x:A.x+ux*(cx-w*s/2)+nx*(dh-depth*s/2),z:A.z+uz*(cx-w*s/2)+nz*(dh-depth*s/2)},
+    {x:A.x+ux*(cx+w*s/2)+nx*(dh-depth*s/2),z:A.z+uz*(cx+w*s/2)+nz*(dh-depth*s/2)},
+    {x:A.x+ux*(cx+w*s/2)+nx*(dh+depth*s/2),z:A.z+uz*(cx+w*s/2)+nz*(dh+depth*s/2)},
+    {x:A.x+ux*(cx-w*s/2)+nx*(dh+depth*s/2),z:A.z+uz*(cx-w*s/2)+nz*(dh+depth*s/2)}]};
+}
+
+// SAT overlap test for two convex quads; EPS gap tolerance so touching != overlap.
+function rectsOverlap(A,B){
+  const EPS=0.05;
+  for(const poly of [A,B]){
+    for(let i=0;i<poly.length;i++){
+      const p1=poly[i],p2=poly[(i+1)%poly.length];
+      let ax=-(p2.z-p1.z),az=(p2.x-p1.x);const L=Math.hypot(ax,az)||1;ax/=L;az/=L;
+      let minA=Infinity,maxA=-Infinity,minB=Infinity,maxB=-Infinity;
+      for(const p of A){const d=p.x*ax+p.z*az;if(d<minA)minA=d;if(d>maxA)maxA=d;}
+      for(const p of B){const d=p.x*ax+p.z*az;if(d<minB)minB=d;if(d>maxB)maxB=d;}
+      if(maxA<minB+EPS||maxB<minA+EPS)return false;   // separated on this axis
+    }
+  }
+  return true;
+}
+
+/* ------------------------------------------------------- 5. straight-skeleton roof */
+// Rectangle: exact hip (classic ridge along the long axis, hip triangles at the
+// short ends). Non-rect convex quad: numeric edge-event shrink (equal-speed
+// wavefront). Pyramid fallback guarantees a watertight cap. Ridge/apex height =
+// offset distance * pitch. baseY = wall height so roof shares the wall top ring.
+function isRect(c){
+  if(c.length!==4)return false;
+  const e=[];for(let i=0;i<4;i++){const a=c[i],b=c[(i+1)%4];e.push({x:b.x-a.x,z:b.z-a.z});}
+  const dot=(p,q)=>p.x*q.x+p.z*q.z, len=p=>Math.hypot(p.x,p.z);
+  const perp=Math.abs(dot(e[0],e[1])/(len(e[0])*len(e[1])+1e-9));
+  const par=Math.abs(len(e[0])-len(e[2]))/(len(e[0])+1e-6)+Math.abs(len(e[1])-len(e[3]))/(len(e[1])+1e-6);
+  return perp<0.12&&par<0.12;
+}
+// type: 'hip' | 'gable' | 'pyramid' (footprints are always rects here). Gable and
+// hip share the rectangle ridge math; gable just runs the ridge the full length so
+// the "hip" end triangles collapse into vertical (watertight) gable end walls.
+function roofFor(corners,baseY,pitch,type){
+  try{
+    if(type==='pyramid')return pyramid(corners,baseY,pitch);
+    if(isRect(corners))return hipRect(corners,baseY,pitch,type==='gable');
+    const r=hipConvex(corners,baseY,pitch);
+    if(r&&r.faces.length)return r;
+  }catch(e){}
+  return pyramid(corners,baseY,pitch);
+}
+function P3(p,y){return{x:p.x,y,z:p.z};}
+function hipRect(c,baseY,pitch,gable){
+  const O={x:(c[0].x+c[1].x+c[2].x+c[3].x)/4,z:(c[0].z+c[1].z+c[2].z+c[3].z)/4};
+  const U={x:c[1].x-c[0].x,z:c[1].z-c[0].z}, Wl=Math.hypot(U.x,U.z);
+  const V={x:c[3].x-c[0].x,z:c[3].z-c[0].z}, Dl=Math.hypot(V.x,V.z);
+  const ux=U.x/Wl,uz=U.z/Wl, vx=V.x/Dl,vz=V.z/Dl;
+  const longU=Wl>=Dl, inset=Math.min(Wl,Dl)/2;
+  // hip: ridge inset by (long-short)/2 -> sloped ends. gable: ridge = full long span
+  // -> ends land on the short-edge midpoints, making the end triangles vertical.
+  const half=gable?Math.max(Wl,Dl)/2:Math.abs(Wl-Dl)/2;
+  const ay=baseY+inset*pitch;
+  let R0,R1;
+  if(longU){R0={x:O.x-ux*half,z:O.z-uz*half};R1={x:O.x+ux*half,z:O.z+uz*half};}
+  else     {R0={x:O.x-vx*half,z:O.z-vz*half};R1={x:O.x+vx*half,z:O.z+vz*half};}
+  const A=P3(R0,ay),Bp=P3(R1,ay);
+  const g=c.map(p=>P3(p,baseY));
+  let faces;
+  if(longU){
+    // ridge along U: long slopes on c0-c1 (front) & c2-c3 (back), hips at the u ends
+    faces=[[g[0],g[1],Bp,A],[g[2],g[3],A,Bp],[g[1],g[2],Bp],[g[3],g[0],A]];
+  }else{
+    // ridge along V: long slopes on c1-c2 & c3-c0, hips at the v ends
+    faces=[[g[1],g[2],Bp,A],[g[3],g[0],A,Bp],[g[0],g[1],A],[g[2],g[3],Bp]];
+  }
+  return {faces,ridge:[R0,R1],apexY:ay};
+}
+// numeric equal-speed wavefront on a convex polygon -> hip faces
+function hipConvex(poly,baseY,pitch){
+  let p=poly.map(q=>({x:q.x,z:q.z}));
+  if(area2(p)<0)p.reverse();
+  const n=p.length;
+  const edges=[];
+  for(let i=0;i<n;i++){const A=p[i],B=p[(i+1)%n];const dx=B.x-A.x,dz=B.z-A.z,L=Math.hypot(dx,dz)||1;
+    let nx=-dz/L,nz=dx/L;                        // inward (left) normal for CCW poly
+    edges.push({nx,nz,c:nx*A.x+nz*A.z,chainL:[P3(A,baseY)],chainR:[P3(B,baseY)],prev:(i+n-1)%n,next:(i+1)%n,dead:false});}
+  const vpos=(a,b,t)=>{const det=a.nx*b.nz-b.nx*a.nz;if(Math.abs(det)<1e-9)return null;
+    const c1=a.c+t,c2=b.c+t;return{x:(c1*b.nz-c2*a.nz)/det,z:(a.nx*c2-b.nx*c1)/det};};
+  const elen=(e,t)=>{const l=vpos(edges[e.prev],e,t),r=vpos(e,edges[e.next],t);if(!l||!r)return 1e9;return Math.hypot(r.x-l.x,r.z-l.z);};
+  const faces=[];let alive=n,T=0,guard=0;
+  while(alive>3&&guard++<n*4){
+    let best=-1,bt=Infinity;
+    for(let i=0;i<edges.length;i++){const e=edges[i];if(e.dead)continue;
+      const l0=elen(e,T),l1=elen(e,T+1),rate=l1-l0;if(rate>=-1e-6)continue;
+      const tc=T-l0/rate;if(tc>T+1e-6&&tc<bt){bt=tc;best=i;}}
+    if(best<0)break;
+    const e=edges[best];T=bt;const Npt=vpos(edges[e.prev],e,T);if(!Npt)break;
+    const N=P3(Npt,baseY+T*pitch);
+    edges[e.prev].chainR.push(N);edges[e.next].chainL.push(N);
+    e.chainL.push(N);e.chainR.push(N);
+    faces.push(e.chainR.concat(e.chainL.slice().reverse()));
+    edges[e.prev].next=e.next;edges[e.next].prev=e.prev;e.dead=true;alive--;
+  }
+  // remaining triangle -> incenter apex (solve 3 offset planes)
+  const rem=[];for(const e of edges)if(!e.dead)rem.push(e);
+  if(rem.length===3){
+    const[a,b,cc]=rem;
+    const M=[[a.nx,a.nz,-1,a.c],[b.nx,b.nz,-1,b.c],[cc.nx,cc.nz,-1,cc.c]];
+    const sol=solve3(M);
+    if(sol){const N=P3({x:sol[0],z:sol[1]},baseY+sol[2]*pitch);
+      for(const e of rem){e.chainR.push(N);e.chainL.push(N);faces.push(e.chainR.concat(e.chainL.slice().reverse()));}}
+    else return null;
+  } else if(rem.length>0) return null;
+  return {faces,ridge:null,apexY:baseY};
+}
+function solve3(M){                             // 3 eqns: nx*x+nz*z-1*t = c
+  const a=M.map(r=>r.slice());
+  for(let i=0;i<3;i++){let piv=i;for(let r=i+1;r<3;r++)if(Math.abs(a[r][i])>Math.abs(a[piv][i]))piv=r;
+    if(Math.abs(a[piv][i])<1e-9)return null;[a[i],a[piv]]=[a[piv],a[i]];
+    for(let r=0;r<3;r++){if(r===i)continue;const f=a[r][i]/a[i][i];for(let k=i;k<4;k++)a[r][k]-=f*a[i][k];}}
+  return[a[0][3]/a[0][0],a[1][3]/a[1][1],a[2][3]/a[2][2]];
+}
+function pyramid(c,baseY,pitch){
+  const O=centroid(c);let ins=1e9;
+  for(let i=0;i<c.length;i++){const A=c[i],B=c[(i+1)%c.length];const dx=B.x-A.x,dz=B.z-A.z,L=Math.hypot(dx,dz)||1;
+    const d=Math.abs((O.x-A.x)*dz-(O.z-A.z)*dx)/L;if(d<ins)ins=d;}
+  const ay=baseY+ins*pitch, apex=P3(O,ay), faces=[];
+  for(let i=0;i<c.length;i++)faces.push([P3(c[i],baseY),P3(c[(i+1)%c.length],baseY),apex]);
+  return {faces,ridge:null,apexY:ay};
+}
+
+/* -------------------------------------------------------------- build the world */
+const cfg={seed:'allhammers',lotDepth:12,lotWidth:9,pitch:0.55};
+let MODEL=null;                                 // {town,blocks,items,stats,vhash}
+function build(){
+  const t0=performance.now();
+  const R=mulberry32(hashSeed(cfg.seed+'|b'));  // seeded wall heights etc.
+  const town=genTown(cfg.seed);
+  const claim=makeClaim(town);
+  const blocks=extractBlocks(town);
+  const items=[];                                // {footprint corners, walls, roof}
+  const gardens=[];                              // unbuilt lot quads (yard/garden)
+  const plazas=[], courtyards=[], rejects=[];
+  let accepted=0,repaired=0,rejectedN=0,areaSum=0,areaN=0;
+  const roofN={hip:0,gable:0,pyramid:0}; let unbuilt=0;
+  for(const bl of blocks){
+    const c=bl.cx, distC=Math.hypot(c.x,c.z);
+    if(distC<20&&Math.abs(area2(bl.poly))<1100){bl.plaza=true;plazas.push(bl.poly);continue;}
+    const par=makeParcels(bl,cfg,claim);
+    accepted+=par.accepted;repaired+=par.repaired;rejectedN+=par.rejectedN;
+    if(par.courtyard)courtyards.push(par.courtyard);
+    for(const lot of par.rejected)rejects.push(lot.q);
+    for(const lot of par.lots){
+      areaSum+=quadArea(lot.q);areaN++;
+      // per-lot seeded form: unbuilt yard (~8%), built depth 60-100%, roof type
+      const isUnbuilt=R()<0.08;
+      const depthFrac=0.6+0.4*R();
+      const rt=R();
+      const wallH=3+R()*2;
+      if(isUnbuilt){gardens.push(lot.q);unbuilt++;continue;}
+      const fp=footprint(lot,depthFrac);
+      // smallest lots may be simple pyramid/hut caps; larger lots split hip/gable ~55/35.
+      const small=Math.min(lot.w,lot.depth)<5.5;
+      let type;
+      if(small)type=rt<0.34?'pyramid':rt<0.66?'hip':'gable';
+      else type=rt<0.61?'hip':'gable';
+      const roof=roofFor(fp.corners,wallH,cfg.pitch,type);
+      roofN[type]++;
+      items.push({lot,fp,wallH,roof,type});
+    }
+  }
+  // pairwise footprint overlap check (broadphase AABB + SAT); must be 0
+  let overlaps=0;
+  const bb=items.map(it=>{const c=it.fp.corners;let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;
+    for(const p of c){if(p.x<x0)x0=p.x;if(p.x>x1)x1=p.x;if(p.z<z0)z0=p.z;if(p.z>z1)z1=p.z;}return{x0,x1,z0,z1};});
+  for(let i=0;i<items.length;i++)for(let j=i+1;j<items.length;j++){
+    const a=bb[i],b=bb[j];if(a.x1<b.x0||b.x1<a.x0||a.z1<b.z0||b.z1<a.z0)continue;
+    if(rectsOverlap(items[i].fp.corners,items[j].fp.corners))overlaps++;
+  }
+  // assemble 3D buffers + vertex hash
+  const wallPos=[],roofPos=[];
+  const pushTri=(arr,a,b,d)=>{arr.push(a.x,a.y,a.z,b.x,b.y,b.z,d.x,d.y,d.z);};
+  const fan=(arr,f)=>{for(let i=1;i<f.length-1;i++)pushTri(arr,f[0],f[i],f[i+1]);};
+  for(const it of items){
+    const c=it.fp.corners, h=it.wallH;
+    for(let i=0;i<c.length;i++){const A=c[i],B=c[(i+1)%c.length];
+      fan(wallPos,[P3(A,0),P3(B,0),P3(B,h),P3(A,h)]);}
+    for(const f of it.roof.faces)if(f)fan(roofPos,f);
+  }
+  let hs=2166136261>>>0;
+  const acc=v=>{const x=(Math.round(v*1000))|0;hs^=x&0xff;hs=Math.imul(hs,16777619);hs^=(x>>>8)&0xff;hs=Math.imul(hs,16777619);hs^=(x>>>16)&0xffff;hs=Math.imul(hs,16777619);};
+  for(const v of wallPos)acc(v);for(const v of roofPos)acc(v);
+  const vhash=(hs>>>0).toString(16);
+  const tris=(wallPos.length+roofPos.length)/9;
+  const stats={blocks:blocks.length,accepted,repaired,rejected:rejectedN,
+    meanArea:areaN?areaSum/areaN:0,tris,ms:performance.now()-t0,vhash,
+    overlaps,unbuilt,roofs:{hip:roofN.hip,gable:roofN.gable,pyramid:roofN.pyramid}};
+  MODEL={town,blocks,items,gardens,plazas,courtyards,rejects,wallPos,roofPos,stats};
+  return MODEL;
+}
+
+/* -------------------------------------------------------------------- 2D render */
+function draw2d(){
+  const cv=document.getElementById('c2d');
+  const dom=MODEL.town.boundaryR+10;
+  const S=Math.min(cv.clientWidth,cv.clientHeight);
+  cv.width=cv.clientWidth;cv.height=cv.clientHeight;
+  const g=cv.getContext('2d');
+  const pad=8, sc=(Math.min(cv.width,cv.height)-pad*2)/(dom*2);
+  const ox=cv.width/2, oy=cv.height/2;
+  const X=x=>ox+x*sc, Y=z=>oy+z*sc;
+  g.fillStyle='#e9e0c9';g.fillRect(0,0,cv.width,cv.height);
+  // streets
+  g.lineCap='round';g.lineJoin='round';g.strokeStyle='#7a5230';
+  for(const st of MODEL.town.streets){g.lineWidth=st.w*sc;g.beginPath();
+    const n=st.pts.length,lim=st.closed?n:n-1;g.moveTo(X(st.pts[0].x),Y(st.pts[0].z));
+    for(let i=1;i<=lim;i++){const p=st.pts[i%n];g.lineTo(X(p.x),Y(p.z));}g.stroke();}
+  // blocks outline
+  g.lineWidth=1;g.strokeStyle='#403a2c';
+  for(const bl of MODEL.blocks){if(bl.plaza)continue;poly(g,bl.poly,X,Y);g.stroke();}
+  // plazas
+  g.fillStyle='#8f8f8f';for(const p of MODEL.plazas){poly(g,p,X,Y);g.fill();}
+  // courtyards
+  g.fillStyle='#6f9a5a';for(const c of MODEL.courtyards){poly(g,c,X,Y);g.fill();}
+  // unbuilt lots (gardens/yards)
+  g.fillStyle='#7ba05a';g.strokeStyle='rgba(60,80,40,.6)';g.lineWidth=0.6;
+  for(const q of MODEL.gardens){poly(g,q,X,Y);g.fill();g.stroke();}
+  // parcels
+  for(const it of MODEL.items){const lot=it.lot;
+    g.fillStyle=lot.status==='repaired'?'#d98a2b':`hsl(${(hashSeed(lot.t0+''+lot.A.x)%50)+35},${38}%,${66}%)`;
+    poly(g,lot.q,X,Y);g.fill();g.lineWidth=0.6;g.strokeStyle='rgba(60,50,30,.5)';g.stroke();}
+  // rejected
+  g.fillStyle='rgba(192,57,43,.55)';g.strokeStyle='#c0392b';g.lineWidth=1;
+  for(const q of MODEL.rejects){poly(g,q,X,Y);g.fill();g.stroke();}
+  // footprints + ridges
+  for(const it of MODEL.items){
+    g.strokeStyle='#2a2016';g.lineWidth=1;poly(g,it.fp.corners,X,Y);g.stroke();
+    if(it.roof.ridge){g.strokeStyle='#fff';g.lineWidth=1.4;g.beginPath();
+      g.moveTo(X(it.roof.ridge[0].x),Y(it.roof.ridge[0].z));g.lineTo(X(it.roof.ridge[1].x),Y(it.roof.ridge[1].z));g.stroke();}
+  }
+}
+function poly(g,p,X,Y){g.beginPath();g.moveTo(X(p[0].x),Y(p[0].z));for(let i=1;i<p.length;i++)g.lineTo(X(p[i].x),Y(p[i].z));g.closePath();}
+
+/* -------------------------------------------------------------------- 3D render */
+let renderer,scene,cam,wallMesh,roofMesh,streetMesh,gardenMesh,groundMesh;
+let orbit={az:0.9,el:0.95,rad:260,tx:0,tz:0};
+function init3d(){
+  const host=document.getElementById('right');
+  renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(host.clientWidth,host.clientHeight);
+  renderer.setClearColor(0x9fb6cc);host.appendChild(renderer.domElement);
+  scene=new THREE.Scene();scene.fog=new THREE.Fog(0x9fb6cc,260,620);
+  cam=new THREE.PerspectiveCamera(48,host.clientWidth/host.clientHeight,1,2000);
+  const sun=new THREE.DirectionalLight(0xfff2d8,1.0);sun.position.set(120,220,90);scene.add(sun);
+  scene.add(new THREE.HemisphereLight(0xcfe0f0,0x5b4a2f,0.65));
+  const gg=new THREE.PlaneGeometry(700,700);const gm=new THREE.MeshLambertMaterial({color:0x8a9a6a});
+  groundMesh=new THREE.Mesh(gg,gm);groundMesh.rotation.x=-Math.PI/2;groundMesh.position.y=-0.05;scene.add(groundMesh);
+  const dom=renderer.domElement;let drag=false,lx=0,ly=0;
+  dom.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly=e.clientY;dom.setPointerCapture(e.pointerId);});
+  dom.addEventListener('pointermove',e=>{if(!drag)return;orbit.az-=(e.clientX-lx)*0.008;orbit.el=Math.max(0.15,Math.min(1.5,orbit.el-(e.clientY-ly)*0.006));lx=e.clientX;ly=e.clientY;});
+  dom.addEventListener('pointerup',e=>{drag=false;});
+  dom.addEventListener('wheel',e=>{orbit.rad=Math.max(70,Math.min(560,orbit.rad*(1+Math.sign(e.deltaY)*0.08)));e.preventDefault();},{passive:false});
+  window.addEventListener('resize',()=>{renderer.setSize(host.clientWidth,host.clientHeight);cam.aspect=host.clientWidth/host.clientHeight;cam.updateProjectionMatrix();});
+  animate();
+}
+function rebuild3d(){
+  for(const m of[wallMesh,roofMesh,streetMesh,gardenMesh]){if(m){scene.remove(m);m.geometry.dispose();}}
+  wallMesh=meshFrom(MODEL.wallPos,0xd8c49a);
+  roofMesh=meshFrom(MODEL.roofPos,0x9c4a2f);
+  // unbuilt lots as flat garden patches
+  const gp=[];const gt=(a,b,c)=>{gp.push(a.x,a.y,a.z,b.x,b.y,b.z,c.x,c.y,c.z);};
+  for(const q of MODEL.gardens){const y=0.06;const P=q.map(p=>({x:p.x,y,z:p.z}));
+    for(let i=1;i<P.length-1;i++)gt(P[0],P[i],P[i+1]);}
+  gardenMesh=meshFrom(gp,0x6f8f4a);
+  if(gardenMesh)scene.add(gardenMesh);
+  // streets as flat ribbons
+  const sp=[];const pushTri=(a,b,c)=>{sp.push(a.x,a.y,a.z,b.x,b.y,b.z,c.x,c.y,c.z);};
+  for(const st of MODEL.town.streets){const n=st.pts.length,lim=st.closed?n:n-1,hw=st.w/2;
+    for(let i=0;i<lim;i++){const A=st.pts[i],B=st.pts[(i+1)%n];const dx=B.x-A.x,dz=B.z-A.z,L=Math.hypot(dx,dz)||1;
+      const nx=-dz/L*hw,nz=dx/L*hw,y=0.05;
+      const a={x:A.x+nx,y,z:A.z+nz},b={x:A.x-nx,y,z:A.z-nz},c={x:B.x-nx,y,z:B.z-nz},d={x:B.x+nx,y,z:B.z+nz};
+      pushTri(a,b,c);pushTri(a,c,d);}}
+  streetMesh=meshFrom(sp,0x6a4a2c);
+  if(wallMesh)scene.add(wallMesh);if(roofMesh)scene.add(roofMesh);if(streetMesh)scene.add(streetMesh);
+}
+function meshFrom(pos,color){
+  if(!pos.length)return null;
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  geo.computeVertexNormals();
+  return new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color,side:THREE.DoubleSide,flatShading:true}));
+}
+function animate(){requestAnimationFrame(animate);
+  const x=Math.cos(orbit.az)*Math.cos(orbit.el)*orbit.rad, y=Math.sin(orbit.el)*orbit.rad, z=Math.sin(orbit.az)*Math.cos(orbit.el)*orbit.rad;
+  cam.position.set(orbit.tx+x,y,orbit.tz+z);cam.lookAt(orbit.tx,0,orbit.tz);
+  renderer.render(scene,cam);
+}
+
+/* --------------------------------------------------------------------- driver */
+function showStats(){
+  const s=MODEL.stats,total=s.accepted+s.repaired+s.rejected;
+  const bad=total?((s.repaired+s.rejected)/total*100):0;
+  document.getElementById('stats').textContent=
+`seed        ${cfg.seed}
+blocks      ${s.blocks}
+parcels     ${total}  (ok ${s.accepted} / repaired ${s.repaired} / rejected ${s.rejected})
+repaired+rej ${bad.toFixed(1)}%
+overlaps    ${s.overlaps}
+roofs       hip ${s.roofs.hip} / gable ${s.roofs.gable} / hut ${s.roofs.pyramid}
+unbuilt     ${s.unbuilt}
+mean lot    ${s.meanArea.toFixed(1)} m²
+triangles   ${s.tris}
+gen time    ${s.ms.toFixed(1)} ms
+vhash       ${s.vhash}`;
+}
+function regen(){
+  cfg.seed=document.getElementById('seed').value.trim()||'allhammers';
+  cfg.lotDepth=+document.getElementById('depth').value;
+  cfg.lotWidth=+document.getElementById('width').value;
+  cfg.pitch=Math.tan(+document.getElementById('pitch').value*Math.PI/180);   // slider = degrees
+  build();draw2d();if(renderer)rebuild3d();showStats();
+  window.PROTO.ready=true;
+}
+window.PROTO={ready:false,
+  regen(seed){if(seed!==undefined)document.getElementById('seed').value=seed;regen();return MODEL.stats;},
+  stats(){return MODEL.stats;},
+  hashVerts(){let hs=2166136261>>>0;const acc=v=>{const x=(Math.round(v*1000))|0;hs^=x&0xff;hs=Math.imul(hs,16777619);hs^=(x>>>8)&0xff;hs=Math.imul(hs,16777619);hs^=(x>>>16)&0xffff;hs=Math.imul(hs,16777619);};for(const v of MODEL.wallPos)acc(v);for(const v of MODEL.roofPos)acc(v);return(hs>>>0).toString(16);},
+  model(){return MODEL;},
+  // exercise the numeric convex skeleton on a trapezoid (footprints are all rects)
+  testSkeleton(){return hipConvex([{x:-10,z:-6},{x:10,z:-6},{x:6,z:6},{x:-6,z:6}],3,0.6);}
+};
+function boot(){
+  document.getElementById('regen').onclick=regen;
+  for(const id of['depth','width','pitch']){const el=document.getElementById(id);
+    el.oninput=()=>{document.getElementById(id+'O').textContent=id==='pitch'?Math.tan(+el.value*Math.PI/180).toFixed(2):el.value;regen();};}
+  document.getElementById('seed').addEventListener('keydown',e=>{if(e.key==='Enter')regen();});
+  document.getElementById('pitchO').textContent=Math.tan(55*Math.PI/180).toFixed(2);
+  init3d();regen();
+}
+if(window.THREE)boot();else window.addEventListener('load',boot);
+</script>

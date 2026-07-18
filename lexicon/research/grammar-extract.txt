@@ -1,0 +1,1585 @@
+
+===== PAGE 1 =====
+Classical Paternic: A Reference
+Grammar (in Part)
+Peternekh Haga Dum (Iend¯ aned)
+HolyFlapjacks
+July 16, 2026
+Relay Grammar
+1.1 Introduction
+This reference grammar (still very much so a work-in-progress) contains a detailed grammatical
+description of a constructed language called Classical Paternic, a language I’ve created for my own
+artistic and intellectual enjoyment and as an element of my personal worldbuilding in the conworld
+of N ¯ ımlad, although I hope that others will find this work both interesting and entertaining. My
+goal in creating this language was to construct the outlines of a grammar and phonaesthetic that
+adhered to my own sense of linguistic aesthetics. As realism is an aesthetic choice of mine and is
+therefore a design constraint, I’ve largely worked to construct a language that I find linguistically
+plausible and internally consistent. However, I have not hesitated to introduce grammatical or
+phonological quirks that are not necessarily ’naturalistic’ for no other reason than because I wanted
+to include them. Classical Paternic draws inspiration phonologically and grammatically from Latin,
+Akkadian, Greenlandic, Hindustani, Nahuatl, Bengali, Hebrew, Lezgian, the Salishan languages,
+Tolkien’s Sindarin and Adˆ unaic, Biblaridion’s Nekachti, and many others, though it does not greatly
+resemble any of these tongues outside of the occasional lexical similarity. Please note that Classical
+Paternic is an ongoing project, with no fixed endpoint. It has changed significantly in the seven or so
+years I have been worked on it and will very likely change much more so long as I remain interested
+in it. The description given in this document is thus not the final form of Classical Paternic, but
+merely a representation of the language’s state at the time of writing.
+Paternic words and morphemes will appear in italics, with glosses set off by single quotes, e.g.,
+agos‘land’. Example sentences are normally presented in the following three line format:
+(1.1)Abkarab
+1sg:poss=lord:nom:sg
+kur¯ ukok
+senate-gen:sg
+em¯ et¯ us
+law-acc:pl
+m¯ ares.
+read-prf
+‘My master has read the senate’s laws.’
+The first line of the example provides the Paternic phrase or sentence, while the second line
+gives a series of word-by-word glosses. If a word is morphologically complex to any degree, each
+morpheme is glossed separately (grammatical morphemes are labeled with abbreviations written
+in small caps, morpheme breaks are indicated through a hyphen, a colon is used to express two
+or more units of meaning expressed by a single morpheme, an equals sign is used to mark clitic
+boundaries, and grammatical properties signaled by a morphophonological change are marked by
+1
+
+===== PAGE 2 =====
+a forward slash). The third line gives an English translation set off by single quotes of the given
+phrase or sentence. I have chosen not to break up Paternic words into their individual morphemes
+for the sake of readability. An asterisk preceding a Paternic word, phrase, or sentence (for example,
+*nar der¯ ugud‘I am crying’) indicates an ungrammatical form or structure.
+Below is a list of glossing abbreviations used in this document:
+Abbreviations
+1sg1st person singular
+2pl2nd person plural
+2sg2nd person singular
+3asg3rd person animate singular
+3i3rd person inanimate
+accaccusative case
+acvbareterite converb
+allallative case
+ananimate
+applapplicative
+averavertive
+benbenefactive
+comcomitative case
+compcomplementizer
+concconcessive
+condconditional
+cvbconverb
+ergergative case
+gengenitive case
+gnognomic tense
+icvbimperfective converb
+impfimperfect tense
+inaninanimate
+insinstrumental case
+irrirrealis tense
+loclocative case
+malmalefactive
+msdmasdar
+narrnarrative tense
+necnecessitative mood
+negnegative
+nomnominative case
+phabpast habitual tense
+pirrpast irrealis tense
+plplural
+pluppluperfect tense
+posspossessive
+postposterior
+pretpreterite tense
+prfperfect tense
+prspresent tense
+purppurposive
+quotquotative
+sgsingular
+vocvocative
+2
+
+===== PAGE 3 =====
+Contents
+1 Introduction 1
+1.1 Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1
+2 Phonology 6
+2.1 Consonants . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+2.1.1 Vowels . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+2.2 Syllable Structure, Phonotactics, and Phonological Processes . . . . . . . . . . . . . 7
+2.2.1 Vowel Hiatus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+2.2.2 Consonant Phonotactics and Processes . . . . . . . . . . . . . . . . . . . . . . 7
+2.2.3 Stress Assignment . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+3 Nouns 8
+3.1 Animacy and Number . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+3.1.1 Animacy . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+3.1.2 Number . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+3.2 Case Roles . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+3.2.1 Nominative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+3.2.2 Accusative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+3.2.3 Ergative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+3.2.4 Genitive . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+3.2.5 Allative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+3.2.6 Locative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+3.2.7 Instrumental . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+3.2.8 Comitative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+3.3 Noun Morphology . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+3.3.1 Principal Parts . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+3.3.2 First Declension . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+3.3.3 Second Declension . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+3.3.4 Third Declension . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+3.3.5 Fourth Declension . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+3.3.6 Fifth Declension . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+3.3.7 Sixth Declension . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+3.3.8 Seventh Declension . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+3.3.9 Eight Declension . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+4 Pronouns 15
+4.1 Personal Pronouns . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+4.1.1 Proclitic Forms . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+4.1.2 Genitive and Accusative Forms . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+5 Adjectives 17
+5.1 Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+5.2 Substantive Adjectives . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+5.3 Degrees of Comparison . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+5.3.1 Comparative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+5.3.2 Superlative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+5.3.3 Equative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+5.3.4 Morphology Tables . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+3
+
+===== PAGE 4 =====
+6 Finite V erbs 19
+6.1 Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+6.2 Principal Parts . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+6.3 Verbal Morphology . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+6.4 Time and Aspect . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+6.5 Tense . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+6.5.1 Gnomic . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+6.5.2 Preterite . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+6.5.3 Narrative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+6.5.4 Perfect . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+6.5.5 Pluperfect . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+6.5.6 Present . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+6.5.7 Imperfect . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+6.5.8 Past Habitual . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+6.5.9 Irrealis and Past Irrealis . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+6.6 Mood . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+6.6.1 Jussive . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+6.6.2 Potential . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+6.6.3 Necessitative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+6.6.4 Old Imperative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+6.7 Applicative Voice . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+6.7.1 Benefactive . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+6.7.2 Malefactive . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+6.7.3 Locative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+6.7.4 Circumstantial . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 24
+6.8 Periphrastic Future . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 24
+7 Non-Finite V erbs 25
+7.1 The Masdar . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+7.2 Converbs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+7.2.1 Imperfective . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+7.2.2 Anterior . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+7.2.3 Posterior . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+7.2.4 Conditional . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+7.2.5 Concessive . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+7.2.6 Purposive . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+7.2.7 Avertive . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+7.3 Participles . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+8 Minor W ord Classes 28
+8.1 Postpositions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
+8.2 Coordination . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
+8.2.1 Postpositive Coordinators . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29
+8.3 Negative Particle . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29
+8.4 Vocative Particle . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29
+9 Clause Structure and Syntax 30
+9.1 Constituent Order . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
+9.2 Complementizers . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
+9.3 Special Clause Types . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+9.3.1 Copular Sentences . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+9.3.2 Direct Speech . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+9.4 Conditional Clauses . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+9.4.1 General Structure . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+4
+
+===== PAGE 5 =====
+9.4.2 Present Indicative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+9.4.3 Past Indicative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+9.4.4 Future Indicative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+9.4.5 Past-to-Present Indicative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+9.4.6 Past-to-Future Indicative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+5
+
+===== PAGE 6 =====
+Phonology
+2.1 Consonants
+There are twenty consonantal phonemes in Classical Patrinaic with the following places and
+manners of articulation.
+bilabial alveolar post-alveolar palatal velar
+nasal m n
+plosive
+Voiceless p t k
+Voiced b d g
+Aspirated ph (ph) th (th) kh (kh)
+fricative Voiceless s S(sh) x (h)
+Voiced z Z(zh) G(gh)
+approximant l j (i)
+rhotic R∼r
+/r/, /m/, and /n/ always become voiceless when word-initial, being pronounced [r
+
+], [m
+
+], and
+[n
+
+] respectively.
+/n/ assimilates in place of articulation to a following plosive.
+The velar fricatives /x/ and /G/ palatalize to [¸ c] and [J] when preceding a front vowel.
+Aspirated plosives lenite into voiceless fricatives word-finally and when preceding another con-
+sonant, yielding the allophonic series [F,T, x].
+2.1.1 V owels
+Classical Patrinaic has ten vowel phonemes with each vowel possessing a distinction in length.
+front non-front
+unround round
+close i i:u u:
+e e:o o:
+open A A:
+In all phonological environments, the long vowels are pronounced as in the IPA. However, all of
+the short vowels other than /A/, as shown in the following examples, have both tense and lax forms.
+The short vowels become tense in stressed syllables and when word-final. They are lax everywhere
+else.
+phel
+zir
+nor
+hus
+[phEl]
+[zIr]
+[nOr]
+[xUs]
+‘water’
+‘tongue’
+‘ground’
+‘authority’
+phelath
+zireth
+norath
+hurath
+["p he.lAT]
+["zi.rET]
+["no.rAT]
+["xu.rAT]
+‘water.com’
+‘tongue.com’
+‘ground.com’
+‘authority.com’
+Additionally, there are two diphthongs: [AI  ] and [AU  ]. These diphthongs have an identical distri-
+bution to the long vowels and are treated as such by the morphology.
+6
+
+===== PAGE 7 =====
+2.2 Syllable Structure, Phonotactics, and Phonological Processes
+Syllables are maximally CCVC although there are strict limits on permissible CC clusters (only
+plosives followed by a rhotic are permissable). Major phonological processes include vowel hiatus
+resolution, nasal and plosive assimilation, degemination, and epenthesis to resolve illegal consonant
+and vowel clusters.
+2.2.1 V owel Hiatus
+Vowels are not permitted to follow each other in Classical Paternic. If two vowels come into
+contact with one another within a word, a vowel hiatus resolution will occur according to the chart
+below:
+Second Vowel
+First Vowel
+a e i o u ¯ a ¯ e ¯ ı ¯ o ¯ u
+a ¯ a ae ae o au ¯ a ¯ e ¯ ı ¯ o ¯ u
+e a ¯ e ¯ e o u ¯ a ¯ e ¯ ı ¯ o ¯ u
+i a e ¯ ı o u ¯ a ¯ e ¯ ı ¯ o ¯ u
+o a ¯ o o ¯ o ¯ o ¯ a ¯ e ¯ ı ¯ o ¯ u
+u a ¯ u u ¯ o ¯ u ¯ a ¯ e ¯ ı ¯ o ¯ u
+¯ a ¯ a ¯ a ¯ a ¯ a ¯ a ¯ a ¯ e ¯ ı ¯ o ¯ u
+¯ e ¯ e ¯ e ¯ e ¯ e ¯ e ¯ a ¯ e ¯ ı ¯ o ¯ u
+¯ ı ¯ ı ¯ ı ¯ ı ¯ ı ¯ ı ¯ a ¯ e ¯ ı ¯ o ¯ u
+¯ o ¯ o ¯ o ¯ o ¯ o ¯ o ¯ a ¯ e ¯ ı ¯ o ¯ u
+¯ u ¯ u ¯ u ¯ u ¯ u ¯ u ¯ a ¯ e ¯ ı ¯ o ¯ u
+2.2.2 Consonant Phonotactics and Processes
+Geminated consonants are not permitted. If two identical consonants collide within a word,
+they will degeminate.
+An illegal consonant cluster can be broken up by inserting an epenthetical /e/ between the
+two consonants of the cluster.
+Alveolar fricatives cannot follow nasals. If such a cluster occurs, the preceding nasal will be
+deleted and the vowel before that nasal will undergo compensatory lengthening.
+2.2.3 Stress Assignment
+In Classical Paternic, the stress on a word is placed on only one of two syllables: the one before
+the last syllable (thepenultimatesyllable, orpenult), or the one before that (theantepenultimate
+syllable, orantepenult). The final syllable is called theultima, but it is irrelevant to stress assignment.
+Rule One:stress the penult if the syllable is long.
+If the vowel in the penult is long or a diphthong, the syllable is long, so the stress goes on the
+penult.
+The penult syllable is long if it is ended by a consonant cluster. However, plosive consonants
+followed by a rhotic both belong to the onset of the next syllabe, and so do not make the
+penult long
+Rule Two:if the penult is short, stress the antepenult.
+7
+
+===== PAGE 8 =====
+Nouns
+3.1 Animacy and Number
+Here a brief summary of animacy and number in Classical Patrinaic will be given.
+3.1.1 Animacy
+Animacy generally refers to whether a noun is living (animate) or non-living (inanimate), al-
+though is no exact equivalence between a noun’s animacy and its semantic category. In the nomina-
+tive case, there is no phonological pattern which can be used to discern a noun’s animacy. Animate
+and inanimate nouns do, however, have differing suffixes in the other cases. Thus, whether a specific
+unmarked noun is animate or inanimate is a property that must be memorized on an individual
+basis.
+There are roughly as many animate nouns as there are inanimate. Animacy is not restricted to
+biological animacy. For example, many words referring to biologically animate things are inanimate,
+such as with the wordsbilka‘plant, fungus’ andgurgael‘raven, cormorant’. Likewise, many animate
+nouns, including the following, are biologically inanimate:
+z¯ or
+balakh
+sulum
+negriln¯ ar
+kembu
+hag
+lazh
+gim ¯ ıl
+‘fire, soul’
+‘ship, boat’
+‘column, mast’
+‘high tide’
+‘mote, dust’
+‘mouth, language’
+‘valley, dell’
+‘star, meteor’
+Such animate nouns may be referred to with inanimate pronouns, and vice versa for morpholog-
+ically inanimate nouns that are biologically animate (especially if said nouns refer to humans).
+3.1.2 Number
+In Classical Patrinaic, animate and inanimate nouns treat number differently. Animate nouns
+are marked for two numbers: singular and plural. The singular refers to a single instance or unit of
+something while the plural refers to several instances or a greater quantity of something. Inanimate
+nouns, on the other hand, take no marking for number. The bare inanimate nounthundo‘pebble’
+can refer to an individual pebble or a group of several pebbles, for instance.
+Many inanimate nouns do have an inherent number, however, meaning that they are assumed
+to denote a certain quantity of something. Demonstrating this, the wordghim‘teeth’ refers to a
+full mouth of teeth instead of to an individual tooth. When necessary, there are methods that can
+be used to explicitly mark number on inanimate nouns, however. Using the previous example, a
+speaker who wished to refer to an individual tooth would quantify the word with the numeral prefix
+az-‘one’. Adjectives, demonstratives, and quantifiers modifying inanimate nouns also agree with
+those nouns in numbers. Thusly, speakers could refrain from quantifying inanimate nouns directly
+if such a modifier would clarify. The sentences below demonstrate these two strategies:
+(3.1)Angimae
+2sg:poss=teeth-acc:inan
+der¯ ule.
+blacken:prs
+‘Your teeth are turning black.’
+(3.2)Tarok
+2sg:genone=teeth-acc:inan
+az-gimae
+blacken:prs
+der¯ ule.
+‘Your tooth is turning black.’
+8
+
+===== PAGE 9 =====
+(3.3)Angim
+2sg:poss=teeth-nom:inan
+d¯ ulas.
+black-nom:inan:pl
+‘Your teeth are black.’
+(3.4)Angim
+2sg:poss=teeth-nom:inan
+d¯ ul.
+black-nom:inan:sg
+‘Your tooth is black.’
+3.2 Case Roles
+Classical Patrinaic is a case-marking language, using morphology to indicate grammatical roles on
+noun phrases and pronouns. There are eight cases: nominative (nom), accusative (acc), ergative
+(erg), genitive (gen), allative (all), locative (loc), instrumental (ins), and comitative (com).
+Almost all of the cases have multiple distinct functions, complicating the system. Therefore each
+case will be accorded its own individual subsection, wherein they can be discussed in detail.
+3.2.1 Nominative
+The nominative case’s most common use is as the marker of the subject. It is also the case used in
+most predicate expressions, and also marks the primary object in the preterite and imperfect tenses
+of non-defective verbs, which feature ergative alignment. The examples below will demonstrate these
+three usages:
+(3.5)Z¯ ores
+fire-Nom:pl
+gh¯ azae
+tree-acc:inan
+nemeb.
+burn-prs
+‘The fire is burning the tree(s).’
+(3.6) ¯Uk
+man:nom:sg
+aldor.
+tall:nom:sg:an
+‘The man is tall.’
+(3.7)Z¯ or¯ es
+fire-erg:pl
+gh¯ az
+tree-nom:inan
+nembut.
+burn-impf
+‘The fire was burning the tree(s).’
+The nominative case can also be used in place of a vocative case, as there is no morphological
+vocative.
+3.2.2 Accusative
+The accusative marks the primary object (a term that conflates the direct object of a transitive
+verb with the recipient of a ditransitive verb), the experiencer of an intransitive verb (Icry, for
+example), and durations of time.
+3.2.3 Ergative
+The ergative case’s primary role is to denote the subject of a non-defective verb in either the
+preterite or imperfect tenses. Both of these tenses exhibit behavior indicative of an ergative align-
+ment. Motion away from a referent is also marked by the ergative case. These two use cases will be
+shown here:
+(3.8)Z¯ or¯ es
+fire-erg:pl
+gh¯ az
+tree-nom:inan
+nembut.
+burn-impf
+‘The fire was burning the tree(s).’
+(3.9)Nar
+1sg:nom
+kh¯ or¯ a
+river-erg:sg
+mem¯ at.
+go-prs
+‘I am going away from the river.’
+9
+
+===== PAGE 10 =====
+3.2.4 Genitive
+The genitive case is best translated using the English preposition ‘of’. It typically marks posses-
+sion of or relation to a head noun. The genitive case is also used to mark motion towards a referent
+and for objects of emotion (e.g. I feel angertowards the king).
+3.2.5 Allative
+The allative case is a largely vestigial case whose role has been taken over by the genitive. Now
+the allative is used only for motion towards a small subset of regions, nations, cities, major rivers,
+islands, and a few other seemingly random words.
+3.2.6 Locative
+The locative can almost always be translated as ‘at’, ‘in’, or ‘on’. This is also the case with time
+or with periods of time. Most postpositions take locative arguments. In the periphrastic passive
+voice, the locative case can also reintroduce agents when combined with the postpositiongh ¯ ıl‘near,
+by’.
+3.2.7 Instrumental
+The instrumental indicates the instrument or means by which an action is accomplished. Its
+other important role is to mark the theme of a ditransitive verb, which shall be demonstrated below:
+(3.10)Akhon
+child:nom:sg
+undae
+rock-acc:inan
+em¯ us.
+bring-gno
+‘The child brings rocks.’
+(3.11)Akhon
+child:nom:sg
+und¯ om
+rock-ins:inan
+gan
+woman-acc:sg
+em¯ us.
+bring-gno
+‘The child brings rocks to the woman.’
+lit. ‘The child brings to the woman by means of rocks.’
+3.2.8 Comitative
+The comitative case mainly marks accompaniment. It may be translated as ‘with’ in the sense
+of ‘along with’. First- and second-person pronouns can be put in the comitative case to intensify
+their meaning also (e.g. Imyself).
+3.3 Noun Morphology
+3.3.1 Principal Parts
+Principle parts are the forms of a noun or verb from which all other inflected forms can be de-
+duced. Animate nouns have four principle parts: nominative singular, nominative plural, accusative
+singular, and comitative singular; and inanimate nouns have three: nominative, accusative, and
+comitative. The nominative singular serves as the citation form for all nouns.
+3.3.2 First Declension
+In the first declension, the accusative singular is almost always irregular, being formed by unpre-
+dictable phonological changes. It will never end in ‘-e’ in the first declension. There are two types
+of first declension nouns:
+Those with a nominative plural that ends in ‘-es’. If the nominative plural ends in a ‘-es’
+suffix, then the ergative, genitive, locative, instrumental, and comitative plural are formed by
+removing the ‘-es’ suffix and applying the relevant case marking to the remaining stem.
+10
+
+===== PAGE 11 =====
+Those with a nominative plural that ends in something other than ‘-s’ If the noun is of this
+type, then apply the relevant case suffixes to the accusative singular stem instead. If the final
+syllable of the accusative singular has the form ‘CeC’ and there exists a preceding syllable that
+ends in a vowel, then instead remove the ‘e’ from the final syllable and apply case suffixes to
+that stem like so:balekh‘ship [acc]’→balkh-‘ship’→balkha‘ship [loc].
+The basic forms of the case suffixes for the first declension are given in the following table:
+animate inanimate
+singular plural
+nominative -∅-es -∅
+accusative -∅-is -ae
+ergative -¯ a -¯ es -ae
+genitive -ok -okh -ak
+allative -okh -okh -akh
+locative -a -¯ as -a
+instrumental -em -¯ es -am
+comitative -eth -then -ath
+3.3.3 Second Declension
+The second declension is characterized by a nominative plural ending in ‘-as’ and an accusative
+singular ending in ‘-ae’. The ergative, genitive, allative, locative, instrumental, and comitative plural
+cases are formed by removing the ‘-as’ suffix from the nominative plural and applying the relevant
+case suffix to the remaining stem.
+The basic forms of the case suffixes for the second declension are given in the following table:
+animate inanimate
+singular plural
+nominative -∅-as -∅
+accusative -ae -is -a
+ergative -¯ a -¯ as -ae
+genitive -ok -okh -ak
+allative -okh -okh -akh
+locative -a -¯ as -a
+instrumental -am -¯ as -am
+comitative -ath -athen -ath
+3.3.4 Third Declension
+The third declension is characterized by an an accusative singular ending in ‘-e’. The ergative,
+genitive, allative, locative, instrumental, and comitative plural cases are formed by removing the
+‘-es’ suffix from the nominative plural and applying the relevant case suffix to the remaining stem.
+The basic forms of the case suffixes for the third declension are given in the following table:
+11
+
+===== PAGE 12 =====
+animate inanimate
+singular plural
+nominative -∅-es -∅
+accusative -e -¯ es -ae
+ergative -¯ a -¯ es -ae
+genitive -ok -okh -ak
+allative -okh -okh -akh
+locative -a -¯ as -a
+instrumental -em -¯ es -am
+comitative -eth -ethen -ath
+3.3.5 F ourth Declension
+The fourth declension is characterized by an accusative singular ending in ‘-i’. The ergative,
+genitive, allative, locative, instrumental, and comitative plural cases are formed by removing the
+‘-is’ suffix from the nominative plural and applying the relevant case suffix to the remaining stem.
+The basic forms of the case suffixes for the fourth declension are given in the following table:
+animate inanimate
+singular plural
+nominative -∅-is -∅
+accusative -i - ¯ ıs -ae
+ergative -¯ a -¯ es -ae
+genitive -ok -okh -ak
+allative -okh -okh -akh
+locative -a -¯ as -a
+instrumental -im - ¯ ıs -am
+comitative -ith -ithen -ath
+3.3.6 Fifth Declension
+There are two types of fifth declension nouns:
+Those with a nominative plural that ends in ‘-os’. If the nominative plural ends in a ‘-os’
+suffix, then the ergative, genitive, locative, instrumental, and comitative plural are formed by
+removing the ‘-os’ suffix and applying the relevant case marking to the remaining stem.
+Those with a nominative plural that ends in ‘-us’. If the nominative plural ends in a ‘-us’
+suffix, then the ergative, genitive, locative, instrumental, and comitative plural are formed by
+removing the ‘-us’ suffix and applying the relevant case marking to the remaining stem.
+The basic forms of the case suffixes for the second declension are given in the following table:
+12
+
+===== PAGE 13 =====
+animate inanimate
+singular plural
+nominative -∅-Vs -∅
+accusative -∅-is -ae
+ergative -¯ a -¯ es -ae
+genitive -ok -okh -ak
+allative -okh -okh -akh
+locative -a - ¯Vs -a
+instrumental -Vm - ¯Vs -am
+comitative -Vth -Vthen -ath
+In the table above, the substitute letters V and ¯V were used in place ofo, u, ¯ o,and¯ u, and can
+be replaced with the necessary vowel without issue.
+3.3.7 Sixth Declension
+The sixth declension is characterized by nouns with a nominative singular ending in a short
+vowel. The basic forms of the case suffixes for the sixth declension are given in the table below. The
+substitute letters V and ¯V are placeholders for the vowel ending of the original stem.
+animate inanimate
+singular plural
+nominative -V - ¯Vs -V
+accusative -V - ¯Vs -ae
+ergative -V - ¯Vs -ae
+genitive - ¯Vk - ¯Vkh - ¯Vk
+allative - ¯Vkh - ¯Vkh - ¯Vkh
+locative -a -¯ as -a
+instrumental - ¯Vm - ¯Vs - ¯Vm
+comitative - ¯Vth - ¯Vthen - ¯Vth
+3.3.8 Seventh Declension
+The seventh declension is characterized by nouns with a nominative singular ending in a long
+vowel. The basic forms of the case suffixes for the seventh declension are given in the table below.
+The substitute letters V and ¯V are placeholders for the vowel ending of the original stem. If a V
+or ¯V is absent from the case ending in the table, then it is to be removed from the stem prior to
+applying the ending.
+13
+
+===== PAGE 14 =====
+animate inanimate
+singular plural
+nominative - ¯V -Vkh -V
+accusative -ek -Vkh -kae
+ergative -k¯ a -k¯ es -kae
+genitive -kok -kokh -kak
+allative -kokh -kokh -kakh
+locative -ka -¯ as -ka
+instrumental -kem -k¯ es -kam
+comitative -heth - ¯Vthen -keth
+3.3.9 Eight Declension
+The eight declension is characterized by nouns with a nominative singular ending in a nasal
+consonant, although not all nouns ending in a nasal are of the eighth declension. The basic forms of
+the case suffixes for the eight declension are given in the table below. The substitute letters V and
+¯V are placeholders for the vowel preceding the nasal in the original stem, while the substitute letter
+N is a placeholder for the final nasal of the original stem. If an N is absent from the case ending in
+the table, then it is to be removed from the stem prior to applying the ending.
+animate inanimate
+singular plural
+nominative -N - ¯Vs -∅
+accusative -N - ¯Vs -Nae
+ergative -N¯ a -N¯ es -Nae
+genitive -Nek -Nekh -Nek
+allative -hes -hes -hes
+locative -Na -N¯ as -Na
+instrumental -Nem -N¯ es -Nam
+comitative -Neth -Nthen -Neth
+14
+
+===== PAGE 15 =====
+Determiner-Pronouns
+4.1 Personal Pronouns
+Pronouns in Classical Paternic encode the person and animacy of their referent, and all but the
+third personinanimate(3i) mark for number as well. They also all inflect for case. There are
+a total of eight personal pronouns, given in the table below. The nominative pronouns may be
+regarded as the default forms.
+nom acc proclitic erg gen loc ins com
+1st person
+sg nar ab (a)b- the narok tha th¯ em th¯ eth
+incl. pl ph¯ aru eb (e)b- ph¯ ar¯ ush ph¯ ar¯ ukh ph¯ ar¯ as ph¯ ar¯ us ph¯ arthen
+excl. pl pher ph¯ er¯ ush phekh ph¯ as ph¯ es phethen
+2nd person sg tar is in- ¯ ın¯ us tarok ina inem ineth
+pl ¯ ıs inis nis-/nir- ¯ ın¯ ush inokh in¯ as in¯ es inthen
+3rd animate sg d¯ um b¯ al b¯ al- b¯ al¯ us d¯ umok b¯ ala b¯ alem b¯ aleth
+pl d ¯ ım b¯ el b¯ el- b¯ al¯ ush d¯ umokh b¯ al¯ as b¯ al¯ es b¯ althen
+3rd inanimate drak il lae- drak¯ us drakak draka drakam drakath
+Observe that there is a clusivity distinction in the first person plural pronouns, except for in the
+first person accusative plural and in the first person plural proclitic form. Furthermore, unlike in
+English, there is no gender distinction made in the third person:d¯ umcan be translated as either
+‘he’ or ‘she’. Classical Paternic does, however, distinguish between animate and inanimate referents
+in the third person. As opposed to nouns and adjectives, the choice of whether to use an animate
+or inanimate pronoun is semantically based rather than lexically based, meaning that the pronoun
+used is determined by the referent’s perceived animacy.
+4.1.1 Proclitic F orms
+As seen in the above table, there is a series ofcliticpronouns. The clitics do not inflect for
+case and are only observed when prefixed to a head noun, adjective, or verb. When prefixed to a
+noun or adjective, the clitics take on a possessive adjective meaning. When prefixed to a verb, the
+clitics take mark person and number of the verb’s primary object. These two usages will be shown
+in the examples below:
+(4.1)nar
+1sg:nom
+b¯ al¯ ob
+3asg:poss=father:acc:sg
+per
+see:gno
+‘I seehisfather.’
+(4.2)nar
+1sg:nom
+per
+see:gno
+‘I see.’
+(4.3)nar
+1sg:nom
+b¯ alper
+3asg:acc=see:gno
+‘I seehim.’
+An astute reader might observe that the first person clitics and second person plural clitics have
+variable forms. The one used is dependent on the word being modified. If the word begins in a
+vowel, then the initial vowel of the first person clitics should be deleted. In the same scenario, the
+second form of the second person cliticnir-is to be used.
+15
+
+===== PAGE 16 =====
+4.1.2 Genitive and Accusative F orms
+The genitive and accusative forms might seem to be purposeless in the face of the clitic pronouns.
+However, this is not so. Both of these complete forms are regularly used for the purpose of emphasis
+or poetic license, especially since their position in the sentence can be moved around as apposed
+to the clitics. The genitive pronoun also regularly occurs with postpositions that take a genitive
+object, or as a possessive pronoun (e.g. ‘mine’, ‘yours’) Furthermore, the full form of the accusative
+is always used for the object of a masdar verb, and the genitive is always used for the subject of a
+masdar verb. Masdar verbs will be discussed in a later section.
+16
+
+===== PAGE 17 =====
+Adjectives
+5.1 Overview
+Adjectives agree with the nouns they modify in gender, number, and case and decline accordingly.
+Adjectives decline according to their declension class, which are the same as those borne by nouns.
+The inanimate plural forms of adjectives will not be discussed in this document as they do not occur
+in the torch and I have not the time to make the necessary charts. Adjectives typically precede
+their head noun, though they can also follow them, in which case they are called postpositive
+adjectives. Postpositive adjectives are typically used in place names or to put particular emphasis
+on the adjective.
+5.2 Substantive Adjectives
+Adjectives can be used alone with a generic meaning if there is an absence of a noun to modify.
+Adjectives used in this way are called substantive adjectives. Some examples of how substantive
+adjectives look when used are given below:
+(5.1)¯ egor
+good:nom:sg
+¯ uk
+man:nom:sg
+‘The good man’
+(5.2)¯ egor
+good:nom:sg
+‘the good one’ or ‘good’
+(5.3) ¯Egor
+good:nom:sg
+per.
+see:gno
+‘the good one sees.’
+5.3 Degrees of Comparison
+There are four degrees of comparison: positive, comparative, superlative, and equative. For any
+adjective, the positive form is the bare form and conveys the basic meaning of the adjective. The
+other degrees of comparison will be detailed in their own subsections below.
+5.3.1 Comparative
+The comparative form indicates a greater degree of an adjective, such as with the English forms
+‘big’ and ‘bigger’. The comparative adjective is formed by applying the- ¯ ırsuffix to an adjective’s
+stem. All comparative adjectives are of the fourth declension.
+5.3.2 Superlative
+The superlative form indicates the greatest degree of an adjective, such as with the English forms
+‘big’ and ‘biggest’. The superlative adjective is formed by applying the-ondesuffix to an adjective’s
+stem. All superlative adjectives are of the sixth declension.
+5.3.3 Equative
+The equative form has no morphological equivalent in English. It is used to convey that something
+is at an equal level of quality, quantity, or relation. It may be translated in English using the phrases
+‘as X’ or ‘equally X’, where X is the semantic meaning of the adjective. Equative adjectives are
+formed by applying theibensuffix to an adjective’s stem. All equative adjectives are of the first
+declension.
+17
+
+===== PAGE 18 =====
+5.3.4 Morphology T ables
+Tables containing the case suffixes for the different degrees of comparison will be given below in
+the following order: comparative, superlative, equative.
+animate inanimate
+singular plural singular plural
+nominative - ¯ ır - ¯ ıris - ¯ ır - ¯ ıras
+accusative - ¯ ıri - ¯ ır ¯ ıs - ¯ ırae - ¯ ıraes
+ergative - ¯ ır¯ a - ¯ ır¯ es - ¯ ırae - ¯ ıraes
+genitive - ¯ ırok - ¯ ırokh - ¯ ırak - ¯ ırakh
+allative - ¯ ırokh - ¯ ırokh - ¯ ırakh - ¯ ırakh
+locative - ¯ ıra - ¯ ır¯ as - ¯ ıra - ¯ ır¯ as
+instrumental - ¯ ırim - ¯ ır ¯ ıs - ¯ ıram - ¯ ır¯ as
+comitative - ¯ ırith - ¯ ırithen - ¯ ırath - ¯ ırathen
+animate inanimate
+singular plural singular plural
+nominative -onde -ond¯ es -onde -ond¯ es
+accusative -onde -ond¯ es -ondae -ondaes
+ergative -onde -ond¯ es -ondae -ondaes
+genitive -ond¯ ek -ond¯ ekh -ond¯ ek -ond¯ ekh
+allative -ond¯ ekh -ond¯ ekh -ond¯ ekh -ond¯ ekh
+locative -onda -ond¯ as -onda -ond¯ as
+instrumental -ond¯ em -ond¯ es -ond¯ em -ond¯ es
+comitative -ond¯ eth -ond¯ ethen -ond¯ eth -ond¯ ethen
+animate inanimate
+singular plural singular plural
+nominative -iben -ibnes -iben -ibnas
+accusative -iben -ibnis -ibnae -ibnaes
+ergative -ibn¯ a -ibn¯ es -ibnae -ibnaes
+genitive -ibnok -ibnokh -ibnak -ibnakh
+allative -ibnokh -ibnokh -ibnakh -ibnakh
+locative -ibna -ibn¯ as -ibna -ibn¯ as
+instrumental -ibnem -ibn¯ es -ibnam -ibn¯ as
+comitative -ibneth -ibenthen -ibnath -ibnathen
+18
+
+===== PAGE 19 =====
+Finite Verbs
+6.1 Overview
+Verbs have two different stems each: one for perfective aspect and one for imperfective aspect
+(for example,naput‘burned’ versusnembut‘was burning’). The perfective stem is more commonly
+called the ‘short stem’ while the imperfective stem is referred to as the ‘long stem’. Verbs also inflect
+for tense and mood in fusional suffixes, which combine with the two stems to generate conflated TAM
+meanings. Additionally, verbs fall under two categories: defective and regular. Defective verbs lack
+some morphological forms that regular verbs possess. Classical Paternic verbs can take one of two
+voices as well, those being the active and the applicative.
+6.2 Principal Parts
+Both defective and regular verbs have six principal parts. The principal parts of defective verbs
+are as follows: present indicative, imperfect indicative, past irrealis indicative, gnomic indicative,
+preterite indicative, and the perfective participle; and the principal parts of regular verbs are: present
+indiciative, imperfect indicative, past habitual indicative, gnomic indicative, preterite indicative, and
+the perfective participle.
+6.3 Verbal Morphology
+The following table gives the complete set of tense, aspect, and mood endings found in finite
+verbs.
+indicative jussive potential necessitative
+short stem
+gnomic -∅-bek -(e)kh -a
+preterite -(e)t -(e)bgat -khet -¯ at
+narrative -o -(e)bgo -¯ okh -¯ ad
+perfect -es -(e)bgas -khes -¯ as
+pluperfect -in -(e)bgaen -khin -¯ an
+past irrealis -e -(e)ebge -khe N/A
+long stem
+present -∅-bebeg -(e)kh -a
+imperfect -(e)t -bebgat -khet -¯ at
+past habitual -k¯ us -bebg¯ us -¯ okh -¯ ad
+irrealis -e -bebge -khe N/A
+6.4 Time and Aspect
+The ten tenses of Classical Paternic can most easily be understood as being different combinations
+of time and aspect. A chart has been included below to help illustrate this point.
+remote past near past non-past
+imperfective past habitual imperfect present
+perfective narrative preterite gnomic
+perfect pluperfect perfect
+subjunctive past irrealis irrealis
+19
+
+===== PAGE 20 =====
+Notice that the irrealis and past irrealis tenses function as a combination of mood and time
+rather than aspect and time. They are still counted as being among the tenses as the irrealis and
+past irrealis bear similar properties to the other tenses, namely that their suffixes can be fusionally
+combined with the other moods.
+6.5 Tense
+Each of Classical Paternic’s ten tenses serves to convey unique information and some bear unique
+properties concerning their syntax. Therefore they each will be receiving their own subsection.
+It should be assumed that each tense features nominative-accusative alignment unless otherwise
+mentioned.
+6.5.1 Gnomic
+The gnomic tense is morphologically identical to the bare short stem. It is most often used for
+statements that are or are considered general truths or facts and for events that regularly, usually,
+or always occur. Most succinctly, the gnomic tense can be said to have eithergnomicaspect or
+habitualaspect, depending on the context. It’s nearest English equivalent is the present simple
+tense.
+(6.1) ¯Olos
+sun:nom:sg
+n ¯ ımlak
+sky-gen:inan
+esh
+into
+alder.
+rise:gno
+‘The sun rises into the sky.’
+(6.2)D¯ um
+3asg:nom
+legin.
+write:gno
+‘He/she writes.’
+or ‘He/she writes (habitually).’
+6.5.2 Preterite
+In regular verbs the preterite tense has an ergative-absolutive alignment, wherein intransitive
+agents and transitive patients are marked by the nominative, and transitive agents are marked by
+the ergative. The preterite is formed by removing the-osuffix of the fifth principal part and applying
+the-(e)tsuffix to the remaining stem. However, if the second principal part ends in-Vtsuch that
+‘V’ is not an ‘e’, then that vowel should be used in place of the ‘(e)’ present in the preterite suffix.
+Defective verbs retain a nominative-accusative alignment, and they are indicated morphologically
+with the narrative tense suffix seen in regular verbs.
+The preterite is used to denote single, completed events, viewed in their entirety, that occurred
+in the past. It corresponds fairly closely to the simple past form in English (e.g. ‘walked’), although
+it can also be translated using the English present perfect (‘has walked’) if the event was recently
+completed. The preterite is thus similar in meaning to Classical Paternic’s perfect tense, but they
+are not identical. Preterite verbs assert that an identified event is completed and not necessarily
+salient to or impacting the present moment; whereas the perfect implies that the event discussed is
+somehow of import now. Compare:
+(6.3)Balkh¯ a
+ship-erg:sg
+s¯ ash
+silver:nom:inan
+gernet.
+transport-pret
+‘The ship transported silver (then).’
+(6.4)Balakh
+ship:nom:sg
+s¯ ashae
+silver-acc:inan
+gernes.
+transport-prf
+‘The ship has transported silver.’
+20
+
+===== PAGE 21 =====
+6.5.3 Narrative
+The narrative tense is identical in form to the fifth principal part. It does not exist in defective
+verbs. Verbs in the narrative are chiefly used for events that happened in the distant past, legends
+and myths, and in narratives. The past simple tense of English is generally an acceptable translation
+of the narrative.
+(6.5)Dol-¯ uk ¯ ıs
+two=people-acc:pl
+gurmo.
+die-narr
+‘Two people died (long ago).’
+6.5.4 Perfect
+Perfect verbs are conjugated by removing the-osuffix from the fifth principle part and suffixing
+the-esending onto the remaining stem. Use of the perfect indicates that the event denoted by the
+verb precedes some other discourse-salient point in time, typically the present. The present perfect
+in English is roughly equivalent in meaning. See (6.4) for an example of the perfect tense in a
+sentence.
+6.5.5 Pluperfect
+The pluperfect is formed by removing the-osuffix from the fifth principle part and suffixing
+the-inending onto the remaining stem. Pluperfect verbs are used to discuss completed events that
+occurred prior to the perspective of some other point in the past. In general, it can be translated
+using the past perfect seen in English (‘had walked’).
+(6.6)Drakae
+3i:acc
+m¯ ust¯ eln¯ ara
+summer-loc:sg
+m¯ adabdin.
+dry up-plup
+‘It had dried up in the summer.’
+6.5.6 Present
+The present tense is morphologically identical to the bare long stem. Use of the present denotes
+that the event is currently happening, and can often be translated into English using the present
+progressive (‘is walking’). It can also be used when the clause expresses a state of affairs which
+began in the past and has persisted up to the present moment, in which case it would be more apt
+to use the present perfect or present perfect progressive (‘has been walking’). Observe:
+(6.7)Tar
+2sg:nom
+lel¯ ok.
+say:prs
+‘You are talking.’
+(6.8)Tar
+2sg:nom
+hanak
+day-gen:sg
+imbar
+through
+lel¯ ok
+say:prs
+‘You have been talking the whole day.’
+6.5.7 Imperfect
+In regular verbs the imperfect tense has an ergative-absolutive alignment, wherein intransitive
+agents and transitive patients are marked by the nominative, and transitive agents are marked
+by the ergative. The imperfect is formed by removing the-tending of the second principal part
+and applying the-tsuffix to the remaining stem. Defective verbs retain a nominative-accusative
+alignment, and they are indicated morphologically with the past habitual tense suffix seen in regular
+verbs.
+The imperfect is used to indicate events that were ongoing in the past, as well as events that
+occurred generally or regularly at some point in the near past. It is best represented in English by
+the past progressive (‘was walking’), as demonstrated by the following example.
+21
+
+===== PAGE 22 =====
+(6.9)In¯ ush
+2pl:erg
+eb
+rope:nom:inan
+pepnit.’
+steal-impf
+‘You all were stealing rope(s).’
+6.5.8 Past Habitual
+In regular verbs the past habitual is identical to the third principal part. It does not exist in
+defective verbs. It is used for events that occurred generally or regularly over some period in the
+past, and can often be translated by the phrase ‘used to’ in English (‘used to walk’). The past
+habitual also is used in narration for any events that were ongoing in the past.
+(6.10)D¯ um
+3asg:nom
+pepunk¯ us.
+steal-phab
+‘He/she used to steal.’
+6.5.9 Irrealis and Past Irrealis
+The irrealis tense is formed by removing the-Vtsuffix of the second principal part and applying
+the-esuffix in its place. The same process is done for the past irrealis tense, save that it is done
+using the fifth principal part instead. The irrealis and past irrealis have a number of different uses.
+They are used to express that an event is or was probable (‘should, should have’ and ‘ought’), when
+politely expressing desires or requests, and when speculating about events.
+(6.11)In
+2sg:acc
+derke.
+die-irr
+‘You should (are likely to) die.
+(6.12)In
+2sg:acc
+dake.
+die-pirr
+‘You should have died.
+6.6 Mood
+There are five moods in Classical Paternic: the indicative, the jussive, the potential, the neces-
+sitative, and the old imperative
+6.6.1 Jussive
+All jussive mood suffixes are applied to the short stem of the verb; the long stem goes unused.
+The jussive is used in order to express commands in the second person and in a hortative sense in the
+first and third persons (‘let him fight’). Negated jussive verbs in present time are generally placed
+in the perfect tense. The imperfect, pluperfect, and narrative tenses give a sense of obligation or
+duty when combined with the jussive (‘you should have fought’).
+6.6.2 Potential
+The potential mood is used when expressing possibility or permission (‘can, could’ and ‘may,
+might’).
+6.6.3 Necessitative
+The necessitative mood is used when expressing necessity or extreme obligation (‘need’ and
+‘must’).
+22
+
+===== PAGE 23 =====
+6.6.4 Old Imperative
+The old imperative is an older form whose use cases have been mostly replaced by the jussive.
+It is usually considered rude to use, and has a very strong force of command. The old imperative
+is, however, socially acceptable to employ when the speaker has a very high level of authority over
+the addressee (such as with parents to their children, or a king to his servant). It is formed simply
+by placing the verb in the gnomic tense and dropping the subject pronoun.
+6.7 Applicative Voice
+The applicative voice is a grammatical voice that promotes an oblique argument of a verb to the
+primary object, deleting the original primary object if there was one. In Classical Paternic there
+are four applicatives: benefactive, malefactive, locative, and circumstantial. All of these voices are
+applied via prefixes, and they take the slot used by pronominal clitics. Therefore when a verb is in
+the applicative voice, any pronouns in the accusative case must use their full form, as opposed to
+the normal clitic form. The following table will showcase the three applicative prefixes.
+benefactive¯ ın-
+malefactivetho-
+locative¯ ag-
+circumstantialle-
+6.7.1 Benefactive
+The benefactive applicative is most commonly used in order to promote the beneficiary, or, in
+other words, the one who benefits from the verb, to the role of primary object. The benefactive
+can also promote goals (where the action is directed towards). Context is needed to determine the
+intended meaning; this is generally not a problem as locations are rarely beneficiaries.
+(6.13)Nar
+1sg:nom
+b¯ al
+3asg:acc
+¯ ıngodbephek.
+appl:ben-rebuild:prs
+‘I am rebuilding (something) for him.’
+(6.14)Nar
+1sg:nom
+nenae
+meadow-acc:inan
+¯ ımem¯ at.
+appl:ben-go:prs
+‘I am going to the meadow.’
+Observe thatnenae‘meadow’ in (6.14) is inflected in the accusative rather than the genitive.
+Nenaeis now the primary object of the verb, which has been modified to mean something like ‘to
+go towards’.
+6.7.2 Malefactive
+The malefactive applicative can only be used with transitive verbs. It is used to promote male-
+ficiaries, those who would in some way suffer as a consequence of the event expressed by the verb.
+(6.15)Nar
+1sg:nom
+b¯ al
+3asg:acc
+thogodbephek.
+appl:mal-rebuild:prs
+‘I am rebuilding (something) to his detriment.’
+6.7.3 Locative
+The locative applicative voice promotes locations and obliques expressed in the comitative case.
+When the primary object of a verb in the locative voice is semantically inanimate, it can generally
+be assumed that it is a location; whereas when the primary object is semantically animate, it will
+typically be an accompanier.
+23
+
+===== PAGE 24 =====
+6.7.4 Circumstantial
+The circumstantial applicative voice promotes sources and origins (e.g., ‘fromthe water’), in-
+struments, inanimate comitative obliques, causes, and the objects of adjectives.
+6.8 Periphrastic Future
+Future time can be conveyed by the use of a periphrastic future construction that makes use
+of the future auxiliarymem¯ at, m¯ at‘go, move’. By placing the lexical noun in the masdar form
+(discussed in the next section) followed by the inflected future auxiliary, a future tense is created.
+Observe:
+(6.16)Il
+3i:acc
+napil
+burn-msd
+m¯ at
+go:gno
+‘It will certainly burn.’
+(6.17)Il
+3i:acc
+napil
+burn-msd
+mem¯ at
+go:prs
+‘It will be burning.’ or ‘It is going to burn.’
+Notice that in (6.16) the auxiliary is in the gnomic tense. This is called the periphrastic future
+prophetic. It is a rare construction used primarily for events that are certain to happen. It should
+be translated as ‘will’ or ‘will certainly’. (6.17) features the much more common future imperfective
+construction, which places the future auxiliary in the present tense. This can be translating using
+‘will’ or ‘going to’.
+24
+
+===== PAGE 25 =====
+Non-Finite Verbs
+7.1 The Masdar
+Masdars are, in essence, verbal nouns, being a sort of mix between gerunds and infinitives. For
+the purposes with this document, I will discuss the overlap between the masdar and the English
+infinitive. To form the masdar, one must simply remove the-Vtsuffix from the fifth principal part
+of the verb and add the-ilsuffix. The masdar will often serve as the complement to another verb,
+effectively acting as its primary object:
+(7.1)Nar
+1sg:nom
+ghadil
+drink-msd
+t¯ ago.
+not want:gno
+‘I don’t want to drink.’
+The masdar always immediately precedes its head verb, as observed in (7.1). If the masdar were
+to take its own object, then that object would need to both immediately precede the masdar and
+be placed in the accusative (non-clitic) case. Compare:
+(7.2) *Nar
+1sg:nom
+il
+3i:acc
+lazha
+valley-loc:sg
+ghil
+near
+ghadil
+drink-msd
+t¯ ago.
+not want:gno
+*‘I don’t want to drink it near the valley.’
+(7.3)Nar
+1sg:nom
+lazha
+valley-loc:sg
+ghil
+near
+il
+3i:acc
+ghadil
+drink-msd
+t¯ ago.
+not want:gno
+‘I don’t want to drink it near the valley.’
+7.2 Converbs
+Most embedded clauses in Classical Paternic are formed with the use of what are called ‘converbs’.
+Converbs are a form of non-finite verb that is used to express adverbial subordination: notions like
+‘when’, ‘because’, ‘after’, and ‘while’. There are seven different converbial forms overall in the
+language. Firstly I will provide a list of the converb suffixes, which are appended to the sixth
+principal part in the same way the masdar suffix is appended:
+imperfective-ith
+anterior-ad
+posterior-the
+conditional-tu
+concessive-phon
+purposive-umor
+avertive-thumor
+7.2.1 Imperfective
+The imperfective converb expresses that the event in the embedded clause is occurring simulta-
+neously with the main clause. Adverbial clauses beginning with ‘when’ and ‘while’ are good ways
+to translate this converb into English.
+(7.4)Tar
+2sg:nom
+l¯ okith
+speak-icvb
+phelae
+water-acc:inan
+sebdo.
+pour-pret
+‘You, while speaking, poured the water.’
+25
+
+===== PAGE 26 =====
+7.2.2 Anterior
+When the main clause is in the preterite and narrative tenses, the anterior converb is used to
+express a sequence of successive events. The phrase ‘and then’ is adequate for this usage. If the
+main clause is not in the narrative or preterite tense, however, the anterior converb usually has a
+meaning similar to ‘having’, although , depending on context, it can also express that the event
+described by the main verb occurred as a result or consequence of the embedded clause. In such a
+case, it would be best translated using words and phrases such as ‘since’, ‘due to’, and ‘because’ or
+‘due to’, depending on context.
+(7.5)Tar
+2sg:nom
+phelae
+water-acc:inan
+sebdad
+pour-acvb
+ghado.
+drink-pret
+‘You poured the water and then drank (it).’
+(7.6)Tar
+2sg:nom
+phelae
+water-acc:inan
+sebdad
+pour-acvb
+gegadg¯ us.
+drink-impf
+‘Having poured the water, you drank (it).’
+‘Because you poured the water, you drank (it).’
+Note that althoughtarandphelaehave been translated as the subject and object respectively of
+‘pour’ in (7.5), this is merely a concession to get the sentence to make sense in English. In Classical
+Paternic, the subject and object belong to the main verbghado‘drank’.Sebdadmore accurately
+translates to ‘poured and then’, without any information as to who is doing the pouring or what is
+being poured.
+7.2.3 Posterior
+When the main clause is in the perfective aspect, the posterior converb expresses that the event
+in the embedded clause followed the event described by the main verb. Adverbial clauses beginning
+with ‘before’ are best for translating this usage. However, if the main clause has been negated or is
+in the imperfective aspect, the converb has a meaning of ‘until’.
+(7.7)Tar
+2sg:nom
+phelae
+water-acc:inan
+ghadlokh
+drink-post:cvb
+sebdo.
+pour-pret
+‘Before drinking the water, you poured it.’
+(7.8)Tar
+2sg:nom
+phelae
+water-acc:inan
+ghadlokh
+drink-post:cvb
+sezbatk¯ us.
+pour-phab
+‘Until you were drinking the water, you poured it.’
+The posterior converb is also used to indicate the protasis of a conditional clause in prior time.
+However, the construction of conditional clauses will be discussed in a later segment.
+7.2.4 Conditional
+Most conditional clauses are begun by a conditional protasis using the conditional converb. The
+exact nature of conditional clauses will be demonstrated later.
+7.2.5 Concessive
+The concessive converb is used to indicate that the main clause occurred despite the condition
+mentioned in the converbial clause. This converb has a meaning like ‘although’, ‘despite’, or ‘even
+though’.
+(7.9)Tar
+2sg:nom
+phelae
+water-acc:inan
+¯ u
+neg
+sebdephon
+pour-conc:cvb
+ghado.
+drink-pret
+‘Despite not pouring the water, you drank it.’
+26
+
+===== PAGE 27 =====
+7.2.6 Purposive
+The use of the purposive converb means that the embedded clause is being done in order to bring
+about the main clause. English phrases such as ‘in order to’ and ‘so as to’ should be used when
+translating this converb.
+(7.10)Tar
+2sg:nom
+phelae
+water-acc:inan
+sebdumor
+pour-purp:cvb
+ghado.
+drink-pret
+‘You poured the water in order to drink it.’
+7.2.7 Avertive
+When the avertive converb is deployed, it means that the embedded clause has been committed
+with the intent to avoid or prevent the main clause from occurring. ‘For fear that’ and ‘lest’ are
+good ways of translating the avertive.
+(7.11)Tar
+2sg:nom
+phelae
+water-acc:inan
+sebdethumor
+pour-aver:cvb
+¯ u
+neg
+ghado.
+drink-pret
+‘You poured the water for fear that you would not drink it.’
+7.3 Participles
+The participles will not be discussed in this document. They are not needed for the torch and
+I do not have the time to write out a summary. If you are curious, there are three: the agent
+perfective, the perfective, and the imperfective.
+27
+
+===== PAGE 28 =====
+Minor Word Classes
+8.1 Postpositions
+Classical Paternic is a strictly postpositional language. Postpositions are a closed class, meaning
+new adpositions are virtually never introduced into the grammar. Some postpositions can take
+multiple cases. In those cases, the usage of a different case changes the meaning of the postposition.
+Below I will provide a list of Classical Paternic postpositions.
+postposition case meaning
+n¯ usgentowards, against
+iurlocin, inside of
+eshgeninto, onto
+telergfrom, away from
+goerg(go) out of, (go) away from
+phe locabove, over
+gen(go) above, (go) over
+hoth locbelow, under
+gen(go) below, (go) under
+oblocin front of, ahead
+nadlocbehind
+gh ¯ ıllocnear, by
+korum locaround
+gen(go) around
+ephilergfar from, (go) far from
+prae locnext to, beside
+gen(go) next to
+gedlocbefore, earlier
+s¯ ulergafter, later
+(n)¯ elocbetween, in the middle of
+doborlocwithin, among
+henarlocon this side of
+latlocbeyond, on the other side of
+hangen(go) across
+imbargenthrough, during
+8.2 Coordination
+Noun phrases and clauses can be linked using a coordinator, which can either precede or follow
+the second conjunct depending on the coordinator. Classical Paternic has the following coordinators:
+¯ ım
+sot
+anar
+kho
+ne
+‘and’
+‘and (adjectival)’
+‘and also, as well as, and even’
+‘but, yet’
+‘or’
+28
+
+===== PAGE 29 =====
+8.2.1 Postpositive Coordinators
+The coordinators¯ ım,sot, andanarare postpositive, meaning they appear after the second
+conjunct. In a list of three or more items where none of the coordinators are deleted however, only
+the last coordinator follows the conjunct. This rule only affects¯ ımwhen it is coordinating nouns,
+however. It is not postpositive when coordination clauses.
+(8.1)undo
+stone:nom:inan
+thundo
+pebble:nom:inan
+¯ ım
+and
+‘stones and pebbles’
+(8.2)undo
+stone:nom:inan
+¯ ım
+and
+thundo
+pebble:nom:inan
+mek¯ ash
+cliff:nom:inan
+¯ ım
+and
+‘stones and pebbles and cliffs’
+8.3 Negative Particle
+All words in Classical Paternic are negated by the particle¯ u(m). The negative particle will always
+immediately precede the item being negated. If the initial phoneme of the word is a consonant, then
+the negative particle will be realized as¯ u. If the initial phone is a vowel, on the other hand, then
+the negative particle will be realized as¯ um.
+8.4 Vocative Particle
+There is no vocative case in Classical Paternic. If a speaker wishes to give a noun a vocative force,
+then they can either use a bare nominative noun, or they can place that noun in the nominative
+case and precede it with the vocative particleialike so:
+(8.3)ia
+voc
+m¯ agor
+king:nom:sg
+‘O king’
+Note that the vocative particle was translated here as ‘O’. This is not necessary to generate a
+good translation, but it can be deployed in order to emphasize the vocative nature of the phrase in
+English.
+29
+
+===== PAGE 30 =====
+Clause Structure and Syntax
+9.1 Constituent Order
+Classical Patrinaic is predominantly head-final in its noun phrases. Possessors and adjectives
+usually precede their head noun, as can be seen by comparing the phrasekhar‘house’ with the
+phrases¯ ukok khar‘the person’s house’ and¯ ukok rhus khar‘the person’s red house’. Demonstratives
+and quantifiers also typically precede the noun they modify.
+It should be noted, however, that the constituent orders described above are not absolute, and can
+be modified with little issue. On occasion, for emphasis or poetic license, possessors and adjectives
+follow the modified noun. This is a technique also regularly employed in place names. In addition,
+placing a demonstrative or quantifier after its head noun can be used as a form of emphasizing
+salience or definiteness.
+At the clausal level, constituent order is fairly free, though there is a clear preference for verb-
+final (SOV) order. Typically, clauses are made of a verb preceded by one or more case-marked
+pronouns or noun phrases. The ordering of these noun phrases is determined primarily by the
+discourse prominence of each constituent, which is demonstrated by the sentences below. In this
+way, Classical Patrinaic operates as a scrambling language akin to Latin or Ancient Greek.
+9.2 Complementizers
+Although Classical Patrinaic is largely head-final with a default SOV order, there are a number
+of embedded clause types which act head-initially rather than head-finally as one would expect. A
+general rule of thumb is that embedded clauses with finite verb forms are head-initial while embedded
+clauses with non-finite verb forms are head-final. Typically, verbs of knowledge, propositional atti-
+tude, and utterance take finite complements and verbs of perception, desideratives, and phasals take
+non-finite complements. A series of example sentences demonstrating these two types of embedded
+clauses has been provided below.
+(9.1)Nar
+1sg:nom
+l¯ oko
+say-pret
+sh¯ as:
+quot
+“d¯ um
+3asg:nom
+ghado.”
+drink-pret.
+‘I said “he/she drank”.’
+(9.2)Nar
+1sg:nom
+peno
+think-pret
+sh¯ as
+quot
+d¯ um
+3asg:nom
+ghado.
+drink-pret.
+‘I thought that he/she drank.’
+(9.3)Nar
+1sg:nom
+pasho
+know-pret
+sh¯ as
+quot
+d¯ um
+3asg:nom
+ghado.
+drink-pret.
+‘I knew that he/she drank.’
+(9.4)D¯ um
+3asg:nom
+ghado
+drink-pret
+men
+comp
+nar
+1sg:nom
+l¯ oko.
+say-pret.
+‘I said that he/she drank.’
+(9.5)Nar
+1sg:nom
+ghadil
+drink-msd
+men
+comp
+p¯ ago.
+want-pret.
+‘I wanted to drink.’
+(9.6)The
+1sg:erg
+ghadil
+drink-msd
+men
+comp
+b¯ uzo.
+stop-pret.
+‘I stopped drinking.’
+Recognize that different complementizers are used depending on if the embedded clause is finite
+or non-finite. The complementizersh¯ as, called the quotative (quot), is specifically used to introduce
+30
+
+===== PAGE 31 =====
+direct speech while the complementizermenis used to introduce indirect speech. Indirect speech
+is the only instance in whichmendisplays head-initial syntax. Additionally, the constructions in
+(9.5) and (9.6) do not require the use ofmen, but it has been included regardless to demonstrate its
+head-final syntax.
+9.3 Special Clause Types
+9.3.1 Copular Sentences
+Classical Paternic is generally a zero-copula language. Furthermore, predicative adjectives and
+nouns can take the narrative, past habitual, perfect, pluperfect, and irrealis tense endings to convey
+meanings other than the default gnomic indicative interpretation, with the narrative tense ending
+providing a preterite meaning. Observe:
+(9.7)D¯ um
+3asg:nom
+akhon.
+child:nom:sg
+‘He/she is a child.’
+(9.8)D¯ um
+3asg:nom
+akhono.
+child-pret
+‘He/she was a child.’
+(9.9)D¯ um
+3asg:nom
+akhono.
+child-gno:nec
+‘He/she needs to be a child.’
+A copula is required for the inflection of non-finite forms, however. This is evidenced by the fact
+that (9.10) is ungrammatical, as opposed to the perfectly acceptable (9.11).
+(9.10)*D¯ um
+3asg:nom
+akhonil
+child-msd
+¯ ath.
+about to be:prs
+*‘He/she is about to be a child.’
+(9.11)D¯ um
+3asg:nom
+akhon
+child:nom:sg
+eril
+be-msd
+¯ ath.
+about to be:prs
+‘He/she is about to be a child.’
+9.3.2 Direct Speech
+To express a direct quotation, the construction illustrated in (9.1) is used. There the direct
+quotation, which takes the form of a new main clause, is introduced by the quotative.
+9.4 Conditional Clauses
+Classical Paternic has a robust series of conditional clause types, all of which are formed by a
+conditional, concessive, posterior, or similative converb in the protastis followed by a finite verb in the
+apodosis. Conditional clauses begun by concessive and similative converb will not here be discussed,
+nor will counterfactual conditionals. After these restrictions, there are five remaining conditional
+clause types: present indicative, past indicative, future indicative, past-to-present indicative, and
+past-to-future indicative.
+9.4.1 General Structure
+I will begin by describing the general structure of the indicative conditional clause. Conditional
+clauses establish a condition, or if-clause, in the protasis, and a subsequent consequence if the
+condition is fulfilled in the apodosis. The if-clause will always contain a converb and the apodosis
+will always contain a finite verb.
+31
+
+===== PAGE 32 =====
+9.4.2 Present Indicative
+The present indicative is formed by a conditional converb in the protasis and a present or perfect
+tense verb in the apodosis. It may be translated thusly: ‘if I do... I am’.
+(9.12)Nar
+1sg:nom
+naktu
+fight-cvb:cond
+nar
+1sg:nom
+gegrem.
+die:prs
+‘If I am fighting then I am dying.’
+9.4.3 Past Indicative
+The past indicative is formed by a conditional converb in the protasis and a imperfect or preterite
+tense verb in the apodosis. It may be translated thusly: ‘if I did... I was’.
+(9.13)Nar
+1sg:nom
+naktu
+fight-cvb:cond
+nar
+1sg:nom
+gurmo.
+die:pret
+‘If I fought then I died.’
+9.4.4 F uture Indicative
+The future indicative is formed by a conditional converb in the protasis and a future periphrastic
+construction in the apodosis. It may be translated thusly: ‘if I do... I will’.
+(9.14)Nar
+1sg:nom
+naktu
+fight-cvb:cond
+nar
+1sg:nom
+gurmil
+die-msd
+mem¯ at.
+go:prs
+‘If I fight then I will die.’
+9.4.5 Past-to-Present Indicative
+The past-to-present indicative is formed by a posterior converb in the protasis and a present or
+perfect tense verb in the apodosis. It may be translated thusly: ‘if I did... I am’.
+(9.15)Nar
+1sg:nom
+naklokh
+fight-cvb:post
+nar
+1sg:nom
+gegrem.
+die:prs
+‘If I fought then I am dying.’
+9.4.6 Past-to-F uture Indicative
+The past-to-future indicative is formed by a posterior converb in the protasis and a future pe-
+riphrastic construction in the apodosis. It may be translated thusly: ‘if I did... I will’.
+(9.16)Nar
+1sg:nom
+naklokh
+fight-cvb:post
+nar
+1sg:nom
+gurmil
+die-msd
+m¯ ato.
+go:pret
+‘If I fought then I will die.’
+32

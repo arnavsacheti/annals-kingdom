@@ -25,7 +25,20 @@ Answers from the campaign DM to the questions raised in `canon-etym.json` /
    "Patrinaic" was reverted.)
 6. The dictionary is a work in progress; re-run the compounding study
    (`compounding.md`) against the richer ety data when convenient.
+7. (2026-07-16, follow-up) The language's endonym is **Peternek Hag**, literally
+   "Language of the Patrin". *Hag* 'mouth, language, speech, voice' is attested
+   (the genitive-first, head-final order matches the compounding evidence);
+   *Peternek* is the Patrin ethnonym in a form not yet in the PolyGlot save.
+   The maps-site lexicon page is titled with it.
 
 Note: `PaternicDictionary_1.pgd` (received alongside these answers) is byte-for-byte the
 same save as `PatrinaicRevamp.pgd` (same DictSaveDate, identical lexicon), so it is not
 stored separately.
+
+## Open question for the DM (atlas)
+
+8. **Map scale**: what real distance does PatrinorModern.png cover — px per league
+   (or any two places with a canon distance between them)? Needed before the atlas
+   can carry an honest scale bar and distance measurement (see
+   docs/research/atlas-structure.md, marginalia). One canon fact calibrates
+   everything.

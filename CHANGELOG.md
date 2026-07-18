@@ -4,6 +4,45 @@ All notable changes to this project are documented here. Versioning follows
 [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html); every release is currently
 an `-alpha.N` prerelease. See `.claude/CLAUDE.md` for the release workflow.
 
+## [0.11.0-alpha.1] — 2026-07-18
+- The atlas learns night, the road, and the index: a ☾/☀ toggle applies the tuned
+  filter-night (straight invert — the hue-rotate recipe turns parchment khaki) with
+  a full chrome-dark token palette, honoring prefers-color-scheme and persisting;
+  journey mode gains true playback — a traveller marker on a distance-uniform
+  path, the dotted route solidifying to bronze behind it, dwell-and-card arrivals
+  with aria-live narration, scrubber/speed/step transport bar, reduced-motion
+  stepping, and #journey=t deep links; and a generated gazetteer
+  (`tools/build-gazetteer.js`, 176 places: name+kind+footprint+wiki+etymology)
+  drives search by old-tongue gloss ("moon" finds Tamaron 'moon-town'), surfaces
+  index-only places the plates never printed, and puts etymology lines on place
+  cards linking into the lexicon
+- The atlas opens on a Contents screen — five thematic plates (The Whole Chart ·
+  The Realms · Roads & Waters · The Company's Road · The Old Tongue) per the
+  two-level atlas pattern; accessibility hardened per the WCAG audit findings
+  (named map container, aria-labelled markers answering Enter/Space, 44px touch
+  targets, focus rings); any view is shareable via #view=x,y,zoom
+- The sim's towns grow along their streets: planParcelsFor cuts street-fronting
+  lots at settlement gen (guaranteed spacing, deliberate gaps, growth radiating
+  from the market square) and building growth consumes them in order before
+  falling back to scatter for the suburbs; hip roofs join the gables across
+  house and shop archetypes (gbHipRoof, the prototype's analytic equal-pitch hip)
+- Name seams obey the DM's reference grammar (lexicon/PaternicGrammar.pdf, §2.2):
+  vowel hiatus resolves by the chart with cascading (Nē+ila → Nēla, Laego+on →
+  Laegōn), identical consonants degeminate, nasals before s/z delete with
+  compensatory lengthening, and word-initial glide-i is honored (Morzilioph
+  stands); -(i)on 'town' simplifies to surface -on (Tamar+on → Tamaron)
+- The lexicon page bears the tongue's own name — Peternek Hag, 'Language of the
+  Patrin' — and accepts ?q= deep links
+- Four prototypes join `prototypes/` as proven groundwork: skeleton-offset
+  parcels + straight-skeleton roofs (claim-mask overlap-proofing, roof mix,
+  garden gaps); Epēshu raised from its own chart (traced coast/primaries/extent
+  with farm masks and an in-page editor — 5,837 parcels, 5,424 roofed buildings
+  standing on the canon footprints); route playback; and the four-way night
+  treatment comparison whose recommendation shipped
+- Five verified research digests land in `docs/research/` (62 adversarially
+  confirmed findings; 13 over-absolute claims refuted; open questions recorded) —
+  the groundwork the above was built from
+
 ## [0.10.0-alpha.1] — 2026-07-16
 - The realm learns its own tongue: the DM's Classical Patrinaic dictionary (PolyGlot
   save, 1,365 words) lives in `lexicon/`, extracted by the new zero-dependency

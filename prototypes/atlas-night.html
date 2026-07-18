@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Atlas — Night Treatments Compared</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  /* ---- theme tokens: chrome (header/panel/controls). Parchment by default;
+     the chrome-only-dark mode (#4) swaps these to a slate set. ---- */
+  :root{
+    --parch:#e9dcc0; --panel:#f3ecd7; --panel2:#e7dabb;
+    --ink:#2c2418; --ink2:#4a3f2c; --muted:#6e5f43;
+    --line2:#b09a6c; --rust:#8a3c28; --bronze:#8a6224;
+    --stage-bg:#d9cba7;
+  }
+  body[data-theme="chrome"]{
+    --parch:#161a22; --panel:#1c222c; --panel2:#141922;
+    --ink:#e8ecf3; --ink2:#c2cad6; --muted:#8b96a6;
+    --line2:#39424f; --rust:#d98a5c; --bronze:#cbb06a;
+    --stage-bg:#0d1017;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;background:var(--parch);color:var(--ink);
+    font-family:Georgia,'Times New Roman',serif;transition:background .3s,color .3s;}
+  #app{display:flex;flex-direction:column;height:100%;}
+
+  header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    padding:8px 16px;background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border-bottom:2px solid var(--line2);z-index:1000;position:relative;
+    transition:background .3s,border-color .3s;}
+  header h1{font-weight:600;font-size:20px;margin:0;letter-spacing:.3px;
+    color:var(--ink);white-space:nowrap;}
+  header h1 .em{color:var(--rust);}
+  .spacer{flex:1 1 auto;}
+
+  /* ---- mode switcher (radios) + split toggle ---- */
+  .modes{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+  .modes label{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;
+    padding:5px 10px;border:1px solid var(--line2);border-radius:5px;cursor:pointer;
+    background:var(--panel2);color:var(--ink);white-space:nowrap;transition:.15s;}
+  .modes label:hover{border-color:var(--bronze);}
+  .modes input{accent-color:var(--rust);margin:0;cursor:pointer;}
+  .modes label:focus-within{outline:2px solid var(--bronze);outline-offset:2px;}
+  .modes label:has(input:checked){background:var(--rust);color:#f5ecd6;border-color:var(--rust);}
+  .split-toggle{margin-left:8px;}
+
+  #stage{flex:1 1 auto;position:relative;display:flex;min-height:0;}
+  #mapMain{position:absolute;inset:0;background:var(--stage-bg);}
+  /* split B-map: overlays the main map, clipped to the right half */
+  #mapB{position:absolute;inset:0;background:#0d1017;display:none;
+    clip-path:inset(0 0 0 50%);z-index:500;}
+  body.split-on #mapB{display:block;}
+  #splitDivider{position:absolute;top:0;bottom:0;left:50%;width:2px;margin-left:-1px;
+    background:rgba(255,255,255,.7);box-shadow:0 0 0 1px rgba(0,0,0,.5);z-index:900;
+    display:none;pointer-events:none;}
+  body.split-on #splitDivider{display:block;}
+  .split-tag{position:absolute;top:10px;z-index:901;display:none;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;
+    text-transform:uppercase;padding:3px 9px;border-radius:4px;color:#fff;
+    background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.35);pointer-events:none;}
+  body.split-on .split-tag{display:block;}
+  .split-tag.left{left:12px;} .split-tag.right{right:12px;}
+
+  footer{padding:5px 16px;background:var(--panel2);border-top:1px solid var(--line2);
+    font-size:12.5px;color:var(--muted);text-align:center;font-style:italic;
+    transition:background .3s;}
+
+  /* ================================================================
+     TILE-PANE NIGHT TREATMENTS  (scoped so overlays/markers are untouched)
+     ================================================================ */
+  /* (2) FILTER NIGHT — a straight invert (no hue-rotate) is what turns this warm
+     parchment into a true slate/indigo night: warm tan inverts to deep blue-grey,
+     and the printed blue seas invert to a darker steel-blue that still reads as
+     water. hue-rotate(180) — the usual dark-map trick — only rebrowns it (it's
+     tuned to preserve a WHITE ground, which this raster doesn't have). Tuned chain: */
+  body[data-theme="filter"] #mapMain .leaflet-tile-pane,
+  #mapB.tb-filter .leaflet-tile-pane{
+    filter:invert(1) brightness(0.92) saturate(0.6);
+  }
+  /* (3) TINTED LENS — non-inverting dusk: darken tiles a little, then a blue wash
+     rectangle (pane #nightwash) blended SOFT-LIGHT on top. Soft-light keeps the
+     cartography's own hues (green realms, red coasts, blue seas all still read)
+     while casting an evening blue — an "evening", not a full night. Tuned: */
+  body[data-theme="tinted"] #mapMain .leaflet-tile-pane,
+  #mapB.tb-tinted .leaflet-tile-pane{
+    filter:brightness(0.66) contrast(1.05) saturate(0.85);
+  }
+  /* wash pane sits above tiles(200), below overlays(400)/markers(600) */
+  .leaflet-nightwash-pane{opacity:0;transition:opacity .3s ease;
+    mix-blend-mode:soft-light;pointer-events:none;}
+  body[data-theme="tinted"] #mapMain .leaflet-nightwash-pane{opacity:1;}
+  #mapB.tb-tinted .leaflet-nightwash-pane{opacity:1;}
+  /* in split, the LEFT (main) map is forced to Day regardless of selected mode */
+  body.split-on #mapMain .leaflet-tile-pane{filter:none!important;}
+  body.split-on #mapMain .leaflet-nightwash-pane{opacity:0!important;}
+
+  /* ================================================================
+     OVERLAY PALETTE per mode (markers + route stay legible everywhere)
+     driven by body[data-theme]; #mapB always uses the night palette.
+     ================================================================ */
+  .nm{display:flex;align-items:center;pointer-events:none;}
+  .nm .glyph{pointer-events:auto;display:flex;align-items:center;justify-content:center;
+    width:22px;height:22px;border-radius:50%;font-size:13px;line-height:1;
+    border:1.6px solid;box-shadow:0 1px 3px rgba(0,0,0,.4);flex:0 0 auto;cursor:pointer;
+    transition:transform .15s ease;}
+  .nm.major .glyph{width:25px;height:25px;font-size:15px;}
+  .nm .glyph:hover{transform:scale(1.18);}
+  .nm .lbl{margin-left:6px;font-weight:600;font-size:13px;white-space:nowrap;
+    font-family:Georgia,serif;}
+  .nm.major .lbl{font-size:14.5px;}
+
+  /* DAY / CHROME (parchment tiles): dark ink glyphs, light halo on labels */
+  .nm .glyph{background:#f2e7cb;color:#5a3210;border-color:#5a3210;}
+  .nm .lbl{color:#2c2418;
+    text-shadow:0 0 3px #e9dcc0,0 0 3px #e9dcc0,0 0 4px #e9dcc0;}
+  .route-line{stroke:#8a3c28;}
+  .wpn{width:16px;height:16px;border-radius:50%;background:#8a3c28;
+    border:1.6px solid #f5ecd6;box-shadow:0 1px 3px rgba(0,0,0,.5);}
+
+  /* FILTER NIGHT (slate/indigo inverted tiles): pale glyphs, dark halo on labels */
+  body[data-theme="filter"] #mapMain .nm .glyph,
+  #mapB .nm .glyph{background:#e9e2c9;color:#20140a;border-color:#f2ecd8;}
+  body[data-theme="filter"] #mapMain .nm.major .glyph,
+  #mapB .nm.major .glyph{background:#f6efd6;border-color:#fff5da;
+    box-shadow:0 0 0 2px rgba(240,225,150,.35),0 1px 4px rgba(0,0,0,.6);}
+  body[data-theme="filter"] #mapMain .nm .lbl,
+  #mapB .nm .lbl{color:#f4ecd4;
+    text-shadow:0 0 3px #0b1424,0 0 4px #0b1424,0 1px 3px #000;}
+  body[data-theme="filter"] #mapMain .route-line,
+  #mapB .route-line{stroke:#f2c14e;}
+  body[data-theme="filter"] #mapMain .wpn,
+  #mapB .wpn{background:#f2c14e;border-color:#3a2a10;}
+
+  /* TINTED LENS (dark-blue evening tiles): warm-cream glyphs, light labels */
+  body[data-theme="tinted"] #mapMain .nm .glyph{
+    background:#f0e4c4;color:#4a2a10;border-color:#f7efd6;}
+  body[data-theme="tinted"] #mapMain .nm.major .glyph{
+    box-shadow:0 0 0 2px rgba(245,220,150,.30),0 1px 4px rgba(0,0,0,.6);}
+  body[data-theme="tinted"] #mapMain .nm .lbl{color:#f6edd2;
+    text-shadow:0 0 3px #0d1730,0 0 4px #0d1730,0 1px 3px #000;}
+  body[data-theme="tinted"] #mapMain .route-line{stroke:#ffb454;}
+  body[data-theme="tinted"] #mapMain .wpn{background:#ffb454;border-color:#2a1c08;}
+
+  /* leaflet controls follow the chrome theme */
+  .leaflet-bar a,.leaflet-control-layers,.leaflet-control-attribution{
+    background:var(--panel)!important;color:var(--ink)!important;
+    border-color:var(--line2)!important;}
+  .leaflet-bar a{color:var(--ink)!important;}
+  .leaflet-control-attribution a{color:var(--rust)!important;}
+  .leaflet-marker-icon:focus-visible,.leaflet-bar a:focus-visible{
+    outline:2px solid var(--bronze);outline-offset:2px;}
+
+  @media (max-width:720px){
+    header h1{font-size:16px;white-space:normal;}
+    .modes label{font-size:12px;padding:4px 7px;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>Atlas <span class="em">— Night Treatments</span></h1>
+    <div class="spacer"></div>
+    <div class="modes" role="radiogroup" aria-label="Night treatment">
+      <label><input type="radio" name="mode" value="day"/>Day</label>
+      <label><input type="radio" name="mode" value="filter"/>Filter&nbsp;night</label>
+      <label><input type="radio" name="mode" value="tinted"/>Tinted&nbsp;lens</label>
+      <label><input type="radio" name="mode" value="chrome"/>Chrome&nbsp;dark</label>
+      <label class="split-toggle"><input type="checkbox" id="splitChk"/>Split&nbsp;A/B</label>
+    </div>
+  </header>
+  <div id="stage">
+    <div id="mapMain"></div>
+    <div id="mapB"></div>
+    <div id="splitDivider"></div>
+    <div class="split-tag left">Day</div>
+    <div class="split-tag right">Filter&nbsp;night</div>
+  </div>
+  <footer>Comparison harness · four dark-mode treatments over a fixed hand-drawn raster</footer>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+"use strict";
+(function(){
+  var NZ=4, IMG_W=4390, IMG_H=2188, TILE_W=4608, TILE_H=2304;
+  var EPESHU=[1560,1300];
+
+  // 10 major settlements (from maps-site/data/gazetteer.json)
+  var MARKERS=[
+    {n:"Epēshu",   x:1236,y:1417,major:true},
+    {n:"Lepon",    x:1145,y:1427,major:true},
+    {n:"Hazad",    x:1405,y:1083},
+    {n:"Gehon Or", x:1540,y:1261},
+    {n:"Leshes",   x:1686,y:1322},
+    {n:"Malagnon", x:1631,y:1288},
+    {n:"Tamaron",  x:1659,y:1556},
+    {n:"Īngomes",  x:1792,y:1165},
+    {n:"Kezren",   x:2212,y:1227,major:true},
+    {n:"Bash Nena",x:1950,y:1012}
+  ];
+  // one route polyline: a march eastward
+  var ROUTE=[[1236,1417],[1405,1083],[1540,1261],[1686,1322],[2212,1227]];
+
+  function buildMap(id){
+    var map=L.map(id,{crs:L.CRS.Simple,minZoom:0,maxZoom:7,
+      zoomControl:(id==="mapMain"),attributionControl:(id==="mapMain"),
+      maxBoundsViscosity:1.0,zoomSnap:0,zoomDelta:.25,
+      keepBuffer:4,fadeAnimation:true});
+    function px(x,y){return map.unproject([x,y],NZ);}
+    var contentBounds=L.latLngBounds(px(0,0),px(IMG_W,IMG_H));
+    var tileBounds=L.latLngBounds(px(0,0),px(TILE_W,TILE_H));
+
+    // wash pane for the tinted-lens treatment (above tiles, below overlays)
+    map.createPane("nightwash");
+    map.getPane("nightwash").style.zIndex=350;
+
+    L.tileLayer("../maps-site/tiles/{z}/{x}/{y}.jpg",{
+      minNativeZoom:0,maxNativeZoom:5,maxZoom:7,tileSize:256,noWrap:true,
+      bounds:tileBounds,keepBuffer:4,
+      attribution:"Agrakh Nīmilkad Utheg · Tale of the Allhammers"}).addTo(map);
+
+    // the evening wash: a dark-blue rectangle over the whole atlas extent
+    L.rectangle(contentBounds,{pane:"nightwash",stroke:false,
+      fillColor:"#2f4f9e",fillOpacity:0.75,interactive:false}).addTo(map);
+
+    // ---- markers ----
+    MARKERS.forEach(function(m){
+      var cls="nm"+(m.major?" major":"");
+      var glyph=m.major?"◉":"○";
+      var icon=L.divIcon({className:"",iconSize:null,
+        html:'<div class="'+cls+'"><span class="glyph">'+glyph+
+             '</span><span class="lbl">'+m.n+'</span></div>'});
+      L.marker(px(m.x,m.y),{icon:icon,keyboard:true,
+        alt:m.n,title:m.n}).addTo(map);
+    });
+
+    // ---- route polyline + waypoint dots ----
+    L.polyline(ROUTE.map(function(p){return px(p[0],p[1]);}),
+      {className:"route-line",weight:3,opacity:.95,
+       dashArray:"9 12"}).addTo(map);
+    ROUTE.forEach(function(p){
+      var icon=L.divIcon({className:"",iconSize:[16,16],iconAnchor:[8,8],
+        html:'<div class="wpn"></div>'});
+      L.marker(px(p[0],p[1]),{icon:icon,interactive:false}).addTo(map);
+    });
+
+    // fill-height initial view
+    function fillZoom(){
+      var vh=map.getSize().y||map.getContainer().clientHeight||IMG_H;
+      var z=NZ+Math.log(vh/IMG_H)/Math.LN2;
+      return Math.ceil(z/0.05)*0.05;
+    }
+    var fz=fillZoom();
+    map.setMinZoom(fz);
+    map.setMaxBounds(contentBounds);
+    map.setView(px(EPESHU[0],EPESHU[1]),fz,{animate:false});
+    map.panInsideBounds(contentBounds,{animate:false});
+    map._fillZoom=fillZoom;
+    map._epeshu=px(EPESHU[0],EPESHU[1]);
+    return map;
+  }
+
+  var mapMain=buildMap("mapMain");
+  var mapB=buildMap("mapB");
+  window.__mapMain=mapMain; window.__mapB=mapB;
+
+  // keep mapB (split B-side) synced to mapMain
+  var syncing=false;
+  function sync(from,to){
+    if(syncing)return; syncing=true;
+    to.setView(from.getCenter(),from.getZoom(),{animate:false});
+    syncing=false;
+  }
+  mapMain.on("move zoom",function(){ if(document.body.classList.contains("split-on")) sync(mapMain,mapB); });
+
+  // ---- mode + split state ----
+  var MODES=["day","filter","tinted","chrome"];
+  function applyMode(mode){
+    if(MODES.indexOf(mode)<0)mode="day";
+    document.body.setAttribute("data-theme",mode);
+    var r=document.querySelector('.modes input[value="'+mode+'"]');
+    if(r)r.checked=true;
+    try{localStorage.setItem("atlasNightMode",mode);}catch(e){}
+    // the split B-side always previews a NIGHT treatment: mirror the chosen
+    // night look (filter/tinted); for day/chrome fall back to filter night.
+    var tb=(mode==="tinted")?"tinted":"filter";
+    mapB.getContainer().className=mapB.getContainer().className
+      .replace(/\btb-\w+\b/g,"").trim()+" tb-"+tb;
+    document.querySelector(".split-tag.right").innerHTML=
+      (tb==="tinted")?"Tinted&nbsp;lens":"Filter&nbsp;night";
+    // let leaflet settle sizes after a possible chrome reflow
+    setTimeout(function(){mapMain.invalidateSize({animate:false});},0);
+  }
+  document.querySelectorAll('.modes input[name="mode"]').forEach(function(inp){
+    inp.addEventListener("change",function(){applyMode(inp.value);});
+  });
+
+  var splitChk=document.getElementById("splitChk");
+  function applySplit(on){
+    document.body.classList.toggle("split-on",on);
+    splitChk.checked=on;
+    try{localStorage.setItem("atlasNightSplit",on?"1":"0");}catch(e){}
+    if(on){
+      mapB.invalidateSize({animate:false});
+      sync(mapMain,mapB);
+    }
+    setTimeout(function(){mapMain.invalidateSize({animate:false});
+      mapB.invalidateSize({animate:false});
+      if(on)sync(mapMain,mapB);},30);
+  }
+  splitChk.addEventListener("change",function(){applySplit(splitChk.checked);});
+
+  // ---- first-load: localStorage, else prefers-color-scheme dark -> mode 2 ----
+  var saved=null; try{saved=localStorage.getItem("atlasNightMode");}catch(e){}
+  var startMode=saved;
+  if(!startMode){
+    var prefersDark=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;
+    startMode=prefersDark?"filter":"day";
+  }
+  applyMode(startMode);
+  var savedSplit=null; try{savedSplit=localStorage.getItem("atlasNightSplit");}catch(e){}
+  applySplit(savedSplit==="1");
+
+  window.__ready=true;
+})();
+</script>
+</body>
+</html>

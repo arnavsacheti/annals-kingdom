@@ -1,0 +1,812 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Annals — Epēshu from its chart</title>
+<!-- Prototype 2 (Spec H): condition procedural town fabric on a real 2D chart.
+     Trace the coast / primary roads / built extent by eye over overlay-Epeshu.jpg,
+     then grow seeded secondary lanes off the primaries and run the v2 parcel/claim/
+     roof pipeline (copied from parcels-roofs.html) inside the extent. Deterministic
+     from seed (mulberry32). Standalone; three.js r128 via the sim's CDN tag.
+     Working coordinate space = JPG pixels (2863x3072), x->x, y->z. -->
+<style>
+  html,body{margin:0;height:100%;background:#20242b;color:#d8cdb4;font:13px/1.4 system-ui,sans-serif;overflow:hidden}
+  #bar{position:fixed;top:0;left:0;right:0;min-height:44px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+       padding:5px 14px;background:#171a20;border-bottom:1px solid #333;z-index:6}
+  #bar label{display:flex;gap:5px;align-items:center;white-space:nowrap;color:#a99}
+  #bar input[type=text]{width:110px;background:#0d0f13;color:#e7dcc0;border:1px solid #444;border-radius:4px;padding:3px 6px;font:inherit}
+  #bar input[type=range]{width:82px}
+  #bar select{background:#0d0f13;color:#e7dcc0;border:1px solid #444;border-radius:4px;padding:3px 6px;font:inherit}
+  #bar output{color:#e7dcc0;min-width:26px;display:inline-block}
+  #bar button{background:#5a3f24;color:#f0e4c8;border:1px solid #7a5a34;border-radius:4px;padding:5px 11px;cursor:pointer;font:inherit}
+  #bar button:hover{background:#6b4c2c}
+  #bar button.on{background:#8a6a3c;border-color:#b08a4c}
+  .sep{width:1px;height:24px;background:#3a3f48}
+  #stage{position:absolute;top:0;left:0;right:0;bottom:0}
+  #c2d{position:absolute;inset:0;display:block;width:100%;height:100%;background:#3f6f6f;touch-action:none}
+  #host3d{position:absolute;inset:0;display:none}
+  #stats{position:absolute;left:8px;bottom:8px;background:rgba(12,14,18,.82);color:#d8cdb4;
+         padding:7px 10px;border-radius:5px;font-size:12px;white-space:pre;pointer-events:none;z-index:3}
+  #hint{position:absolute;right:8px;bottom:8px;background:rgba(12,14,18,.72);padding:6px 9px;border-radius:5px;font-size:11px;z-index:3;max-width:280px;line-height:1.5}
+  #exportBox{position:absolute;right:8px;top:8px;width:360px;height:60%;display:none;z-index:5}
+  #exportBox textarea{width:100%;height:100%;background:#0d0f13;color:#cfe0c0;border:1px solid #555;border-radius:5px;font:11px/1.35 ui-monospace,monospace;padding:6px}
+  .hidden{display:none!important}
+</style>
+
+<div id="bar">
+  <button id="mTrace" class="on">Trace</button>
+  <button id="mGen">Generate</button>
+  <button id="m3d">3D</button>
+  <div class="sep"></div>
+  <label>seed <input id="seed" type="text" value="epeshu"></label>
+  <button id="regen">regen</button>
+  <div class="sep"></div>
+  <label>chart <input id="opacity" type="range" min="0" max="1" step="0.05" value="0.5"><output id="opacityO">0.50</output></label>
+  <span id="editCtl">
+    <div class="sep"></div>
+    <label>feature <select id="feat"></select></label>
+    <button id="addRoad">+road</button>
+    <button id="addMask">+field</button>
+    <button id="delFeat">del feature</button>
+    <button id="export">export</button>
+    <button id="download">download</button>
+  </span>
+</div>
+<div id="stage">
+  <canvas id="c2d"></canvas>
+  <div id="host3d"></div>
+  <div id="stats">…</div>
+  <div id="hint"></div>
+  <div id="exportBox"><textarea id="exportTA" spellcheck="false"></textarea></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+"use strict";
+/* ================================================================= rng + math
+   (copied from prototypes/parcels-roofs.html) */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hashSeed(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+const TAU=Math.PI*2;
+function area2(p){let s=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];s+=a.x*b.z-b.x*a.z;}return s/2;}
+function centroid(p){let x=0,z=0;for(const q of p){x+=q.x;z+=q.z;}return{x:x/p.length,z:z/p.length};}
+function pointInPoly(pt,poly){let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];
+  if(((a.z>pt.z)!==(b.z>pt.z))&&(pt.x<(b.x-a.x)*(pt.z-a.z)/(b.z-a.z)+a.x))c=!c;}return c;}
+function quadArea(q){return Math.abs(area2(q));}
+// Douglas-Peucker on a closed ring
+function dpClosed(ring,eps){
+  if(ring.length<4)return ring.slice();
+  let k=0;for(let i=1;i<ring.length;i++)if(ring[i].x<ring[k].x||(ring[i].x===ring[k].x&&ring[i].z<ring[k].z))k=i;
+  const chain=[];for(let i=0;i<ring.length;i++)chain.push(ring[(k+i)%ring.length]);
+  return dp(chain,eps);
+}
+function dp(pts,eps){
+  if(pts.length<3)return pts.slice();
+  const keep=new Array(pts.length).fill(false);keep[0]=keep[pts.length-1]=true;
+  const stack=[[0,pts.length-1]];
+  while(stack.length){const[a,b]=stack.pop();let md=-1,mi=-1;
+    const A=pts[a],B=pts[b],dx=B.x-A.x,dz=B.z-A.z,L=Math.hypot(dx,dz)||1;
+    for(let i=a+1;i<b;i++){const P=pts[i];const d=Math.abs((P.x-A.x)*dz-(P.z-A.z)*dx)/L;if(d>md){md=d;mi=i;}}
+    if(md>eps){keep[mi]=true;stack.push([a,mi],[mi,b]);}}
+  const out=[];for(let i=0;i<pts.length;i++)if(keep[i])out.push(pts[i]);return out;
+}
+
+/* ================================================================= tuning (px) */
+const CELL=2.5;                    // raster cell size (px)
+const COAST_STRIP=60;              // unbuilt waterfront band (px)
+const LOTW=12, LOTD=18;            // nominal parcel width/depth (px)
+const MINDEPTH=6, MINWIDTH=7;      // absolute floors for a viable lot (px)
+const RIB_W=7;                     // secondary lane half-fabric width (px, total ~7)
+const RIB_MAX=150;                 // max rib reach (px)
+
+/* ============================================================ 1. trace -> model
+   The editable trace E: {coast:[{x,y}], primaries:[{name,w,pts:[{x,y}]}],
+   extent:[{x,y}], plazas:[{name,pts:[{x,y}]}], pois:[...]}. */
+function fromJSON(j){
+  const P=a=>({x:a[0],y:a[1]});
+  return {
+    img:j.img, w:j.w, h:j.h,
+    coast:(j.coast||[]).map(P),
+    primaries:(j.primaries||[]).map(r=>({name:r.name||'road',w:r.w||12,pts:(r.pts||[]).map(P)})),
+    extent:(j.extent||[]).map(P),
+    plazas:(j.plazas||[]).map(r=>({name:r.name||'open',pts:(r.pts||[]).map(P)})),
+    masks:(j.masks||[]).map(r=>({name:r.name||'field',kind:r.kind||'farm',pts:(r.pts||[]).map(P)})),
+    pois:(j.pois||[]).slice()
+  };
+}
+function toJSON(E){
+  const A=p=>[Math.round(p.x),Math.round(p.y)];
+  return {
+    img:E.img, w:E.w, h:E.h,
+    coast:E.coast.map(A),
+    primaries:E.primaries.map(r=>({name:r.name,pts:r.pts.map(A),w:r.w})),
+    extent:E.extent.map(A),
+    plazas:E.plazas.map(r=>({name:r.name,pts:r.pts.map(A)})),
+    masks:E.masks.map(r=>({name:r.name,kind:r.kind,pts:r.pts.map(A)})),
+    pois:E.pois
+  };
+}
+// world helpers: trace stores {x,y}; geometry uses {x,z}. y===z (image px down).
+const XZ=p=>({x:p.x,z:p.y});
+
+/* ================================================= 2. raster grid over extent */
+function makeGrid(E){
+  let minX=1e9,minZ=1e9,maxX=-1e9,maxZ=-1e9;
+  for(const p of E.extent){if(p.x<minX)minX=p.x;if(p.x>maxX)maxX=p.x;if(p.y<minZ)minZ=p.y;if(p.y>maxZ)maxZ=p.y;}
+  const pad=40;minX-=pad;minZ-=pad;maxX+=pad;maxZ+=pad;
+  const W=Math.ceil((maxX-minX)/CELL), H=Math.ceil((maxZ-minZ)/CELL);
+  return {minX,minZ,W,H,mask:new Uint8Array(W*H)};
+}
+const gx=(G,x)=>(x-G.minX)/CELL, gz=(G,z)=>(z-G.minZ)/CELL;
+const wx=(G,px)=>G.minX+(px+0.5)*CELL, wz=(G,pz)=>G.minZ+(pz+0.5)*CELL;
+function stampDisc(mask,W,H,cx,cy,r,v){const r2=r*r,x0=Math.max(0,Math.floor(cx-r)),x1=Math.min(W-1,Math.ceil(cx+r)),
+    y0=Math.max(0,Math.floor(cy-r)),y1=Math.min(H-1,Math.ceil(cy+r));
+  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const dx=x-cx,dy=y-cy;if(dx*dx+dy*dy<=r2)mask[y*W+x]=v;}}
+function stampSeg(G,a,b,wpx,v){
+  const r=(wpx/2)/CELL, ax=gx(G,a.x),ay=gz(G,a.z),bx=gx(G,b.x),by=gz(G,b.z);
+  const L=Math.hypot(bx-ax,by-ay),steps=Math.max(1,Math.ceil(L));
+  for(let s=0;s<=steps;s++){const t=s/steps;stampDisc(G.mask,G.W,G.H,ax+(bx-ax)*t,ay+(by-ay)*t,r,v);}
+}
+// scanline fill of a world-space polygon (list of {x,z}) into the mask
+function fillPoly(G,poly,v){
+  let z0=1e9,z1=-1e9;for(const p of poly){if(p.z<z0)z0=p.z;if(p.z>z1)z1=p.z;}
+  const py0=Math.max(0,Math.floor(gz(G,z0))), py1=Math.min(G.H-1,Math.ceil(gz(G,z1)));
+  for(let py=py0;py<=py1;py++){
+    const zc=wz(G,py), xs=[];
+    for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];
+      if((a.z>zc)!==(b.z>zc)){const x=(b.x-a.x)*(zc-a.z)/(b.z-a.z)+a.x;xs.push(x);}}
+    xs.sort((m,n)=>m-n);
+    for(let k=0;k+1<xs.length;k+=2){
+      const px0=Math.max(0,Math.round(gx(G,xs[k]))), px1=Math.min(G.W-1,Math.round(gx(G,xs[k+1])));
+      for(let px=px0;px<=px1;px++)G.mask[py*G.W+px]=v;}
+  }
+}
+
+/* ======================================= 3. secondary lanes (Citygen-lite ribs) */
+// Perpendicular ribs off every primary, seeded gaps 60-110px, clipped to extent,
+// stopping when they hit an already-stamped street. Deterministic from R.
+function growRibs(G,sources,extentPoly,R,opt){
+  opt=opt||{};
+  const gapMin=opt.gapMin!==undefined?opt.gapMin:60, gapSpan=opt.gapSpan!==undefined?opt.gapSpan:50;
+  const reachMax=opt.reachMax!==undefined?opt.reachMax:RIB_MAX, ribW=opt.ribW!==undefined?opt.ribW:RIB_W;
+  const ribs=[];
+  const inExt=p=>pointInPoly(p,extentPoly);
+  for(const road of sources){
+    const pts=road.pts;if(pts.length<2)continue;
+    // resample the source at ~4px so gaps are measured along arc length
+    let acc=0, nextGap=gapMin+R()*gapSpan;
+    for(let i=0;i<pts.length-1;i++){
+      const A=XZ(pts[i]),B=XZ(pts[i+1]);const dx=B.x-A.x,dz=B.z-A.z,L=Math.hypot(dx,dz)||1;
+      const ux=dx/L,uz=dz/L,nx=-uz,nz=ux;         // unit tangent + normal
+      for(let s=0;s<L;s+=4){
+        acc+=4;if(acc<nextGap)continue;acc=0;nextGap=gapMin+R()*gapSpan;
+        const ox=A.x+ux*s, oz=A.z+uz*s;
+        for(const sgn of [1,-1]){
+          const clear=(road.w||RIB_W)/2+6;
+          const reach=reachMax*(0.6+0.5*R());
+          let end=null, jitter=(R()-0.5)*0.35;    // slight skew so ribs aren't perfectly straight
+          const dnx=nx*Math.cos(jitter)-nz*Math.sin(jitter), dnz=nx*Math.sin(jitter)+nz*Math.cos(jitter);
+          for(let d=CELL;d<=reach;d+=CELL){
+            const px=ox+dnx*sgn*d, pz=oz+dnz*sgn*d;
+            if(!inExt({x:px,z:pz})){end={x:ox+dnx*sgn*Math.max(clear,d-CELL),z:oz+dnz*sgn*Math.max(clear,d-CELL)};break;}
+            if(d>clear){const gxx=gx(G,px)|0,gzz=gz(G,pz)|0;
+              if(gxx>=0&&gzz>=0&&gxx<G.W&&gzz<G.H&&G.mask[gzz*G.W+gxx]){end={x:px,z:pz};break;}}
+          }
+          if(!end)end={x:ox+dnx*sgn*reach,z:oz+dnz*sgn*reach};
+          const st={x:ox,z:oz};
+          if(Math.hypot(end.x-st.x,end.z-st.z)>clear+8){
+            stampSeg(G,st,end,ribW,1);
+            ribs.push({pts:[{x:st.x,y:st.z},{x:end.x,y:end.z}],w:ribW,rib:true});
+          }
+        }
+      }
+    }
+  }
+  return ribs;
+}
+
+/* ============================================ 4. blocks via raster flood-fill
+   (Moore trace copied from parcels-roofs.html). Outside-extent / coast / plazas
+   are pre-stamped blocked, so every free component is a buildable interior block. */
+function extractBlocks(G){
+  const W=G.W,H=G.H,mask=G.mask;
+  const lab=new Int32Array(W*H).fill(-1);
+  const comps=[];const stack=[];
+  for(let sy=0;sy<H;sy++)for(let sx=0;sx<W;sx++){
+    const idx=sy*W+sx;if(mask[idx]||lab[idx]>=0)continue;
+    const id=comps.length;let count=0,border=false;stack.length=0;stack.push(idx);lab[idx]=id;
+    while(stack.length){const p=stack.pop();count++;const px=p%W,py=(p-px)/W;
+      if(px===0||py===0||px===W-1||py===H-1)border=true;
+      const nb=[p-1,p+1,p-W,p+W],ok=[px>0,px<W-1,py>0,py<H-1];
+      for(let d=0;d<4;d++){if(!ok[d])continue;const q=nb[d];if(!mask[q]&&lab[q]<0){lab[q]=id;stack.push(q);}}}
+    comps.push({id,count,border});
+  }
+  const minCells=Math.ceil(70/(CELL*CELL));   // drop <~70 px^2 slivers
+  const blocks=[];
+  for(const c of comps){
+    if(c.border)continue;
+    if(c.count<minCells)continue;
+    const ring=moore(lab,W,H,c.id);
+    if(!ring||ring.length<4)continue;
+    let poly=ring.map(p=>({x:wx(G,p.x),z:wz(G,p.y)}));
+    poly=dpClosed(poly,3.0);
+    if(poly.length<3)continue;
+    if(Math.abs(area2(poly))<70)continue;
+    if(area2(poly)<0)poly.reverse();
+    blocks.push({poly,cx:centroid(poly)});
+  }
+  return blocks;
+}
+function moore(lab,W,H,id){
+  let sx=-1,sy=-1;
+  outer:for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(lab[y*W+x]===id){sx=x;sy=y;break outer;}
+  if(sx<0)return null;
+  const IN=(x,y)=>x>=0&&y>=0&&x<W&&y<H&&lab[y*W+x]===id;
+  const CW=[[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]];
+  const ring=[{x:sx,y:sy}];
+  let px=sx,py=sy, bdx=-1,bdy=0;
+  const maxIt=8*(W+H)*4;let it=0;
+  const startX=sx,startY=sy;let firstStep=null;
+  while(it++<maxIt){
+    let bi=0;for(let k=0;k<8;k++)if(CW[k][0]===bdx&&CW[k][1]===bdy){bi=k;break;}
+    let found=false;
+    for(let s=1;s<=8;s++){const k=(bi+s)%8;const nx=px+CW[k][0],ny=py+CW[k][1];
+      if(IN(nx,ny)){bdx=px-nx;bdy=py-ny;px=nx;py=ny;found=true;
+        if(firstStep===null)firstStep=px*100000+py;break;}}
+    if(!found)break;
+    if(px===startX&&py===startY&&ring.length>2&&firstStep!==null)break;
+    ring.push({x:px,y:py});
+    if(ring.length>maxIt)break;
+  }
+  return ring;
+}
+
+/* =================================== 5. strip parcels + claim mask + repair
+   (copied from parcels-roofs.html; metric constants swapped for px tuning). */
+function makeClaim(G){return {mask:new Uint8Array(G.W*G.H),W:G.W,H:G.H,G};}
+function claimGet(cm,x,z){const px=gx(cm.G,x)|0,pz=gz(cm.G,z)|0;
+  if(px<0||pz<0||px>=cm.W||pz>=cm.H)return 1;return cm.mask[pz*cm.W+px];}
+function claimSet(cm,x,z){const px=gx(cm.G,x)|0,pz=gz(cm.G,z)|0;
+  if(px<0||pz<0||px>=cm.W||pz>=cm.H)return;cm.mask[pz*cm.W+px]=1;}
+function claimStampLot(cm,lot){const {A,ux,uz,nx,nz,t0,t1,depth}=lot,step=CELL*0.7;
+  for(let a=t0;a<=t1+1e-6;a+=step)for(let dd=0;dd<=depth+1e-6;dd+=step)
+    claimSet(cm,A.x+ux*a+nx*dd,A.z+uz*a+nz*dd);}
+function claimMaxDepth(cm,A,ux,uz,nx,nz,t0,t1,maxD){
+  const wlen=t1-t0, inset=Math.min(1.5,wlen*0.2), a0=t0+inset, a1=t1-inset;
+  const nS=Math.max(2,Math.ceil((a1-a0)/CELL)), stepD=CELL;
+  let d=0;
+  for(let dd=stepD;dd<=maxD+1e-6;dd+=stepD){
+    let hit=false;
+    for(let s=0;s<=nS;s++){const a=a0+(a1-a0)*s/nS;
+      if(claimGet(cm,A.x+ux*a+nx*dd,A.z+uz*a+nz*dd)){hit=true;break;}}
+    if(hit)break;d=dd;}
+  return d;
+}
+function makeParcels(block,claim){
+  const poly=block.poly, lots=[], rejected=[];
+  const nominal=LOTW*LOTD;let accepted=0,repaired=0;
+  for(let e=0;e<poly.length;e++){
+    const A=poly[e],B=poly[(e+1)%poly.length];
+    const dx=B.x-A.x,dz=B.z-A.z,L=Math.hypot(dx,dz);
+    if(L<LOTW*0.5)continue;
+    const ux=dx/L,uz=dz/L;let nx=-uz,nz=ux;
+    if(!pointInPoly({x:(A.x+B.x)/2+nx*1.0,z:(A.z+B.z)/2+nz*1.0},poly)){nx=-nx;nz=-nz;}
+    const cnt=Math.max(1,Math.round(L/LOTW)), w=L/cnt;let prev=null;
+    for(let k=0;k<cnt;k++){
+      const lot=buildLot(A,ux,uz,nx,nz,k*w,(k+1)*w,LOTD,poly,claim);
+      if(lotValid(lot,nominal)){lot.status='accepted';lots.push(lot);accepted++;prev=lot;claimStampLot(claim,lot);}
+      else if(prev){prev.t1=lot.t1;rebuildLot(prev,A,ux,uz,nx,nz,LOTD,poly,claim);
+        if(prev.status==='accepted'){accepted--;repaired++;}prev.status='repaired';claimStampLot(claim,prev);}
+      else {lot.status='rejected';rejected.push(lot);}
+    }
+  }
+  let courtyard=insetPolygon(poly,LOTD);
+  if(courtyard&&(courtyard.length<3||Math.abs(area2(courtyard))<40))courtyard=null;
+  return {lots,rejected,courtyard,accepted,repaired,rejectedN:rejected.length};
+}
+function buildLot(A,ux,uz,nx,nz,t0,t1,depth,poly,claim){
+  const lot={A,ux,uz,nx,nz,t0,t1,depth};rebuildLot(lot,A,ux,uz,nx,nz,depth,poly,claim);return lot;}
+function rebuildLot(lot,A,ux,uz,nx,nz,depth,poly,claim){
+  const {t0,t1}=lot;
+  const p0={x:A.x+ux*t0,z:A.z+uz*t0}, p1={x:A.x+ux*t1,z:A.z+uz*t1};
+  let d=depth;
+  for(let i=0;i<6;i++){const q0={x:p0.x+nx*d,z:p0.z+nz*d}, q1={x:p1.x+nx*d,z:p1.z+nz*d};
+    if(pointInPoly(q0,poly)&&pointInPoly(q1,poly))break;d*=0.72;if(d<MINDEPTH){d=MINDEPTH;break;}}
+  const tm=(t0+t1)/2, mx=A.x+ux*tm, mz=A.z+uz*tm;
+  let T=120;for(let dd=CELL;dd<=120;dd+=CELL){if(!pointInPoly({x:mx+nx*dd,z:mz+nz*dd},poly)){T=dd;break;}}
+  if(T*0.5>=MINDEPTH&&T*0.5<d)d=T*0.5;
+  if(claim){const dc=claimMaxDepth(claim,A,ux,uz,nx,nz,t0,t1,d);if(dc<d)d=dc;}
+  lot.depth=d;
+  lot.q=[p0,p1,{x:p1.x+nx*d,z:p1.z+nz*d},{x:p0.x+nx*d,z:p0.z+nz*d}];
+  lot.w=t1-t0;
+}
+function lotValid(lot){
+  if(lot.depth<MINDEPTH||lot.w<MINWIDTH)return false;
+  if(quadArea(lot.q)<28)return false;
+  const aspect=Math.max(lot.w,lot.depth)/Math.max(1e-3,Math.min(lot.w,lot.depth));
+  if(aspect>4.5)return false;return true;
+}
+function insetPolygon(poly,d){
+  const n=poly.length,lines=[];
+  for(let i=0;i<n;i++){const A=poly[i],B=poly[(i+1)%n];const dx=B.x-A.x,dz=B.z-A.z,L=Math.hypot(dx,dz)||1;
+    let nx=-dz/L,nz=dx/L;
+    if(!pointInPoly({x:(A.x+B.x)/2+nx*0.8,z:(A.z+B.z)/2+nz*0.8},poly)){nx=-nx;nz=-nz;}
+    lines.push({px:A.x+nx*d,pz:A.z+nz*d,dx:dx/L,dz:dz/L});}
+  const out=[];
+  for(let i=0;i<n;i++){const a=lines[(i+n-1)%n],b=lines[i];
+    const det=a.dx*b.dz-a.dz*b.dx;if(Math.abs(det)<1e-6)return null;
+    const t=((b.px-a.px)*b.dz-(b.pz-a.pz)*b.dx)/det;out.push({x:a.px+a.dx*t,z:a.pz+a.dz*t});}
+  if(area2(out)<0)return null;return out;
+}
+
+/* ================================================ 6. footprints + overlap test */
+function footprint(lot,depthFrac){
+  const {A,ux,uz,nx,nz,t0,t1,depth}=lot, m=1.5, w=t1-t0;
+  const bd=Math.max(3.0,(depthFrac||1)*depth-2*m);
+  if(w>2*m+2&&bd>2&&depth>2*m+2){
+    const a0=t0+m,a1=t1-m,d0=m,d1=Math.min(depth-m,m+bd);
+    return {corners:[
+      {x:A.x+ux*a0+nx*d0,z:A.z+uz*a0+nz*d0},
+      {x:A.x+ux*a1+nx*d0,z:A.z+uz*a1+nz*d0},
+      {x:A.x+ux*a1+nx*d1,z:A.z+uz*a1+nz*d1},
+      {x:A.x+ux*a0+nx*d1,z:A.z+uz*a0+nz*d1}]};
+  }
+  const s=0.72,cx=(t0+t1)/2,dh=depth/2;
+  return {corners:[
+    {x:A.x+ux*(cx-w*s/2)+nx*(dh-depth*s/2),z:A.z+uz*(cx-w*s/2)+nz*(dh-depth*s/2)},
+    {x:A.x+ux*(cx+w*s/2)+nx*(dh-depth*s/2),z:A.z+uz*(cx+w*s/2)+nz*(dh-depth*s/2)},
+    {x:A.x+ux*(cx+w*s/2)+nx*(dh+depth*s/2),z:A.z+uz*(cx+w*s/2)+nz*(dh+depth*s/2)},
+    {x:A.x+ux*(cx-w*s/2)+nx*(dh+depth*s/2),z:A.z+uz*(cx-w*s/2)+nz*(dh+depth*s/2)}]};
+}
+function rectsOverlap(A,B){
+  const EPS=0.05;
+  for(const poly of [A,B]){
+    for(let i=0;i<poly.length;i++){
+      const p1=poly[i],p2=poly[(i+1)%poly.length];
+      let ax=-(p2.z-p1.z),az=(p2.x-p1.x);const L=Math.hypot(ax,az)||1;ax/=L;az/=L;
+      let minA=Infinity,maxA=-Infinity,minB=Infinity,maxB=-Infinity;
+      for(const p of A){const d=p.x*ax+p.z*az;if(d<minA)minA=d;if(d>maxA)maxA=d;}
+      for(const p of B){const d=p.x*ax+p.z*az;if(d<minB)minB=d;if(d>maxB)maxB=d;}
+      if(maxA<minB+EPS||maxB<minA+EPS)return false;
+    }
+  }
+  return true;
+}
+
+/* ================================================= 7. straight-skeleton roofs
+   (copied verbatim from parcels-roofs.html) */
+function isRect(c){
+  if(c.length!==4)return false;
+  const e=[];for(let i=0;i<4;i++){const a=c[i],b=c[(i+1)%4];e.push({x:b.x-a.x,z:b.z-a.z});}
+  const dot=(p,q)=>p.x*q.x+p.z*q.z, len=p=>Math.hypot(p.x,p.z);
+  const perp=Math.abs(dot(e[0],e[1])/(len(e[0])*len(e[1])+1e-9));
+  const par=Math.abs(len(e[0])-len(e[2]))/(len(e[0])+1e-6)+Math.abs(len(e[1])-len(e[3]))/(len(e[1])+1e-6);
+  return perp<0.12&&par<0.12;
+}
+function roofFor(corners,baseY,pitch,type){
+  try{
+    if(type==='pyramid')return pyramid(corners,baseY,pitch);
+    if(isRect(corners))return hipRect(corners,baseY,pitch,type==='gable');
+    const r=hipConvex(corners,baseY,pitch);if(r&&r.faces.length)return r;
+  }catch(e){}
+  return pyramid(corners,baseY,pitch);
+}
+function P3(p,y){return{x:p.x,y,z:p.z};}
+function hipRect(c,baseY,pitch,gable){
+  const O={x:(c[0].x+c[1].x+c[2].x+c[3].x)/4,z:(c[0].z+c[1].z+c[2].z+c[3].z)/4};
+  const U={x:c[1].x-c[0].x,z:c[1].z-c[0].z}, Wl=Math.hypot(U.x,U.z);
+  const V={x:c[3].x-c[0].x,z:c[3].z-c[0].z}, Dl=Math.hypot(V.x,V.z);
+  const ux=U.x/Wl,uz=U.z/Wl, vx=V.x/Dl,vz=V.z/Dl;
+  const longU=Wl>=Dl, inset=Math.min(Wl,Dl)/2;
+  const half=gable?Math.max(Wl,Dl)/2:Math.abs(Wl-Dl)/2;
+  const ay=baseY+inset*pitch;let R0,R1;
+  if(longU){R0={x:O.x-ux*half,z:O.z-uz*half};R1={x:O.x+ux*half,z:O.z+uz*half};}
+  else     {R0={x:O.x-vx*half,z:O.z-vz*half};R1={x:O.x+vx*half,z:O.z+vz*half};}
+  const A=P3(R0,ay),Bp=P3(R1,ay);const g=c.map(p=>P3(p,baseY));let faces;
+  if(longU)faces=[[g[0],g[1],Bp,A],[g[2],g[3],A,Bp],[g[1],g[2],Bp],[g[3],g[0],A]];
+  else     faces=[[g[1],g[2],Bp,A],[g[3],g[0],A,Bp],[g[0],g[1],A],[g[2],g[3],Bp]];
+  return {faces,ridge:[R0,R1],apexY:ay};
+}
+function hipConvex(poly,baseY,pitch){
+  let p=poly.map(q=>({x:q.x,z:q.z}));if(area2(p)<0)p.reverse();
+  const n=p.length,edges=[];
+  for(let i=0;i<n;i++){const A=p[i],B=p[(i+1)%n];const dx=B.x-A.x,dz=B.z-A.z,L=Math.hypot(dx,dz)||1;
+    let nx=-dz/L,nz=dx/L;
+    edges.push({nx,nz,c:nx*A.x+nz*A.z,chainL:[P3(A,baseY)],chainR:[P3(B,baseY)],prev:(i+n-1)%n,next:(i+1)%n,dead:false});}
+  const vpos=(a,b,t)=>{const det=a.nx*b.nz-b.nx*a.nz;if(Math.abs(det)<1e-9)return null;
+    const c1=a.c+t,c2=b.c+t;return{x:(c1*b.nz-c2*a.nz)/det,z:(a.nx*c2-b.nx*c1)/det};};
+  const elen=(e,t)=>{const l=vpos(edges[e.prev],e,t),r=vpos(e,edges[e.next],t);if(!l||!r)return 1e9;return Math.hypot(r.x-l.x,r.z-l.z);};
+  const faces=[];let alive=n,T=0,guard=0;
+  while(alive>3&&guard++<n*4){
+    let best=-1,bt=Infinity;
+    for(let i=0;i<edges.length;i++){const e=edges[i];if(e.dead)continue;
+      const l0=elen(e,T),l1=elen(e,T+1),rate=l1-l0;if(rate>=-1e-6)continue;
+      const tc=T-l0/rate;if(tc>T+1e-6&&tc<bt){bt=tc;best=i;}}
+    if(best<0)break;
+    const e=edges[best];T=bt;const Npt=vpos(edges[e.prev],e,T);if(!Npt)break;
+    const N=P3(Npt,baseY+T*pitch);
+    edges[e.prev].chainR.push(N);edges[e.next].chainL.push(N);e.chainL.push(N);e.chainR.push(N);
+    faces.push(e.chainR.concat(e.chainL.slice().reverse()));
+    edges[e.prev].next=e.next;edges[e.next].prev=e.prev;e.dead=true;alive--;
+  }
+  const rem=[];for(const e of edges)if(!e.dead)rem.push(e);
+  if(rem.length===3){const[a,b,cc]=rem;
+    const M=[[a.nx,a.nz,-1,a.c],[b.nx,b.nz,-1,b.c],[cc.nx,cc.nz,-1,cc.c]];const sol=solve3(M);
+    if(sol){const N=P3({x:sol[0],z:sol[1]},baseY+sol[2]*pitch);
+      for(const e of rem){e.chainR.push(N);e.chainL.push(N);faces.push(e.chainR.concat(e.chainL.slice().reverse()));}}
+    else return null;
+  } else if(rem.length>0) return null;
+  return {faces,ridge:null,apexY:baseY};
+}
+function solve3(M){const a=M.map(r=>r.slice());
+  for(let i=0;i<3;i++){let piv=i;for(let r=i+1;r<3;r++)if(Math.abs(a[r][i])>Math.abs(a[piv][i]))piv=r;
+    if(Math.abs(a[piv][i])<1e-9)return null;[a[i],a[piv]]=[a[piv],a[i]];
+    for(let r=0;r<3;r++){if(r===i)continue;const f=a[r][i]/a[i][i];for(let k=i;k<4;k++)a[r][k]-=f*a[i][k];}}
+  return[a[0][3]/a[0][0],a[1][3]/a[1][1],a[2][3]/a[2][2]];}
+function pyramid(c,baseY,pitch){
+  const O=centroid(c);let ins=1e9;
+  for(let i=0;i<c.length;i++){const A=c[i],B=c[(i+1)%c.length];const dx=B.x-A.x,dz=B.z-A.z,L=Math.hypot(dx,dz)||1;
+    const d=Math.abs((O.x-A.x)*dz-(O.z-A.z)*dx)/L;if(d<ins)ins=d;}
+  const ay=baseY+ins*pitch, apex=P3(O,ay), faces=[];
+  for(let i=0;i<c.length;i++)faces.push([P3(c[i],baseY),P3(c[(i+1)%c.length],baseY),apex]);
+  return {faces,ridge:null,apexY:ay};
+}
+
+/* =================================================================== 8. build */
+const cfg={seed:'epeshu',pitch:0.5,wallH:11};
+let E=null, MODEL=null, IMG=null;
+function build(){
+  const t0=performance.now();
+  const R=mulberry32(hashSeed(cfg.seed));
+  const extentPoly=E.extent.map(p=>({x:p.x,z:p.y}));
+  const G=makeGrid(E);
+  // block everything outside extent, then re-open the interior
+  for(let i=0;i<G.mask.length;i++)G.mask[i]=1;
+  fillPoly(G,extentPoly,0);
+  // coast strip (waterfront band) blocked
+  for(let i=0;i<E.coast.length-1;i++)stampSeg(G,XZ(E.coast[i]),XZ(E.coast[i+1]),COAST_STRIP*2,1);
+  // plazas blocked (kept unbuilt)
+  for(const pz of E.plazas)fillPoly(G,pz.pts.map(XZ),1);
+  // masks (farm/green holes) blocked: generation never builds here
+  for(const mk of E.masks)fillPoly(G,mk.pts.map(XZ),1);
+  // primaries stamped as streets
+  for(const road of E.primaries){const pts=road.pts;
+    for(let i=0;i<pts.length-1;i++)stampSeg(G,XZ(pts[i]),XZ(pts[i+1]),road.w,1);}
+  // secondary lanes (first-order ribs off primaries) + second-order ribs off those,
+  // one level deep, to fill big blocks closer to the chart's density.
+  const ribs1=growRibs(G,E.primaries,extentPoly,R,{gapMin:42,gapSpan:32,reachMax:RIB_MAX,ribW:RIB_W});
+  const ribs2=growRibs(G,ribs1,extentPoly,R,{gapMin:30,gapSpan:22,reachMax:78,ribW:RIB_W});
+  const ribs=ribs1.concat(ribs2);
+  // blocks
+  const blocks=extractBlocks(G);
+  const claim=makeClaim(G);
+  const items=[],gardens=[],courtyards=[],rejects=[];
+  let accepted=0,repaired=0,rejectedN=0,areaSum=0,areaN=0;
+  const roofN={hip:0,gable:0,pyramid:0};let unbuilt=0;
+  for(const bl of blocks){
+    const par=makeParcels(bl,claim);
+    accepted+=par.accepted;repaired+=par.repaired;rejectedN+=par.rejectedN;
+    if(par.courtyard)courtyards.push(par.courtyard);
+    for(const lot of par.rejected)rejects.push(lot.q);
+    for(const lot of par.lots){
+      areaSum+=quadArea(lot.q);areaN++;
+      const isUnbuilt=R()<0.07, depthFrac=0.6+0.4*R(), rt=R(), wallH=cfg.wallH*(0.8+R()*0.6);
+      if(isUnbuilt){gardens.push(lot.q);unbuilt++;continue;}
+      const fp=footprint(lot,depthFrac);
+      const small=Math.min(lot.w,lot.depth)<11;
+      let type;
+      if(small)type=rt<0.34?'pyramid':rt<0.66?'hip':'gable';
+      else type=rt<0.61?'hip':'gable';
+      const roof=roofFor(fp.corners,wallH,cfg.pitch,type);roofN[type]++;
+      items.push({lot,fp,wallH,roof,type});
+    }
+  }
+  // pairwise overlap (broadphase AABB + SAT)
+  let overlaps=0;
+  const bb=items.map(it=>{const c=it.fp.corners;let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;
+    for(const p of c){if(p.x<x0)x0=p.x;if(p.x>x1)x1=p.x;if(p.z<z0)z0=p.z;if(p.z>z1)z1=p.z;}return{x0,x1,z0,z1};});
+  for(let i=0;i<items.length;i++)for(let j=i+1;j<items.length;j++){
+    const a=bb[i],b=bb[j];if(a.x1<b.x0||b.x1<a.x0||a.z1<b.z0||b.z1<a.z0)continue;
+    if(rectsOverlap(items[i].fp.corners,items[j].fp.corners))overlaps++;}
+  // 3D buffers + vertex hash
+  const wallPos=[],roofPos=[];
+  const pushTri=(arr,a,b,d)=>{arr.push(a.x,a.y,a.z,b.x,b.y,b.z,d.x,d.y,d.z);};
+  const fan=(arr,f)=>{for(let i=1;i<f.length-1;i++)pushTri(arr,f[0],f[i],f[i+1]);};
+  for(const it of items){const c=it.fp.corners,h=it.wallH;
+    for(let i=0;i<c.length;i++){const A=c[i],B=c[(i+1)%c.length];fan(wallPos,[P3(A,0),P3(B,0),P3(B,h),P3(A,h)]);}
+    for(const f of it.roof.faces)if(f)fan(roofPos,f);}
+  const vhash=hashArr(wallPos,roofPos);
+  const tris=(wallPos.length+roofPos.length)/9;
+  const stats={blocks:blocks.length,ribs:ribs.length,parcels:accepted+repaired,accepted,repaired,rejected:rejectedN,
+    buildings:items.length,overlaps,unbuilt,meanArea:areaN?areaSum/areaN:0,tris,ms:performance.now()-t0,vhash,
+    roofs:{hip:roofN.hip,gable:roofN.gable,pyramid:roofN.pyramid}};
+  MODEL={G,blocks,ribs,items,gardens,courtyards,rejects,wallPos,roofPos,stats};
+  return MODEL;
+}
+function hashArr(a,b){let hs=2166136261>>>0;
+  const acc=v=>{const x=(Math.round(v*1000))|0;hs^=x&0xff;hs=Math.imul(hs,16777619);hs^=(x>>>8)&0xff;hs=Math.imul(hs,16777619);hs^=(x>>>16)&0xffff;hs=Math.imul(hs,16777619);};
+  for(const v of a)acc(v);for(const v of b)acc(v);return(hs>>>0).toString(16);}
+
+/* =============================================================== view + 2D UI */
+let MODE='trace';
+const view={z:0.3,ox:0,oy:0};      // screen = img*z + o
+let selFeat='extent';               // key in the feature list
+const cv=document.getElementById('c2d');
+function fitView(){
+  const w=cv.clientWidth,h=cv.clientHeight;
+  const z=Math.min(w/E.w,h/E.h)*0.98;
+  view.z=z;view.ox=(w-E.w*z)/2;view.oy=(h-E.h*z)/2;
+}
+const S=p=>({x:p.x*view.z+view.ox,y:(p.y!==undefined?p.y:p.z)*view.z+view.oy});
+const toImg=(sx,sy)=>({x:(sx-view.ox)/view.z,y:(sy-view.oy)/view.z});
+
+// enumerate editable features -> {key,label,pts,kind}
+function featureList(){
+  const L=[{key:'coast',label:'coast',pts:E.coast,kind:'line'},
+           {key:'extent',label:'extent',pts:E.extent,kind:'ring'}];
+  E.primaries.forEach((r,i)=>L.push({key:'p'+i,label:'road: '+r.name,pts:r.pts,kind:'line'}));
+  E.plazas.forEach((r,i)=>L.push({key:'z'+i,label:'plaza: '+r.name,pts:r.pts,kind:'ring'}));
+  E.masks.forEach((r,i)=>L.push({key:'m'+i,label:'mask('+r.kind+'): '+r.name,pts:r.pts,kind:'ring'}));
+  return L;
+}
+function feat(key){return featureList().find(f=>f.key===key);}
+function refreshFeatSelect(){
+  const sel=document.getElementById('feat');const cur=selFeat;sel.innerHTML='';
+  for(const f of featureList()){const o=document.createElement('option');o.value=f.key;o.textContent=f.label;sel.appendChild(o);}
+  if(feat(cur))sel.value=cur;else{selFeat=sel.value||'extent';}
+}
+
+function draw2d(){
+  cv.width=cv.clientWidth;cv.height=cv.clientHeight;
+  const g=cv.getContext('2d');
+  g.fillStyle='#3f6f6f';g.fillRect(0,0,cv.width,cv.height);
+  // chart image with opacity
+  if(IMG){g.globalAlpha=+document.getElementById('opacity').value;
+    g.drawImage(IMG,view.ox,view.oy,E.w*view.z,E.h*view.z);g.globalAlpha=1;}
+  if(MODE==='gen'&&MODEL)drawGen(g);
+  drawTrace(g,MODE==='trace');
+}
+function poly2(g,pts,closed){g.beginPath();const P=S(pts[0]);g.moveTo(P.x,P.y);
+  for(let i=1;i<pts.length;i++){const q=S(pts[i]);g.lineTo(q.x,q.y);}if(closed)g.closePath();}
+function drawTrace(g,editor){
+  // extent
+  if(E.extent.length>1){g.lineWidth=2;g.strokeStyle='rgba(230,210,120,.9)';poly2(g,E.extent,true);g.stroke();}
+  // coast
+  if(E.coast.length>1){g.lineWidth=3;g.strokeStyle='#2f7fd0';poly2(g,E.coast,false);g.stroke();}
+  // masks (farm/green holes) — pale field-green, like the chart's farmland
+  for(const mk of E.masks){if(mk.pts.length>2){
+    g.fillStyle=mk.kind==='green'?'rgba(150,178,120,.62)':'rgba(198,214,156,.66)';
+    g.strokeStyle=mk.kind==='green'?'#7ea25a':'#9fb46a';g.lineWidth=1.5;
+    poly2(g,mk.pts,true);g.fill();g.stroke();}}
+  // plazas
+  for(const z of E.plazas){if(z.pts.length>2){g.fillStyle='rgba(150,150,150,.5)';g.strokeStyle='#bbb';g.lineWidth=1.5;poly2(g,z.pts,true);g.fill();g.stroke();}}
+  // primaries
+  for(const r of E.primaries){if(r.pts.length>1){g.lineWidth=Math.max(2,r.w*view.z);g.lineCap='round';g.lineJoin='round';
+    g.strokeStyle='rgba(210,60,40,.85)';poly2(g,r.pts,false);g.stroke();}}
+  // editor: draw handles on selected feature
+  if(editor){const f=feat(selFeat);if(f){g.fillStyle='#ffd36a';g.strokeStyle='#000';g.lineWidth=1;
+    for(const p of f.pts){const q=S(p);g.beginPath();g.arc(q.x,q.y,4,0,TAU);g.fill();g.stroke();}}}
+  // POIs
+  g.textAlign='center';g.textBaseline='middle';
+  for(const P of E.pois){const q=S({x:P.x,y:P.y});
+    g.fillStyle='#12233f';g.beginPath();g.arc(q.x,q.y,9,0,TAU);g.fill();
+    g.fillStyle='#f0e4c8';g.font='bold 10px system-ui';g.fillText(P.n,q.x,q.y);}
+}
+function drawGen(g){
+  // ribs
+  g.lineCap='round';g.strokeStyle='rgba(120,84,48,.6)';
+  for(const r of MODEL.ribs){g.lineWidth=Math.max(1,r.w*view.z);poly2(g,r.pts,false);g.stroke();}
+  // courtyards / gardens
+  g.fillStyle='rgba(120,150,90,.55)';for(const c of MODEL.courtyards){poly2(g,c.map(p=>({x:p.x,y:p.z})),true);g.fill();}
+  g.fillStyle='rgba(123,160,90,.7)';for(const q of MODEL.gardens){poly2(g,q.map(p=>({x:p.x,y:p.z})),true);g.fill();}
+  // parcels
+  for(const it of MODEL.items){const lot=it.lot;
+    g.fillStyle=lot.status==='repaired'?'#d98a2b':`hsl(${(hashSeed(lot.t0+''+lot.A.x)%50)+30},42%,64%)`;
+    poly2(g,lot.q.map(p=>({x:p.x,y:p.z})),true);g.fill();}
+  // footprints
+  g.strokeStyle='rgba(40,30,20,.8)';g.lineWidth=0.8;
+  for(const it of MODEL.items){poly2(g,it.fp.corners.map(p=>({x:p.x,y:p.z})),true);g.stroke();}
+}
+
+/* =============================================================== 3D rendering */
+let renderer,scene,cam,wallMesh,roofMesh,chartMesh,groundMesh,ribMesh,maskMesh3;
+let orbit={az:1.05,el:0.85,rad:2600,tx:0,tz:0};
+function init3d(){
+  const host=document.getElementById('host3d');
+  renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(host.clientWidth||window.innerWidth,host.clientHeight||window.innerHeight);
+  renderer.setClearColor(0x9fb6cc);host.appendChild(renderer.domElement);
+  scene=new THREE.Scene();scene.fog=new THREE.Fog(0x9fb6cc,2600,7000);
+  cam=new THREE.PerspectiveCamera(46,1,1,20000);
+  const sun=new THREE.DirectionalLight(0xfff2d8,1.0);sun.position.set(800,1600,600);scene.add(sun);
+  scene.add(new THREE.HemisphereLight(0xcfe0f0,0x5b4a2f,0.6));
+  // ground quad (solid) + chart quad (textured, opacity slider)
+  groundMesh=quadMesh(0x8a9a6a,-0.3,null,1);scene.add(groundMesh);
+  const dom=renderer.domElement;let drag=false,lx=0,ly=0;
+  dom.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly=e.clientY;dom.setPointerCapture(e.pointerId);});
+  dom.addEventListener('pointermove',e=>{if(!drag)return;orbit.az-=(e.clientX-lx)*0.006;orbit.el=Math.max(0.12,Math.min(1.5,orbit.el-(e.clientY-ly)*0.005));lx=e.clientX;ly=e.clientY;});
+  dom.addEventListener('pointerup',()=>{drag=false;});
+  dom.addEventListener('wheel',e=>{orbit.rad=Math.max(400,Math.min(9000,orbit.rad*(1+Math.sign(e.deltaY)*0.08)));e.preventDefault();},{passive:false});
+  window.addEventListener('resize',resize3d);
+  animate();
+}
+function quadMesh(color,y,tex,op){
+  const g=new THREE.BufferGeometry();
+  const p=[0,y,0, E.w,y,0, E.w,y,E.h, 0,y,0, E.w,y,E.h, 0,y,E.h];
+  const uv=[0,0, 1,0, 1,1, 0,0, 1,1, 0,1];
+  g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));
+  g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.computeVertexNormals();
+  const mat=tex?new THREE.MeshBasicMaterial({map:tex,transparent:true,opacity:op,side:THREE.DoubleSide}):
+                new THREE.MeshLambertMaterial({color,side:THREE.DoubleSide});
+  return new THREE.Mesh(g,mat);
+}
+// flat pale-green patches for masks (farm/green holes), triangulated via ShapeGeometry
+function buildMaskMesh(){
+  const farm=[],green=[];
+  for(const mk of E.masks){
+    if(!mk.pts||mk.pts.length<3)continue;
+    const shape=new THREE.Shape();
+    shape.moveTo(mk.pts[0].x,mk.pts[0].y);
+    for(let i=1;i<mk.pts.length;i++)shape.lineTo(mk.pts[i].x,mk.pts[i].y);
+    const g=new THREE.ShapeGeometry(shape);
+    const p=g.attributes.position.array, idx=g.index?g.index.array:null, out=mk.kind==='green'?green:farm;
+    if(idx){for(let i=0;i<idx.length;i++){const k=idx[i]*3;out.push(p[k],0.05,p[k+1]);}}
+    else{for(let i=0;i<p.length;i+=3)out.push(p[i],0.05,p[i+1]);}
+    g.dispose();
+  }
+  const mk=(pos,color)=>{if(!pos.length)return null;const geo=new THREE.BufferGeometry();
+    geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.computeVertexNormals();
+    return new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color,side:THREE.DoubleSide}));};
+  const meshes=[];const f=mk(farm,0xccd9a0),gr=mk(green,0x93ac66);
+  if(f)meshes.push(f);if(gr)meshes.push(gr);
+  if(!meshes.length)return null;
+  const grp=new THREE.Group();for(const m of meshes)grp.add(m);
+  grp.userData.dispose=()=>{for(const m of meshes)m.geometry.dispose();};
+  return grp;
+}
+function rebuild3d(){
+  if(maskMesh3){scene.remove(maskMesh3);if(maskMesh3.userData.dispose)maskMesh3.userData.dispose();maskMesh3=null;}
+  for(const m of[wallMesh,roofMesh,chartMesh,ribMesh]){if(m){scene.remove(m);m.geometry.dispose();}}
+  if(IMG&&!chartMesh){const tex=new THREE.Texture(IMG);tex.flipY=false;
+    // chart is non-power-of-two: clamp + linear + no mipmaps or WebGL1 renders it blank
+    tex.wrapS=tex.wrapT=THREE.ClampToEdgeWrapping;tex.minFilter=THREE.LinearFilter;tex.generateMipmaps=false;tex.needsUpdate=true;
+    chartMesh=quadMesh(0,-0.1,tex,+document.getElementById('opacity').value);scene.add(chartMesh);}
+  else if(chartMesh){scene.add(chartMesh);chartMesh.material.opacity=+document.getElementById('opacity').value;}
+  maskMesh3=buildMaskMesh();if(maskMesh3)scene.add(maskMesh3);
+  wallMesh=meshFrom(MODEL.wallPos,0xd8c49a);
+  roofMesh=meshFrom(MODEL.roofPos,0x9c4a2f);
+  if(wallMesh)scene.add(wallMesh);if(roofMesh)scene.add(roofMesh);
+  const c=centroid(E.extent.map(p=>({x:p.x,z:p.y})));orbit.tx=c.x;orbit.tz=c.z;
+}
+function meshFrom(pos,color){if(!pos.length)return null;
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  geo.computeVertexNormals();return new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color,side:THREE.DoubleSide,flatShading:true}));}
+function resize3d(){const host=document.getElementById('host3d');if(!renderer)return;
+  const w=host.clientWidth||window.innerWidth,h=host.clientHeight||window.innerHeight;
+  renderer.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();}
+function animate(){requestAnimationFrame(animate);if(!cam)return;
+  const x=Math.cos(orbit.az)*Math.cos(orbit.el)*orbit.rad,y=Math.sin(orbit.el)*orbit.rad,z=Math.sin(orbit.az)*Math.cos(orbit.el)*orbit.rad;
+  cam.position.set(orbit.tx+x,y,orbit.tz+z);cam.lookAt(orbit.tx,0,orbit.tz);renderer.render(scene,cam);}
+
+/* ===================================================================== driver */
+function showStats(){
+  const el=document.getElementById('stats');
+  if(MODE==='trace'||!MODEL){
+    el.textContent=`mode        trace\nseed        ${cfg.seed}\ncoast pts   ${E.coast.length}\nprimaries   ${E.primaries.length}\nextent pts  ${E.extent.length}\nplazas      ${E.plazas.length}\nmasks       ${E.masks.length}\nselected    ${selFeat}`;
+    return;
+  }
+  const s=MODEL.stats;
+  el.textContent=
+`mode        ${MODE}
+seed        ${cfg.seed}
+blocks      ${s.blocks}   ribs ${s.ribs}
+parcels     ${s.parcels}  (ok ${s.accepted} / rep ${s.repaired} / rej ${s.rejected})
+buildings   ${s.buildings}
+overlaps    ${s.overlaps}
+roofs       hip ${s.roofs.hip} / gable ${s.roofs.gable} / hut ${s.roofs.pyramid}
+mean lot    ${s.meanArea.toFixed(0)} px²
+triangles   ${s.tris}
+gen time    ${s.ms.toFixed(0)} ms
+vhash       ${s.vhash}`;
+}
+function setMode(m){
+  MODE=m;
+  document.getElementById('mTrace').classList.toggle('on',m==='trace');
+  document.getElementById('mGen').classList.toggle('on',m==='gen');
+  document.getElementById('m3d').classList.toggle('on',m==='3d');
+  document.getElementById('editCtl').style.display=m==='trace'?'':'none';
+  document.getElementById('exportBox').style.display='none';
+  const is3=m==='3d';
+  document.getElementById('host3d').style.display=is3?'block':'none';
+  cv.style.display=is3?'none':'block';
+  if(is3){if(!renderer)init3d();if(!MODEL)build();rebuild3d();resize3d();}
+  else draw2d();
+  showStats();
+  document.getElementById('hint').innerHTML = m==='trace'
+    ? 'left-click empty: add point to selected feature · drag handle: move · right-click: delete nearest · wheel: zoom · shift-drag: pan'
+    : (m==='gen'? 'seeded fabric inside the traced extent; primaries in red over the chart' : 'orbit: drag · zoom: wheel · chart slider fades the plate under the buildings');
+}
+function regen(){
+  cfg.seed=document.getElementById('seed').value.trim()||'epeshu';
+  build();
+  if(MODE==='3d'){rebuild3d();}else draw2d();
+  showStats();window.PROTO.ready=true;
+}
+
+/* ------------------------------------------------------ editor interactions */
+let dragPt=null,panning=false,plx=0,ply=0;
+function nearestHandle(sx,sy){const f=feat(selFeat);if(!f)return null;let bi=-1,bd=100;
+  for(let i=0;i<f.pts.length;i++){const q=S(f.pts[i]);const d=Math.hypot(q.x-sx,q.y-sy);if(d<bd){bd=d;bi=i;}}
+  return bi>=0?{f,i:bi}:null;}
+function bindEditor(){
+  cv.addEventListener('contextmenu',e=>e.preventDefault());
+  cv.addEventListener('pointerdown',e=>{
+    if(MODE!=='trace')return;
+    const r=cv.getBoundingClientRect(),sx=e.clientX-r.left,sy=e.clientY-r.top;
+    if(e.button===2){const h=nearestHandle(sx,sy);if(h&&Math.hypot(S(h.f.pts[h.i]).x-sx,S(h.f.pts[h.i]).y-sy)<10){h.f.pts.splice(h.i,1);draw2d();showStats();}return;}
+    if(e.shiftKey){panning=true;plx=sx;ply=sy;return;}
+    const h=nearestHandle(sx,sy);
+    if(h&&Math.hypot(S(h.f.pts[h.i]).x-sx,S(h.f.pts[h.i]).y-sy)<9){dragPt=h;return;}
+    // append point
+    const im=toImg(sx,sy);const f=feat(selFeat);if(f){f.pts.push({x:im.x,y:im.y});draw2d();showStats();}
+  });
+  cv.addEventListener('pointermove',e=>{
+    if(MODE!=='trace')return;const r=cv.getBoundingClientRect(),sx=e.clientX-r.left,sy=e.clientY-r.top;
+    if(panning){view.ox+=sx-plx;view.oy+=sy-ply;plx=sx;ply=sy;draw2d();return;}
+    if(dragPt){const im=toImg(sx,sy);dragPt.f.pts[dragPt.i]={x:im.x,y:im.y};draw2d();}
+  });
+  window.addEventListener('pointerup',()=>{dragPt=null;panning=false;});
+  cv.addEventListener('wheel',e=>{if(MODE==='3d')return;const r=cv.getBoundingClientRect(),sx=e.clientX-r.left,sy=e.clientY-r.top;
+    const im=toImg(sx,sy);const f=1+Math.sign(e.deltaY)*-0.12;view.z*=f;view.ox=sx-im.x*view.z;view.oy=sy-im.y*view.z;draw2d();e.preventDefault();},{passive:false});
+}
+
+/* -------------------------------------------------------------------- boot */
+function boot(){
+  document.getElementById('mTrace').onclick=()=>setMode('trace');
+  document.getElementById('mGen').onclick=()=>{if(!MODEL)build();setMode('gen');};
+  document.getElementById('m3d').onclick=()=>setMode('3d');
+  document.getElementById('regen').onclick=regen;
+  document.getElementById('seed').addEventListener('keydown',e=>{if(e.key==='Enter')regen();});
+  const op=document.getElementById('opacity');
+  op.oninput=()=>{document.getElementById('opacityO').textContent=(+op.value).toFixed(2);
+    if(MODE==='3d'){if(chartMesh)chartMesh.material.opacity=+op.value;}else draw2d();};
+  document.getElementById('feat').onchange=e=>{selFeat=e.target.value;draw2d();showStats();};
+  document.getElementById('addRoad').onclick=()=>{const name=prompt('road name','new road')||'new road';
+    E.primaries.push({name,w:12,pts:[]});selFeat='p'+(E.primaries.length-1);refreshFeatSelect();document.getElementById('feat').value=selFeat;draw2d();showStats();};
+  document.getElementById('addMask').onclick=()=>{const name=prompt('field/mask name','new field')||'new field';
+    const kind=(prompt('kind: farm or green','farm')||'farm').trim()==='green'?'green':'farm';
+    E.masks.push({name,kind,pts:[]});selFeat='m'+(E.masks.length-1);refreshFeatSelect();document.getElementById('feat').value=selFeat;draw2d();showStats();};
+  document.getElementById('delFeat').onclick=()=>{const m=selFeat.match(/^p(\d+)$/);const z=selFeat.match(/^z(\d+)$/);const k=selFeat.match(/^m(\d+)$/);
+    if(m){E.primaries.splice(+m[1],1);}else if(z){E.plazas.splice(+z[1],1);}else if(k){E.masks.splice(+k[1],1);}else{alert('only roads/plazas/masks can be deleted');return;}
+    selFeat='extent';refreshFeatSelect();draw2d();showStats();};
+  document.getElementById('export').onclick=()=>{const box=document.getElementById('exportBox');
+    document.getElementById('exportTA').value=JSON.stringify(toJSON(E),null,1);box.style.display='block';};
+  document.getElementById('download').onclick=()=>{const blob=new Blob([JSON.stringify(toJSON(E),null,1)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='epeshu-trace.json';a.click();};
+  bindEditor();
+  fitView();refreshFeatSelect();
+  // load chart image, then first render
+  IMG=new Image();IMG.onload=()=>{draw2d();window.PROTO.imgReady=true;};
+  IMG.onerror=()=>{window.PROTO.imgReady=false;draw2d();};
+  IMG.src=E.img;
+  setMode('trace');
+  window.PROTO.ready=true;
+}
+window.PROTO={ready:false,imgReady:false,
+  regen(seed){if(seed!==undefined){document.getElementById('seed').value=seed;}regen();return MODEL.stats;},
+  build(){build();return MODEL.stats;},
+  stats(){return MODEL?MODEL.stats:null;},
+  setMode,
+  hashVerts(){return MODEL?hashArr(MODEL.wallPos,MODEL.roofPos):null;},
+  trace(){return E;},
+  featureKeys(){return featureList().map(f=>f.key);},
+  select(k){selFeat=k;const s=document.getElementById('feat');if(s)s.value=k;},
+  // simulate a click that appends a point (image-space) to the selected feature
+  editAppend(x,y){const f=feat(selFeat);if(!f)return null;f.pts.push({x,y});draw2d();showStats();return f.pts.length;},
+  model(){return MODEL;}
+};
+// fetch trace, then boot
+fetch('data/epeshu-trace.json').then(r=>r.json()).then(j=>{
+  E=fromJSON(j);
+  if(window.THREE)boot();else window.addEventListener('load',boot);
+}).catch(err=>{console.error('trace load failed',err);
+  document.getElementById('stats').textContent='trace load failed: '+err.message;});
+</script>

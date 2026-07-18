@@ -15,6 +15,58 @@
     --line:#c7b58c; --line2:#b09a6c;
     --rust:#8a3c28; --bronze:#8a6224; --water:#3a6478; --moss:#5a6b34;
   }
+  /* ===== NIGHT MODE (spec K) — chrome-dark UI + a filter-inverted world tile pane.
+     Day is the default look untouched; every night rule is scoped under
+     body[data-theme="night"], so [data-theme="day"] (or unset) stays pixel-identical.
+     The whole page is token-driven, so overriding the custom properties re-skins the
+     header, panels, cards, contents screen and leaflet controls in one stroke; a small
+     tail below fixes the handful of hardcoded parchment colours that tokens can't reach,
+     and re-tunes the map overlay palette (markers/labels/route) for the inverted tiles. */
+  body[data-theme="night"]{
+    --parch:#161a22; --parch2:#1b212b; --panel:#1c222c; --panel2:#141922;
+    --ink:#e8ecf3; --ink2:#c2cad6; --muted:#8b96a6;
+    --line:#2f3743; --line2:#39424f;
+    --rust:#d98a5c; --bronze:#cbb06a; --water:#6fa3bd; --moss:#8fa35e;
+  }
+  /* the map's own backdrop (shown at edges / before tiles paint) goes deep slate */
+  body[data-theme="night"] #map{background:#0d1017;}
+  /* THE night look: invert only the WORLD tile pane (a straight invert — no hue-rotate —
+     turns the warm raster to true slate/indigo; hard-won finding from the prototype).
+     In chart mode the world base is swapped out and the chart plate occupies this same
+     pane, so exempt it: chart plates and card art must never invert. */
+  body[data-theme="night"] #map .leaflet-tile-pane{
+    filter:invert(1) brightness(0.92) saturate(0.6);}
+  body[data-theme="night"] #map.chart-mode .leaflet-tile-pane{filter:none;}
+  /* --- night overlay palette (markers stay legible on the slate ground) --- */
+  body[data-theme="night"] #map .mk.t-set .glyph{background:#e9e2c9;color:#20140a;border-color:#f2ecd8;}
+  body[data-theme="night"] #map .mk.t-major .glyph{background:#f6efd6;color:#5a3210;border-color:#fff5da;
+    box-shadow:0 0 0 2px rgba(240,225,150,.30),0 1px 4px rgba(0,0,0,.6);}
+  body[data-theme="night"] #map .mk.t-minor .glyph{background:#efe6cf;color:#5a3210;border-color:#e6d7a8;}
+  body[data-theme="night"] #map .mk.t-mtn .glyph{background:#ece3cf;color:#5a3d1c;border-color:#e6d7a8;}
+  body[data-theme="night"] #map .mk.t-water .glyph{background:#dbe9ec;color:#20505f;border-color:#bfe0ea;}
+  body[data-theme="night"] #map .mk.t-lesser .glyph{background:#e3d3ac;border-color:#f2ecd8;}
+  body[data-theme="night"] #map .mk.t-lesser.mag .glyph{
+    background:radial-gradient(circle,#20140a 0 3.5px,#e3d3ac 4.6px 100%);}
+  body[data-theme="night"] #map .mk .lbl{color:#f4ecd4;
+    text-shadow:0 0 3px #0b1424,0 0 4px #0b1424,0 1px 3px #000;}
+  body[data-theme="night"] #map .mk.t-water .lbl{color:#bfe0ea;}
+  body[data-theme="night"] #map .route-line{stroke:#f2c14e;}
+  body[data-theme="night"] #map .trail-line{stroke:#e0a24a;}
+  body[data-theme="night"] #map .wp{background:#f2c14e;color:#3a2a10;border-color:#3a2a10;}
+  body[data-theme="night"] #map .wp.visited{background:#cbb06a;border-color:#3a2a10;}
+  body[data-theme="night"] #map .wp.here{background:#e2492a;color:#fff;border-color:#f0d9a0;}
+  /* --- hardcoded-parchment fixes the tokens don't reach (light chips / dark ink) --- */
+  body[data-theme="night"] .leaflet-control-attribution{background:rgba(20,25,34,.85)!important;}
+  body[data-theme="night"] .scalebar{background:rgba(20,25,34,.9);}
+  body[data-theme="night"] .uncharted-mark{background:rgba(20,25,34,.9);color:#d9b98a;}
+  body[data-theme="night"] .rate-chip{color:#e0c98a;background:#2a3140;border-color:#4a5464;}
+  body[data-theme="night"] .co-beat[data-beat]:hover{background:#232b36;}
+  body[data-theme="night"] .prov-banner{color:#d9b98a;}
+  body[data-theme="night"] .prov-banner.annals{color:#e0a884;}
+  body[data-theme="night"] .prov-banner.trace{color:#8fc0d4;}
+  body[data-theme="night"] .prov-arch{color:var(--muted);}
+  /* the day/night toggle glyph button */
+  .theme-toggle{font-size:16px;line-height:1;min-width:34px;text-align:center;}
   *{box-sizing:border-box;}
   html,body{margin:0;height:100%;background:var(--parch);color:var(--ink);
     font-family:'Lora',Georgia,serif;}
@@ -44,10 +96,48 @@
   .sug .st{font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;
     text-transform:uppercase;letter-spacing:.5px;}
   .links{display:flex;gap:10px;margin-left:auto;}
-  .links a{font-family:'EB Garamond',serif;font-size:15px;color:var(--ink);
+  .links a,.links button{font-family:'EB Garamond',serif;font-size:15px;color:var(--ink);
     text-decoration:none;padding:5px 11px;border:1px solid var(--line2);
-    border-radius:4px;background:var(--parch2);white-space:nowrap;transition:.15s;}
-  .links a:hover{background:var(--rust);color:#f5ecd6;border-color:var(--rust);}
+    border-radius:4px;background:var(--parch2);white-space:nowrap;transition:.15s;
+    cursor:pointer;line-height:normal;}
+  .links a:hover,.links button:hover{background:var(--rust);color:#f5ecd6;border-color:var(--rust);}
+  .links button:focus-visible{outline:2px solid var(--rust);outline-offset:2px;}
+
+  /* ---- Contents landing overlay (spec D): a thematic start page over the chart ---- */
+  #contents{position:fixed;inset:0;z-index:1500;display:flex;align-items:center;
+    justify-content:center;padding:32px 20px;overflow:auto;
+    background:radial-gradient(130% 120% at 50% -10%,var(--parch2),var(--parch) 58%,var(--panel2));}
+  #contents[hidden]{display:none;}
+  .contents-inner{width:100%;max-width:940px;text-align:center;}
+  .contents-head{margin-bottom:26px;}
+  .contents-kicker{font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;
+    letter-spacing:2.4px;color:var(--muted);}
+  .contents-title{font-family:'EB Garamond',serif;font-weight:600;font-size:46px;
+    margin:5px 0 6px;color:var(--ink);letter-spacing:.5px;text-shadow:0 1px 0 rgba(255,255,255,.45);}
+  .contents-sub{font-family:'Lora',serif;font-style:italic;font-size:16px;color:var(--ink2);margin:0;}
+  .contents-grid{display:grid;gap:14px;text-align:left;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));}
+  .tcard{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;
+    padding:16px 18px;cursor:pointer;text-decoration:none;color:var(--ink);
+    font-family:'Lora',serif;background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--line2);border-radius:8px;box-shadow:0 3px 12px rgba(44,36,24,.18);
+    transition:transform .15s,box-shadow .15s,border-color .15s;}
+  .tcard:hover{border-color:var(--bronze);box-shadow:0 6px 18px rgba(44,36,24,.3);
+    transform:translateY(-2px);}
+  .tcard:focus-visible{outline:2px solid var(--rust);outline-offset:2px;}
+  .tcard .tg{flex:0 0 auto;width:44px;height:44px;border-radius:50%;display:flex;
+    align-items:center;justify-content:center;font-size:22px;line-height:1;
+    background:var(--parch2);border:1.5px solid var(--line2);color:var(--bronze);}
+  .tcard .tt{min-width:0;display:block;}
+  .tcard .th{display:block;font-family:'EB Garamond',serif;font-size:19px;font-weight:600;
+    line-height:1.12;margin-bottom:3px;}
+  .tcard .td{display:block;font-size:13.5px;line-height:1.5;color:var(--ink2);}
+  .contents-foot{margin-top:24px;font-family:'EB Garamond',serif;font-style:italic;
+    font-size:13px;color:var(--muted);letter-spacing:.3px;}
+  @media (max-width:640px){
+    .contents-title{font-size:34px;}
+    .contents-grid{grid-template-columns:1fr;}
+  }
 
   #stage{flex:1 1 auto;position:relative;display:flex;min-height:0;}
   #map{flex:1 1 auto;height:100%;background:#d9cba7;}
@@ -109,6 +199,16 @@
   .route-line{stroke-dasharray:10 14;}
   .route-line.playing{animation:dashmove 2.6s linear infinite;}
   @keyframes dashmove{to{stroke-dashoffset:-240;}}
+  /* ---- route playback (spec L): visited-prefix trail, pip states, traveller ---- */
+  .trail-line{stroke:#a9803f;}                         /* solid bronze over the dotted base route */
+  .wp.visited{background:var(--bronze);border-color:#f5ecd6;}
+  .wp.here{background:#c23a1e;color:#fff;border-color:#f0d9a0;
+    box-shadow:0 0 0 3px rgba(240,225,150,.5),0 1px 4px rgba(0,0,0,.45);}
+  .jtrav{width:0;height:0;}
+  .jtrav-dot{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;
+    background:#c23a1e;border:3px solid #f4e9c9;box-shadow:0 1px 6px rgba(0,0,0,.6);}
+  .jtrav-dot::after{content:"";position:absolute;inset:-9px;border-radius:50%;
+    border:2px solid rgba(194,58,30,.45);}
 
   /* off-frame edge markers: inward chevron badge pointing at the true bearing */
   .mk.edge,.wp.edge,.fac-badge.edge{position:relative;}
@@ -160,6 +260,10 @@
     margin:2px 40px 12px 0;line-height:1.06;color:var(--ink);}
   .card-sess{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);
     text-transform:uppercase;letter-spacing:.6px;margin:-4px 0 12px;}
+  .card-etym{font-family:'EB Garamond',serif;font-style:italic;font-size:14px;
+    color:var(--ink2);margin:-8px 0 12px;}
+  .card-etym a{color:var(--rust);text-decoration:none;font-style:normal;font-size:12px;}
+  .card-etym a:hover{text-decoration:underline;}
   .card-lore{font-family:'Lora',serif;font-size:14.5px;line-height:1.62;color:var(--ink2);}
   .card-lore p{margin:0 0 11px;}
   .card-lore h4{font-family:'EB Garamond',serif;font-size:16.5px;color:var(--ink);
@@ -216,6 +320,47 @@
   .jrn-ctrl button:hover{background:var(--panel2);}
   .jrn-ctrl button.on{background:var(--rust);color:#f5ecd6;}
 
+  /* ---- journey transport bar (spec L); token-driven so night reskins for free ---- */
+  #jbar{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:1000;
+    width:min(680px,calc(100% - 32px));
+    background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--line2);border-radius:10px;
+    box-shadow:0 6px 22px rgba(44,36,24,.4);padding:9px 14px 11px;
+    font-family:'EB Garamond',serif;color:var(--ink);
+    display:flex;flex-direction:column;gap:7px;}
+  #jbar[hidden]{display:none;}
+  .panel-open #jbar{left:calc(50% + 170px);transition:left .28s;}   /* clear the left drawer */
+  #jbar-narr{min-height:18px;font-size:13px;color:var(--rust);letter-spacing:.2px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  #jbar-narr:empty::before{content:"Press play to follow the Company's march.";color:var(--muted);}
+  #jbar-scrubrow{display:flex;align-items:center;gap:10px;}
+  #jbar-scrub{flex:1;height:18px;cursor:pointer;accent-color:var(--rust);}
+  #jbar-tstamp{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);
+    min-width:104px;text-align:right;font-variant-numeric:tabular-nums;}
+  #jbar-btns{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  #jbar button{font-family:'EB Garamond',serif;font-size:13px;color:var(--ink);
+    background:var(--parch2);border:1px solid var(--line2);border-radius:6px;
+    padding:6px 10px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:5px;}
+  #jbar button:hover{background:var(--rust);color:#f5ecd6;border-color:var(--rust);}
+  #jbar button:active{transform:translateY(1px);}
+  #jbar-play{min-width:92px;justify-content:center;font-weight:600;
+    background:var(--rust);color:#f5ecd6;border-color:var(--rust);}
+  #jbar-play:hover{filter:brightness(1.08);}
+  #jbar .sp{flex:1;}
+  #jbar label{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;
+    color:var(--ink2);white-space:nowrap;cursor:pointer;}
+  #jbar select{font-family:'EB Garamond',serif;font-size:13px;color:var(--ink);
+    background:var(--parch2);border:1px solid var(--line2);border-radius:6px;
+    padding:5px 6px;cursor:pointer;}
+  #jbar input[type=checkbox]{width:15px;height:15px;accent-color:var(--rust);cursor:pointer;}
+  #jbar-close{min-width:34px;justify-content:center;}
+  #jbar button:focus-visible,#jbar select:focus-visible,#jbar input:focus-visible,
+  #jbar-scrub:focus-visible{outline:3px solid var(--bronze);outline-offset:2px;}
+  @media (max-width:720px){
+    #jbar{left:12px;right:12px;transform:none;width:auto;}
+    .panel-open #jbar{left:12px;bottom:calc(64% + 10px);}   /* ride above the bottom sheet */
+  }
+
   /* ---- scale bar ---- */
   .scalebar{font-family:'IBM Plex Mono',monospace;color:var(--ink);
     background:rgba(243,236,215,.9);border:1px solid var(--line2);border-radius:4px;
@@ -231,6 +376,13 @@
     border-color:var(--line2)!important;}
   .leaflet-bar a{color:var(--ink);}
   .leaflet-bar a:hover{background:var(--panel2);}
+  /* a11y: visible focus + 44px touch targets on coarse pointers (WCAG target-size audit) */
+  .leaflet-marker-icon:focus-visible,.leaflet-bar a:focus-visible,
+  .leaflet-control-layers:focus-within{outline:2px solid var(--bronze);outline-offset:2px;}
+  @media (pointer:coarse){
+    .leaflet-control-zoom a{width:44px !important;height:44px !important;
+      line-height:44px !important;font-size:22px !important;}
+  }
   .leaflet-control-layers{font-family:'EB Garamond',serif;font-size:14px;
     box-shadow:0 4px 14px rgba(44,36,24,.3);border-radius:5px;padding:2px;}
   .leaflet-control-layers-toggle{background-color:var(--panel);}
@@ -487,6 +639,9 @@
       <div id="suggest"></div>
     </div>
     <div class="links">
+      <button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false"
+        aria-label="Switch to night map" title="Night">☾</button>
+      <button id="contentsBtn" class="contents-btn" type="button">Contents</button>
       <a href="lexicon.html">Lexicon</a>
       <a href="https://princexizor.ddns.net/" target="_blank" rel="noopener">Wiki&nbsp;↗</a>
       <a id="simLink" href="https://sim.princexizor.ddns.net/" target="_blank" rel="noopener">Sim&nbsp;↗</a>
@@ -498,8 +653,68 @@
       <button id="panelClose" class="panel-close" aria-label="Close panel" title="Close">×</button>
       <div id="panelBody" class="panel-body"></div>
     </aside>
+    <div id="jbar" hidden role="group" aria-label="Journey playback controls">
+      <div id="jbar-narr" role="status" aria-live="polite" aria-atomic="true"></div>
+      <div id="jbar-scrubrow">
+        <input id="jbar-scrub" type="range" min="0" max="1000" step="1" value="0"
+               aria-label="Journey progress" aria-valuetext="Start">
+        <span id="jbar-tstamp">0% · start</span>
+      </div>
+      <div id="jbar-btns">
+        <button id="jbar-prev" type="button" aria-label="Previous waypoint" title="Previous waypoint (Left arrow)">◀❚ Prev</button>
+        <button id="jbar-play" type="button" aria-label="Play" aria-pressed="false" title="Play/pause (Space)">▶ Play</button>
+        <button id="jbar-next" type="button" aria-label="Next waypoint" title="Next waypoint (Right arrow)">Next ❚▶</button>
+        <label>Speed
+          <select id="jbar-speed" aria-label="Playback speed">
+            <option value="0.5">0.5×</option><option value="1" selected>1×</option>
+            <option value="2">2×</option><option value="4">4×</option>
+          </select>
+        </label>
+        <label><input id="jbar-reduce" type="checkbox"> Reduced motion</label>
+        <span class="sp"></span>
+        <button id="jbar-close" type="button" aria-label="Close journey" title="Close journey">✕</button>
+      </div>
+    </div>
   </div>
   <footer>Atlas by the campaign's cartographer · interactive chart for the Tale of the Allhammers</footer>
+  <div id="contents" class="contents" role="dialog" aria-modal="true"
+       aria-label="Contents — choose where the chart opens" hidden>
+    <div class="contents-inner">
+      <div class="contents-head">
+        <div class="contents-kicker">The Annals of Nīmlad</div>
+        <h2 class="contents-title">Contents</h2>
+        <p class="contents-sub">Choose where the chart shall open.</p>
+      </div>
+      <div class="contents-grid">
+        <button class="tcard" type="button" data-theme="whole">
+          <span class="tg">✦</span>
+          <span class="tt"><span class="th">The Whole Chart</span>
+            <span class="td">The wide world entire, as the cartographer set it down — every mark upon the vellum.</span></span>
+        </button>
+        <button class="tcard" type="button" data-theme="realms">
+          <span class="tg">⚑</span>
+          <span class="tt"><span class="th">The Realms</span>
+            <span class="td">The bounds of the realms and their regions drawn plain; the roads and companies set aside.</span></span>
+        </button>
+        <button class="tcard" type="button" data-theme="roads">
+          <span class="tg">≈</span>
+          <span class="tt"><span class="th">Roads &amp; Waters</span>
+            <span class="td">The ways overland and the sea-lanes between the ports, traced across the waters.</span></span>
+        </button>
+        <button class="tcard" type="button" data-theme="company">
+          <span class="tg">⚔</span>
+          <span class="tt"><span class="th">The Company's Road</span>
+            <span class="td">Follow the Company's march, waystone by waystone, as the Tale records it.</span></span>
+        </button>
+        <a class="tcard" href="lexicon.html" data-theme="tongue">
+          <span class="tg">✒</span>
+          <span class="tt"><span class="th">The Old Tongue</span>
+            <span class="td">The lexicon of Classical Patrinaic — its roots, and the words the scribes shaped from them.</span></span>
+        </a>
+      </div>
+      <div class="contents-foot">The Annals of Nīmlad · Tale of the Allhammers</div>
+    </div>
+  </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -515,6 +730,34 @@
   // relatively — the atlas lives at <root>/maps-site/, so '../' lands on the sim.
   (function(){var s=document.getElementById('simLink');
     if(s&&!location.hostname.endsWith('princexizor.ddns.net'))s.setAttribute('href','../');})();
+
+  // ---- Day/Night theme (spec K): night = inverted world tiles + chrome-dark chrome.
+  // The whole treatment is CSS, scoped under body[data-theme]; JS only toggles the
+  // attribute, persists the choice, and reflects it on the header button. First load
+  // honours a stored choice, else prefers-color-scheme dark → night.
+  (function(){
+    var btn=document.getElementById('themeToggle');
+    function stored(){try{return localStorage.getItem('atlasTheme');}catch(_){return null;}}
+    function persist(v){try{localStorage.setItem('atlasTheme',v);}catch(_){}}
+    function apply(theme,save){
+      var night=theme==='night';
+      document.body.setAttribute('data-theme',night?'night':'day');
+      if(btn){
+        btn.setAttribute('aria-pressed',night?'true':'false');
+        btn.setAttribute('aria-label',night?'Switch to day map':'Switch to night map');
+        btn.title=night?'Day':'Night';
+        btn.textContent=night?'☀':'☾';
+      }
+      if(save)persist(theme);
+    }
+    var saved=stored(), start;
+    if(saved==='night'||saved==='day')start=saved;
+    else start=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'night':'day';
+    apply(start,false);
+    if(btn)btn.addEventListener('click',function(){
+      apply(document.body.getAttribute('data-theme')==='night'?'day':'night',true);});
+    window.__atlasSetTheme=apply;   // test hook
+  })();
 
   // ---- meshed-world (spec MW §A) continuous-zoom constants ----
   // The atlas z0..~6 stays master; below it the world goes soft. Max zoom is managed
@@ -532,6 +775,9 @@
     zoomControl:true,attributionControl:true,maxBoundsViscosity:1.0,
     zoomSnap:0,zoomDelta:.25,wheelPxPerZoomLevel:80,wheelDebounceTime:20,
     fadeAnimation:true});
+  // the focusable map div ships with no accessible name/role (Leaflet #9119)
+  map.getContainer().setAttribute('role','region');
+  map.getContainer().setAttribute('aria-label','Map of the Wide World — arrow keys pan, plus and minus zoom');
   function px(x,y){return map.unproject([x,y],NZ);}
   var contentBounds=L.latLngBounds(px(0,0),px(IMG_W,IMG_H));
   var tileBounds=L.latLngBounds(px(0,0),px(TILE_W,TILE_H));
@@ -554,9 +800,9 @@
   // WW panes: district strokes just over realm fills; sea lanes + named ways below the
   // party route line, so the campaign's own path reads on top where they cross.
   [['pRealm',410],['pDistrict',411],['pTrail',412],['pLane',413],['pWay',414],
-   ['pRouteLine',415],['pCityWash',449],['pCity',450],['pWater',618],
+   ['pRouteLine',415],['pJTrail',416],['pCityWash',449],['pCity',450],['pWater',618],
    ['pMajor',620],['pMtn',622],['pLesser',623],['pSettle',624],['pMinor',626],['pOrigin',628],
-   ['pFaction',630],['pRouteWp',640],['pCityPOI',650]].forEach(function(p){
+   ['pFaction',630],['pRouteWp',640],['pJTrav',645],['pCityPOI',650]].forEach(function(p){
     map.createPane(p[0]); map.getPane(p[0]).style.zIndex=p[1];
   });
 
@@ -752,10 +998,14 @@
   }
 
   // ---- state ----
-  var MARKERS=[], MREF={}, WIKI={}, WIKIFOLD={}, REVIEWS={}, ROUTE=[];
+  var MARKERS=[], MREF={}, WIKI={}, WIKIFOLD={}, REVIEWS={}, ROUTE=[], GAZ={};
   var routePoly=null;
+  // route-playback geometry (spec L): flattened path + per-waypoint stop nodes + wp markers
+  var JPATH=[], JSTOPS=[], JTOTAL=0, JWP=[], jPxToLL=1, jTrail=null, jTrav=null;
   var PARTY=[], FACTIONS=[], PMREF={}, FMREF={};
   var companyTrails=null, layersCtrl=null;
+  var OVERLAYS=null, contentsPrevFocus=null;
+  var contentsEl=document.getElementById('contents');
   // detail charts / POIs / card art — folded indices resolve to the canonical JSON
   // key (names drift in case/diacritics across files, as WIKIFOLD already handles).
   var DETAIL={}, DETAILFOLD={}, POIS={}, LOCART={}, LOCARTFOLD={};
@@ -806,6 +1056,9 @@
     var h=(art?'<div class="card-plate"><img class="card-art" src="'+esc(art)+'" alt=""></div>':'')+
       '<span class="card-type">'+esc(m.type||'Place')+'</span>'+rchip+
       '<h2 class="card-name">'+esc(m.name)+'</h2>';
+    var gz=GAZ[fold(m.name)];
+    if(gz&&gz.etym)h+='<div class="card-etym">“'+esc(gz.etym)+'” in the old tongue · '+
+      '<a href="lexicon.html'+(gz.lex?'?q='+encodeURIComponent(gz.lex):'')+'">lexicon →</a></div>';
     if(m._edge)h+=edgeLine('This place lies',m._edge);
     if(flyCity)h+='<button class="chart-btn" data-descend="'+esc(akey)+'">⚘ Descend into '+
       esc(akey)+'</button>';
@@ -882,9 +1135,61 @@
   // walk the route (used by Prev/Next and by journey play-through)
   function goWaypoint(i){
     if(i<0||i>=ROUTE.length)return;
+    if(jrn.on&&JSTOPS.length){jStopTo(i);return;}   // journey mode: walk the traveller to that stop
     var p=ROUTE[i],c=clampToFrame(p.x,p.y);
     map.flyTo(px(c.x,c.y),Math.max(map.getZoom(),tierZoom('c')),{duration:1.2,easeLinearity:.25});
     openWaypoint(i);
+  }
+
+  // ---- Contents landing (spec D): a thematic start screen over the chart ----
+  // Theme functions add/remove real overlays by their layers-control label keys
+  // (OVERLAYS is the same `overlays` map the control is built from); the control's
+  // checkboxes reconcile themselves off the map's overlayadd/overlayremove events.
+  function layerOn(label){var ly=OVERLAYS&&OVERLAYS[label];if(ly&&!map.hasLayer(ly))map.addLayer(ly);}
+  function layerOff(label){var ly=OVERLAYS&&OVERLAYS[label];if(ly&&map.hasLayer(ly))map.removeLayer(ly);}
+  var CO_LABELS=['⚑ The Company',' ⚑ Origin homelands',' ⋯ Origin trails','⛊ Faction seats'];
+  var WW_LABELS=['≈ Ways & Waters',' ⛵ Sea lanes',' ⌖ Named ways',' ◌ District borders'];
+  // the fresh-load default: everything on save the specialist district borders
+  var DEFAULT_ON=['⌂ Settlements',' ⌂ Lesser settlements','✦ Major Regions','◆ Minor Regions',
+    '≈ Bodies of Water','▲ Mountains & Hills','⚑ Realm Boundaries','⚔ Party Route',
+    '⚑ The Company',' ⚑ Origin homelands',' ⋯ Origin trails','⛊ Faction seats',
+    '≈ Ways & Waters',' ⛵ Sea lanes',' ⌖ Named ways'];
+  var THEMES={
+    whole:function(){DEFAULT_ON.forEach(layerOn);layerOff(' ◌ District borders');},
+    realms:function(){
+      layerOn('⚑ Realm Boundaries');layerOn('✦ Major Regions');layerOn('◆ Minor Regions');
+      CO_LABELS.forEach(layerOff);WW_LABELS.forEach(layerOff);},
+    roads:function(){
+      layerOn('≈ Ways & Waters');layerOn(' ⛵ Sea lanes');layerOn(' ⌖ Named ways');
+      CO_LABELS.forEach(layerOff);
+      layerOff('✦ Major Regions');layerOff('◆ Minor Regions');},
+    company:function(){
+      layerOn('⚔ Party Route');CO_LABELS.forEach(layerOn);
+      if(ROUTE.length)startJourney(0);}   // surface the journey: transport bar + traveller, paused at t=0
+  };
+  function contentsSeen(){try{return localStorage.getItem('atlas-seen-contents')==='1';}catch(_){return false;}}
+  function setContentsSeen(){try{localStorage.setItem('atlas-seen-contents','1');}catch(_){}}
+  function openContents(){
+    if(!contentsEl)return;
+    contentsPrevFocus=document.activeElement;
+    contentsEl.hidden=false;
+    var first=contentsEl.querySelector('.tcard'); if(first)first.focus();
+  }
+  function closeContents(){
+    if(!contentsEl||contentsEl.hidden)return;
+    contentsEl.hidden=true; setContentsSeen();
+    var btn=document.getElementById('contentsBtn'); if(btn)btn.focus();
+  }
+  function applyTheme(name){var fn=THEMES[name];if(fn)fn();closeContents();}
+  function wireContents(){
+    var btn=document.getElementById('contentsBtn');
+    if(btn)btn.addEventListener('click',openContents);
+    if(!contentsEl)return;
+    Array.prototype.forEach.call(contentsEl.querySelectorAll('.tcard[data-theme]'),function(c){
+      var th=c.getAttribute('data-theme');
+      if(th==='tongue'){c.addEventListener('click',setContentsSeen);return;}  // plain link out
+      c.addEventListener('click',function(){applyTheme(th);});
+    });
   }
 
   // ---- markers ----
@@ -930,7 +1235,12 @@
       var mk=L.marker(px(c.x,c.y),{icon:icon,title:m.name,pane:pane,riseOnHover:true});
       mk.bindTooltip(esc(m.name)+(c.clamped?edgeSuffix(c.dir):''),
         {direction:'right',offset:[12,0],className:'mk-tip',opacity:1});
+      mk.on('add',function(){var el=mk.getElement();if(el){el.setAttribute('role','button');
+        el.setAttribute('aria-label',m.name+' — '+(m.minor?'lesser settlement':String(m.type||'place').toLowerCase()));}});
       mk.on('click',function(){openPlace(m);});
+      // Leaflet 1.9 forwards key events but only popup-bound markers act on Enter — do it ourselves
+      mk.on('keydown',function(e){var k=e.originalEvent.key;
+        if(k==='Enter'||k===' '){e.originalEvent.preventDefault();openPlace(m);}});
       m._mk=mk; MREF[fold(m.name)]=m;
       if(m.minor){LESSER.addLayer(mk);return;}
       if(!LAYERS[m.type])LAYERS[m.type]=L.layerGroup();
@@ -968,7 +1278,7 @@
     var g=L.layerGroup();
     // each leg is its own centripetal spline through [prev, ...via, current]; legs
     // are concatenated but NOT smoothed across waypoints (stops stay sharp corners).
-    var latlngs=[];
+    var latlngs=[], stopIdx=[];   // stopIdx[wpIndex] = index into latlngs (for playback)
     function cpt(x,y){var c=clampToFrame(x,y);return[c.x,c.y];}
     for(var li=1;li<pts.length;li++){
       var ctrl=[cpt(pts[li-1].x,pts[li-1].y)];
@@ -978,10 +1288,25 @@
       for(var k=(li===1?0:1);k<seg.length;k++){
         var s=clampToFrame(seg[k][0],seg[k][1],0);  // spline overshoot hugs the edge
         latlngs.push(px(s.x,s.y));
+        if(li===1&&k===0)stopIdx[0]=latlngs.length-1;   // first point is waypoint 0
       }
+      stopIdx[li]=latlngs.length-1;                     // leg ends on its waypoint
     }
     routePoly=L.polyline(latlngs,{className:'route-line',color:'#8a3c28',weight:3,
       opacity:.85,dashArray:'10 14',lineJoin:'round',pane:'pRouteLine'}).addTo(g);
+    // flatten the drawn polyline into distance-parameterised nodes for playback
+    var stopWp={}; stopIdx.forEach(function(idx,wp){stopWp[idx]=wp;});
+    JPATH=latlngs.map(function(ll,n){return {ll:ll,dist:0,wp:(stopWp[n]!==undefined?stopWp[n]:-1)};});
+    JTOTAL=0;
+    for(var n=1;n<JPATH.length;n++){
+      var a=JPATH[n-1].ll,b=JPATH[n].ll;
+      JTOTAL+=Math.hypot(b.lat-a.lat,b.lng-a.lng);
+      JPATH[n].dist=JTOTAL;
+    }
+    JSTOPS=[]; JPATH.forEach(function(nd){if(nd.wp>=0)JSTOPS[nd.wp]=nd;});
+    var q0=px(0,0),q1=px(1000,0);                        // latlng units per atlas px (const under CRS.Simple)
+    jPxToLL=Math.hypot(q1.lat-q0.lat,q1.lng-q0.lng)/1000||1;
+    JWP=[];
     pts.forEach(function(p,i){
       var c=clampToFrame(p.x,p.y);
       p._edge=c.clamped?c.dir:null;
@@ -992,7 +1317,7 @@
       if(c.clamped)wp.bindTooltip(esc(p.name)+edgeSuffix(c.dir),
         {direction:'right',offset:[12,0],className:'mk-tip',opacity:1});
       wp.on('click',function(){openWaypoint(i);});
-      g.addLayer(wp);
+      g.addLayer(wp); JWP.push(wp);
     });
     return g;
   }
@@ -2741,22 +3066,257 @@
     map.addControl(new C());
   }
 
-  // ---- journey play-through ----
-  var jrn={on:false,i:0};
+  // ---- journey play-through (spec L): route playback ported from
+  // prototypes/route-playback.html, driving the atlas's own route line + waypoint cards.
+  // Distances live in latlng units along the flattened JPATH; JPPS is atlas px/sec, so a
+  // step in latlng units is speed*JPPS*jPxToLL*dt. ----
+  var jrn={on:false,i:0,d:0,playing:false,speed:1,dwellUntil:0,lastFrame:0,
+           lastArrived:-1,forceReduced:false,_rtimer:0,_rafOn:false};
+  var JPPS=260, JDWELL=1200, JLEG_PAUSE=650;         // atlas px/sec, dwell ms, teleport gap ms (all at 1x)
+  var jReduceMq=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)');
+  function jReduced(){return jrn.forceReduced||!!(jReduceMq&&jReduceMq.matches);}
+  var JEPS=1e-6;                                      // stop-hit tolerance (latlng units)
+
+  var jbar=document.getElementById('jbar'),
+      jbarNarr=document.getElementById('jbar-narr'),
+      jbarScrub=document.getElementById('jbar-scrub'),
+      jbarTstamp=document.getElementById('jbar-tstamp'),
+      jbarPlay=document.getElementById('jbar-play'),
+      jbarSpeed=document.getElementById('jbar-speed'),
+      jbarReduce=document.getElementById('jbar-reduce');
+
   function setRoutePlaying(on){
     if(!routePoly)return;
     var el=routePoly.getElement&&routePoly.getElement();
     if(el)el.classList.toggle('playing',on);
   }
-  function startJourney(){
-    if(!ROUTE.length)return;
-    jrn.on=true; setRoutePlaying(true); jrnBtn.classList.add('on');
-    goWaypoint(0);
+
+  // ---- geometry over the flattened path ----
+  function jLlAt(d){
+    d=Math.max(0,Math.min(JTOTAL,d));
+    for(var i=1;i<JPATH.length;i++){
+      if(JPATH[i].dist>=d){
+        var a=JPATH[i-1],b=JPATH[i],span=b.dist-a.dist||1,f=(d-a.dist)/span;
+        return L.latLng(a.ll.lat+(b.ll.lat-a.ll.lat)*f,a.ll.lng+(b.ll.lng-a.ll.lng)*f);
+      }
+    }
+    return JPATH[JPATH.length-1].ll;
+  }
+  function jTrailUpTo(d){
+    var out=[];
+    for(var i=0;i<JPATH.length;i++){if(JPATH[i].dist<=d)out.push(JPATH[i].ll);else break;}
+    out.push(jLlAt(d));
+    return out;
+  }
+  function jNextStop(d){for(var i=0;i<JSTOPS.length;i++)if(JSTOPS[i]&&JSTOPS[i].dist>d+JEPS)return JSTOPS[i];return null;}
+  function jPrevStop(d){for(var i=JSTOPS.length-1;i>=0;i--)if(JSTOPS[i]&&JSTOPS[i].dist<d-JEPS)return JSTOPS[i];return null;}
+  function jStopIndexAt(d){for(var i=0;i<JSTOPS.length;i++)if(JSTOPS[i]&&Math.abs(JSTOPS[i].dist-d)<=JEPS)return i;return -1;}
+  function jWpEl(i){var m=JWP[i];if(!m||!m.getElement)return null;var e=m.getElement();
+    if(!e)return null;return e.classList&&e.classList.contains('wp')?e:(e.querySelector?e.querySelector('.wp'):null);}
+
+  // ---- traveller + trail layers (created lazily, torn down on stop) ----
+  function jEnsureLayers(){
+    if(!jTrail)jTrail=L.polyline([],{className:'trail-line',pane:'pJTrail',color:'#a9803f',
+      weight:4,opacity:.95,lineCap:'round'});
+    if(!jTrav)jTrav=L.marker(JPATH.length?JPATH[0].ll:px(0,0),{pane:'pJTrav',interactive:false,
+      zIndexOffset:1000,icon:L.divIcon({className:'jtrav',iconSize:[0,0],html:'<div class="jtrav-dot"></div>'})});
+    if(!map.hasLayer(jTrail))jTrail.addTo(map);
+    if(!map.hasLayer(jTrav))jTrav.addTo(map);
+  }
+
+  // ---- core position setter ----
+  function jSetD(d,opt){
+    opt=opt||{};
+    jrn.d=Math.max(0,Math.min(JTOTAL,d));
+    var ll=jLlAt(jrn.d);
+    if(jTrav)jTrav.setLatLng(ll);
+    if(jTrail)jTrail.setLatLngs(jTrailUpTo(jrn.d));
+    jPips();
+    if(opt.center)map.panTo(ll,{animate:!jReduced(),duration:.6});
+    else jFollow(ll,!opt.snap&&!jReduced());
+    jSyncScrub();
+    jWriteHash();
+  }
+  function jFollow(ll,animate){
+    var b=map.getBounds().pad(-0.14);                // pan-only follow: act when the traveller leaves the central 72% zone
+    if(!b.contains(ll))map.panTo(ll,{animate:animate,duration:.6});
+  }
+  function jPips(){
+    for(var i=0;i<JWP.length;i++){
+      var el=jWpEl(i);if(!el)continue;
+      el.classList.toggle('visited',!!(JSTOPS[i]&&JSTOPS[i].dist<=jrn.d+JEPS));
+      el.classList.remove('here');
+    }
+    var si=jStopIndexAt(jrn.d);
+    if(si>=0){var e=jWpEl(si);if(e)e.classList.add('here');}
+  }
+
+  // ---- arrival: drive the existing waypoint card + narrate to the aria-live line ----
+  function jArrive(force){
+    var si=jStopIndexAt(jrn.d);
+    if(si<0)return;
+    if(!force&&si===jrn.lastArrived)return;
+    jrn.lastArrived=si; jrn.i=si;
+    openWaypoint(si);
+    jNarrate(si);
+  }
+  function jFirstSentence(s){var m=/^[\s\S]*?[.!?](\s|$)/.exec(String(s));return m?m[0].trim():String(s);}
+  function jNarrate(i){
+    if(!jbarNarr)return;
+    var w=ROUTE[i];if(!w)return;                     // session 0 is pre-campaign, mirroring the card idiom
+    jbarNarr.textContent=(w.session?'Session '+w.session:'Pre-campaign')+' — '+w.name+
+      (w.note?': '+jFirstSentence(w.note):'');
+  }
+
+  // ---- transport actions ----
+  function reflectPlay(){
+    if(!jbarPlay)return;
+    jbarPlay.innerHTML=jrn.playing?'❚❚ Pause':'▶ Play';
+    jbarPlay.setAttribute('aria-label',jrn.playing?'Pause':'Play');
+    jbarPlay.setAttribute('aria-pressed',jrn.playing?'true':'false');
+  }
+  function jPlay(){
+    if(!jrn.on)return;
+    if(jrn.d>=JTOTAL-JEPS)jSetD(0,{snap:true});      // replay from the top when finished
+    jrn.playing=true; jrn.dwellUntil=0; jrn.lastFrame=performance.now();
+    reflectPlay();
+    if(jReduced())jReducedStep();
+  }
+  function jPause(){jrn.playing=false;clearTimeout(jrn._rtimer);reflectPlay();}
+  function jToggle(){jrn.playing?jPause():jPlay();}
+  function jStopTo(i){                                // chapter jump: land on that stop, paused
+    if(!JSTOPS[i])return;
+    jPause(); jrn.lastArrived=-1;
+    jSetD(JSTOPS[i].dist,{center:true}); jArrive(true);
+  }
+  function jStepNext(){var n=jNextStop(jrn.d);jPause();if(n){jrn.lastArrived=-1;jSetD(n.dist,{center:true});jArrive(true);}}
+  function jStepPrev(){var p=jPrevStop(jrn.d);jPause();if(p){jrn.lastArrived=-1;jSetD(p.dist,{center:true});jArrive(true);}}
+
+  // ---- continuous animation (motion-full) ----
+  function jFrame(now){
+    if(!jrn.on){jrn._rafOn=false;return;}
+    if(jrn.playing&&!jReduced()){
+      var dt=now-jrn.lastFrame;if(dt>120)dt=120;      // clamp after a tab-away
+      if(now>=jrn.dwellUntil){
+        var nd=jrn.d+jrn.speed*JPPS*jPxToLL*(dt/1000);
+        var n=jNextStop(jrn.d);
+        if(n&&nd>=n.dist){jSetD(n.dist);jArrive();jrn.dwellUntil=now+JDWELL/jrn.speed;}   // reached a stop → snap + dwell
+        else if(nd>=JTOTAL){jSetD(JTOTAL);jArrive();jrn.playing=false;reflectPlay();}      // journey's end
+        else jSetD(nd);
+      }
+    }
+    jrn.lastFrame=now;
+    requestAnimationFrame(jFrame);
+  }
+  // ---- reduced-motion playback: teleport leg by leg, dwelling at each (no tween) ----
+  function jReducedStep(){
+    if(!jrn.on||!jrn.playing)return;
+    var n=jNextStop(jrn.d);
+    if(!n){jrn.playing=false;reflectPlay();return;}
+    jSetD(n.dist,{snap:true});jArrive();
+    jrn._rtimer=setTimeout(jReducedStep,(JDWELL+JLEG_PAUSE)/jrn.speed);
+  }
+
+  // ---- scrubber ----
+  function jSyncScrub(){
+    if(!jbarScrub)return;
+    var t=JTOTAL?jrn.d/JTOTAL:0, pct=Math.round(t*100), si=jStopIndexAt(jrn.d);
+    jbarScrub.value=Math.round(t*1000);
+    var label=si>=0?(ROUTE[si]?ROUTE[si].name:'start'):('leg '+jLegLabel(jrn.d));
+    if(jbarTstamp)jbarTstamp.textContent=pct+'% · '+label;
+    jbarScrub.setAttribute('aria-valuetext',pct+' percent, '+label);
+  }
+  function jLegLabel(d){
+    var p=jPrevStop(d),n=jNextStop(d);
+    if(!p)return '1';
+    var pi=JSTOPS.indexOf(p);
+    return (pi+1)+'→'+(n?JSTOPS.indexOf(n)+1:pi+1);
+  }
+
+  // ---- hash resume (#journey=t0..1); setHash uses replaceState, so no hashchange loop ----
+  var jHashTimer;
+  function jWriteHash(){
+    if(!jrn.on)return;
+    clearTimeout(jHashTimer);
+    jHashTimer=setTimeout(function(){
+      if(!jrn.on)return;
+      setHash('#journey=t'+(JTOTAL?jrn.d/JTOTAL:0).toFixed(4));
+    },160);
+  }
+
+  // ---- start / stop ----
+  function startJourney(t){
+    if(!ROUTE.length||!JPATH.length)return;
+    layerOn('⚔ Party Route');                        // pips + route line must be on the map
+    jrn.on=true; setRoutePlaying(true);
+    if(jrnBtn){jrnBtn.classList.add('on');jrnBtn.textContent='⚑ Stop the journey';}
+    jEnsureLayers();
+    if(jbar)jbar.hidden=false;
+    if(jbarReduce)jbarReduce.checked=jrn.forceReduced;
+    jrn.playing=false; jrn.dwellUntil=0; jrn.lastArrived=-1;
+    var d=(typeof t==='number'&&isFinite(t))?Math.max(0,Math.min(1,t))*JTOTAL:0;
+    jSetD(d,{snap:true});
+    if(jTrav)map.panTo(jTrav.getLatLng(),{animate:false});   // bring the traveller into view; do NOT force a zoom
+    jArrive(true);
+    reflectPlay();
+    if(!jrn._rafOn){jrn._rafOn=true;requestAnimationFrame(jFrame);}
   }
   function stopJourney(){
     if(!jrn.on)return;
-    jrn.on=false; setRoutePlaying(false); jrnBtn.classList.remove('on');
+    jrn.on=false; jrn.playing=false; clearTimeout(jrn._rtimer);
+    setRoutePlaying(false);
+    if(jrnBtn){jrnBtn.classList.remove('on');jrnBtn.textContent='⚑ Follow the journey';}
+    if(jbar)jbar.hidden=true;
+    if(jbarNarr)jbarNarr.textContent='';
+    if(jTrail){jTrail.setLatLngs([]);if(map.hasLayer(jTrail))map.removeLayer(jTrail);}
+    if(jTrav&&map.hasLayer(jTrav))map.removeLayer(jTrav);
+    for(var i=0;i<JWP.length;i++){var e=jWpEl(i);if(e){e.classList.remove('visited');e.classList.remove('here');}}
+    if(/#journey=/.test(location.hash||''))history.replaceState(null,'',location.pathname+location.search);
   }
+
+  // ---- transport-bar wiring (bound once; every handler is inert while jrn.on is false) ----
+  (function wireJbar(){
+    if(!jbar)return;
+    if(jbarPlay)jbarPlay.addEventListener('click',jToggle);
+    var pv=document.getElementById('jbar-prev'), nx=document.getElementById('jbar-next'),
+        cl=document.getElementById('jbar-close');
+    if(pv)pv.addEventListener('click',jStepPrev);
+    if(nx)nx.addEventListener('click',jStepNext);
+    if(cl)cl.addEventListener('click',stopJourney);
+    if(jbarSpeed)jbarSpeed.addEventListener('change',function(){
+      jrn.speed=parseFloat(this.value)||1;
+      if(jrn.playing&&jReduced()){clearTimeout(jrn._rtimer);jReducedStep();}   // re-time the teleport cadence
+    });
+    if(jbarReduce)jbarReduce.addEventListener('change',function(){
+      jrn.forceReduced=this.checked;
+      if(jrn.playing){jPause();jPlay();}               // restart under the new mode
+    });
+    var scrubbing=false;
+    if(jbarScrub){
+      jbarScrub.addEventListener('input',function(){
+        if(!jrn.on)return;
+        if(!scrubbing){jPause();scrubbing=true;}
+        jrn.lastArrived=-1;
+        jSetD(parseInt(this.value,10)/1000*JTOTAL,{snap:true});
+        jArrive();                                     // reveal the card if the scrub lands on a stop
+      });
+      jbarScrub.addEventListener('change',function(){scrubbing=false;});
+    }
+    document.addEventListener('keydown',function(e){
+      if(!jrn.on)return;
+      var t=e.target,tag=t&&t.tagName;
+      var typing=(tag==='INPUT'&&t.type!=='checkbox'&&t.type!=='range')||tag==='TEXTAREA'||tag==='SELECT';
+      if(typing)return;
+      var onRange=(tag==='INPUT'&&t.type==='range'), onButton=(tag==='BUTTON');
+      switch(e.key){
+        case ' ': case 'Spacebar': if(onButton)return; e.preventDefault(); jToggle(); break;
+        case 'ArrowRight': if(onRange)return; e.preventDefault(); jStepNext(); break;
+        case 'ArrowLeft': if(onRange)return; e.preventDefault(); jStepPrev(); break;
+        case 'Home': e.preventDefault(); jStopTo(0); break;
+        case 'End': e.preventDefault(); jStopTo(JSTOPS.length-1); break;
+      }
+    });
+  })();
 
   // ---- controls ----
   var jrnBtn; // set when journey control added
@@ -2847,8 +3407,10 @@
     sugItems=list;sugIdx=-1;
     if(!list.length){sugEl.className='';sugEl.innerHTML='';return;}
     sugEl.innerHTML=list.map(function(m,i){
+      var g=GAZ[fold(m.name)], sub=m.minor?'Lesser settlement':m.type;
+      if(g&&g.etym)sub+=' · “'+g.etym+'”';
       return '<div class="sug" data-i="'+i+'"><span>'+esc(m.name)+'</span> '+
-        '<span class="st">'+esc(m.minor?'Lesser settlement':m.type)+'</span></div>';
+        '<span class="st">'+esc(sub)+'</span></div>';
     }).join('');
     sugEl.className='on';
     Array.prototype.forEach.call(sugEl.children,function(el){
@@ -2860,6 +3422,8 @@
     if(m._t==='poi'){openPOI(m._chart,m._poi);
       if(m._poi._pmk)map.panTo(m._poi._pmk.getLatLng(),{animate:false});return;}
     if(CHART.on)exitChart();                 // any world result leaves the chart first
+    if(m._t==='gaz'){map.flyTo(px(m.x,m.y),revealZoom('Settlements'),
+      {duration:.9,easeLinearity:.25});openPlace({name:m.name,type:m.type.replace(' · index','')});return;}
     if(m._t==='company')openCompanyByName(m.name,true);
     else if(m._t==='faction')openFactionByName(m.name,true);
     else{flyToMarker(m);openPlace(m);}}
@@ -2868,9 +3432,18 @@
     var hits=[];
     if(CHART.on&&CHART.pois)CHART.pois.forEach(function(p){if(fold(p.name).indexOf(q)>=0)
       hits.push({name:p.name,type:'Point · '+CHART.name,_t:'poi',_poi:p,_chart:CHART.name});});
-    // match name OR type words (so "settlement" surfaces settlements, incl. traced lesser ones)
+    // match name OR type words OR the old-tongue gloss (so "settlement" surfaces settlements
+    // and "moon" surfaces Tamaron 'moon-town' via the gazetteer)
     MARKERS.forEach(function(m){var ty=m.minor?'lesser settlement':fold(m.type||'');
-      if(fold(m.name).indexOf(q)>=0||ty.indexOf(q)>=0)hits.push(m);});
+      var g=GAZ[fold(m.name)];
+      if(fold(m.name).indexOf(q)>=0||ty.indexOf(q)>=0||
+         (g&&g.etym&&fold(g.etym).indexOf(q)>=0))hits.push(m);});
+    // gazetteer-only places (in the index but not printed as markers) — the atlas
+    // index knows more than the plates; picking one flies to its coordinates
+    for(var gk in GAZ){var g2=GAZ[gk];
+      if(MREF[gk]||g2.x===undefined)continue;
+      if(gk.indexOf(q)>=0||(g2.etym&&fold(g2.etym).indexOf(q)>=0))
+        hits.push({name:g2.name,type:(g2.kind||'place')+' · index',_t:'gaz',x:g2.x,y:g2.y});}
     PARTY.forEach(function(p){if(fold(p.name).indexOf(q)>=0)
       hits.push({name:p.name,type:'Company',_t:'company'});});
     FACTIONS.forEach(function(f){if(fold(f.name).indexOf(q)>=0)
@@ -2893,7 +3466,9 @@
   document.addEventListener('click',function(e){
     if(!e.target.closest('.search-wrap'))sugEl.className='';});
   document.addEventListener('keydown',function(e){
-    if(e.key!=='Escape'||sugEl.className==='on')return;
+    if(e.key!=='Escape')return;
+    if(contentsEl&&!contentsEl.hidden){closeContents();return;}  // Contents Escape wins
+    if(sugEl.className==='on')return;
     if(CHART.on){exitChart();return;}          // chart-mode Escape has priority
     if(panel.classList.contains('open'))closePanel();
   });
@@ -2922,6 +3497,9 @@
   function hashVal(re){var m=String(location.hash||'').match(re);if(!m)return null;
     try{return decodeURIComponent(m[1]);}catch(_){return m[1];}}
   function handleHash(){
+    var jt=(location.hash||'').match(/journey=t([0-9.]+)/);   // #journey=t0..1 → resume playback, paused
+    if(jt){var tv=parseFloat(jt[1]);if(!isFinite(tv))tv=0;tv=Math.max(0,Math.min(1,tv));
+      layerOn('⚔ Party Route');startJourney(tv);return;}
     var ch=hashVal(/chart=([^&]+)/);
     if(ch){var poi=hashVal(/[?&]poi=(\d+)/); poi=poi?+poi:0;
       if(isFlyInCity(ch)){                    // city chart → fly into the world overlay
@@ -2933,10 +3511,25 @@
     if(CHART.on)exitChart();                  // hash left the chart → leave chart mode
     var c=hashVal(/company=([^&]+)/); if(c){openCompanyByName(c,true);return;}
     var f=hashVal(/faction=([^&]+)/); if(f){openFactionByName(f,true);return;}
-    var name=hashVal(/place=([^&]+)/); if(!name)return;
-    var mk=MREF[fold(name)];
-    if(mk){flyToMarker(mk);openPlace(mk);}
+    var name=hashVal(/place=([^&]+)/);
+    if(name){
+      var mk=MREF[fold(name)];
+      if(mk){flyToMarker(mk);openPlace(mk);return;}
+      var g=GAZ[fold(name)];                  // index-only place: fly to its footprint
+      if(g&&g.x!==undefined){map.flyTo(px(g.x,g.y),revealZoom('Settlements'),
+        {duration:.9,easeLinearity:.25});openPlace({name:g.name,type:g.kind||'place'});}
+      return;
+    }
+    // shareable raw view: #view=<atlas px x>,<y>,<zoom>
+    var v=(location.hash||'').match(/view=([-\d.]+),([-\d.]+),([-\d.]+)/);
+    if(v)map.setView(px(+v[1],+v[2]),+v[3],{animate:false});
   }
+  // serialize the wandering view into the URL — but never clobber an entity link
+  map.on('moveend',function(){
+    if(location.hash&&!/^#view=/.test(location.hash))return;
+    var c=map.project(map.getCenter(),NZ);
+    setHash('#view='+c.x.toFixed(0)+','+c.y.toFixed(0)+','+map.getZoom().toFixed(2));
+  });
 
   // ---- load everything ----
   function getJSON(u){return fetch(u).then(function(r){
@@ -2957,13 +3550,15 @@
     getJSON('data/city-traits.json'),
     getJSON('data/sea-lanes.json'),
     getJSON('data/named-ways.json'),
-    getJSON('data/minor-regions.geojson')
+    getJSON('data/minor-regions.geojson'),
+    getJSON('data/gazetteer.json')
   ]).then(function(res){
     var markers=res[0]||[], wiki=res[1]||[], reviews=res[2]||[],
         route=res[3]||[], realms=res[4];
     PARTY=res[5]||[]; FACTIONS=res[6]||[];
     DETAIL=res[7]||{}; POIS=res[8]||{}; LOCART=res[9]||{};
 
+    (res[15]||[]).forEach(function(g){GAZ[fold(g.name)]=g;});   // gazetteer: etym + wiki enrichment
     wiki.forEach(function(p){WIKI[p.title]=p;WIKIFOLD[fold(p.title)]=p;});
     reviews.forEach(function(r){(REVIEWS[r.place]=REVIEWS[r.place]||[]).push(r);});
     PARTY.forEach(function(p){PMREF[fold(p.name)]=p;});
@@ -3077,6 +3672,10 @@
     updTier(); updScale(); worldOpacityUpdate(); worldCityUpdate(); handleHash();
     window.addEventListener('hashchange',handleHash);
 
+    // ---- Contents landing (spec D): wire cards; show on a fresh, un-deep-linked load ----
+    OVERLAYS=overlays; wireContents();
+    if((!location.hash||location.hash==='#')&&!contentsSeen())openContents();
+
     window.ATLAS={map:map,markers:MARKERS,party:PARTY,factions:FACTIONS,ready:true,
       find:function(n){return MREF[fold(n)];},
       fly:function(n){var m=MREF[fold(n)];if(m){flyToMarker(m);openPlace(m);}return !!m;},
@@ -3084,9 +3683,18 @@
       faction:function(n){return openFactionByName(n,true);},
       groups:openFactionsList,
       era:setEra, journey:startJourney, stopJourney:stopJourney,
+      jstate:function(){return {on:jrn.on,t:JTOTAL?jrn.d/JTOTAL:0,d:jrn.d,total:JTOTAL,
+        playing:jrn.playing,speed:jrn.speed,reduced:jReduced(),arrived:jrn.lastArrived,
+        stops:JSTOPS.length,trav:jTrav?[jTrav.getLatLng().lat,jTrav.getLatLng().lng]:null};},
+      jplay:function(){jPlay();}, jpause:function(){jPause();},
+      jnext:function(){jStepNext();}, jprev:function(){jStepPrev();},
+      jscrub:function(t){jPause();jrn.lastArrived=-1;jSetD(Math.max(0,Math.min(1,t))*JTOTAL,{snap:true});jArrive();},
       openRealm:openRealm, close:closePanel,
       chart:function(n,poi){return enterChart(n,poi||0);}, exitChart:exitChart,
       chartOn:function(){return CHART.on;},
+      contents:{open:openContents,close:closeContents,theme:applyTheme,
+        shown:function(){return !!(contentsEl&&!contentsEl.hidden);}},
+      hasOverlay:function(lbl){return !!(OVERLAYS&&OVERLAYS[lbl]&&map.hasLayer(OVERLAYS[lbl]));},
       // meshed world (spec MW): descend into a city + the generator's overlay hook
       descend:function(n,poi){return flyIntoCity(n,poi||0);},
       registerCityOverlay:registerCityOverlay,

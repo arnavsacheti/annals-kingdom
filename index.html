@@ -584,9 +584,45 @@ const PATRINAIC_ROOTS = [
 ];
 // attested derivational affixes: [suffix, connector-if-vowel-final, gloss-pattern]
 // -(g)os 'land of' · -(n)or (archaic) 'land of' · -ban 'place of' · -ila diminutive
-// -(i)on 'town' is DM-attested (Tamar+ion → Tamaron), absent from the PolyGlot save
+// -(i)on 'town' is DM-attested (Tamar+ion → Tamaron); surface -on, hiatus resolution covers vowel stems
 const PATRINAIC_SUFS = { grand: [['os','g','%-land'],['or','n','%-land']],
-                         common: [['ban','','%-stead'],['ila','','little %'],['os','g','%-land'],['on','i','%-town']] };
+                         common: [['ban','','%-stead'],['ila','','little %'],['os','g','%-land'],['on','','%-town']] };
+// morpheme seams follow the DM's reference grammar §2.2 (lexicon/PaternicGrammar.pdf):
+// vowel hiatus is illegal and resolves by chart; identical consonants degeminate;
+// a nasal before s/z deletes with compensatory lengthening of its vowel.
+const PAT_HIATUS = { // short+short cells; any long/diphthong second wins, else long first survives
+  a:{a:'ā',e:'ae',i:'ae',o:'o',u:'au'}, e:{a:'a',e:'ē',i:'ē',o:'o',u:'u'},
+  i:{a:'a',e:'e',i:'ī',o:'o',u:'u'},   o:{a:'a',e:'ō',i:'o',o:'ō',u:'ō'},
+  u:{a:'a',e:'ū',i:'u',o:'ō',u:'ū'} };
+const PAT_LONG = 'āēīōū';
+function patJoin(a, b){
+  const tokEnd = s => (s.match(/(ph|th|kh|sh|zh|gh|ae|au|[a-zāēīōū])$/i)||[''])[0];
+  const tokStart = s => (s.match(/^(ph|th|kh|sh|zh|gh|ae|au|[a-zāēīōū])/i)||[''])[0];
+  const isVow = t => /^(ae|au|[aeiouāēīōū])$/.test(t);
+  // orthographic word-initial i before a vowel is the approximant /j/ (Ioph, Iet), not a vowel
+  const glideStart = s => /^i(ae|au|[aeiouāēīōū])/i.test(s);
+  let guard = 0;
+  for(;;){
+    const ta = tokEnd(a).toLowerCase(), tb = tokStart(b).toLowerCase();
+    if(!ta || !tb || guard++ > 4) break;
+    if(isVow(ta) && isVow(tb) && !glideStart(b)){
+      const res = (PAT_LONG.includes(tb) || tb.length>1) ? tb
+                : (PAT_LONG.includes(ta) || ta.length>1) ? ta
+                : PAT_HIATUS[ta][tb];
+      a = a.slice(0, a.length-ta.length) + res; b = b.slice(tb.length);
+      continue;   // the resolved vowel may collide with b's next vowel — cascade
+    }
+    if(ta === tb){ b = b.slice(tb.length); break; }             // degemination
+    if(/^[nm]$/.test(ta) && /^[sz]$/.test(tb)){                 // nasal deletes, vowel lengthens
+      const stem = a.slice(0, a.length-1), tv = tokEnd(stem);
+      if(/^[aeiou]$/i.test(tv)) a = stem.slice(0, stem.length-1) + 'āēīōū'['aeiou'.indexOf(tv.toLowerCase())];
+      else a = stem;
+      break;
+    }
+    break;
+  }
+  return a + b;
+}
 const NAME = (()=>{
   // rivers keep their translated common names; settlements bear the old tongue
   const riverPre = ['Red','Copper','Grey','Swan','Watch','Riving','Still','Salt','Cold','White','Reed','Deep'];
@@ -599,12 +635,11 @@ const NAME = (()=>{
         // ~1 in 3 non-grand names mint two-root compounds (Sokundo = Sok+Undo); grand names stay root+affix
         if(!grand && pick(r,[0,0,1])){
           const a = pick(r, PATRINAIC_ROOTS), b = pick(r, PATRINAIC_ROOTS);
-          n = a[0] + b[0].toLowerCase(); et = a[1] + '-' + b[1];   // fused like canon Sokundo (Sok+Undo)
-          // reject unattested seams: same root, vowel|vowel hiatus, or over-long
-          bad = a[0]===b[0] || (/[aeiouāēīōū]$/i.test(a[0]) && /^[aeiouāēīōū]/i.test(b[0])) || n.length>10;
+          n = patJoin(a[0], b[0].toLowerCase()); et = a[1] + '-' + b[1];   // fused like canon Sokundo (Sok+Undo)
+          bad = a[0]===b[0] || n.length>10;
         } else {
           const ro = pick(r, PATRINAIC_ROOTS), sf = pick(r, grand ? PATRINAIC_SUFS.grand : PATRINAIC_SUFS.common);
-          n = ro[0] + (/[aeiouāēīōū]$/i.test(ro[0]) ? sf[1] : '') + sf[0];
+          n = patJoin(ro[0] + (/[aeiouāēīōū]$/i.test(ro[0]) ? sf[1] : ''), sf[0]);
           et = sf[2].replace('%', ro[1]);
         }
         guard++;
@@ -741,6 +776,21 @@ function gbGableRoof(gb, cx, y0, cz, sx, sz, rh, colRoof, colGable, over){
   // thin underside strips of the overhang read as eaves shadow
   gbQuad(gb, [x0,y0,z0],[x0,y0,z1],[gx0,y0,gz1],[gx0,y0,gz0], shade(colRoof,0.55));
   gbQuad(gb, [x1,y0,z1],[x1,y0,z0],[gx1,y0,gz0],[gx1,y0,gz1], shade(colRoof,0.55));
+}
+// hip roof: ridge along z, inset by the half-width so all four slopes pitch equally
+// (the Sokundo-prototype analytic hip; degenerates toward a pyramid on square plans)
+function gbHipRoof(gb, cx, y0, cz, sx, sz, rh, col, over){
+  over = over===undefined ? 0.36 : over;
+  const x0=cx-sx/2-over, x1=cx+sx/2+over, z0=cz-sz/2-over, z1=cz+sz/2+over;
+  const yr=y0+rh, ins=Math.min((x1-x0)/2, (z1-z0)/2-0.4);
+  const rz0=z0+ins, rz1=z1-ins;
+  gbQuad(gb, [x0,y0,z1],[cx,yr,rz1],[cx,yr,rz0],[x0,y0,z0], shade(col,0.94)); // west slope
+  gbQuad(gb, [cx,yr,rz1],[x1,y0,z1],[x1,y0,z0],[cx,yr,rz0], col);             // east slope
+  gbTri(gb, x0,y0,z1, x1,y0,z1, cx,yr,rz1, shade(col,0.9));                    // +z hip
+  gbTri(gb, x1,y0,z0, x0,y0,z0, cx,yr,rz0, shade(col,0.85));                   // -z hip
+  const gx0=cx-sx/2, gx1=cx+sx/2, gz0=cz-sz/2, gz1=cz+sz/2;
+  gbQuad(gb, [x0,y0,z0],[x0,y0,z1],[gx0,y0,gz1],[gx0,y0,gz0], shade(col,0.55));
+  gbQuad(gb, [x1,y0,z1],[x1,y0,z0],[gx1,y0,gz0],[gx1,y0,gz1], shade(col,0.55));
 }
 function gbPyramidRoof(gb, cx, y0, cz, sx, sz, rh, col, over){
   over = over===undefined ? 0.3 : over;
@@ -1565,6 +1615,50 @@ function planStreetsFor(s, R){
       }
     }
     s.segs = segs;
+    planParcelsFor(s, R);
+}
+// ordered street-fronting lots consumed by sim-time growth (tryGrowBuildings);
+// dynamic predicates (walls/temple/neighbours) are re-checked at consumption time
+function planParcelsFor(s, R){
+  const P = s.parcels = [];
+  const growR = s.growR || s.R;
+  for(const seg of s.segs){
+    const dxs = seg.bx-seg.ax, dzs = seg.bz-seg.az;
+    const len = Math.hypot(dxs,dzs);
+    if(len < 8) continue;
+    const ux = dxs/len, uz = dzs/len, nx = -uz, nz = ux;
+    for(let along = 0; ; ){
+      const w = rr(R, 8.5, 11);
+      const c = along + w/2;
+      if(c > len) break;
+      const px = seg.ax + ux*c, pz = seg.az + uz*c;
+      for(const side of [1,-1]){
+        if(chance(R, 0.1)) continue;                 // organic gaps ~10%
+        const depth = rr(R, 7.5, 10.5);
+        const off = seg.w/2 + depth/2 + rr(R, 0.4, 1.2);
+        const bx = px + nx*off*side, bz = pz + nz*off*side;
+        if(dist2d(bx,bz,s.x,s.z) > growR) continue;
+        const gi = idx(Math.round(worldToGrid(bx)), Math.round(worldToGrid(bz)));
+        if(W.distWater[gi]*CELL < 9) continue;
+        const h0 = hAt(bx,bz);
+        if(h0 < SEA_Y + 0.9) continue;
+        let ok = true;
+        for(let cc=0;cc<4;cc++){ if(Math.abs(hAt(bx+[4,-4,4,-4][cc], bz+[4,4,-4,-4][cc]) - h0) > 4.2){ ok=false; break; } }
+        if(!ok) continue;
+        if(nearWallCircuit(s, bx, bz, 6)) continue;
+        if(s.templePt && dist2d(bx,bz,s.templePt.x,s.templePt.z) < s.templePt.r) continue;
+        for(const b of s.buildings){ if(dist2d(bx,bz,b.x,b.z) < 7.4){ ok=false; break; } }
+        if(ok) for(const q of P){ if(dist2d(bx,bz,q.x,q.z) < 7.4){ ok=false; break; } }
+        if(!ok) continue;
+        P.push({x:bx, z:bz, ry: Math.atan2(nx*side, nz*side)+Math.PI, d: dist2d(bx,bz,s.x,s.z), used:false});
+      }
+      along += w;
+    }
+  }
+  // radiate from the heart with a little seeded jitter, not strict ring-by-ring
+  const keyed = P.map(p => ({p, k: p.d + rr(R,0,18)}));
+  keyed.sort((a,b)=> a.k - b.k);
+  s.parcels = keyed.map(o => o.p);
 }
 
 // which trade a lot takes on, by ward — shared by forge placement and sim-time growth
@@ -2658,11 +2752,13 @@ function buildArch(t, tier, rng){
   switch(t){
     case ARCH.HOUSE: {
       const sx = rr(rng,4.6,6.4), sz = rr(rng,5.6,7.6), wh = 2.5+tier*0.35, rh = rr(rng,1.9,2.7);
+      const hip = chance(rng, 0.45);
       gbBox(gb, 0,-F,0, sx, wh+F, sz, cw);
-      gbGableRoof(gb, 0, wh, 0, sx, sz, rh, cr, shade(cw,0.96));
+      if(hip) gbHipRoof(gb, 0, wh, 0, sx, sz, rh*0.92, cr);
+      else gbGableRoof(gb, 0, wh, 0, sx, sz, rh, cr, shade(cw,0.96));
       addDoor(gb, rr(rng,-0.6,0.6), sz/2, 1.9);
       windowRow(gb, ri(rng,1,2), wh-0.95, sx, sz, rng, tier>=2 ? ['f','l','r'] : ['f']);
-      if(tier>=2) addChimney(gb, 0, wh+rh-0.75, rr(rng,-0.3,0.3)*sz*0.5, 0.55, rng);
+      if(tier>=2) addChimney(gb, 0, wh+rh-0.75, rr(rng,-0.3,0.3)*sz*(hip?0.18:0.5), 0.55, rng);
       if(tier===2) addTimber(gb, sx, wh, sz, rng);
       dims = {sx, sz, h: wh+rh, col: cr};
       break;
@@ -2680,7 +2776,8 @@ function buildArch(t, tier, rng){
     case ARCH.SHOP: {
       const sx = rr(rng,5,6.6), sz = rr(rng,6,7.8), wh = 2.7+tier*0.35, rh = rr(rng,1.9,2.5);
       gbBox(gb, 0,-F,0, sx, wh+F, sz, cw);
-      gbGableRoof(gb, 0, wh, 0, sx, sz, rh, cr, shade(cw,0.96));
+      if(chance(rng, 0.3)) gbHipRoof(gb, 0, wh, 0, sx, sz, rh*0.92, cr);
+      else gbGableRoof(gb, 0, wh, 0, sx, sz, rh, cr, shade(cw,0.96));
       addDoor(gb, -sx*0.2, sz/2, 2.0);
       gbWindow(gb, sx*0.22, 1.5, sz/2, 1.1, 1.0, 0, 1, rr(rng,0.2,1));
       windowRow(gb, 1, wh-0.8, sx, sz, rng, ['l','r']);
@@ -3812,6 +3909,23 @@ function foundVillage(day, near){
 function tryGrowBuildings(s, n){
   const R = W.rng.hist;
   let added = 0, guard = 0;
+  // planned street-fronting parcels first; scatter (below) serves suburbs past them
+  if(s.parcels){
+    for(const p of s.parcels){
+      if(added >= n) break;
+      if(p.used) continue;
+      if(nearWallCircuit(s, p.x, p.z, 6)) continue;   // walls can appear after planning
+      if(s.templePt && dist2d(p.x,p.z,s.templePt.x,s.templePt.z) < s.templePt.r) continue;
+      let ok = true;
+      for(const b of s.buildings){ if(dist2d(p.x,p.z,b.x,b.z) < 7.4){ ok=false; break; } }
+      if(!ok) continue;
+      p.used = true;
+      const tier = clamp(Math.round(1 + s.prosperity*1.6 + rr(R,-0.4,0.6)), 1, 3);
+      const t2 = pickBuildType(s, p.x, p.z, R);
+      s.buildings.push({t:t2, x:p.x, z:p.z, ry:p.ry, tier, sc:rr(R,0.92,1.1)});
+      added++;
+    }
+  }
   while(added < n && guard++ < 70){
     const seg = pick(R, s.segs);
     if(!seg) break;

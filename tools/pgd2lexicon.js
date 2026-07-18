@@ -115,9 +115,9 @@ function emitJs(lang, roots){
     `const PATRINAIC_ROOTS = [`, lines.join(',\n'), `];`,
     `// attested derivational affixes: [suffix, connector-if-vowel-final, gloss-pattern]`,
     `// -(g)os 'land of' · -(n)or (archaic) 'land of' · -ban 'place of' · -ila diminutive`,
-    `// -(i)on 'town' is DM-attested (Tamar+ion → Tamaron), absent from the PolyGlot save`,
+    `// -(i)on 'town' is DM-attested (Tamar+ion → Tamaron); surface -on, hiatus resolution covers vowel stems`,
     `const PATRINAIC_SUFS = { grand: [['os','g','%-land'],['or','n','%-land']],`,
-    `                         common: [['ban','','%-stead'],['ila','','little %'],['os','g','%-land'],['on','i','%-town']] };`
+    `                         common: [['ban','','%-stead'],['ila','','little %'],['os','g','%-land'],['on','','%-town']] };`
   ].join('\n');
 }
 
