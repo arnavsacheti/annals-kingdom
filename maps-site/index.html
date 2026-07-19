@@ -530,6 +530,27 @@
     border-radius:6px;}
   .chart-back button:hover{background:var(--rust);color:#f5ecd6;}
 
+  /* ---- chart-mode surveyed-plan toggle (parchment idiom) ---- */
+  .chart-plan{background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--line2);border-radius:6px;padding:6px 9px 7px;
+    box-shadow:0 4px 14px rgba(44,36,24,.3);text-align:center;max-width:190px;}
+  .chart-plan .cp-toggle{font-family:'EB Garamond',serif;font-size:14px;color:var(--ink);
+    background:none;border:1px solid var(--line2);border-radius:5px;padding:4px 14px;
+    cursor:pointer;letter-spacing:.2px;}
+  .chart-plan .cp-toggle:hover{background:var(--rust);color:#f5ecd6;border-color:var(--rust);}
+  .chart-plan .cp-toggle.on{background:var(--rust);color:#f5ecd6;border-color:var(--rust);}
+  .chart-plan .cp-prov{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);
+    margin-top:6px;line-height:1.35;letter-spacing:.2px;}
+  .chart-plan .cp-tools{display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;
+    font-size:9.5px;color:var(--bronze);text-decoration:none;letter-spacing:.3px;}
+  .chart-plan .cp-tools:hover{text-decoration:underline;}
+  /* plan vectors — colour via CSS vars so day/night flip with the theme;
+     weight/opacity/dash ride Leaflet options. */
+  .plan-primary{stroke:var(--rust);fill:none;stroke-linecap:round;stroke-linejoin:round;}
+  .plan-extent{stroke:var(--bronze);fill:none;}
+  .plan-plaza{stroke:var(--bronze);fill:var(--bronze);}
+  .plan-mask{stroke:var(--moss);fill:var(--moss);}
+
   /* ---- chart mode: hide every world overlay pane + world-only control ---- */
   .chart-mode .leaflet-pRealm-pane,.chart-mode .leaflet-pTrail-pane,
   .chart-mode .leaflet-pRouteLine-pane,.chart-mode .leaflet-pWater-pane,
@@ -799,8 +820,10 @@
   // realms sit below markers; route waypoints above the route line.
   // WW panes: district strokes just over realm fills; sea lanes + named ways below the
   // party route line, so the campaign's own path reads on top where they cross.
+  // pChartPlan: surveyed-plan vectors in chart mode — above the plate tiles (tilePane 200),
+  // below the numbered POI markers (markerPane 600) so points stay legible over the roads.
   [['pRealm',410],['pDistrict',411],['pTrail',412],['pLane',413],['pWay',414],
-   ['pRouteLine',415],['pJTrail',416],['pCityWash',449],['pCity',450],['pWater',618],
+   ['pRouteLine',415],['pJTrail',416],['pCityWash',449],['pCity',450],['pChartPlan',300],['pWater',618],
    ['pMajor',620],['pMtn',622],['pLesser',623],['pSettle',624],['pMinor',626],['pOrigin',628],
    ['pFaction',630],['pRouteWp',640],['pJTrav',645],['pCityPOI',650]].forEach(function(p){
     map.createPane(p[0]); map.getPane(p[0]).style.zIndex=p[1];
@@ -1010,7 +1033,11 @@
   // key (names drift in case/diacritics across files, as WIKIFOLD already handles).
   var DETAIL={}, DETAILFOLD={}, POIS={}, LOCART={}, LOCARTFOLD={};
   var CHART={on:false,name:null,def:null,atZoom:0,layer:null,poiLayer:null,
-    cb:null,pois:null,cpx:null,titleCtrl:null,backCtrl:null,save:null};
+    cb:null,pois:null,cpx:null,titleCtrl:null,backCtrl:null,save:null,
+    planCtrl:null,planLayer:null,planOn:false};
+  // surveyed-plan traces (JPG-frame vectors) exist only for these charts; the Plan chip
+  // appears only when the open chart is keyed here. Lazy-fetched + cached on first toggle.
+  var CHART_TRACES={'Epēshu':'data/epeshu-trace.json'}, TRACE_CACHE={};
   function detailKey(name){return DETAIL[name]?name:(DETAILFOLD[fold(name)]||null);}
   function artFor(name){return LOCART[name]||LOCARTFOLD[fold(name)]||null;}
 
@@ -1701,7 +1728,71 @@
       return;
     }
   }
+  // ---- surveyed-plan overlay (spec O): traced JPG-frame vectors reprojected through cpx ----
+  // The trace's w/h are the JPG plate dims; the chart's cpx expects the DETAIL frame
+  // (def.w×def.h). A single uniform scale (def.w/trace.w, def.h/trace.h) recovers that
+  // frame — the same rescale the chart POIs already carry (verified <1px over all points).
+  function planPt(trace,cpx,pt){
+    var sx=CHART.def.w/trace.w, sy=CHART.def.h/trace.h;
+    return cpx(pt[0]*sx, pt[1]*sy);
+  }
+  function planPath(trace,cpx,pts){return pts.map(function(p){return planPt(trace,cpx,p);});}
+  function buildPlanLayer(trace,cpx){
+    var g=L.layerGroup();
+    // farm fields + plazas first (fills below the road lines), boundary, then roads on top.
+    (trace.masks||[]).forEach(function(m){
+      L.polygon(planPath(trace,cpx,m.pts),{pane:'pChartPlan',className:'plan-mask',
+        weight:1,opacity:.55,fillOpacity:.18}).addTo(g);
+    });
+    (trace.plazas||[]).forEach(function(pz){
+      L.polygon(planPath(trace,cpx,pz.pts),{pane:'pChartPlan',className:'plan-plaza',
+        weight:1,opacity:.5,fillOpacity:.16}).addTo(g);
+    });
+    if(trace.extent&&trace.extent.length){
+      L.polygon(planPath(trace,cpx,trace.extent),{pane:'pChartPlan',className:'plan-extent',
+        weight:1.2,opacity:.75,dashArray:'3 6',fill:false}).addTo(g);
+    }
+    (trace.primaries||[]).forEach(function(r){
+      var w=Math.max(2.5,(r.w||12)*0.5);       // trace 'w' (JPG px) → a proportional screen weight
+      var ln=L.polyline(planPath(trace,cpx,r.pts),{pane:'pChartPlan',className:'plan-primary',
+        weight:w,opacity:.9});
+      if(r.name)ln.bindTooltip(esc(r.name),{sticky:true,direction:'top',className:'mk-tip',opacity:1});
+      ln.addTo(g);
+    });
+    return g;
+  }
+  function chartHasTrace(canon){return !!(canon&&CHART_TRACES[canon]);}
+  function withTrace(canon,cb){                // lazy-fetch + cache the trace, then cb(trace)
+    var url=CHART_TRACES[canon]; if(!url){cb(null);return;}
+    if(TRACE_CACHE[canon]!==undefined){cb(TRACE_CACHE[canon]);return;}
+    getJSON(url).then(function(t){TRACE_CACHE[canon]=t||null;cb(TRACE_CACHE[canon]);});
+  }
+  function planTeardown(){                      // drop the vector group; leave the chip state to caller
+    if(CHART.planLayer){map.removeLayer(CHART.planLayer);CHART.planLayer=null;}
+  }
+  function setPlanChip(on){
+    CHART.planOn=on;
+    var d=CHART.planCtrl&&CHART.planCtrl.getContainer&&CHART.planCtrl.getContainer();
+    if(!d)return;
+    var btn=d.querySelector('.cp-toggle'), prov=d.querySelector('.cp-prov');
+    if(btn){btn.classList.toggle('on',on);btn.setAttribute('aria-pressed',on?'true':'false');}
+    if(prov)prov.hidden=!on;
+  }
+  function togglePlan(){
+    if(!CHART.on)return;
+    if(CHART.planLayer){planTeardown();setPlanChip(false);return;}
+    var canon=CHART.name, cpx=CHART.cpx;
+    withTrace(canon,function(trace){
+      // guard: chart may have changed/closed during the async fetch
+      if(!CHART.on||CHART.name!==canon||!trace||CHART.planLayer)return;
+      CHART.planLayer=buildPlanLayer(trace,cpx); CHART.planLayer.addTo(map);
+      setPlanChip(true);
+    });
+  }
   function chartTeardownLayers(){
+    planTeardown();
+    if(CHART.planCtrl){map.removeControl(CHART.planCtrl);CHART.planCtrl=null;}
+    CHART.planOn=false;
     if(CHART.layer){map.removeLayer(CHART.layer);CHART.layer=null;}
     if(CHART.poiLayer){map.removeLayer(CHART.poiLayer);CHART.poiLayer=null;}
     if(CHART.titleCtrl){map.removeControl(CHART.titleCtrl);CHART.titleCtrl=null;}
@@ -1764,6 +1855,19 @@
       b.addEventListener('click',exitChart);return d;}});
     CHART.titleCtrl=new TitleC(); CHART.backCtrl=new BackC();
     map.addControl(CHART.titleCtrl); map.addControl(CHART.backCtrl);
+    // surveyed-plan chip — only for charts that carry a trace (Epēshu). Off by default;
+    // sits under the title cartouche (topright), with the cartographer's-tools link.
+    if(chartHasTrace(canon)){
+      var PlanC=L.Control.extend({options:{position:'topright'},onAdd:function(){
+        var d=L.DomUtil.create('div','chart-plan');
+        d.innerHTML='<button type="button" class="cp-toggle" aria-pressed="false">▤ Plan</button>'+
+          '<div class="cp-prov" hidden>✶ surveyed plan, per the Annals’ telling</div>'+
+          '<a class="cp-tools" target="_blank" rel="noopener" href="../prototypes/epeshu-chart.html">cartographer’s tools →</a>';
+        L.DomEvent.disableClickPropagation(d); L.DomEvent.disableScrollPropagation(d);
+        d.querySelector('.cp-toggle').addEventListener('click',togglePlan);
+        return d;}});
+      CHART.planCtrl=new PlanC(); map.addControl(CHART.planCtrl);
+    }
     setHash('#chart='+encodeURIComponent(canon));
     if(poiN)selectPOI(canon,poiN);
     return true;
