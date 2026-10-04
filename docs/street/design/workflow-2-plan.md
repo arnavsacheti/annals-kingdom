@@ -1,3 +1,5 @@
+> Planning snapshot (2026-10-04): the script in `.claude/workflows/` is the source of truth; where this document and the script disagree, the script wins.
+
 # Workflow 2 · `street-2-plan.js` — Street 2 · Planning → street spec
 
 > Planning snapshot, 2026-10-04 (final integrated plan). Where the committed script and this document disagree, the
@@ -17,10 +19,10 @@ export const meta = {
     {title: 'Sections', detail: 'one writer per section -> spec/<sid>.md + .json fragment; anchor check; triage fixer'},
     {title: 'Integrate', detail: 'opus/xhigh integrator -> street-spec.md/.json; red team; patcher'},
     {title: 'Units', detail: 'unit planner -> /units in slices S0-S4 with machine-checkable acceptance'},
-    {title: 'Check', detail: 'spec reader (mechanical read-back), anchor + filigree-literal guard, leak grep, vocabulary grep'},
+    {title: 'Check', detail: 'spec reader (mechanical read-back, incl. the limits Street 3 gates on), anchor + filigree-literal guard, leak grep, vocabulary grep'},
     {title: 'Cold-engineer gate', detail: 'two blind readers (sonnet/high + opus/high) answer the frozen probes from the spec alone; guess auditors; scoring in code'},
     {title: 'Fix', detail: 'spec fixer -> re-read -> re-gate (<= maxRounds)'},
-    {title: 'Record', detail: 'gates/2-plan.json, state/2-plan.json'}
+    {title: 'Record', detail: 'gates/2-plan.json, state/2-plan.json (the ledger is also checkpointed after Probes and after Sections, and on a stop with unrecorded work)'}
   ]
 }
 ```
@@ -49,14 +51,15 @@ const SECTIONS = [
 ]
 const MANDATORY_CHECKS = ['street.fingerprint', 'street.off_identity', 'street.caps', 'street.static_clock', 'street.static_rng',
   'street.instance_color', 'street.fil_anchors', 'street.untouched', 'street.console', 'street.hooks', 'street.keydown', 'street.stats_keys']   // every slice
-const SLICE_CHECKS = {S0: ['street.hash_table'], S1: ['street.fade', 'street.swaps', 'street.paths'], S3: ['street.vfps', 'street.spacing'], S4: ['street.clouds', 'street.shadows_row', 'street.weather_dial', 'street.tidings']}   // + 'street.fog_copy' when the fog unit exists
+const SLICE_CHECKS = {S0: ['street.hash_table'], S1: ['street.fade', 'street.swaps', 'street.paths'], S3: ['street.vfps', 'street.spacing', 'street.caravan_tiers'], S4: ['street.clouds', 'street.shadows_row', 'street.weather_dial', 'street.tidings', 'street.folk_row']}   // + 'street.fog_copy' when the fog unit exists
 const MANDATORY_UNITS = {
   'S0.U00': 'the STREET block (one namespace const STREET, placed per /block/placement) + the ANNALS.street getter hook (on, set, stats, settledHash, queueHash, parseHash, pinDegrade) + the default-off master row + street=1 read',
   'S0.U01': 'probe extension: --layers street=1 (and street=0 now asserts ANNALS.street absent OR stats().objects === 0), metrics classes/appear/swaps/jobs/resident, path builds/jobs/resident, --paths and --vfps accept comma lists (--paths descent,oscillate,flyaway; --vfps 30,60) with --queue-hash <t>, --hash-table, --phone, device degrade_step; Street 1 literals unchanged (acceptance re-measures baseline.json fields exactly); S4 units add --tidings, --sky, --fog-pairs',
   'S0.U02': 'hash parser (ST18): both seed parse sites anchored to (?:^#|&)s=; every #s= writer keeps the other params',
   'S4.Ufog': 'the R13 fog copy (only when q09 found the function; otherwise a recorded gap, no unit)',
   'S4.Unotices': 'notices reader for notices=<url> (after S0.U02) drawing shut ways and muster days from the R12 schema'}
-const UNIT_FILES_OK = /^(index\.html|tools\/street-probe\.js|docs\/street\/(fixtures|shots|device)\/.+)$/
+const UNIT_FILES_OK = /^(index\.html|tools\/street-probe\.js|docs\/street\/(fixtures|shots|device)(\/[^\/.][^\/]*)+)$/
+const UNIT_PATH_BAD = f => typeof f !== 'string' || /\\|^\.\/|\/\/|(^|\/)\.{1,2}(\/|$)|\s/.test(f)   // a '.' or '..' segment, backslash, './' lead or empty segment slips past the anchored regexes
 const UNIT_FILES_BAD = /^(maps-site\/|docs\/filigree\/|\.claude\/|tools\/filigree-|tools\/street-drift\.js$|docs\/street\/(gates|state|research)\/|docs\/street\/(street-bible|street-spec)\.|docs\/street\/rulings\.json$|server\.js$|POLISH\.md$|CHANGELOG\.md$|VERSION$)/
 const PARAM_OK = p => /^[a-z]+$/.test(p) && !/s$/.test(p) && !['s', 'goto', 'filigree'].includes(p)
 const HASH_TABLE_MIN = ['#s=epeshu', '#s=a&goto=B', '#goto=B&s=a', '#notices=u&s=a', '#s=a&street=1', '#street=1', '#notices=u']
@@ -68,7 +71,11 @@ const ROUND_TOKENS = 600000
 const SPEC_MD = OUTABS + '/street-spec.md', SPEC_JSON = OUTABS + '/street-spec.json', PROBES = OUTABS + '/gates/2-probes.json', TIDINGS = OUTABS + '/fixtures/tidings.json'
 ```
 
-The fixed mandatory probes (answers from the bible, views, baseline or rulings; the writer may add more):
+The fixed mandatory probes (answers from the bible, views, baseline or rulings; the writer may add more). An override of
+ST5, ST7, ST9, ST19 or R6 replaces the baked default answers below (P-dark-hour `render`, P-shadows-default `on`,
+P-hash-param `street`, P-fade-ms 250) with "as the overridden ruling states", filled by the probe writer from the ruling
+text; an ST5 override adds a `none` option to P-dark-hour; an ST7 hash-param override must pass `PARAM_OK` and flows into
+`hash.params`, `layers.param`, the minimum hash table and the S0.U00 text. The plan preview returns `overridden_baked`.
 
 | id | question | answer (kind) |
 |---|---|---|
@@ -95,12 +102,13 @@ const PRE2 = OBJ({missing: SA, anchors: ANCH, fil_anchors: FILANCH, drift: DRIFT
   fil_bible_sha256_now: S, fil_overrides: {type: 'object', additionalProperties: S}, st_overrides: {type: 'object', additionalProperties: S},
   fil_notices: OBJ({exists: B, source: S}),   // source: 'sheet-spec /contracts/notices' | 'maps-site/data/<file>' | ''
   fog: OBJ({exists: B, name: S}),             // from research/q09.json via the bible
-  ledger: OBJ({sections: {type: 'array', items: OBJ({sid: S, path: S, sha256: S, sha_ok: B, stamp: S})}, probes_sha256: S, tidings_sha256: S}),
+  ledger: OBJ({sections: {type: 'array', items: OBJ({sid: S, path: S, sha256: S, md: S, sha_md: S, sha_ok: B, stamp: S})}, probes_sha256: S, tidings_sha256: S, tidings_schema_source: S, tidings_shut_ways: I, tidings_muster_days: I}),   // an entry without md/sha_md (an older ledger) is not resumed and is rewritten once
+  gate_prev: OBJ({exists: B, pass: B, mode: S, forced: B, spec_ok: B, bible_sha256: S, rulings_stamp: S, fil_bible_sha256: S}),   // preflight item 11: the already-passed test
   probes: OBJ({exists: B, frozen: B, sha256: S, bible_sha256: S, rulings_stamp: S, n: I}),
   tidings: OBJ({exists: B, frozen: B, sha256: S}),
   views_ok: B, baseline_ok: B, spec_exists: B})
 const PROBEW = OBJ({path: S, sha256: S, parsed: B, n: I})
-const PROBERB = OBJ({ok: B, failures: SA, sha256: S, n: I, ids: SA})
+const PROBERB = OBJ({ok: B, failures: SA, sha256: S, n: I, ids: SA, canon_len: I})   // canon_len is cross-checked by the script
 const TIDE = OBJ({path: S, sha256: S, parsed: B, schema_source: S, shut_ways: I, muster_days: I})
 const SECW = OBJ({sid: S, md: S, json: S, sha_md: S, sha_json: S, pointers: SA, anchors: SA, open: SA})
 const ANCHK = OBJ({sid: S, lost: SA})
@@ -118,6 +126,7 @@ const READER = OBJ({   // the spec reader's read-back: the ONLY source the scrip
   hook_lines: {type: 'array', items: OBJ({line: S, replaces: {type: ['string', 'null']}})}, hook_map_ok: B,
   block: OBJ({placement: S, namespace: S}),
   fog_unit: B, notices_unit: B,
+  limits: OBJ({fade_ms: NN, max_jobs_frame: NN, tri_cap_frame: NN, resident_tris: NN, s0: NN, T: NN, v0: NN, hysteresis: {type: 'array', items: OBJ({tier: ANY, in_R: NN, out_R: NN})}, caravan_tiers: {type: 'array', items: OBJ({tier: ANY, in_R: NN, out_R: NN})}}),   // SG2.16
   pointers: {type: 'object', additionalProperties: ANY}})
 const GUARD = OBJ({lost: SA, fil_literals_touched: SA, street_literals_touched: SA})
 const READ2 = OBJ({answers: {type: 'object', additionalProperties: ANY}, guesses: {type: 'array', items: OBJ({id: S, why: S})}, files_read: SA})
@@ -129,9 +138,9 @@ const FIXR = OBJ({md: S, json: S, sha_md: S, sha_json: S, fixed: SA})
 
 | label | phase | role → pair | prompt essentials (`PS(...)`) | schema |
 |---|---|---|---|---|
-| `preflight` (crit) | Preflight | mech → haiku/low | `ANCHOR_TASK`, `FIL_ANCHOR_TASK`, `DRIFT_TASK`; `gate1` from `gates/1-research.json` (md_ok/json_ok = artifact shas equal sha256sum of the bible files; copy `fil_bible_sha256`, `fil_rulings_cited`); `fil_bible_sha256_now` = sha256sum `${FIL}/density-bible.json`; both rulings files; `fil_notices` (read-only); `fog` from `street-bible.json` `/prerequisites` or `research/q09.json`; ledger `state/2-plan.json` (re-hash each section file); probes/tidings files and their stamps; views/baseline parse; writes nothing | PRE2 |
+| `preflight` (crit) | Preflight | mech → haiku/low | `ANCHOR_TASK`, `FIL_ANCHOR_TASK`, `DRIFT_TASK`; `gate1` from `gates/1-research.json` (md_ok/json_ok = artifact shas equal sha256sum of the bible files; copy `fil_bible_sha256`, `fil_rulings_cited`); `fil_bible_sha256_now` = sha256sum `${FIL}/density-bible.json`; both rulings files; `fil_notices` (read-only); `fog` from `street-bible.json` `/prerequisites` or `research/q09.json`; ledger `state/2-plan.json` (re-hash each section's json AND md file); `gate_prev` (item 11: the already-passed test); probes/tidings files and their stamps; views/baseline parse; writes nothing | PRE2 |
 | `probe writer` (crit; skipped while frozen and stamps match) | Probes | judge → opus/high | read ONLY the bible, views.json, baseline.json and the rulings text in the prompt (no spec exists yet); write `${PROBES}` = `{date, frozen: true, bible_sha256, rulings_stamp: <rulingText(RUL, FIL_CITED) + rulingText(STR.r, all ST)>, probes: [{id, q, kind: number|enum|string|order|pointer, options?, answer?, tol?, pointer?, source: bible|views|baseline|ruling|spec}]}`, 28–36 probes, every MANDATORY_PROBES id with its answer, ≥12 spec probes (question + JSON pointer into street-spec.json, no answer) spread over every section's `owns`; READBACK + n | PROBEW |
-| `probe readback` | Probes | mech → haiku/low | JSON.parse; unique ids; kinds; 28–36; every fixed probe has `answer`, every spec probe has `pointer` and no `answer`; MANDATORY_PROBES present; `frozen === true`; stamps equal those in the prompt | PROBERB |
+| `probe readback` | Probes | mech → haiku/low | JSON.parse; unique ids; kinds; 28–36; every fixed probe has `answer`, every spec probe has `pointer` and no `answer`; MANDATORY_PROBES present with their fixed kinds, options and tol (`probeFails`); no fixed answer holds an unfilled `<...>` placeholder; fixed enum answers are among their options, number answers numeric, enum/order probes have options, P-key-crowd has the form `st:crowd:<settlement id>:day`, P-hash-param passes `PARAM_OK`; `frozen === true`; stamps equal those in the prompt; returns `canon_len` | PROBERB |
 | `tidings fixture` (crit; frozen while resume) | Probes | audit → sonnet/medium | write `${TIDINGS}` in the R12 notices schema (`fil_notices.source`, read-only; absent → the bible's notice classes and `schema_source: 'bible'`, recorded as a gap): seed epeshu, sim day 120, one shut way on the SV4 approach route (its route id from views.json + the sim), one muster day at Epēshu; READBACK + counts | TIDE |
 | `<sid> · writer` | Sections | per SECTIONS (`judge` opus/high, `deep` sonnet/high, `audit` sonnet/medium) | from the bible alone (+ views, baseline, q-evidence the bible cites): write `spec/<sid>.md` and `spec/<sid>.json` holding exactly the pointers it owns; cite index.html literals as `index.html :: <literal>`; the section's cited R/ST texts; KEY_IDIOM; `VOCAB_ST_RULE`; never name a probe | SECW |
 | `<sid> · anchors` | Sections | mech → haiku/low | every `index.html :: literal` in the section resolves by indexOf | ANCHK |
@@ -140,10 +149,10 @@ const FIXR = OBJ({md: S, json: S, sha_md: S, sha_json: S, fixed: SA})
 | `red team` | Integrate | judge → opus/high | contradictions between sections, against the cited R/ST texts and the determinism contract | RED |
 | `spec patcher` (crit; only when blocking contradictions) | Integrate | judge → opus/high | fix each blocking contradiction; never renumber ids | INTEG2 |
 | `unit planner` | Units | judge → opus/high | write `/units` into `${SPEC_JSON}`: `[{id, slice, title, kind: logic|tool|doc, files, deps, covers: [SS ids], hooks: [hook line literals], acceptance: [{id, kind: node|grep|json|probe, cmd, expect}], model?, effort?}]`; MANDATORY_UNITS present (S4.Ufog only when `fog.exists`); ≤9 units per slice; files match UNIT_FILES_OK, never UNIT_FILES_BAD; `expect` forms: an exact string, `re:<regex>`, `==N`, `<=N`, `>=N`, or `json:<value>` (the build scores them in code) | UNITW |
-| `spec reader` | Check | mech → haiku/low | a fixed node read-back of `${SPEC_JSON}` + `street-bible.json` producing READER (traceability: every bible rule of kind `must` traced by some SS rule's `traces`; every SS rule covered by ≥1 unit; Kahn DAG; `checks` ids per slice and malformed entries; caps per view and `caps_ceiling_over` against the bible; `far_quiet_ok` = SV5 and SV9 `on` caps equal baseline; `hook_map_ok` = the map hook line → replaces is a function and every `line` contains `/*ST-HOOK*/`; `pointers` = the value at every spec-probe pointer of `${PROBES}`, null when absent) | READER |
-| `literal guard` | Check | mech → haiku/low | every `index.html` literal the spec cites and every hook `replaces` line occurs in index.html; no hook `line` contains a filigree ANCHORS literal (index.html, flag 1, read from filigree-1-research.js) or a street flag-1 literal | GUARD |
+| `spec reader` | Check | mech → haiku/low | a fixed node read-back of `${SPEC_JSON}` + `street-bible.json` producing READER (traceability: every bible rule of kind `must` traced by some SS rule's `traces`; every SS rule covered by ≥1 unit; Kahn DAG; `checks` ids per slice and malformed entries; caps per view and `caps_ceiling_over` against the bible; `far_quiet_ok` = SV5 and SV9 `on` caps equal baseline; `hook_map_ok` = the map hook line → replaces is a function and every `line` contains `/*ST-HOOK*/`; `pointers` = the value at every spec-probe pointer of `${PROBES}`, null when absent; `limits` = `/fade/ms`, `/stream/{max_jobs_frame,tri_cap_frame,resident_tris}`, `/traffic/{s0,T,v0}`, `/traffic/tiers` and `/tiers/hysteresis` for SG2.16; a dead spec reader in the Fix phase ends the run with `agent died: spec reader`) | READER |
+| `literal guard` | Check | mech → haiku/low | every `index.html` literal the spec cites occurs in index.html, every non-null hook `replaces` equals exactly one whole index.html line (`not a whole line` / `ambiguous (n lines)`), and `block.placement` is non-empty and found on exactly one line; no hook `line` contains a filigree ANCHORS literal (index.html, flag 1, read from filigree-1-research.js) or a street flag-1 literal | GUARD |
 | `leak grep` | Check | mech → haiku/low | `LEAK_RE` (case-insensitive) over `${SPEC_MD}` outside `## Provenance` and over every string of `${SPEC_JSON}` | VHITS |
-| `vocabulary grep` | Check | mech → haiku/low | `VOCAB_ST` over `${SPEC_MD}` outside `## Provenance`/`## Renames` and over every `label`, `row`, `text` and `player` string of `${SPEC_JSON}` | VHITS |
+| `vocabulary grep` | Check | mech → haiku/low | `VOCAB_ST` over `${SPEC_MD}` outside `## Provenance`/`## Renames` and over every `label`, `row`, `text` and `player` string of `${SPEC_JSON}`; the ban is stated as covering all spec prose, not only player-facing text | VHITS |
 | `reader A` / `reader B` | Cold-engineer gate | A deep → sonnet/high, B judge → opus/high (identical prompts) | blind: read ONLY READER_ALLOWED; answer every probe `{id, q, kind, options}` (spec probes: the value the spec gives); list guesses (an answer not stated by the spec); `files_read` | READ2 |
 | `guess audit <A|B>` (only when guesses) | Cold-engineer gate | triage → sonnet/low | per guess: is the answer derivable from the spec text (false = a schema-path guess)? | AUDITG |
 | `spec fixer` | Fix | judge → opus/high | fix only: probes both readers missed, null pointers, missing checks, cap rows, malformed acceptance, schema-path guesses | FIXR |
@@ -154,11 +163,11 @@ const FIXR = OBJ({md: S, json: S, sha_md: S, sha_json: S, fixed: SA})
 ```
 {date, bible_sha256, rules: [{id: "SS-01", text, traces: [bible rule ids]}],
  tiers: {bands: [{tier, R_min, R_max}], refine: {kind: "sse", target_px, geom_err_m: {T0..T4}},
-         hysteresis: [{tier, in_R, out_R}]},                       // out_R > in_R; all <= 2200 (inside meshHi)
+         hysteresis: [{tier, in_R, out_R}]},                       // 0 < in_R < out_R <= 2200 (inside meshHi) (SG2.16)
  fade: {ms, method: "opacity"|"dither"},                           // ms <= 250 (R6)
  stream: {max_jobs_frame, tri_cap_frame, resident_tris, lru: "map", cull: "sphere"},   // max_jobs_frame <= 6 (ST9)
  facades: {...}, surface: {...}, ground: {rule}, props: {...}, crowds: {key, scale},
- traffic: {s0, T, v0, obstacles: [{class, key, rule}]}, gates: {clock: "render"},
+ traffic: {s0, T, v0, tiers: [{tier, in_R, out_R}] (>= 3 caravan tiers), obstacles: [{class, key, rule}]}, gates: {clock: "render"},
  sky: {clouds: {key, states}, shadows: {row_default: "on"}}, fog: {source: "filigree:<fn>" | "absent", helpers: []},
  weather: {steps: [1, 0.75, 0.5, 0.25]},
  layers: {rows: [{label, default}], param: "street"},
@@ -197,11 +206,14 @@ const chainOk = !chain.length
 if (MODE === 'plan') return done({reason: 'plan', chain_ok: chainOk, chain, schedule, bound: 90, agents_max, over_bound: agents_max > 90, …})
 if (!chainOk && !FORCE && MODE === 'full') die(chain[0])   // a thrown prerequisite: the run treats it as blocked
 phase('Probes')
+// already passed (RESUME, full, unforced, chain held, gate_prev pass + spec_ok + same bible/rulings stamps): done('already passed …') without rewriting street-spec.json; to redo, delete gates/2-plan.json or resume:false
 // probe writer (skip when RESUME && frozen && sha matches the ledger && bible + rulings stamps match) -> readback
 //   readback !ok -> die('gates/2-probes.json is invalid (' + failures + '); delete it and rerun with resume:false')
 // tidings fixture (skip when frozen and its sha matches the ledger) -> FILE_OK or done('agent died: tidings fixture')
+// checkpoint('probes'): the ledger (probes + tidings, incl. tidings_schema_source / _shut_ways / _muster_days) is recorded here
 phase('Sections')
 // pipeline over SECTIONS needing a write: writer -> anchors -> (lost.length ? anchor fix -> anchors) ; kept() >= 75%
+// checkpoint('sections') BEFORE the section-quorum stop; stop() also checkpoints whenever work is unrecorded; a section resumes only when its json AND md both re-hash
 phase('Integrate')
 // integrator (crit) -> red team -> patcher when blocking contradictions
 phase('Units')
@@ -213,33 +225,34 @@ phase('Cold-engineer gate')
 // Fix loop: while failing && rounds < ROUNDS && !lowBudget() (log() when skipped): spec fixer -> Check (all four) -> gate again
 phase('Record')
 // record gates/2-plan.json (gateObj incl. street_rulings_used, artifacts: spec md/json, bible json, probes, tidings shas)
-// record state/2-plan.json {job, date, sections: [...], probes_sha256, tidings_sha256, bible_sha256, spec: {md, json}}
+// record state/2-plan.json {job, date, sections: [{sid, path, sha256, md, sha_md, stamp}], probes_sha256, tidings_sha256, tidings_schema_source, tidings_shut_ways, tidings_muster_days, bible_sha256, spec: {md, json}}
 return done({...})
 ```
 
 ## 7. Gate: cold-engineer test (scored in code)
 
-Probe scoring: number within `tol` (default 0), enum/string by `norm`, order exact; a spec probe is scored against
+Probe scoring: number within `tol` (default 0), enum/string by `norm` (P-near, P-parser and P-hook-marker: whitespace-collapsed exact, not `norm`), order exact, using the fixed kind, tol and options of the mandatory probes; a spec probe is scored against
 the spec reader's `pointers[pointer]` (never the integrator's claim). A reader's score = correct / total.
 
 | id | criterion | threshold |
 |---|---|---|
 | SG2.0 | chain held (Street 1 pass, bible unchanged, filigree bible and cited rulings unchanged) | true (forced → recorded, never pass) |
 | SG2.1 | traceability + structure (reader): `untraced_bible_must` = [], `rules_without_unit` = [], `dag_ok`, ≤9 units per slice, every unit `acceptance_n` ≥1 and `acceptance_ok` | all |
-| SG2.2 | unit files: every file matches UNIT_FILES_OK and none UNIT_FILES_BAD | 0 violations |
-| SG2.3 | literal guard: `lost` = [], `fil_literals_touched` = [], `street_literals_touched` = [] | all empty |
+| SG2.2 | unit files: every file matches UNIT_FILES_OK, none UNIT_FILES_BAD and none `UNIT_PATH_BAD` (`.`/`..`/empty segments, backslash, leading `./`; dot-leading segments in the fixtures/shots/device tail) | 0 violations |
+| SG2.3 | literal guard: `lost` = [] (a non-null hook `replaces` must be exactly one whole index.html line), `fil_literals_touched` = [], `street_literals_touched` = [] | all empty |
 | SG2.4 | leak grep | 0 hits |
 | SG2.5 | spec-probe pointers null | 0 |
 | SG2.6 | each reader | ≥90% |
-| SG2.7 | checks: every slice S0–S4 non-empty, `checks_malformed` = [], union ⊇ MANDATORY_CHECKS, each slice ⊇ SLICE_CHECKS[slice], S4 ⊇ `street.fog_copy` when `fog_unit` | all |
+| SG2.7 | checks: every slice S0–S4 non-empty, `checks_malformed` = [], union ⊇ MANDATORY_CHECKS, each slice ⊇ SLICE_CHECKS[slice] (S3: `vfps`, `spacing`, `caravan_tiers`; S4 also `folk_row`), S4 ⊇ `street.fog_copy` when `fog_unit` | all |
 | SG2.8 | caps: SV1–SV9 numeric (6 metrics), `caps_ceiling_over` = [], `far_quiet_ok` | all |
-| SG2.9 | determinism: allowed_sources = `['keyed-hash','sim-read-only']`, new_sim_state = [], key_idiom = KEY_IDIOM, `rng_in_acceptance` = [] | all |
+| SG2.9 | determinism: allowed_sources = `['keyed-hash','sim-read-only']`, new_sim_state = [], key_idiom = KEY_IDIOM, `rng_in_acceptance` = [] (grep kinds, `street.static_clock`/`street.static_rng` and token-naming text scans are skipped; the s10 writer writes tokens in bracket form) | all |
 | SG2.10 | hash: every param `PARAM_OK`; if `consumes` has `notices` then S0 has `S0.U02` and the table ⊇ HASH_TABLE_MIN | all |
-| SG2.11 | hook lines: `hook_map_ok`, count ≤16, every unit's `hooks` ⊆ hook_lines, `block.namespace` = `STREET` | all |
+| SG2.11 | hook lines: `hook_map_ok`, count ≤16, every unit's `hooks` ⊆ hook_lines, `block.namespace` = `STREET`, non-empty `block.placement` found on exactly one index.html line | all |
 | SG2.12 | mandatory units present (S4.Ufog iff `pre.fog.exists`; S4.Unotices iff `consumes` has notices) | all |
 | SG2.13 | vocabulary | 0 hits |
 | SG2.14 | blindness and guesses: both readers' `files_read` ⊆ READER_ALLOWED; zero `schema_guess: true` (a missing audit verdict fails) | all |
 | SG2.15 | artifacts hashed: spec md/json, bible json, probes, tidings (64-hex each) | all |
+| SG2.16 | limits (spec reader `limits`): `fade.ms` ≤ 250 (R6), `max_jobs_frame` an integer 1..6 (ST9), `tri_cap_frame`, `resident_tris`, `s0`, `T`, `v0` positive numbers, ≥ 3 caravan tiers, every hysteresis pair 0 < in_R < out_R ≤ 2200; an R6/ST9 override relaxes only that bound; failures go to the spec fixer as `limits` items | all |
 
 Fix-loop note (filigree §12): a probe missed by both readers is spec ambiguity and goes to the fixer; one missed by a
 single reader is logged as noise.
@@ -247,20 +260,20 @@ single reader is logged as noise.
 ## 8. Bounds
 
 Preflight 2 + Probes (writer 2 + readback 1 + tidings 2) 5 + Sections 10 × 3 = 30 + Integrate 2 + 1 + 2 = 5 + Units 1 +
-Check 4 + Gate 4 + Fix 2 × (1 + 4 + 4) = 18 + Record 4 = 2 + 5 + 30 + 5 + 1 + 4 + 4 + 18 + 4 = **73 (bound 90; typical ≈50)**; `agents_max` is computed in code from these same terms
-(`2 + 5 + 3 * SECTIONS.length + 5 + 1 + 4 + 4 + ROUNDS * 9 + 4`) and `over_bound` / README §11 quote that value. A fix round is skipped
+Check 4 + Gate 4 + Fix 2 × (1 + 4 + 4) = 18 + Record 8 (gate + final ledger + two ledger checkpoints, crit each) = 2 + 5 + 30 + 5 + 1 + 4 + 4 + 18 + 8 = **77 (bound 90; typical ≈50)**; `agents_max` is computed in code from these same terms
+(`2 + 5 + 3 * SECTIONS.length + 5 + 1 + 4 + 4 + ROUNDS * 9 + 8`) and `over_bound` / README §11 quote that value. A fix round is skipped
 when `lowBudget()` is true (`ROUND_TOKENS` = 600000), with a `log()`.
 
 ## 9. Outputs and return
 
 Outputs: `docs/street/street-spec.{md,json}`, `spec/s01..s10.{md,json}`, `gates/2-probes.json` (frozen while
 `resume:true`), `fixtures/tidings.json` (frozen while `resume:true`), `cold/{A,B}[-r<k>].json` (the readers' answers,
-written by the script via `record`), `gates/2-plan.json`, `state/2-plan.json`.
+written by the script via `record`), `gates/2-plan.json`, `state/2-plan.json` (also checkpointed after Probes and Sections).
 
 | field | value |
 |---|---|
 | `pass` | gate pass and records read back |
-| `reason` | `''` · `forced: <reason>` · failing ids joined `,` · `record-mismatch` · `agent died: <label>` · `infra` · `plan` · `smoke` |
+| `reason` | `''` · `already passed: …` · `forced: <reason>` · failing ids joined `,` · `record-mismatch` · `agent died: <label>` (incl. `spec reader`) · `infra` · `plan` · `smoke` |
 | `polish_note` | `street spec: <u> units (S0 <a> / S1 <b> / S2 <c> / S3 <d> / S4 <e>), readers <A>% / <B>%, <n> probes; gate pass|fail` |
 | `polish_inserts` | `- [ ] **Street data (S3) — <item>**` for each spec `/prerequisites` entry whose `polish_title` is not queued and no `Street data (S3) — <item>` exists (directly above Street 3) |
 | `polish_inserts_above` | `'Street 3'` |

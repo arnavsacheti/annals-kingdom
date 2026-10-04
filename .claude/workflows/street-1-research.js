@@ -215,8 +215,8 @@ const VIEW_RULES = [   // resolved once by the probe's --freeze-views, then froz
 ]
 const FOCUS_RULES = 'label:<name> = Epēshu centre (s.x, s.z) + the cityLabels entry {dx, dz} of that name; gate:Epēshu>Tamaron = the Epēshu s.gates entry whose bearing from the centre is nearest the bearing to Tamaron (ties: lower index); bridge:Epēshu = the W.bridges entry nearest Epēshu that lies within 30 m of a W.routes polyline (camera on its midpoint); settlement:<name> = s.x, s.z; building-near-label:<name> = the s.buildings entry (of the settlement) nearest that label point; largest-settlement = the settlement with the largest pop (ties: lower index)'
 const DAY_RULES = 'weather = the first d in 120..240 whose W.weather.state after simDays(d) from a cold load is overcast, rain or storm (fallback 120, recorded as fallback); queue = the first d in 120..240 with >= 2 caravans within 300 m of the SV4 bridge after simDays(d) (fallback: the d with the most such caravans, ties lowest d, recorded)'
-const TOD_RULES = 'dark = the midpoint of the longest run of tod in [0,1) (step 1/1000) where the dark-hour proxy (probe --dark-scan) is >= 0.5 (fallback 0.92, recorded)'
-const CAMERA_RULE = 'cold load of /?v=<V_BUST>#s=<seed>, ANNALS.speed(0), ANNALS.simDays(day) (never ANNALS.day(): it skips the weather rolls), ANNALS.tod(tod), ANNALS.hold(1e12), ANNALS.goto(x, z, R, true), ANNALS.yaw(0); pump frames under the virtual clock until settled (street: stats().pending === 0) or 600 frames'
+const TOD_RULES = 'dark = the midpoint of the longest run of tod in [0,1) (step 1/1000) where the code\'s dark-hour formula at the view\'s day (probe --dark-scan) is >= 0.5; no such run writes tod 0.92 with fallback "dark: none", and a fallback (or any SV2 tod whose dark hour is < 0.5) fails SG1.11, it is never just recorded'
+const CAMERA_RULE = 'cold load of /?v=<V_BUST>#s=<seed>, ANNALS.speed(0), ANNALS.simDays(day) (never ANNALS.day(): it skips the weather rolls), then snap the slow season filter: ANNALS.world.sv = the code\'s seasonWeights(W.clock.day) (the steady state it converges to; render-only, so the drawn sky and the dark hour depend on the day alone), ANNALS.tod(tod), ANNALS.hold(1e12), ANNALS.goto(x, z, R, true), ANNALS.yaw(0); pump frames under the virtual clock until settled (street: stats().pending === 0) or 600 frames'
 const GATE_VIEWS = ['SV1', 'SV2', 'SV3', 'SV4', 'SV5', 'SV6', 'SV7', 'SV8']   // SV9 is measure-only
 const STATS_KEYS = ['fps', 'calls', 'tris', 'buildings', 'trees', 'seed', 'realm', 'treasury', 'pop', 'agents', 'chron']   // ANNALS.stats() today; must never change (filigree Job 4 F07 compares it across loads)
 const PIECES = ['tiling', 'refine_rule', 'build_budget', 'eviction', 'culling', 'fade_in', 'facades', 'street_surface', 'instancing', 'traffic', 'sky_clouds', 'shadows', 'layer_ui', 'terrain_drape', 'vtt_scene', 'agent_lod', 'near_plane']   // todo-inputs.json pieces[0..16], in order
@@ -231,6 +231,10 @@ const BIBLE_MD = OUTABS + '/street-bible.md', BIBLE_JSON = OUTABS + '/street-bib
 const VIEWS_JSON = OUTABS + '/gates/views.json', BASELINE = OUTABS + '/gates/baseline.json'
 const FIL_BIBLE = FIL + '/density-bible.json', FIL_GATE1 = FIL + '/gates/1-research.json'
 const PROBE_T = MODE === 'smoke' ? OUTABS + '/tools/street-probe.js' : PROBE   // smoke never writes into the repo
+const SBX = SANDBOX_ST.split(PROBE).join(PROBE_T)   // the sandbox recipe with the probe path of this run (smoke: under outDir, never the repo path)
+const TIER_BANDS = [['T0', 9, 40], ['T1', 40, 150], ['T2', 150, 700], ['T3', 700, 2400], ['T4', 2400, 11001]]   // radius tiers (R in metres, R_min <= R < R_max); the one scale shared by q15, the integrator, the patcher and the validator
+const TIER_TEXT = 'radius tier bands (fixed, in camera radius R metres, R_min <= R < R_max): ' + TIER_BANDS.map(b => `${b[0]} [${b[1]}, ${b[2]})`).join(', ') + '. A radius tier is a nearness band of the camera; it is not a building tier (material class) and not a label tier (near/mid/far).'
+const DEBT_NAME = 'Debt naming rule (the integrator, the validator and q04 all use it): fn = the nearest enclosing `function name(` or method/property name `name(`/`name:` (for an arrow or function assigned to a const/let/property, that name); `<anon>@<line>` (1-based line of the callback start) for an anonymous callback or listener with no name; `<top-level>` for module scope; token = the matched literal (Math[.]random, Date[.]now, performance[.]now, W.rng.amb or nowMs); kind = gen (world generation), sim (day-step and agents) or render (frame, camera, sky, UI) by the code that owns the call.'
 const APPLIER_ALLOWED = [BIBLE_MD, BIBLE_JSON, VIEWS_JSON, OUTABS + '/gates/view/', BASELINE, REPO + '/index.html', REPO + '/maps-site/data/', FIL_BIBLE]
 const ST_CITED_1 = ['ST2', 'ST3', 'ST4', 'ST5', 'ST6', 'ST7', 'ST10', 'ST11', 'ST12', 'ST13', 'ST16', 'ST18', 'ST19']
 const PROBE_REL = MODE === 'smoke' ? OUT + '/tools/street-probe.js' : 'tools/street-probe.js'
@@ -247,67 +251,84 @@ const PROBE_SPEC = `PROBE_SPEC — ${PROBE_T} (the street track's instrument; St
 - Plain Node + Playwright from NODE_PATH; read-only on the repo (writes only --out and --shots); no npm installs; sorted object keys and stable array order, so every exact field is byte-stable across runs; no clock or random call syntax outside the fenced installer /* VCLOCK */ ... /* /VCLOCK */ (grep -cE '${ST_CLOCK_GREP}' over the file with the fenced text removed = 0).
 - Server and CDN: its own read-only static server over the repo on --port (default 0 = an OS-assigned free port); --cdn-dir <dir> routes the two CDN globs to disk (the sandbox recipe); never starts, stops or touches server.js or port 8544.
 - Virtual clock (page.addInitScript, before any page script): requestAnimationFrame, performance[.]now and Date[.]now on a fixed timeline, dt = 1/--vfps (default 60); Math[.]random replaced by a seeded copy of the sim's xmur3 -> sfc32 keyed 'probe'; the director held (ANNALS.hold(1e12)), speed 0, tod pinned. The probe pumps frames itself, so fps reads 60 and the degrade ladder never trips in measurement. Page loads use /?v=${V_BUST}#s=<seed>.
+- Page access: the whole sim is one IIFE (index.html "(function(){" ... "})();"), so its bindings (W, renderer, scene, renderTod, _sunDir, _tamarDir, seasonWeights, CAM, degradeStep, shadowsOn) are NOT readable from page.evaluate (typeof gives "undefined"). The only page handles are window.ANNALS (stats() = calls and tris plus counts, world = W, the debug calls) and window.THREE. Everything else the probe reads comes through a hook it installs itself, never by editing index.html on disk: the renderer and the scene through a wrapper on THREE.WebGLRenderer (appended to the three.min.js body the probe routes, or a trap on the window.THREE assignment in its init script) that keeps the instance and wraps that instance's render (r128 assigns render per instance, not on the prototype) to keep the last scene passed to it; the dark hour by computing the code's own formula (--dark-scan). A metric the hook cannot read is null with a console_errors entry, never a guess.
 - View spec: --view <seed>:<day>:<focus>:<R>:<tod> (focus = x,z or a focus token; inside --view a token writes its colon as "=", e.g. settlement=Epēshu) or --views <views.json> (entries carry x, z or a focus token); the camera per CAMERA_RULE: ${CAMERA_RULE}.
   Focus tokens: ${FOCUS_RULES}.
   Day tokens: ${DAY_RULES}.
   Tod tokens: ${TOD_RULES}.
 - --freeze-views <rules.json> --out <views.json> --shots <dir>: rules.json = {date, v, rules (a string), views (the view rules)}; resolve every rule's focus, day and tod tokens and write {date, frozen: true, rules (copied verbatim from rules.json), views: [{id, seed, day, x, z, R, tod, yaw: 0, focus, fallback?}]} plus one JPEG still per view at <dir>/<id>.jpg (UI chrome hidden, <= 300 KB).
-- --dark-scan --seed <s>: the dark-hour midpoint tod (the tod rule). For each f = k/1000: ANNALS.tod(f), ANNALS.step(1), then in the page (global script bindings are readable from page.evaluate) the proxy smooth((_sunDir.dot(_tamarDir) - 0.955) / (0.985 - 0.955)) * clamp01(Math.asin(_sunDir.y) * 6), i.e. the code's own "const darkHour =" with sunElev (a local) recovered as asin(_sunDir.y).
-- --metrics <csv> over calls, tris, geoms, textures, objects, stats_keys: calls and tris from renderer.info.render after one settled render, geoms and textures from renderer.info.memory, objects = scene objects counted by type, stats_keys = Object.keys(ANNALS.stats()).
+- --dark-scan --seed <s> [--days <d>, default 120]: the dark-hour midpoint tod (the tod rule) at day d; --freeze-views scans at each dark view's own day. The page globals it would need are IIFE-private, so the probe computes the code's own formula itself (in Node or in the page, no page global needed): copies of index.html's clamp01, smooth, lerp and seasonWeights, then updateSkyAndLight's lines from "const maxElev" through "const darkHour =" (maxElev, rise, set, sunElev and prog on both the day and the night branch, az, _sunDir, then smooth((_sunDir . _tamarDir - 0.955) / (0.985 - 0.955)) * clamp01(sunElev * 6)) with renderTod = f = k/1000, _tamarDir = (-0.665, 0.244, -0.706) and sw = seasonWeights(d) (the steady state that CAMERA_RULE snaps W.sv to). Output dark = {seed, day, tod, run: [first f, last f]}; no f with darkHour >= 0.5 gives tod null and a non-zero exit (the freezer then writes the TOD_RULES fallback).
+- --metrics <csv> over calls, tris, geoms, textures, objects, stats_keys, through the renderer hook after one settled render: calls and tris = renderer.info.render.calls and .triangles (equal to ANNALS.stats() calls and tris), geoms and textures = renderer.info.memory.geometries and .textures, objects = the integer count of objects scene.traverse visits in the scene last passed to render (objects_by_type = {<type>: count}, sorted keys, beside it), stats_keys = Object.keys(ANNALS.stats()). Every metric but stats_keys is an integer.
 - --layers street=0: asserts ANNALS.street is absent (Street 3 adds street=1).
 - --fingerprint --seed <s> --days <n> [--walk <views.json>] [--perturb departDay]: speed 0, simDays(n) (with --walk: 8 chunks of n/8 days, the camera parked at SV1..SV8 with 120 pumped frames between chunks), then sha256 of a canonical JSON of {clock: W.clock, dayTicked, settlements: [{id|name, pop, kind, prosperity}], agents: [{kind, departDay, route key, speed}], chron: the W.chron texts, treasury, routeVolume}; output fingerprint = {seed, days, walk, perturb, sha256}. --perturb departDay adds 1 to the first caravan's departDay in page memory before simDays (the sensitivity test: the sha must change).
 - --paths <a,b,..> (one or more of descent, oscillate, flyaway, comma-separated; never repeated flags) and --vfps <30,60> (30, 60 or 30,60): per-frame records {f, R, calls, tris, geoms}; descent 11000 -> 9 log-linear over 900 frames at SV1's focus; oscillate R 170<->230 and 2150<->2450, 600 frames; flyaway SV1 -> R 11000 -> SV1 twice, then ANNALS.seed('tamar1374') and back to epeshu and SV1.
 - --device: real clock, headed when a display exists, the SV1 descent for 60 s, per-second ANNALS.stats().fps -> docs/street/device/<date>.json; owner-run only, never inside a workflow.
 - --stats-keys; --help (lists every flag literally: ${PROBE_FLAGS.join('  ')}); --out <path>.
-- Output: one JSON {tool_sha (sha256 of the probe file), index_sha (sha256 of index.html), views: {SVn: {...}}, fingerprint: {...}, paths: {...}, console_errors: [...], infra_error: ""}; a setup failure (port, browser, CDN) is infra_error, never a street defect.`
+- Output: one JSON {tool_sha (sha256 of the probe file), index_sha (sha256 of index.html), views: {SVn: {...}}, fingerprint: {...}, dark: {...}, paths: {...}, console_errors: [...], console_errors_filter: [the excluded font hosts], infra_error: ""}; a setup failure (port, browser, CDN) is infra_error, never a street defect.`
 const PROBE_LIT = [
   'fingerprint twice: --fingerprint --seed epeshu --days 30, two runs -> equal 64-hex fingerprint.sha256 (sha_run1, sha_run2)',
   'sensitivity: --fingerprint --seed epeshu --days 30 --perturb departDay -> a sha256 different from sha_run1 (perturbed_differs)',
-  'one view: --view epeshu:120:settlement=Epēshu:600:0.5 --metrics calls,tris -> integers > 0 (view_calls, view_tris; null when unreadable)',
+  'one view: --view epeshu:120:settlement=Epēshu:600:0.5 --metrics calls,tris,geoms,textures,objects -> calls, tris, geoms and objects integers > 0, textures an integer >= 0 (view_calls, view_tris, view_geoms, view_textures, view_objects; null when unreadable)',
   `stats keys: --stats-keys -> deep-equals ${JSON.stringify(STATS_KEYS)} (stats_keys = the printed array)`,
   `clock syntax: lines of the probe file outside the /* VCLOCK */ ... /* /VCLOCK */ fence matching the regex ${ST_CLOCK_GREP} -> 0 (clock_hits = the count; a node script removes the fenced text first)`,
   `byte-stable views: --views over a one-view temp file twice, each run with its own --out -> byte-equal output files (views_equal); the one view is SV1 of ${VIEWS_JSON} when that file exists, else {"id":"T1","seed":"epeshu","day":120,"focus":"settlement:Epēshu","R":600,"tod":0.5,"yaw":0}`,
-  `help: --help lists every one of ${JSON.stringify(PROBE_FLAGS)} as a literal substring (flags_missing = the absent ones)`
+  `help: --help lists every one of ${JSON.stringify(PROBE_FLAGS)} as a literal substring (flags_missing = the absent ones)`,
+  'dark scan: --dark-scan --seed epeshu --days 120 -> the printed dark.tod (dark_tod; null when absent); the script itself checks that the code\'s dark-hour formula at day 120 is >= 0.5 there'
 ]
 const PROBE_LIT_TEXT = 'PROBE_LIT (scored in code by the script):\n' + PROBE_LIT.map((t, i) => `${i + 1}. ${t}`).join('\n')
-const probeTask = lits => `exists = ${PROBE_T} exists. If it does not, return exists false, every string "", every number null, every boolean false and every array []. Otherwise, from ${REPO}, run ${lits ? 'ONLY literals ' + lits.join(', ') : 'every literal'} below with node ${PROBE_T} (outputs and temp files in a mktemp -d dir, never in the repo) and report what the commands printed: sha_run1, sha_run2, perturbed_differs, view_calls, view_tris, stats_keys, clock_hits, views_equal, flags_missing as each literal names them${lits ? '; for the literals you do not run return perturbed_differs false, views_equal false, flags_missing []' : ''}. tool_sha = sha256sum ${PROBE_T}. infra_error = "" or the setup failure (port, browser, CDN) that kept a literal from running. Never edit the probe.
+const probeTask = lits => `exists = ${PROBE_T} exists. If it does not, return exists false, every string "", every number null, every boolean false and every array []. Otherwise, from ${REPO}, run ${lits ? 'ONLY literals ' + lits.join(', ') : 'every literal'} below with node ${PROBE_T} (outputs and temp files in a mktemp -d dir, never in the repo) and report what the commands printed: sha_run1, sha_run2, perturbed_differs, view_calls, view_tris, view_geoms, view_textures, view_objects, stats_keys, clock_hits, views_equal, flags_missing, dark_tod as each literal names them${lits ? '; for the literals you do not run return perturbed_differs false, views_equal false, flags_missing [] and null for their numbers' : ''}. tool_sha = sha256sum ${PROBE_T}. infra_error = "" or the setup failure (port, browser, CDN) that kept a literal from running. Never edit the probe.
 ${PROBE_LIT_TEXT}`
 const posInt = v => Number.isInteger(v) && v > 0
+// index.html's dark hour (updateSkyAndLight, "const darkHour =") at the season steady state of day; an independent check of the probe's --dark-scan and of the frozen SV2 tod
+function darkAt(tod, day) {
+  const c01 = x => x < 0 ? 0 : (x > 1 ? 1 : x), sm = t => { t = c01(t); return t * t * (3 - 2 * t) }, lp = (a, b, t) => a + (b - a) * t
+  const d = ((day % 360) + 360) % 360, w = [0, 1, 2, 3].map(i => { let dd = Math.abs(d - (i * 90 + 45)); dd = Math.min(dd, 360 - dd); return c01((57 - dd) / 24) })
+  const ws = w[0] + w[1] + w[2] + w[3], sw = w.map(x => x / ws)
+  const maxElev = 0.82 * sw[0] + 1.02 * sw[1] + 0.76 * sw[2] + 0.48 * sw[3], rise = lp(0.300, 0.215, (maxElev - 0.48) / (1.15 - 0.48)), set = 1 - rise
+  let el, prog
+  if (tod >= rise && tod <= set) { prog = (tod - rise) / (set - rise); el = Math.sin(Math.PI * prog) * maxElev } else { const nl = 1 - set + rise; prog = tod > set ? (tod - set) / nl : (tod + 1 - set) / nl; el = -Math.sin(Math.PI * prog) * 0.55 }
+  const az = lp(0.55, Math.PI - 0.55, prog) + Math.PI * 0.5
+  const dot = Math.cos(el) * Math.cos(az) * -0.665 + Math.sin(el) * 0.244 + Math.cos(el) * Math.sin(az) * -0.706
+  return sm((dot - 0.955) / (0.985 - 0.955)) * c01(el * 6)
+}
+const darkOk = (tod, day) => typeof tod === 'number' && tod >= 0 && tod < 1 && Number.isInteger(day) && darkAt(tod, day) >= 0.5
+const PROBE_ALL = [1, 2, 3, 4, 5, 6, 7, 8]
 function probeWhy(p, lits) {   // the failing PROBE_LIT items, scored here from a recount (never from the probe writer)
-  const L = lits || [1, 2, 3, 4, 5, 6, 7]
+  const L = lits || PROBE_ALL
   if (!p) return ['no probe reading']
   if (p.exists !== true) return ['probe missing: ' + PROBE_REL]
   if (infraOf(p)) return ['infra: ' + p.infra_error]
   const w = []
   if (L.includes(1) && !(HEX64.test(p.sha_run1 || '') && p.sha_run1 === p.sha_run2)) w.push(`1 fingerprint not reproducible (${p.sha_run1 || '-'} vs ${p.sha_run2 || '-'})`)
   if (L.includes(2) && p.perturbed_differs !== true) w.push('2 fingerprint insensitive to --perturb departDay')
-  if (L.includes(3) && !(posInt(p.view_calls) && posInt(p.view_tris))) w.push(`3 view metrics calls ${p.view_calls}, tris ${p.view_tris}`)
+  if (L.includes(3) && !(posInt(p.view_calls) && posInt(p.view_tris) && posInt(p.view_geoms) && posInt(p.view_objects) && Number.isInteger(p.view_textures) && p.view_textures >= 0)) w.push(`3 view metrics calls ${p.view_calls}, tris ${p.view_tris}, geoms ${p.view_geoms}, textures ${p.view_textures}, objects ${p.view_objects}`)
   if (L.includes(4) && JSON.stringify(p.stats_keys || []) !== JSON.stringify(STATS_KEYS)) w.push('4 stats keys ' + JSON.stringify(p.stats_keys || []))
   if (L.includes(5) && p.clock_hits !== 0) w.push(`5 clock syntax outside the VCLOCK fence: ${p.clock_hits}`)
   if (L.includes(6) && p.views_equal !== true) w.push('6 --views output not byte-stable')
   if (L.includes(7) && !(Array.isArray(p.flags_missing) && p.flags_missing.length === 0)) w.push('7 --help lacks ' + (p.flags_missing || []).join(' '))
+  if (L.includes(8) && !darkOk(p.dark_tod, 120)) w.push(`8 --dark-scan tod ${p.dark_tod} is not inside the dark hour (formula ${typeof p.dark_tod === 'number' ? darkAt(p.dark_tod, 120).toFixed(2) : '-'} < 0.5)`)
   return w
 }
 const probePass = p => probeWhy(p).length === 0
-const PRE_LITS = [1, 3, 4, 5]   // what the preflight re-measures for resume; the Tool phase always recounts 1-7
+const PRE_LITS = [1, 3, 4, 5, 8]   // what the preflight re-measures for resume; the Tool phase always recounts 1-8
 
 // ---- questions (design §3.1; one targeted task each) ----
 const QUESTIONS = [
   {qid: 'q01', short: 'probe tool', tool: true, question: 'Write the read-only street probe to PROBE_SPEC (below) so it meets every PROBE_LIT item; claims = each flag and output field, each with a computed evidence ref (the command you ran and what it printed).', reads: ['index.html (anchor window.ANNALS = { : the debug API the probe drives)', 'docs/street/README.md §8 (f)-(g0) (the sandbox recipe; the prompt carries it as SANDBOX_ST)'], role: 'deep', lens: ['recount']},
   {qid: 'q02', short: 'clocks and the dark hour', question: 'Clocks and the dark hour: tick(dt, nowMs) -> simAdvance; simDays partition-independence at speed 0; how renderTod advances (dt/300) against W.clock.day; the darkHour formula (_sunDir, _tamarDir, the local sunElev) checked against the probe --dark-scan proxy; ANNALS.step feeding a performance[.]now reading as nowMs; what a gate-leaf rule may read (render state only).', reads: ['index.html (anchors function tick(dt, nowMs), function simAdvance(nd), const darkHour =, renderTod = (renderTod)'], role: 'audit', lens: ['refute']},
   {qid: 'q03', short: 'caravans and the stateless queue', question: 'Caravans and the stateless queue: routePos, updateAgents, processArrivals(day): the fields a render-only queue may touch (mesh transforms only); the neighbour set per (route, day) computed statelessly; the IDM calcAccDet terms at donkey pace (s0, T, v0). Run a node property test on synthetic agents (in a mktemp -d dir): monotone order, gap >= s0, d_vis <= d_true, f(day) path-independence.', reads: ['index.html (anchors function routePos(, function updateAgents(), function processArrivals(day))', 'docs/street/research-dossier.md §2 M1-M3'], role: 'deep', lens: ['refute']},
-  {qid: 'q04', short: 'determinism debts', question: 'Determinism debts: every Math[.]random, Date[.]now, performance[.]now, W.rng.amb and nowMs occurrence in index.html, each with its enclosing function name and its class gen | sim | render.', reads: ['index.html'], role: 'mech', lens: ['recount']},
+  {qid: 'q04', short: 'determinism debts', question: 'Determinism debts: every Math[.]random, Date[.]now, performance[.]now, W.rng.amb and nowMs occurrence in index.html, each with its enclosing function name and its class gen | sim | render. ' + DEBT_NAME, reads: ['index.html'], role: 'mech', lens: ['recount']},
   {qid: 'q05', short: 'settlement street data', question: 'Settlement street data: s.streets (widths), s.buildings {t,x,z,ry,tier,sc}, s.gates, the market reserve (dd<0.30), W.bridges, W.routes, quays; sub-cell street ground against the 11.72 m heightfield grid (R22 cited: no new relief).', reads: ['index.html (anchors s.gates = [], s.streets.push, W.bridges = [])'], role: 'audit', lens: ['recount']},
   {qid: 'q06', short: 'facades and instancing', question: 'Facades and instancing: the 12 ARCH, tier materials, the 4 cached variants, windows and night glow; every InstancedMesh site and the instanceColor rule; the culling gaps (rocks, sheep, birds); where a near-only mesh must sit (never meshHi).', reads: ['index.html (anchor every InstancedMesh sharing MAT.world MUST carry instanceColor)'], role: 'audit', lens: ['recount']},
   {qid: 'q07', short: 'LOD, camera, near plane', question: 'LOD, camera and near plane: updateLOD 2400/2200 by camera-to-centre distance; label tiers by R; water fades; CAM.radius 9..11000; camera.near = clamp(R*0.02, 0.5, 50) (already dynamic); the inputs a screen-space-error refine rule would need.', reads: ['index.html (anchors function updateLOD(), camera.near = clamp(R*0.02, 0.5, 50))'], role: 'audit', lens: ['recount']},
   {qid: 'q08', short: 'keys, hash, parser, writers', question: 'Keys, hash, parser and writers: the keydown keys; the overlay menu rows (#ovMenu); the unanchored seed regex at both parse sites (a notices= param collides with it); every "#s=" writer (each drops the other params); applyGotoFromHash; free hash param names (matching ^[a-z]+$, not ending in s).', reads: ["index.html (anchors window.addEventListener('keydown', id=\"ovMenu\", function applyGotoFromHash())"], role: 'audit', lens: ['recount']},
   {qid: 'q09', short: 'weather and the R13 fog source', question: 'Weather and the R13 fog source: W.weather states and roll cadence; the precipitation Points (count 1500, render-only randomness); fog far-plane modulation; the R13 fog function inside the /* FILIGREE */ block of maps-site/index.html: does it exist? its name, signature, the helpers it calls (mulberry32 included) and its purity, or "not yet built" (ST11: then a recorded gap, nothing invented).', reads: ['index.html (anchor W.weather = )', 'maps-site/index.html (read-only; the /* FILIGREE */ ... /* /FILIGREE */ block)'], role: 'audit', lens: ['refute']},
-  {qid: 'q10', short: 'notices (R12)', question: 'Notices (R12): the committed notices sample in maps-site/data/ or the /contracts of docs/filigree/sheet-spec.json (both read-only): the schema of shut ways and muster days; what the sim can read without a fetch at boot; the classes a street view would draw from it.', reads: ['maps-site/data/', 'docs/filigree/ (read-only: sheet-spec.json /contracts when present)'], role: 'audit', lens: ['canon']},
+  {qid: 'q10', short: 'notices (R12)', question: 'Notices (R12): the committed notices sample in maps-site/data/ or the /contracts of docs/filigree/sheet-spec.json (both read-only): the schema of shut ways and muster days; what the sim can read without a fetch at boot; the classes a street view would draw from it.', reads: ['maps-site/data/', 'docs/filigree/ (read-only: sheet-spec.json /contracts when present)'], role: 'audit', lens: ['recount', 'canon']},
   {qid: 'q11', short: 'Epēshu canon', question: 'Epēshu canon: wiki-places.json (the Blue Temple of Thobrauk on Wood Quay\'s northern edge), the chart-pois.json districts, detail-charts.json, the capital\'s marble walls, the Epēshu cityLabels of index.html; look at one chart crop of the Marble Quarter.', reads: ['maps-site/data/wiki-places.json', 'maps-site/data/chart-pois.json', 'maps-site/data/detail-charts.json', 'maps-site/charts/epeshu/', "index.html (anchors templeName:'the Blue Temple of Thobrauk', {name:'Wood Quay', {name:'Epēshīn Forum')"], role: 'deep', lens: ['second-look', 'canon']},
-  {qid: 'q12', short: 'Patrinaic words', question: 'Patrinaic words for gate, toll, market, bridge, ford, crowd, cloud, caravan halt and herald (reserved canon words excluded), each with its lexicon entry.', reads: ['lexicon/patrinaic.json'], role: 'audit', lens: ['canon']},
+  {qid: 'q12', short: 'Patrinaic words', question: 'Patrinaic words for gate, toll, market, bridge, ford, crowd, cloud, caravan halt and herald (reserved canon words excluded), each with its lexicon entry.', reads: ['lexicon/patrinaic.json'], role: 'audit', lens: ['recount', 'canon']},
   {qid: 'q13', short: 'shadows and the degrade ladder', question: 'Shadows and the degrade ladder: shadowsOn (never set), wantShadow, the one-way ladder (smoothed fps < 42, every 5 s after frame 300), shadow extent and map size; what headless can and cannot measure; the global binding a pinDegrade hook must hold.', reads: ['index.html (anchors let shadowsOn = true, const wantShadow, let fpsAvg = 60, degradeStep)'], role: 'audit', lens: ['recount']},
   {qid: 'q14', short: 'r128 API facts', question: 'three r128 API facts from the source of npm pack three@0.128.0 (in a mktemp -d dir): InstancedMesh.setColorAt / instanceColor, Frustum.intersectsSphere, an onBeforeCompile dither on the patched Lambert, no BatchedMesh, LOD.addLevel without hysteresis.', reads: ['npm pack three@0.128.0 (src/ of the extracted package)'], role: 'audit', lens: ['recount']},
-  {qid: 'q15', short: 'class map', question: `Class map: map each of the ${CHECKLIST.length} checklist keys (${PIECES.length} Tokyo pieces + ${ANALOGUES.length} bronze-age analogues of todo-inputs.json) to street classes {id, from, state in ${STATES.join(' | ')}, fil_class?, tier_min, tier_max}, reusing a filigree density-bible class id wherever one exists (read-only). Keys: ${CHECKLIST.join(', ')}.`, reads: ['docs/street/todo-inputs.json', 'docs/filigree/density-bible.json (read-only)'], role: 'judge', lens: ['refute', 'canon']}
+  {qid: 'q15', short: 'class map', question: `Class map: map each of the ${CHECKLIST.length} checklist keys (${PIECES.length} Tokyo pieces + ${ANALOGUES.length} bronze-age analogues of todo-inputs.json) to street classes {id, from, state in ${STATES.join(' | ')}, fil_class?, tier_min, tier_max} where tier_min and tier_max are RADIUS tier names T0..T4 of ${TIER_TEXT} (the nearest and farthest band the class must be present in), reusing a filigree density-bible class id wherever one exists (read-only). Keys: ${CHECKLIST.join(', ')}.`, reads: ['docs/street/todo-inputs.json', 'docs/filigree/density-bible.json (read-only)'], role: 'judge', lens: ['refute', 'canon']}
 ]
 const LENS_ROLE = {anchor: 'mech', 'second-look': 'deep', refute: 'judge', recount: 'mech', canon: 'audit'}
 
@@ -323,7 +344,7 @@ const driftIds = d => ((d && d.checks) || []).filter(c => !c.ok).map(c => c.id).
 const citedChanged = (cited, now) => Object.keys(cited || {}).filter(k => (now || {})[k] !== cited[k])   // ids whose ruling text differs from the text Street 1 stamped
 const lowBudget = () => !!(budget && budget.total && budget.remaining() < ROUND_TOKENS)   // the filigree-1 idiom; every round gate is `if (lowBudget()) { log('budget: round skipped'); break }`
 // W1-local functions probePass, researchRound, checkBible, runGate, evaluate and ambiguity are defined in the script body at §5; they are not shared with W2-W4
-const PROBEP = OBJ({exists: B, sha_run1: S, sha_run2: S, perturbed_differs: B, view_calls: NN, view_tris: NN, stats_keys: SA, clock_hits: I, views_equal: B, flags_missing: SA, tool_sha: S, infra_error: S})
+const PROBEP = OBJ({exists: B, sha_run1: S, sha_run2: S, perturbed_differs: B, view_calls: NN, view_tris: NN, view_geoms: NN, view_textures: NN, view_objects: NN, stats_keys: SA, clock_hits: {type: ['integer', 'null']}, views_equal: B, flags_missing: SA, dark_tod: NN, tool_sha: S, infra_error: S})
 const PRE1 = OBJ({
   missing: SA, anchors: ANCH, fil_anchors: FILANCH, drift: DRIFT,
   fil_gate1: OBJ({exists: B, pass: B, mode: S, forced: B, bible_ok: B, bible_sha256: S, class_ids: SA}),
@@ -339,8 +360,8 @@ const QSCHEMA = OBJ({qid: S, path: S, sha256: S,
   gaps: SA, summary: S})
 const LENS = {type: 'object', properties: {lens: S, checked: I, own_reading: {type: 'array', items: OBJ({claim: S, reading: S})},
   struck: {type: 'array', items: OBJ({claim: S, why: S, evidence: S})}}, required: ['lens', 'checked', 'struck']}
-const VIEWFRZ = OBJ({fixtures_changed: B, path: S, sha256: S, parsed: B, views: {type: 'array', items: OBJ({id: S, seed: S, day: I, x: N, z: N, R: N, tod: N, fallback: S})}, stills: {type: 'array', items: OBJ({id: S, path: S, bytes: I})}, infra_error: S})
-const BASE = OBJ({path: S, sha256: S, parsed: B, runs_equal: B, view_dependent: B, index_sha: S, tool_sha: S, views_n: I, stats_keys: SA, keydown_sha: S, perturbed_differs: B, infra_error: S})
+const VIEWFRZ = OBJ({fixtures_changed: B, changed_views: SA, path: S, sha256: S, parsed: B, views: {type: 'array', items: OBJ({id: S, seed: S, day: I, x: N, z: N, R: N, tod: N, fallback: S})}, stills: {type: 'array', items: OBJ({id: S, path: S, bytes: I})}, infra_error: S})
+const BASE = OBJ({path: S, sha256: S, parsed: B, runs_equal: B, view_dependent: B, index_sha: S, tool_sha: S, views_sha: S, kept: B, views_n: I, stats_keys: SA, keydown_sha: S, perturbed_differs: B, infra_error: S})
 const INTEG1 = OBJ({md: S, json: S, sha_md: S, sha_json: S, class_ids: SA, rule_ids: SA,
   tier_bands: {type: 'array', items: OBJ({tier: S, R_min: N, R_max: N})}, states: {type: 'object', additionalProperties: S},
   checklist_keys: SA, cited_claims: SA})
@@ -373,7 +394,7 @@ Also check:
 3. fil_overrides = the "overrides" object of ${FIL}/rulings.json; st_overrides = the "overrides" object of ${DOCS}/rulings.json ({} when a file or its key is absent; string values only).
 4. The ledger ${OUTABS}/state/1-research.json if present: for each entry of its "questions", sha256sum the file at its "path" and return {qid, path, sha256 (the recorded one), sha_ok (the file exists and re-hashes to the recorded sha256), claim_ids, struck} copied from the entry; seen_questions = its "seen_questions". Absent ledger = {questions: [], seen_questions: []}.
 5. probe (run it, edit nothing): ${probeTask(PRE_LITS)}
-${SANDBOX_ST}
+${SBX}
 6. gate_prev from ${OUTABS}/gates/1-research.json: {exists (present and parses), pass: parsed.pass === true, mode: parsed.mode or "", forced: parsed.forced_by != null, md_ok: the artifacts entry whose path ends "street-bible.md" names a sha256 equal to sha256sum ${BIBLE_MD}, json_ok: the same for street-bible.json and ${BIBLE_JSON}, answers_exists: ${OUTABS}/gates/1-view-answers.json exists and parses, fil_bible_sha256: parsed.fil_bible_sha256 or "", fil_rulings_cited: parsed.fil_rulings_cited or {}}. Absent file = all false, "" and {}.
 7. fixtures: {views_exists: ${VIEWS_JSON} exists and parses, views_rules: its "rules" string ("" when absent), stills: the file names present under ${OUTABS}/gates/view/ (e.g. "SV1.jpg"), baseline_exists: ${BASELINE} exists and parses, baseline_index_sha and baseline_tool_sha: its index_sha and tool_sha ("" when absent), index_sha: sha256sum ${REPO}/index.html}.
 Return {missing, anchors (the map of A), fil_anchors (B), drift (C), fil_gate1, fil_overrides, st_overrides, ledger, probe, gate_prev, fixtures}.`
@@ -395,7 +416,7 @@ const FIL_CITED_TEXT = Object.fromEntries(FIL_CITED.map(k => [k, RUL[k]]))
 const fx0 = pre.fixtures || {}
 log(`fixtures: views.json ${fx0.views_exists ? 'frozen' : 'absent'}, ${(fx0.stills || []).length} still(s), baseline ${fx0.baseline_exists ? (fx0.baseline_index_sha === fx0.index_sha ? 'current' : 'stale (index.html moved)') : 'absent'}`)
 
-// ledger + resume (Job 1 rules): a question resumes while its evidence re-hashes; q01 also needs the preflight probe reading (literals 1, 3, 4, 5)
+// ledger + resume (Job 1 rules): a question resumes while its evidence re-hashes; q01 also needs the preflight probe reading (literals 1, 3, 4, 5, 8)
 const LEDGER = (pre.ledger && Array.isArray(pre.ledger.questions)) ? pre.ledger.questions.filter(x => x && x.qid) : []
 const TOOL_QIDS = new Set(QUESTIONS.filter(q => q.tool).map(q => q.qid))
 const probePre = probeWhy(pre.probe, PRE_LITS).length === 0
@@ -411,7 +432,7 @@ const lensMax = q => q.lens.length + (q.lens.includes('anchor') ? 0 : 1)   // Jo
 const TOOL_MAX = 2 + 2 * 2   // writer + recount + 2 x (fix + recount)
 const GATE_MIN = 3 * GATE_VIEWS.length, GATE_MAX = GATE_MIN + CRIT_MAX   // 2 appliers + 1 resolver per view (+ ambiguity judge, crit)
 const FU_Q_MAX = FU_MAX_Q * 3   // questions x (research + <=2 lenses); a probe rewrite costs research + recount + one baseline re-measure
-const FU_ROUND_MAX = 1 + FU_Q_MAX + CRIT_MAX + 2 + GATE_MAX   // critic, questions, patcher (crit), validator + grep, gate
+const FU_ROUND_MAX = 2 + FU_Q_MAX + CRIT_MAX + 2 + GATE_MAX   // critic, questions, patcher (crit), validator + grep, gate
 if (MODE === 'plan') {
   const rq = unresumed.filter(q => !q.tool)
   const sched = [
@@ -430,18 +451,23 @@ if (MODE === 'plan') {
     polish_note: `plan: ${unresumed.length} question(s) to research${q01Todo ? ' (q01 writes the probe)' : ''}, at most ${tot} agents including crit() retries (bound 180)`})
 }
 
-// A gate that already passed on an unchanged bible, an unchanged filigree bible and unchanged cited rulings is not redone.
+// A gate that already passed on an unchanged bible, an unchanged filigree bible and unchanged cited rulings is not redone; when index.html moved since the baseline, the frozen views are re-resolved first (RECHECK).
+const STREET_BUILT = !!(pre.anchors || {})['/* STREET */']   // Street 3 has built: an existing street-off baseline is never re-measured from this file
+const INDEX_MOVED = !(fx0.baseline_exists === true && HEX64.test(fx0.baseline_index_sha || '') && fx0.baseline_index_sha === fx0.index_sha)
+let RECHECK = false
+const passedDone = what => done({pass: true, reason: 'already passed: gate pass:true, the street bible re-hashes, the filigree bible and the cited rulings are unchanged; ' + what, owner_rulings_used: RUSED, street_rulings_used: SUSED,
+  gate_path: OUT + '/gates/1-research.json', polish_inserts_above: 'Street 2',
+  outputs: [OUT + '/street-bible.md', OUT + '/street-bible.json', OUT + '/gates/views.json', OUT + '/gates/view/', OUT + '/gates/baseline.json', OUT + '/gates/1-research.json', OUT + '/gates/1-view-answers.json', OUT + '/research/', PROBE_REL],
+  polish_note: 'Street 1 already passed on an unchanged street bible; ' + what})
 const GP = pre.gate_prev || {}
 const citedSame = FIL_CITED.every(k => (GP.fil_rulings_cited || {})[k] === RUL[k]) && !citedChanged(GP.fil_rulings_cited, RUL).length
 if (RESUME && MODE === 'full' && GP.exists === true && GP.pass === true && GP.mode === 'full' && GP.forced !== true && GP.md_ok === true && GP.json_ok === true
   && HEX64.test(GP.fil_bible_sha256 || '') && GP.fil_bible_sha256 === fg.bible_sha256 && citedSame) {
   const lack = [GP.answers_exists === true ? '' : 'gates/1-view-answers.json', LEDGER.length ? '' : 'state/1-research.json'].filter(Boolean)
   if (lack.length) return done({reason: 'record-incomplete: the gate passed on an unchanged bible but ' + lack.join(' and ') + ' is missing and cannot be rebuilt without a new run; delete docs/street/gates/1-research.json (or pass resume:false) to redo Street 1', owner_rulings_used: RUSED, street_rulings_used: SUSED, polish_inserts_above: 'Street 2'})
-  log('gate already passed on an unchanged bible: nothing to do')
-  return done({pass: true, reason: 'already passed: gate pass:true, the street bible re-hashes, the filigree bible and the cited rulings are unchanged; nothing re-run', owner_rulings_used: RUSED, street_rulings_used: SUSED,
-    gate_path: OUT + '/gates/1-research.json', polish_inserts_above: 'Street 2',
-    outputs: [OUT + '/street-bible.md', OUT + '/street-bible.json', OUT + '/gates/views.json', OUT + '/gates/view/', OUT + '/gates/baseline.json', OUT + '/gates/1-research.json', OUT + '/gates/1-view-answers.json', OUT + '/research/', PROBE_REL],
-    polish_note: 'Street 1 already passed on an unchanged street bible; nothing was re-run'})
+  if (!INDEX_MOVED) { log('gate already passed on an unchanged bible: nothing to do'); return passedDone('nothing re-run') }
+  if (probePre) { RECHECK = true; log('gate passed before, but index.html changed since gates/baseline.json: re-resolving the frozen views only') }   // the frozen views are re-resolved (recount + freezer) before the pass stands
+  else log('gate passed before, but index.html changed since gates/baseline.json and the probe fails preflight: full run')
 }
 
 // ---- research + verify machinery (ported from filigree Job 1) ----
@@ -454,7 +480,7 @@ const LENS_TEXT = {
   anchor: 'Anchor: for every claim whose evidence.kind is "anchor", check that the ref resolves: grep -nF -e <literal> <file> from the repo root, quoting the literal properly (a literal containing a single quote goes through a temp file with grep -nF -f, or through double quotes). Strike every claim whose anchor does not resolve.'
 }
 const lensesFor = (q, r) => cap([...new Set(q.lens.concat((r.claims || []).some(c => c && c.evidence && c.evidence.kind === 'anchor') ? ['anchor'] : []))])
-const toolTask = () => `Tool task: write the committed read-only probe ${PROBE_T} (create the directory) to the contract below, and run it until it meets every literal. Stamp the date ${DATE} in a header comment. ${SANDBOX_ST}
+const toolTask = () => `Tool task: write the committed read-only probe ${PROBE_T} (create the directory) to the contract below, and run it until it meets every literal. Stamp the date ${DATE} in a header comment. ${SBX}
 ${PROBE_SPEC}
 ${PROBE_LIT_TEXT}`
 const researchPrompt = q => PS(`Research question ${q.qid} (${q.short || 'follow-up'}). Answer this ONE question and nothing else:
@@ -462,7 +488,7 @@ ${q.question}
 
 Reads: ${q.reads.join('; ')}
 ${READS_NOTE}
-Static inputs you may consult: ${DOCS}/research-dossier.md, ${DOCS}/todo-inputs.json, ${REPO}/docs/research/streamed-streets.md${q.tool ? '' : `, the frozen fixtures ${VIEWS_JSON} and ${BASELINE}, the probe ${PROBE_T} (run it per the sandbox recipe when a measurement settles a claim: ${SANDBOX_ST})`}.
+Static inputs you may consult: ${DOCS}/research-dossier.md, ${DOCS}/todo-inputs.json, ${REPO}/docs/research/streamed-streets.md${q.tool ? '' : `, the frozen fixtures ${VIEWS_JSON} and ${BASELINE}, the probe ${PROBE_T} (run it per the sandbox recipe when a measurement settles a claim: ${SBX})`}.
 
 Anchors re-derived by pattern this run (literal -> path:line):
 ${anchorMap(pre.anchors)}
@@ -487,7 +513,7 @@ ${(r.claims || []).map(c => L === 'second-look' ? `${c.id}: ${c.text}` : `${c.id
 
 Write nothing (throwaway scripts in a mktemp -d dir); return the LENS object${L === 'second-look' ? ' (own_reading first, one entry per claim id)' : ''}: lens = "${L}", checked = how many claims you checked, struck = [{claim: <claim id>, why, evidence}] for every claim you disproved (empty when none).`)
 const recountPrompt = () => PS(`Recount the street probe against its literals (write nothing outside a mktemp -d dir; never edit the probe).
-${SANDBOX_ST}
+${SBX}
 ${probeTask(null)}`)
 
 const STRUCK = new Set(resumed.flatMap(x => x.struck || []))
@@ -501,7 +527,7 @@ async function researchRound(qs, tag) {   // a tool question's verify stage is t
     q => agent(researchPrompt(q), {label: q.qid + ' · ' + (q.short || 'follow-up') + tag, phase: 'Research', schema: QSCHEMA, ...M(q.role)}),
     (r, q) => r && (q.tool
       ? agent(recountPrompt(), {label: q.qid + ' · recount' + tag, phase: 'Verify', schema: PROBEP, ...M('mech')})
-        .then(pp => ({q, r, probe: pp, struck: probePass(pp) ? [] : (r.claims || []).map(c => c.id), lensDrops: pp ? 0 : 1, lensN: 1}))
+        .then(pp => ({q, r, probe: pp, struck: probePass(pp) ? [] : (r.claims || []).map(c => c.id), lensDrops: pp && probePass(pp) ? 0 : 1, lensN: 1}))
       : parallel(lensesFor(q, r).map(L => () =>
         agent(lensPrompt(L, q, r), {label: q.qid + ' · ' + L + tag, phase: 'Verify', schema: LENS, ...M(LENS_ROLE[L])})))
         .then(vs => ({q, r, struck: vs.filter(Boolean).flatMap(v => (v.struck || []).map(s => s.claim)), lensDrops: vs.filter(v => !v).length, lensN: vs.length}))))
@@ -526,7 +552,7 @@ const fixPrompt = (p, k) => PS(`Fix the street probe ${PROBE_T} (fix ${k} of 2).
 ${probeWhy(p).join('\n')}
 Recount reading: ${JSON.stringify(p)}
 Rewrite ${PROBE_T} only (no other file but the research record below), to the contract below, and run it until every literal holds. Then rewrite ${OUTABS}/research/q01.json = {qid: "q01", claims, gaps, summary, date: "${DATE}"} for the fixed tool (claim ids "q01-c01", ...; evidence kind computed, ref = the command). Return {qid: "q01", path, sha256 (sha256sum of research/q01.json), claims, gaps, summary}.
-${SANDBOX_ST}
+${SBX}
 ${PROBE_SPEC}
 ${PROBE_LIT_TEXT}
 ${DET_RULE}`)
@@ -551,20 +577,26 @@ if (r01) {
   if (q01Todo) cov.rk += 1
   x.struck.forEach(c => STRUCK.add(c)); (r01.gaps || []).forEach(g => gapsResearch.push('q01: ' + g)); resAll.push(x)
 } else if (q01Todo) gapsResearch.push('q01: no research record (the probe writer died)')
-log(`probe: ${probeOk ? 'literals 1-7 met' : 'failing: ' + probeWhy(P1).join('; ')} after ${probeFixes} fix(es)`)
+log(`probe: ${probeOk ? 'literals 1-8 met' : 'failing: ' + probeWhy(P1).join('; ')} after ${probeFixes} fix(es)`)
+if (RECHECK && (!probeOk || probeFixes > 0 || r01)) { RECHECK = false; log('the probe changed or fails: the re-check becomes a full run') }
 
 // ---- Fixtures, Research, Synthesize, gate and follow-up run only on a passing probe; otherwise straight to Record with SG1.11 failed ----
-const baselinePrompt = () => PS(`Measure the street-off baseline (frozen per index.html sha and probe sha; README §5.3).
-Skip (write nothing, go to the read-back) when ${BASELINE} exists, parses, has frozen === true, its index_sha equals sha256sum ${REPO}/index.html and its tool_sha equals sha256sum ${PROBE_T}.
-Otherwise, with the sandbox recipe and all outputs in a mktemp -d dir: run twice node ${PROBE_T} --views ${VIEWS_JSON} --layers street=0 --metrics calls,tris,geoms,textures,objects,stats_keys (each with its own --out); for each seed of ${JSON.stringify(SEEDS)} run twice --fingerprint --seed <seed> --days 400 and twice --fingerprint --seed <seed> --days 400 --walk ${VIEWS_JSON}; run once --fingerprint --seed epeshu --days 400 --perturb departDay. keydown_sha = sha256 of the text of ${REPO}/index.html from "window.addEventListener('keydown'" to its matching "});" (a node script matching braces from the first "{" after it).
+const baselinePrompt = () => PS(`Measure the street-off baseline (frozen per index.html sha, probe sha and views.json sha; README §5.3).
+${STREET_BUILT
+    ? `${REPO}/index.html already carries the STREET block (Street 3 has built), so an existing street-off baseline is never re-measured from it. Keep (write nothing, go to the read-back, kept true) when ${BASELINE} exists, parses and has frozen === true, whatever its shas.`
+    : `Keep (write nothing, go to the read-back, kept true) when ${BASELINE} exists, parses, has frozen === true, its index_sha equals sha256sum ${REPO}/index.html, its tool_sha equals sha256sum ${PROBE_T} and its views_sha equals sha256sum ${VIEWS_JSON}.`}
+Otherwise (kept false), with the sandbox recipe and all outputs in a mktemp -d dir: run twice node ${PROBE_T} --views ${VIEWS_JSON} --layers street=0 --metrics calls,tris,geoms,textures,objects,stats_keys (each with its own --out); for each seed of ${JSON.stringify(SEEDS)} run twice --fingerprint --seed <seed> --days 400 and twice --fingerprint --seed <seed> --days 400 --walk ${VIEWS_JSON}; run once --fingerprint --seed epeshu --days 400 --perturb departDay. keydown_sha = sha256 of the text of ${REPO}/index.html from "window.addEventListener('keydown'" to its matching "});" (a node script matching braces from the first "{" after it).
 runs_equal = the two metrics outputs are byte-equal AND each fingerprint pair is equal; view_dependent = for some seed the plain sha differs from the walk sha; perturbed_differs = the perturbed sha differs from the epeshu plain sha.
-Write ${BASELINE} (create gates/) = {date: "${DATE}", frozen: true, tool_sha, index_sha, views: {SVn: {calls, tris, geoms, textures, objects}} (from the first metrics run), fingerprint: {epeshu: {plain, walk}, tamar1374: {plain, walk}}, view_dependent, stats_keys, keydown_sha, near_line: "camera.near = clamp(R*0.02, 0.5, 50);", runs_equal, perturbed_differs}.
-${SANDBOX_ST}
-${READBACK} Also return, read from the file: runs_equal, view_dependent, index_sha, tool_sha, views_n (the number of keys of views), stats_keys, keydown_sha, perturbed_differs; and infra_error ("" or the setup failure).`)
-const freezePrompt = PS(`Freeze the street fixture views (README §5.1). They are frozen once written and never regenerated.
-1. If ${VIEWS_JSON} exists: with a node script (mktemp -d) compare JSON.parse(file).rules with the expected rules string below using ===. Different, or no rules key: write nothing, delete nothing, and return fixtures_changed true with the read-back of the existing file. Equal and every still ${OUTABS}/gates/view/<id>.jpg exists for ${VIEW_RULES.map(v => v.id).join(', ')}: write nothing; go to the read-back.
-2. Otherwise: write the rules file below VERBATIM to <tmp>/rules.json and run node ${PROBE_T} --freeze-views <tmp>/rules.json --out ${VIEWS_JSON} --shots ${OUTABS}/gates/view/ --cdn-dir <cdn dir> (create the directories). ${SANDBOX_ST}
-${READBACK} Also return fixtures_changed (false unless step 1 found a difference), views: [{id, seed, day, x, z, R, tod, fallback ("" when none)}] read from the file, stills: [{id, path, bytes}] for every still that exists, and infra_error ("" or the setup failure the probe reported).
+Write ${BASELINE} (create gates/) = {date: "${DATE}", frozen: true, tool_sha, index_sha, views_sha (sha256sum ${VIEWS_JSON} as measured), street_block (${REPO}/index.html contains "/* STREET */"), views: {SVn: {calls, tris, geoms, textures, objects}} (from the first metrics run), fingerprint: {epeshu: {plain, walk}, tamar1374: {plain, walk}}, view_dependent, stats_keys, keydown_sha, near_line: "camera.near = clamp(R*0.02, 0.5, 50);", runs_equal, perturbed_differs}.
+${SBX}
+${READBACK} Also return, read from the file: runs_equal, view_dependent, index_sha, tool_sha, views_sha ("" when the file has none), views_n (the number of keys of views), stats_keys, keydown_sha, perturbed_differs; kept; and infra_error ("" or the setup failure).`)
+const freezePrompt = PS(`Freeze the street fixture views (README §5.1). They are frozen once written and never regenerated: while ${VIEWS_JSON} exists, never run --freeze-views with --out ${VIEWS_JSON} and never write or delete it. All temp files in a mktemp -d dir (<tmp>). ${SBX}
+1. If ${VIEWS_JSON} exists:
+ a. With a node script compare JSON.parse(file).rules with the expected rules string below using ===. Different, or no rules key: return fixtures_changed true, changed_views [] with the read-back of the existing file.
+ b. Re-resolve against today's index.html: write the rules file below VERBATIM to <tmp>/rules.json and run node ${PROBE_T} --freeze-views <tmp>/rules.json --out <tmp>/views.json --shots <tmp>/shots/ --cdn-dir <cdn dir>. With a node script compare every frozen view with the same id in <tmp>/views.json: seed, day and R exactly, x, z and tod within 1e-6, fallback (absent = "") exactly. changed_views = every id that differs or is missing there. Non-empty (a focus, day or tod moved, e.g. Filigree 3 or a sim edit moved a label, gate or bridge): return fixtures_changed true with the read-back of the existing file.
+ c. Unchanged: for every id of ${VIEW_RULES.map(v => v.id).join(', ')} whose still ${OUTABS}/gates/view/<id>.jpg is missing, copy <tmp>/shots/<id>.jpg there (create the directory; never overwrite an existing still). Then go to the read-back.
+2. If it does not exist: write the rules file below VERBATIM to <tmp>/rules.json and run node ${PROBE_T} --freeze-views <tmp>/rules.json --out ${VIEWS_JSON} --shots ${OUTABS}/gates/view/ --cdn-dir <cdn dir> (create the directories).
+${READBACK} Also return fixtures_changed (true only from 1a or 1b), changed_views (the ids 1b found; [] otherwise), views: [{id, seed, day, x, z, R, tod, fallback ("" when none)}] read from ${VIEWS_JSON}, stills: [{id, path, bytes}] for every still that exists under ${OUTABS}/gates/view/, and infra_error ("" or the setup failure the probe reported).
 Expected rules string (JSON-encoded): ${JSON.stringify(RULES_TEXT)}
 Rules file: ${JSON.stringify(RULES_FILE)}`)
 let vf = null, BASEL = null, bible = null, chk = {val: null, voc: null}, gate = {rows: [], skipped: ''}, ev = null, amb = {gaps: []}, rounds = 0
@@ -575,14 +607,14 @@ const GV = cap(GATE_VIEWS)
 const STRUCTURE = `street-bible.md sections: tiers; classes by tier (what must be there at each nearness); determinism (states, keys, debts); clocks; caravans and queues; sky and weather; layers and hash; notices; Epēshu; caps; prerequisites; "## Renames"; "## Provenance" (the only place the source post's sources may be named, ST17).
 street-bible.json:
 {date: "${DATE}", fil_bible_sha256: "${fg.bible_sha256 || ''}",
- tiers: {kind: "radius", bands: [{tier: "T0".."T4", R_min, R_max}]},          (contiguous, covering [9, 11000]; a view's tier is the band with R_min <= R < R_max)
+ tiers: {kind: "radius", bands: [{tier, R_min, R_max}]},          (EXACTLY the fixed bands: ${TIER_TEXT} Contiguous, covering [9, 11000]; a view's tier is the band with R_min <= R < R_max; tier_min and tier_max of a class are these names)
  classes: [{id, label, from: [checklist keys], state: ${STATES.map(s => '"' + s + '"').join(' | ')},
             sim_source: [index.html literal], key: "st:<class>:<id expr>:day" | "", fil_class: "" | <filigree class id>,
             tier_min, tier_max, row: "roads and folk" | "clouds" | "weather" | "shadows" | "street" | "", new: bool}],
  rules: [{id: "SB-01", text, kind: "must" | "forbidden" | "threshold" | "determinism" | "source", cites: [claimId]}],   (ids stable across rounds)
  caps_ceiling: {SV1..SV9: {calls, tris, objects}},   (each >= the ${BASELINE} views value)
  determinism: {allowed_sources: ["keyed-hash", "sim-read-only"], new_sim_state: [], key_idiom: "${KEY_IDIOM}",
-               debts: [{fn, token, kind: "gen" | "sim" | "render"}]},   (every Math[.]random, Date[.]now, performance[.]now, W.rng.amb and nowMs occurrence in index.html with its enclosing function)
+               debts: [{fn, token, kind: "gen" | "sim" | "render"}]},   (every Math[.]random, Date[.]now, performance[.]now, W.rng.amb and nowMs occurrence in index.html; fn per: ${DEBT_NAME})
  clocks: {dark_hour: "render", sim_day: "W.clock.day", presentation: "ST.t"},
  hash: {param: "street", parser_fix: "S0 (ST18)", writers: [literal lines]},
  checklist: {<each of the ${CHECKLIST.length} keys>: rule id or class id},
@@ -595,7 +627,7 @@ const FIL_IDS_TEXT = `Filigree density-bible class ids (read-only, sha ${fg.bibl
 
 async function checkBible(tag) {
   const [v, w] = await parallel([
-    () => agent(PS(`Validate the street bible with a fixed node script (mktemp -d); write nothing. JSON.parse ${BIBLE_JSON} and check that ${BIBLE_MD} exists. Checks: the required keys (date, fil_bible_sha256, tiers, classes, rules, caps_ceiling, determinism, clocks, hash, checklist, prerequisites); unique class ids and unique rule ids; every class state is one of ${JSON.stringify(STATES)}; every sim-read or seeded-gen class has >= 1 sim_source and each one is found in ${REPO}/index.html by indexOf; every keyed-render class has a key matching new RegExp(${JSON.stringify(KEY_RE)}) (else its id goes to bad_keys); determinism.new_sim_state is [] (else its entries go to new_sim_state); the debt grep: list every Math[.]random, Date[.]now, performance[.]now, W.rng.amb and nowMs occurrence in ${REPO}/index.html with its enclosing function name, and every (fn, token) pair must appear in determinism.debts (else "fn :: token" goes to debts_missing); every non-empty fil_class is a classes[].id of ${FIL_BIBLE} (else to fil_class_unknown); tiers.bands are contiguous (each R_max = the next R_min) and cover [9, 11000]; caps_ceiling has numeric calls, tris and objects for each of SV1..SV9 (else the view id goes to ceiling_missing), each >= the same field of views.<SVn> in ${BASELINE} (else "SVn.field" goes to ceiling_below_baseline).
+    () => agent(PS(`Validate the street bible with a fixed node script (mktemp -d); write nothing. JSON.parse ${BIBLE_JSON} and check that ${BIBLE_MD} exists. Checks: the required keys (date, fil_bible_sha256, tiers, classes, rules, caps_ceiling, determinism, clocks, hash, checklist, prerequisites); unique class ids and unique rule ids; every class state is one of ${JSON.stringify(STATES)}; every sim-read or seeded-gen class has >= 1 sim_source and each one is found in ${REPO}/index.html by indexOf; every keyed-render class has a key matching new RegExp(${JSON.stringify(KEY_RE)}) (else its id goes to bad_keys); determinism.new_sim_state is [] (else its entries go to new_sim_state); the debt grep: list every Math[.]random, Date[.]now, performance[.]now, W.rng.amb and nowMs occurrence in ${REPO}/index.html with its enclosing function name per this rule: ${DEBT_NAME} Every (fn, token) pair must appear in determinism.debts (else "fn :: token" goes to debts_missing); every non-empty fil_class is a classes[].id of ${FIL_BIBLE} (else to fil_class_unknown); tiers.bands equal exactly ${JSON.stringify(TIER_BANDS)} as [tier, R_min, R_max] (else the band names go to failures), are contiguous (each R_max = the next R_min) and cover [9, 11000]; every class tier_min and tier_max is one of those tier names (else failures); caps_ceiling has numeric calls, tris and objects for each of SV1..SV9 (else the view id goes to ceiling_missing), each >= the same field of views.<SVn> in ${BASELINE} (else "SVn.field" goes to ceiling_below_baseline).
 Return {ok (true only when no check fails), failures (one line per failed check), sha_md and sha_json (sha256sum of ${BIBLE_MD} and ${BIBLE_JSON} as they are now), class_ids (every classes[].id), checklist_keys (the keys of "checklist" whose value is an existing rule or class id), cited_claims (every distinct string in any rules[].cites), tier_bands (tiers.bands as {tier, R_min, R_max}), states ({<class id>: state}), new_sim_state, debts_missing, fil_class_unknown, ceiling_below_baseline, ceiling_missing, bad_keys, fil_bible_sha256 (sha256sum ${FIL_BIBLE} now)}.`),
     {label: 'bible validator' + tag, phase: 'Synthesize', schema: VALID1, ...M('mech')}),
     () => agent(PS(`Vocabulary grep over the street bible. A short node script in a mktemp -d dir with the case-insensitive regex source ${JSON.stringify(VOCAB_ST.source)} (flags "gi"): scan ${BIBLE_MD} line by line, skipping the sections "## Provenance" and "## Renames" (a section runs to the next "## " heading), and every string value under a "label" or "row" key anywhere in ${BIBLE_JSON}. Write nothing. Return {hits: ["<file>:<line or json path>: <matched word>", ...]} (empty when clean).`),
@@ -607,7 +639,7 @@ Return {ok (true only when no check fails), failures (one line per failed check)
 }
 
 const applyPrompt = id => PS(`Blank-street test for view ${id}. You may read ONLY these (a path ending "/" means the files under that directory): ${APPLIER_ALLOWED.join(', ')}. Read ${REPO}/index.html only through grep -nF (never open it whole). Open nothing else: the script checks your files_read against this allowlist, so do not open research files, dossiers, inputs, READMEs, design notes or POLISH.
-Find ${id} in ${VIEWS_JSON} (seed, day, x, z, R, tod) and look at its still ${OUTABS}/gates/view/${id}.jpg. Name the tier the bible's tier rule gives for this view's R (street-bible.json tiers.bands: R_min <= R < R_max).
+Find ${id} in ${VIEWS_JSON} and use ONLY its id, seed, day, x, z, R and tod fields; ignore the file's "rules" text and any "tests" or "focus" field in it (they are the fixture author's notes, not part of the test). Look at at its still ${OUTABS}/gates/view/${id}.jpg. Name the tier the bible's tier rule gives for this view's R (street-bible.json tiers.bands: R_min <= R < R_max).
 Then name exactly SIX distinct bible classes (street-bible.json classes[].id) that must be present at this view before it may look bare, each with: state (that class's state in the bible: ${STATES.join(' | ')}); instance {what (what it is at this view), near: "x,z" (world metres, inside the view's footprint: within 1.5*R + 30 of the view's x,z)}; source {kind, ref}: sim -> ref = an index.html literal you found with grep -nF; key -> ref = "st:<class>:<id expr>:day" (the class's key); notice -> ref = the notice class; probe -> ref = "<SVn>.<metric>" of the views in ${BASELINE}; fil -> ref = a filigree class id in ${FIL_BIBLE}.
 If the bible does not let you answer, set bible_silent true and list what it lacks in missing; otherwise bible_silent false and missing [].
 files_read = every file you opened or grepped (absolute paths). Return {view: "${id}", tier, items, bible_silent, missing, files_read}.`, true)
@@ -616,7 +648,7 @@ const resolvePrompt = (id, pair) => {
   const its = a => a ? JSON.stringify((a.items || []).map((it, idx) => ({idx, class: it && it.class, state: it && it.state, near: it && it.instance && it.instance.near, source: it && it.source}))) : 'no answer'
   return PS(`Resolve the blank-street answers for view ${id}${v ? ` (frozen at x ${v.x}, z ${v.z}, R ${v.R})` : ''}; take x, z and R from ${VIEWS_JSON}. Write nothing (throwaway scripts in a mktemp -d dir).
 For every item of applier A and of applier B check:
-1. The source resolves: sim -> grep -cF of the literal in ${REPO}/index.html is >= 1 AND the literal is listed in that class's sim_source in ${BIBLE_JSON}; key -> the ref matches new RegExp(${JSON.stringify(KEY_RE)}) AND the class is keyed-render with exactly that key; notice -> the class has state notice; probe -> views.<SVn>.<metric> exists in ${BASELINE}; fil -> the ref is a classes[].id of ${FIL_BIBLE}.
+1. The source resolves (literals contain quotes, brackets and $, so no shell grep: write them to a temp JSON file and count with a short node script using String.indexOf on the text of ${REPO}/index.html): sim -> the literal occurs at least once in index.html AND the literal is listed in that class's sim_source in ${BIBLE_JSON}; key -> the ref matches new RegExp(${JSON.stringify(KEY_RE)}) AND the class is keyed-render with exactly that key; notice -> the class has state notice; probe -> views.<SVn>.<metric> exists in ${BASELINE}; fil -> the ref is a classes[].id of ${FIL_BIBLE}.
 2. near "x,z" parses and lies within 1.5*R + 30 m (Euclidean) of the view's x,z.
 ok = both hold; why names the first failing check ("" when ok). Return {view: "${id}", results: [{actor: "A" | "B", idx, ok, why}]}, one result per item.
 Applier A items: ${its(pair[0])}
@@ -682,8 +714,8 @@ function evaluate(bib, ck, gt, note) {
   const fanBad = fan.filter(([, n, k]) => k < Math.ceil(n * 0.75))
   const shaOk = !!val && HEX64.test(val.sha_md || '') && HEX64.test(val.sha_json || '') && val.sha_md === b.sha_md && val.sha_json === b.sha_json
   const xc = (xs, what) => xs.length ? `; integrator self-report also claims ${what}: ${xs.join(', ')}` : ''
-  const probeW = probeWhy(P1), bl = BASEL
-  const probe11 = probeW.length === 0 && !!bl && bl.runs_equal === true && bl.perturbed_differs === true
+  const probeW = probeWhy(P1), bl = BASEL, fx = fixState()
+  const probe11 = probeW.length === 0 && !!bl && bl.runs_equal === true && bl.perturbed_differs === true && fx.viewsShaOk && fx.darkFine
   const filShaOk = !!val && HEX64.test(val.fil_bible_sha256 || '') && val.fil_bible_sha256 === fg.bible_sha256
   const ne = m => NE || m, ok = x => !NE && !!x   // a run stopped before the gate records every criterion but SG1.11 as not evaluated (fail)
   const VD = 'agent died: bible validator'
@@ -701,9 +733,9 @@ function evaluate(bib, ck, gt, note) {
     C('SG1.8', 'struck claims cited (validator read of rules[].cites)', ne(!val ? VD : citedStruck.length || citedSelf.length ? (citedStruck.join(', ') || 'none') + xc(citedSelf, 'struck cites') : 0), 'none cited', ok(!!val && citedStruck.length === 0 && citedSelf.length === 0)),
     C('SG1.9', 'blind compliance (allowlist check on self-reported files_read; not a guarantee)', ne(blindHits.length ? blindHits.join(' | ') : 0), '0 reads outside APPLIER_ALLOWED', ok(gt.rows.length > 0 && blindHits.length === 0)),
     C('SG1.10', 'coverage', ne(fan.map(([w, n, k]) => `${w} ${k}/${n}`).join('; ')), 'every fan-out >=75% kept', ok(fanBad.length === 0)),
-    C('SG1.11', 'probe literals 1-7 (recount) + baseline double run equal + fingerprint sensitive',
-      (probeW.length ? 'probe: ' + probeW.join('; ') : 'probe: literals 1-7 met') + '; ' + (!bl ? 'baseline: not measured' : `baseline runs_equal ${bl.runs_equal}, perturbed_differs ${bl.perturbed_differs}`),
-      'probePass && runs_equal && perturbed_differs', probe11),
+    C('SG1.11', 'probe literals 1-8 (recount) + baseline double run equal, measured on the frozen views.json + fingerprint sensitive + SV2 inside the dark hour',
+      (probeW.length ? 'probe: ' + probeW.join('; ') : 'probe: literals 1-8 met') + '; ' + (!bl ? 'baseline: not measured' : `baseline runs_equal ${bl.runs_equal}, perturbed_differs ${bl.perturbed_differs}, views_sha ${fx.viewsShaOk ? 'current' : 'stale or missing'}`) + '; ' + fx.darkText,
+      'probePass && runs_equal && perturbed_differs && baseline views_sha = views.json sha256 && SV2 tod without fallback and dark hour >= 0.5 (day-120 formula)', probe11),
     C('SG1.12', 'determinism contract (validator)', ne(!val ? VD : [lst('new_sim_state', val.new_sim_state), lst('debts_missing', val.debts_missing), lst('bad_keys', val.bad_keys)].filter(Boolean).join('; ') || 'all empty'),
       'new_sim_state = debts_missing = bad_keys = []', ok(!!val && !(val.new_sim_state || []).length && !(val.debts_missing || []).length && !(val.bad_keys || []).length)),
     C('SG1.13', 'caps ceiling (validator)', ne(!val ? VD : [lst('missing', val.ceiling_missing), lst('below baseline', val.ceiling_below_baseline)].filter(Boolean).join('; ') || 'numeric for SV1-SV9, >= baseline'),
@@ -715,6 +747,18 @@ function evaluate(bib, ck, gt, note) {
   return {criteria, vs, n5, pct, ckN: CHECKLIST.length - ckMiss.length, needJudge}
 }
 const failing = e => e.criteria.filter(x => !x.pass)
+function fixState() {   // the frozen fixtures checked in code: SV2's tod against index.html's dark-hour formula, the baseline against the views.json it measured
+  const sv2 = viewOf('SV2'), bl = BASEL
+  const darkFine = !!sv2 && !(sv2.fallback || '') && darkOk(sv2.tod, sv2.day)
+  const viewsShaOk = !!bl && !!vf && HEX64.test(bl.views_sha || '') && bl.views_sha === vf.sha256
+  const darkText = !sv2 ? 'SV2: not frozen' : `SV2 tod ${sv2.tod}${sv2.fallback ? ' (fallback ' + sv2.fallback + ')' : ''}, dark hour ${typeof sv2.tod === 'number' && Number.isInteger(sv2.day) ? darkAt(sv2.tod, sv2.day).toFixed(2) : '-'}`
+  const gaps = []
+  if (sv2 && !darkFine) gaps.push(`SV2 froze outside the dark hour (${darkText}): fix the probe's --dark-scan, then delete docs/street/gates/views.json and docs/street/gates/view/ to re-freeze`)
+  if (bl && vf && !viewsShaOk) gaps.push(`gates/baseline.json was measured on another views.json (views_sha ${bl.views_sha || '-'} != ${vf.sha256})` + (STREET_BUILT ? ': index.html carries the STREET block, so it is kept; re-measure it on a STREET-free index.html' : ''))
+  if (bl && bl.kept === true && STREET_BUILT && P1 && bl.tool_sha !== P1.tool_sha) gaps.push('gates/baseline.json was kept from before the STREET block, measured with an older probe (tool_sha differs)')
+  if (bl && bl.kept !== true && STREET_BUILT) gaps.push('gates/baseline.json was measured on a STREET-bearing index.html (--layers street=0)')
+  return {darkFine, viewsShaOk, darkText, gaps}
+}
 async function ambiguity(e, gt, tag) {
   if (!e.needJudge) return {gaps: []}
   const bad = e.vs.filter(s => s.agree < 5 || !s.valid.A || !s.valid.B || s.silent).map(s => {
@@ -730,12 +774,14 @@ ${JSON.stringify(bad, null, 1)}`), {label: 'ambiguity judge' + tag, phase: 'Blan
 if (probeOk) {
   phase('Fixtures')
   vf = await crit(freezePrompt, {label: 'view freezer', phase: 'Fixtures', schema: VIEWFRZ, ...M('mech')})
-  if (vf && vf.fixtures_changed === true) die('fixtures changed; delete docs/street/gates/views.json and docs/street/gates/view/ to re-freeze')
+  if (vf && vf.fixtures_changed === true) die('fixtures changed' + ((vf.changed_views || []).length ? ' (moved: ' + vf.changed_views.join(', ') + ')' : ' (rules)') + '; delete docs/street/gates/views.json and docs/street/gates/view/ to re-freeze'
+    + (STREET_BUILT ? ' (index.html carries the STREET block, so gates/baseline.json is kept and goes stale: SG1.11 fails until it is re-measured on a STREET-free index.html)' : ' (gates/baseline.json re-measures itself against the new views.json)'))
   if (infraOf(vf)) return done({reason: 'infra', owner_rulings_used: RUSED, street_rulings_used: SUSED, polish_inserts_above: 'Street 2', polish_note: 'infra (view freezer): ' + vf.infra_error})
   if (!FILE_OK(vf)) return done({reason: 'agent died: view freezer', owner_rulings_used: RUSED, street_rulings_used: SUSED, polish_inserts_above: 'Street 2'})
   const stillIds = new Set((vf.stills || []).filter(x => x && x.id).map(x => x.id))
   const noStill = VIEW_RULES.map(v => v.id).filter(id => !stillIds.has(id))
   if (noStill.length) gapsPre.push('stills missing: ' + noStill.join(', '))
+  if (RECHECK) { log('frozen views re-resolve identically against the moved index.html'); return passedDone('index.html moved since gates/baseline.json, and the frozen views re-resolve identically (baseline.json kept; Street 3 re-baselines on its own)') }
   BASEL = await crit(baselinePrompt(), {label: 'baseline', phase: 'Fixtures', schema: BASE, ...M('mech')})
   if (infraOf(BASEL)) return done({reason: 'infra', owner_rulings_used: RUSED, street_rulings_used: SUSED, polish_inserts_above: 'Street 2', polish_note: 'infra (baseline): ' + BASEL.infra_error})
   if (!FILE_OK(BASEL)) return done({reason: 'agent died: baseline', owner_rulings_used: RUSED, street_rulings_used: SUSED, polish_inserts_above: 'Street 2'})
@@ -782,7 +828,7 @@ ${RETURN1}`), {label: 'bible integrator', phase: 'Synthesize', schema: INTEG1, .
     const probeFail = failing(ev).find(x => x.id === 'SG1.11')
     const fails = failing(ev).map(x => `${x.id} ${x.desc}: ${x.measured}`)
     const askMax = FU_MAX_Q - (probeFail ? 1 : 0)
-    const critic = await agent(PS(`Completeness critic for the street bible (follow-up round ${rr}). The blank-street gate failed.
+    const criticRaw = (await crit(PS(`Completeness critic for the street bible (follow-up round ${rr}). The blank-street gate failed.
 Failing criteria:
 ${fails.join('\n')}
 Gaps (bible sections + research gaps):
@@ -792,8 +838,9 @@ ${[...seenQ].join('\n')}
 Read ${BIBLE_MD} and, as needed, the trusted research files below.
 ${EVIDENCE_NOTE()}
 Emit at most ${askMax} follow-up research questions that would close these gaps: each ONE targeted task with reads (repo-relative paths), role (mech | triage | audit | deep | judge: deep for tools and crops, audit for code reading, judge for interpretation, mech for counts and greps) and lens (at most one of anchor | second-look | refute | recount | canon; [] for none). qid = "f${fr}<n>" (the script renumbers). Wording and structure problems in the bible are not research questions: the patcher runs and the gate re-runs every round, so return an empty list when every gap is one of those. ${probeFail ? 'SG1.11 (the probe and the baseline) is not yours: the script queues a probe rewrite itself. ' : ''}Write nothing. Return {questions}.`),
-    {label: 'completeness critic' + tag, phase: 'Follow-up', schema: CRITIC, ...M('judge')})
-    if (!critic) { log('agent died: completeness critic' + tag + '; follow-up stopped'); break }
+    {label: 'completeness critic' + tag, phase: 'Follow-up', schema: CRITIC, ...M('judge')}))
+    if (!criticRaw) log('agent died: completeness critic' + tag + '; round continues without fresh questions')
+    const critic = criticRaw || {questions: []}   // a dead critic still leaves the probe rewrite and the patch + re-gate
     const fresh = []
     if (probeFail) fresh.push({...Q01, qid: `f${fr}1`, short: 'probe rewrite',   // no other question carries the tool task, so SG1.11 is closed here or not at all
       question: `The street probe ${PROBE_REL} or its baseline failed SG1.11 (${probeFail.measured}). Rewrite the probe so it is deterministic, meets every PROBE_LIT item and makes the baseline double run byte-equal with a fingerprint sensitive to --perturb departDay.`})
@@ -849,7 +896,7 @@ ${RETURN1}`), {label: 'bible patcher' + tag, phase: 'Follow-up', schema: INTEG1,
 phase('Record')
 const fails = failing(ev)
 const vdep = !!BASEL && BASEL.view_dependent === true
-const gapsFinal = gapsPre.concat(gapsGate, gapsResearch, vdep ? ['the sim fingerprint is view-dependent (baseline.json): Street 3 compares walked-on with walked-off only (README §5.3)'] : [])
+const gapsFinal = gapsPre.concat(fixState().gaps, gapsGate, gapsResearch, vdep ? ['the sim fingerprint is view-dependent (baseline.json): Street 3 compares walked-on with walked-off only (README §5.3)'] : [])
 const shaRec = k => (chk.val && HEX64.test(chk.val[k] || '') && chk.val[k]) || (bible && bible[k]) || ''
 const gateRec = gateObj({criteria: ev.criteria, rounds, rulings_used: RUSED, street_rulings_used: SUSED, gaps: gapsFinal,
   fil_bible_sha256: fg.bible_sha256 || '', fil_rulings_cited: FIL_CITED_TEXT, view_rules: VIEW_RULES, probe: P1,

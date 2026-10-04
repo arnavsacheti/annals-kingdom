@@ -49,14 +49,15 @@ line, the `.claude/CLAUDE.md` pointer, and last the POLISH.md block (so no "Run:
 
 1. **One job per polish run.** The four street items sit in one block below the "Filigree 4 · Review → punch list"
    entry and above `## Done`. A polish run takes the top unchecked item, as usual, so the street jobs are reached when
-   every item above is checked or refused; Streets 1, 2 and 4 hold no app file and may run while the filigree build
-   waits on its data prerequisites.
+   every item above is checked or refused; Streets 1 and 2 hold no app file and may run while the filigree build
+   waits on its data prerequisites (Street 4 only after Street 3 has passed, or with `preview:true`).
 
    The queue rule is POLISH.md's own: *"each run takes the TOP unchecked item only … If another workflow holds the
    target file, take the next non-conflicting item instead."* So Street 1 is reached only when every item above it is
    checked, or is skipped as non-conflicting because it is blocked or held: a runnable-but-unfinished Filigree 2, a
-   multi-run Filigree 3 between its runs, or Filigree 4 all outrank it. Reading the entry's "early" as "while Filigree 3
-   is merely incomplete" is wrong; it holds only while that item is refused (thrown prerequisite or `held`). To run a
+   multi-run Filigree 3 between its runs, or Filigree 4 all outrank it. Reading the queue as reaching the street jobs "early" (a word of `design/polish-entries.md`, not of the POLISH
+   block) while Filigree 3 is merely incomplete is wrong; it holds only while that item is refused (thrown prerequisite
+   or `held`). To run a
    street job out of order the owner moves its entry above the filigree items or invokes the Workflow explicitly; an
    explicit invocation is still gated by the job's preflight (gate files, density bible, hold), which nothing overrides
    except Streets 2–4's `args.force` (recorded, never a pass).
@@ -68,15 +69,22 @@ line, the `.claude/CLAUDE.md` pointer, and last the POLISH.md block (so no "Run:
      exists …`; also `the filigree density bible changed since Street 1; re-run street-1-research` and `the cited
      filigree rulings changed since Street 1 (…); re-run street-1-research`;
    - Street 3 needs `gates/2-plan.json` and an unchanged spec: `build must not start before the street spec passes …`;
-     `slice Sx refused: earlier slice Sy has not passed its gate`; `street-spec.json has no /checks for slice Sx: re-run
-     street-2-plan`;
-   - Street 4 needs `gates/3-build.json`: `review must wait for the finished street view …` (`args.preview` skips it).
+     also `the filigree density bible changed since Street 1; re-run street-1-research` and `the cited filigree rulings
+     changed since Street 1 (…); re-run street-1-research`; `slice Sx refused: earlier slice Sy has not passed its
+     gate`; `street-spec.json has no /checks for slice Sx: re-run street-2-plan`;
+   - Street 4 needs `gates/3-build.json` as a full, unforced pass whose spec is unchanged since Street 3's final gate
+     (`spec_ok`), and the cited filigree rulings unchanged: `review must wait for the finished street view …` and
+     `the cited filigree rulings changed since Street 1 (…)` (`args.preview` and `args.force` skip both). The wait is
+     thrown in full mode only; smoke and plan runs log it and go on. A cycle-2 run also returns `reason:'blocked'`
+     (§1.6) while a cycle-1 punch item is open.
 
    A thrown prerequisite is treated as blocked: leave the item unchecked, note it, take the next item. `args.force`
    (a reason string, Streets 2–4) bypasses the chain; a forced gate is recorded `forced_by` and **can never pass**.
 3. **The hold (Street 3 only; computed in code; no override).** Street 3 returns `reason:'held'` (never throws) unless
    all of these hold:
    - `docs/filigree/gates/3-build.json` exists with `pass: true`, `mode: 'full'` and no `forced_by`;
+   - that gate is fresh: the `sheet-spec.json` sha256 recorded in its artifacts equals the sha256 of the current
+     `docs/filigree/sheet-spec.json` (a stale gate holds Street 3);
    - POLISH.md has a line starting `- [x] **Filigree 3 ·`;
    - no unchecked line matches `^- \[ \] \*\*(Filigree 3 stuck unit|Filigree 4 punch c|Filigree data —)`;
    - with ST15 overridden to `strict…`: the highest `docs/filigree/gates/4-review-c<k>.json` has `pass: true`.
@@ -87,9 +95,21 @@ line, the `.claude/CLAUDE.md` pointer, and last the POLISH.md block (so no "Run:
    Street 3 also returns `reason:'blocked'` while any `- [ ] **Street data (S3) — …` item is open (its own
    prerequisites, queued by Street 2).
 4. **Street 3 is multi-run.** Slices S0 instrument → S1 streaming → S2 near detail → S3 life → S4 sky and layers; each
-   run builds up to `maxUnits` ready units of the current slice (every `index.html` unit strictly one at a time) and
-   runs the slice gate when the slice is complete. Leave the item unchecked between runs with the returned note; check
-   it off only on `check_off: true` (the final S4 gate passed, or the `nothing to build` rerun after it).
+   run builds up to `maxUnits` ready units of the current slice and runs the slice gate when the slice is complete.
+   Every unit holds the `index.html` lock (units run strictly one at a time, and each `index.html` unit also takes the
+   `tools/street-probe.js` lock, so index units serialize against probe-tool edits). Leave the item unchecked between
+   runs with the returned note; check it off only on `check_off: true` (the final S4 gate passed, or the `nothing to
+   build` rerun after it).
+
+   Stuck items are queued once, directly above Street 3, each as one line (whitespace collapsed; title capped at 120
+   and last failure at 600 characters): `Street 3 stuck unit <id>` (3 failed runs; `args.unstick` after a hand fix),
+   and `Street 3 stuck criterion <S> <id>` (a fix unit is done but did not cure its criterion; `args.discard` is the
+   escape, the next gate round then offers a fresh fix unit). A ledger fix unit whose dependency is no unit of its own
+   or an earlier slice (rejected, discarded or unknown id) is reported stuck once (recorded `runs_failed` 3) with
+   "dependency X can never be met …; drop it with args.discard ["id"]", never with a suggestion to unstick, and the
+   run's reason is `units-failed`; a diagnoser unit with such a dependency is rejected (it stays `proposed`). A fix
+   unit blocked by a failed in-batch dependency is recorded `pending`, not left `proposed`. When such dead units are
+   recorded, the run builds `max(1, maxUnits - ceil(dead/6))` units so the §11 bound holds.
 5. **What the polish run does with the return value.**
 
    | Return field | What the run does with it |
@@ -102,10 +122,13 @@ line, the `.claude/CLAUDE.md` pointer, and last the POLISH.md block (so no "Run:
    | `held_by`, `blocked_by`, `slice`, `gate`, `final_gate`, `state`, `device_gate`, `chain_ok` | informational, except record-mismatch recovery (§12) |
 6. **Reason codes.** Filigree's (filigree README §1.6) with these street specifics:
    - `held` (Street 3): the filigree hold (item 3). No release; take the next item.
-   - `blocked` (Street 3): open `Street data (S3)` items. Same handling.
+   - `blocked` (Street 3): open `Street data (S3)` items. Same handling. (Street 4): cycle 2 while a `- [ ] **Street 4
+     punch c<cycle-1> ` line is still open in POLISH.md, returned with `blocked_by` (not for `preview`, `force` or
+     `plan`; plan lists `blocked_by`).
    - `prelude drift: D…` (thrown, any job): a run fault, like `anchor lost`. No release; fix per §12.
-   - `infra`, `agent died: <label>`: no release, the next run retries; in Street 3 units built before an `infra` are
-     still committed with the returned `changelog_line`.
+   - `infra`, `agent died: <label>`: no release when nothing was built, the next run retries; in Street 3, units built
+     before an `infra` are still committed in a patch release using the returned `changelog_line` (as in filigree
+     Job 3). Street 2: a dead spec reader in the Fix phase ends the run with `agent died: spec reader`, not a fix round.
    - `gate-fail`, `units-failed`, `smoke-fail` (Street 3); comma-joined criterion ids (Streets 1 and 2 join with `,`,
      Street 4 with `, `): leave the box unchecked.
    - **Which thrown string is which** (match against the text after the `<job>: ` prefix that die() prepends, or by substring; the polish run treats each class as stated):
@@ -113,7 +136,7 @@ line, the `.claude/CLAUDE.md` pointer, and last the POLISH.md block (so no "Run:
      | class | thrown-string prefixes | action |
      |---|---|---|
      | blocked (a prerequisite is not met yet) | `street research waits for the density bible`, `planning must not start before`, `build must not start before`, `review must wait for the finished street view`, `slice Sx refused`, `street-spec.json has no /checks`, `the filigree density bible changed since Street 1`, `the cited filigree rulings changed since Street 1` | leave unchecked, note it, take the next item |
-     | run fault (the package or the checkout is broken) | `prelude drift:`, `anchor lost:`, `missing inputs:` (the commonest on a partial delivery), `a third review cycle is refused`, `unknown arg …`, `fixtures changed; delete docs/street/gates/views.json and docs/street/gates/view/ to re-freeze` (Street 1; delete as named, rerun), `gates/2-probes.json is invalid (…); delete it and rerun with resume:false`, `gates/4-review-c<k>.json already exists: refusing to overwrite an earlier cycle's record` (owner action named in the message), `args.units: … is not ready`, `scheduler: …`, `args.… must …`, `street ruling … is a fixed constraint` (fix the call) | no release; fix per §12; note it |
+     | run fault (the package or the checkout is broken) | `prelude drift:`, `anchor lost:`, `missing inputs:` (the commonest on a partial delivery), `a third review cycle is refused`, `unknown arg …`, `fixtures changed` followed by `(moved: SVn, …)` or `(rules)`, then `; delete docs/street/gates/views.json and docs/street/gates/view/ to re-freeze` and a baseline clause (Street 1: a moved focus or a changed rule; delete as named, rerun), `gates/2-probes.json is invalid (…); delete it and rerun with resume:false`, `gates/4-review-c<k>.json already exists: refusing to overwrite an earlier cycle's record` (owner action named in the message; raised for the derived cycle as well as `args.cycle`), `args.units: … is not ready`, `scheduler: …`, `restore invariant broken:` and `coexistence broken:` (Street 3: undeclared `/*ST-HOOK*/` lines at preflight, a previous run that left `restore(index.html)` off its stamp, or a previous run that changed `maps-site/` or `docs/filigree/` with the tree unchanged since; the owner action is in each message: undo by hand, or delete `state/3-build/index-ref.json` when the remaining change is legitimate), `street-bible.json has no classes` (Street 4), `street ruling … is a fixed constraint`, and every other argument-validation throw (`args.… must …`, `args.force is not accepted by Street 1`, `args.rulings sets the filigree R1..R22 and is refused here …`, `unknown ruling …`, `unknown street ruling …`, `ruling … must be a non-empty string`, `street ruling … must be a non-empty string`, `preview must be a boolean`, `args.units lists a unit twice`): fix the call. **Catch-all:** any throw not in the blocked or infra rows is a run fault | no release; fix per §12; note it |
      | infra | `agent died: <label>`, `infra`, Workflow name unresolved | no release; the next run retries |
 
    - `nothing to build` (Street 3), `already passed: …` (Street 1, `pass:true`), `record-incomplete: …` (Street 1),
@@ -125,11 +148,14 @@ line, the `.claude/CLAUDE.md` pointer, and last the POLISH.md block (so no "Run:
    filigree paths: `maps-site/`, `docs/filigree/`, `.claude/workflows/filigree-*`, and `index.html` while Filigree 3 is
    mid-build); if it is not clean, finish or commit that track's work first, or take the next item. (2) Run the job.
    (3) Stage only the paths the job wrote (`docs/street/**`, `tools/street-probe.js`, and for Street 3 `index.html`),
-   plus `VERSION` and `CHANGELOG.md`. (4) Squash per `.claude/CLAUDE.md` "Cutting a version": the WIP commits since the
+   plus `POLISH.md` (the polish run's own edit: the checked box, the result note and the inserts), `VERSION` and
+   `CHANGELOG.md`. (4) Squash per `.claude/CLAUDE.md` "Cutting a version": the WIP commits since the
    last release that touch these paths become the ONE release commit; a filigree WIP commit never goes into a street
    release or the reverse. (5) Tag and `git push --follow-tags`. If an earlier street commit was already pushed, the
    CLAUDE.md hotfix exception applies and the squash is pushed with `--force-with-lease`; when unrelated filigree WIP
-   commits sit between, squash only the unpushed street tail.
+   commits sit between, squash only the unpushed street tail. The street delivery commit has no release of its own: the
+   first release cut after it (normally Street 1's) absorbs it. A Street 3 run with no unit built and no gate words
+   its CHANGELOG line `no unit built (n failed)`, not `slice gate run`.
 8. **Git.** Agents never run git and never edit POLISH.md, CHANGELOG.md, VERSION or `.claude/`. The polish run commits.
 9. **The street view ships off** (ST7, R18 cited): `street=1` plus a layers row, default off, until Street 4 passes
    **and** an owner-hardware device run passes (ST8, §5.2). Then the owner flips the default.
@@ -149,11 +175,16 @@ line, the `.claude/CLAUDE.md` pointer, and last the POLISH.md block (so no "Run:
 
 Plan mode is not a polish result. Street 1's plan preview fails exactly as a full run would (`missing inputs`,
 `anchor lost`, `prelude drift`, the density-bible refusal). Streets 2 and 3 report an unsatisfied chain as
-`chain_ok:false` and still return the schedule; Street 3 also reports `held`/`blocked_by`. Street 4 throws until Street
-3's final gate exists (use `preview:true` for a partial build).
+`chain_ok:false` and still return the schedule; Street 3 also reports `held`/`blocked_by`. Street 4 throws that wait in full
+mode only (smoke and plan log it; use `preview:true` for a partial build in a full run).
 
 Cross-session resume: Street 1 skips questions whose evidence re-hashes (its ledger is written only at Record) and
-never regenerates frozen fixtures; Street 2 resumes sections and frozen probes while their stamps match; Street 3
+never regenerates frozen fixtures; Street 2 resumes sections and frozen probes while their stamps match,
+also across agent-died stops: the ledger `state/2-plan.json` is checkpointed after Probes (probes + tidings) and after
+Sections (before the section-quorum stop), and on any stop with unrecorded work; a section resumes only when its
+recorded json AND md both re-hash; the tidings gaps (schema source, shut-way and muster-day counts) survive a resume in the
+ledger. A re-run on an unchanged bible, rulings and spec files returns `already passed` and
+does not rewrite `street-spec.json` (to redo Street 2, delete `gates/2-plan.json` or pass `resume:false`). Street 3
 resumes per unit from `state/3-build/`; Street 4 is one cycle per run.
 
 ## 3. Args
@@ -162,9 +193,10 @@ resumes per unit from `state/3-build/`; Street 4 is one cycle per run.
 `docs/street`; full mode must stay under it; smoke needs an absolute dir outside the repo), `mode`
 (`full|smoke|plan`), `maxRounds` (0..2), `resume` (default true), `force` (Streets 2–4: a non-empty reason; Street 1
 rejects it). **`rulings` is refused**: filigree R overrides come only from `docs/filigree/rulings.json`; use
-`streetRulings` (keys ⊆ ST1…ST19, non-empty strings; ST3, ST4 and ST18 are fixed and refused) for street rulings.
-`port` (default 0 = the probe binds an OS-assigned free port; 8544 is refused, it belongs to `server.js` and the
-filigree jobs). Unknown keys are rejected.
+`streetRulings` (keys ⊆ ST1…ST19, non-empty strings; ST3, ST4 and ST18 are fixed and refused) for street rulings;
+Street 2 honours overrides of ST5, ST7, ST9 and ST19 (§9).
+`port` (default 0 = the probe binds an OS-assigned free port; otherwise an integer 1024..65535; 8544 is refused, it
+belongs to `server.js` and the filigree jobs). Unknown keys are rejected.
 
 | job | arg | default | rule |
 |---|---|---|---|
@@ -175,7 +207,7 @@ filigree jobs). Unknown keys are rejected.
 | 3 | `unstick` | — | unit ids whose `runs_failed` is reset for this run |
 | 3 | `discard` | — | `fix-S<n><k>` ids marked `discarded` |
 | 4 | `preview` | false | findings only, under `docs/street/preview/`; never a polish result |
-| 4 | `cycle` | 1 + non-preview review gates | 1..2; a third is refused (ST13) |
+| 4 | `cycle` | 1 + max(existing cycles, 0) | 1..2; a third is refused (ST13); the already-exists refusal applies to the derived cycle as well as `args.cycle` |
 
 ## 4. Outputs
 
@@ -193,28 +225,34 @@ docs/street/
   fixtures/tidings.json     Street 2: the R12-schema tidings fixture (frozen while resume:true)
   cold/                     Street 2: the blind readers' answers
   state/                    ledgers: 1-research.json, 2-plan.json, 3-build.json, 3-build/<unit>.json,
-                            3-build/index-ref.json, 3-build/off-ref.json (when re-baselined), 4-review.json
+                            3-build/index-ref.json, 3-build/off-ref.json (when re-baselined), 4-review.json;
+                            2-plan.json sections carry {sid, path, sha256, md, sha_md, stamp} (older entries without
+                            md/sha_md are not resumed and are rewritten once) and the ledger also holds
+                            tidings_schema_source, tidings_shut_ways, tidings_muster_days
   shots/                    Street 3 captures (git-ignored; last two runs; ≤300 KB per image)
-  review-c<k>/              Street 4: metrics.json + cited/ (tracked); shots/ (git-ignored)
+  review-c<k>/              Street 4: metrics.json + cited/ (tracked; files named <NN>-<basename>); shots/ (git-ignored)
   findings/                 Street 4
-  punch-list.{md,json}      Street 4
+  punch-list-c<k>.{md,json} Street 4, per cycle (punch-list.{md,json} is kept only as a copy of the latest list)
   device/<date>.json        owner-run device measurements (ST8)
   preview/                  Street 4 preview scratch (git-ignored)
   gates/
     views.json, view/SV1..SV9.jpg     Street 1 fixtures (frozen)
-    baseline.json                     Street 1 street-off baseline (frozen per index.html sha)
+    baseline.json                     Street 1 street-off baseline (per index.html, probe and views.json sha;
+                                      never re-measured once the STREET block exists)
     1-research.json, 1-view-answers.json
     2-probes.json (frozen), 2-plan.json
-    3-build-S0..S4.json, 3-build.json
-    4-review-c<k>.json
+    3-build-S0..S4.json, 3-build.json (each with a top-level tree_digest)
+    4-review-c<k>.json (its punch_items [{id, lens, title}] feed the next cycle)
 tools/street-probe.js       Street 1 q01 (extended by Street 3 units, never broken)
 tools/street-drift.js       the drift check (delivered with the scripts)
 index.html                  Street 3 only: the /* STREET */ block + the spec's declared hook lines
 ```
 
-**Frozen files.** `gates/views.json` + `gates/view/` (a changed rule dies with `fixtures changed; delete
-docs/street/gates/views.json and docs/street/gates/view/ to re-freeze`), `gates/baseline.json` (re-measured only when
-index.html or the probe changed), `gates/2-probes.json` and `fixtures/tidings.json` (frozen while `resume:true`;
+**Frozen files.** `gates/views.json` + `gates/view/` (a changed rule or a moved focus dies with `fixtures changed (moved: SVn, ...)`
+or `fixtures changed (rules)`, then `; delete docs/street/gates/views.json and docs/street/gates/view/ to re-freeze`
+and a baseline note), `gates/baseline.json` (re-measured when
+index.html, the probe or `views.json` changed, and never once index.html carries the STREET block: it is kept and
+staleness is a recorded gap), `gates/2-probes.json` and `fixtures/tidings.json` (frozen while `resume:true`;
 `resume:false` regenerates). Those deletions are the only sanctioned ones.
 
 ## 5. Gates
@@ -234,7 +272,11 @@ index.html or the probe changed), `gates/2-probes.json` and `fixtures/tidings.js
 | SV9 | epeshu | 120 | Epēshu centre | 11000 | 0.50 | far quiet (measure only) |
 
 Every view is reached by `simDays(day)` from a cold load at speed 0 (never `ANNALS.day()`, which skips the weather
-rolls), the camera by `ANNALS.goto(x, z, R, true)` with yaw 0. Seeds: `epeshu` and `tamar1374` (filigree Job 3's
+rolls), then `ANNALS.world.sv` is snapped to the code's `seasonWeights` of the day (CAMERA_RULE: the slow season filter's
+steady state, render-only, so the drawn sky and the dark hour depend on the day alone), the camera by
+`ANNALS.goto(x, z, R, true)` with yaw 0. SV2's tod is the midpoint of the longest run where the code's own dark-hour
+formula at that day is ≥ 0.5 (`--dark-scan`); the dark fallback no longer exists as a recorded outcome: an SV2 frozen
+without a dark hour (fallback `dark: none`, or formula < 0.5 at its tod) fails SG1.11. Seeds: `epeshu` and `tamar1374` (filigree Job 3's
 procedural smoke seed). The blank-street gate uses SV1–SV8; SV9 is measured only. Street 4 adds 390×844 phone variants
 of SV1 and SV2.
 
@@ -244,9 +286,17 @@ of SV1 and SV2.
 OS-assigned port), routes the CDNs from `--cdn-dir`, and installs a **virtual clock** before page scripts:
 `requestAnimationFrame`, `performance.now` and `Date.now` on a fixed timeline, `Math.random` seeded, the director held,
 speed 0, tod pinned. Under it, calls, tris, geometries, object counts, settled hashes and fingerprints are exact and the
-degrade ladder never trips. Wall-clock times are never gated. The one real-clock mode, `--device`, is owner-run on real
-hardware and writes `docs/street/device/<date>.json` (smoothed fps per second over a 60 s descent, the degrade step);
-a pass (fps ≥ 42 throughout, degrade step 0) is the precondition for flipping the default (ST8).
+degrade ladder never trips. Wall-clock times are never gated. The sim is one IIFE, so none of its bindings (`renderer`, `scene`,
+`renderTod`, `_sunDir`, …) is readable from the page: the probe reads the renderer and the scene through its own
+`THREE.WebGLRenderer` hook and computes the dark hour from copies of the code's formula (`--dark-scan`), never by
+editing index.html. Requests to `fonts.googleapis.com` and `fonts.gstatic.com` are aborted (the sandbox has no network);
+exactly those failures are excluded from `console_errors` and the filter is listed in the output field
+`console_errors_filter`. The one real-clock mode, `--device`, is owner-run on real hardware and writes
+`docs/street/device/<date>.json` (smoothed fps per second over a 60 s descent, the degrade step, and, as it must stamp,
+`index_sha`, the sha256 of the index.html it ran against); a pass (fps ≥ 42 throughout, degrade step 0, on the current index.html) is the
+precondition for flipping the default (ST8). Street 4 reads the newest device file as `pass`, `fail`, `absent` or
+`stale` (no `index_sha`, or one that differs from the current index.html); until `--device` stamps `index_sha`, every
+device run reads as stale.
 
 ### 5.3 Fingerprint protocol
 
@@ -264,14 +314,36 @@ spec declares, each carrying `/*ST-HOOK*/`. `restore(index.html)` removes the bl
 into the line it replaced. While only this track has edited the sim, `restore(index.html)` is the pre-street file byte
 for byte. So: a changed `restore` sha at preflight means another item edited the sim (Street 3 then re-measures its
 off reference: the **re-baseline**, recorded), and an unchanged one after a build proves no undeclared line moved
-(GS.X3). The filigree anchors are read live from `filigree-1-research.js` and must still resolve, none may appear
-inside the block, and `maps-site/**` + `docs/filigree/**` must hash to the same tree digest after every run (GS.8).
+(GS.X3), also across runs. The re-baseline measures `restore(index.html)`: it copies the repo (minus `.git`,
+`node_modules` and `maps-site`) to a temp tree, writes the restored index.html there (its sha must equal the restore
+sha) and runs the probe and the keydown rule on that copy; `off-ref.json` gains `measured_on: 'restore(index.html)'`,
+and a probe that cannot serve another tree makes the result `infra`. `state/3-build/index-ref.json` stamps the
+reference this run measured against (`pre.restore.sha_restore`, kept or re-baselined), never the post-run restore sha,
+plus `restore_ok`, `sha_restore_left`, `undeclared_left`, `tree_ok`, `tree_digest_pre` and `tree_digest_end`, so the next
+preflight refuses (`restore invariant broken:` or `coexistence broken:`, §1.6) instead of absorbing a stray edit. The
+proof also requires each declared insert hook to appear at most once (`dup_hooks`); a hook placed in the wrong function
+is still unchecked. The filigree anchors are read live from `filigree-1-research.js` and must still resolve (the
+preflight's `fil_anchors.n` is the kept entry count; a run fault when it is 0 or differs from the literal count), none
+may appear inside the block, and `maps-site/**` + `docs/filigree/**` must hash to the same tree digest after every run
+(GS.8). The shots pruner computes that tree rule at the end of every run, gate or not: a difference fails GS.8 when a
+gate ran, otherwise it gives reason `units-failed` with a polish-note clause, and either way it is stamped in
+`index-ref.json`. The slice gates `gates/3-build-S*.json` and `gates/3-build.json` carry a top-level `tree_digest`. The
+spec copy the preflight reads carries counts and canonical lengths for units, checks, hook_lines and caps; a mismatch
+is a run fault, so nothing is scheduled from a truncated copy.
 
 ### 5.5 Street 1 — blank-street test
 
 Two blind appliers on different models (A sonnet/high, B opus/high, identical prompts) hold only the bible, the views,
-the stills, the baseline and greps of index.html; per gate view they name the tier and six bible classes, each with its
-state and a source ref; a resolver checks every ref.
+the stills, the baseline and greps of index.html (and, for `fil` class ids, the filigree density bible and
+`maps-site/data/`); per gate view they name the tier and six bible classes, each with its state and a source ref; a
+resolver checks every ref. The appliers are told to use only `id`, `seed`, `day`, `x`, `z`, `R` and `tod` of
+`views.json` and to ignore its `rules` and `tests`. The resolver counts sim literals with a node script (`String.indexOf`
+on a temp JSON file), not shell `grep -cF`. The radius tiers are fixed constants shared by q15, the integrator, the
+patcher and the validator, which checks the bands equal them: T0 [9, 40), T1 [40, 150), T2 [150, 700), T3 [700, 2400),
+T4 [2400, 11001). The debt naming rule is fixed in q04, the integrator spec and the validator (`<anon>@<line>`,
+`<top-level>`). Questions q10 and q12 carry the lenses recount and canon. A dead completeness critic does not end the
+follow-up loop: the critic goes through `crit()` (one retry), and if it still dies the round continues (probe rewrite,
+patch, re-gate) with an empty question list.
 
 | id | criterion |
 |---|---|
@@ -285,34 +357,40 @@ state and a source ref; a resolver checks every ref.
 | SG1.8 | no struck claim cited |
 | SG1.9 | blind compliance |
 | SG1.10 | every fan-out ≥75% kept |
-| SG1.11 | probe deterministic, literals met, fingerprint sensitive; baseline double run equal |
-| SG1.12 | no new sim state; every determinism debt the grep finds listed; keys in canonical form |
+| SG1.11 | probe deterministic, literals 1-8 met (8 = `--dark-scan` checked against the code's formula), fingerprint sensitive; baseline double run equal and measured on the current `views.json` (`views_sha`); SV2 frozen without a dark fallback and inside the dark hour (formula ≥ 0.5) |
+| SG1.12 | no new sim state; every determinism debt the grep finds listed (fn named by the fixed rule); keys in canonical form |
 | SG1.13 | caps ceiling numeric for SV1–SV9 and ≥ the baseline |
 | SG1.14 | every imported filigree class id exists; the filigree bible unchanged during the run |
 
 ### 5.6 Street 2 — cold-engineer test
 
 Two blind readers (sonnet/high, opus/high) may read only `street-spec.{md,json}` and answer 28–36 probes frozen before
-the spec existed.
+the spec existed. Probe answers are scored through `norm()` except P-near, P-parser and P-hook-marker, which are scored
+whitespace-collapsed exact; the readers are scored against the fixed kind, tol and options, and a frozen probe set
+fails readback when a mandatory probe changed them, when a fixed answer holds an unfilled `<...>` placeholder, when a
+fixed enum answer is not among its options, a fixed number answer is not numeric, an enum or order probe has no
+options, P-key-crowd lacks the form `st:crowd:<settlement id>:day`, or P-hash-param fails ST18 `PARAM_OK`. The probe
+readback returns `canon_len`, which the script cross-checks.
 
 | id | criterion |
 |---|---|
 | SG2.0 | chain held |
 | SG2.1 | traceability (bible must-rule → spec rule → unit), DAG, ≤9 units per slice, machine-checkable acceptance |
-| SG2.2 | unit files only `index.html`, `tools/street-*.js`, `docs/street/**` |
-| SG2.3 | cited literals resolve; no hook line holds a filigree or street anchor literal |
+| SG2.2 | unit files only `index.html`, `tools/street-probe.js` and `docs/street/{fixtures,shots,device}/**`, never the gate, state, research, bible, spec or rulings files or `tools/street-drift.js`; no `.`/`..`/empty segments, backslashes or leading `./`, and the fixtures/shots/device tail has no dot-leading segment |
+| SG2.3 | cited literals resolve; each non-null `hook_lines[].replaces` equals exactly one whole `index.html` line (else `not a whole line` / `ambiguous (n lines)`); no hook line holds a filigree or street anchor literal |
 | SG2.4 | no source-post name outside `## Provenance` |
 | SG2.5 | no spec-probe pointer null |
 | SG2.6 | each reader ≥90% |
-| SG2.7 | every slice has `/checks`; the mandatory check ids present |
+| SG2.7 | every slice has `/checks`; the mandatory check ids present (12 on every slice, plus per slice: S0 `street.hash_table`; S1 `fade`, `swaps`, `paths`; S3 `vfps`, `spacing`, `caravan_tiers`; S4 `clouds`, `shadows_row`, `weather_dial`, `tidings`, `folk_row` and `fog_copy` when the fog unit exists) |
 | SG2.8 | caps for SV1–SV9 numeric, within the bible ceiling; SV5 and SV9 equal the baseline |
-| SG2.9 | determinism contract: keyed hash + read-only sim state only; no new sim state |
+| SG2.9 | determinism contract: keyed hash + read-only sim state only; no new sim state; no clock or random token in acceptance commands (grep kinds, `street.static_clock`/`street.static_rng` and text scans that only name the tokens are skipped; tokens are written in bracket form) |
 | SG2.10 | hash params `^[a-z]+$`, not ending in `s`, not `s`/`goto`/`filigree`; `notices` consumed only with the S0 parser unit and the hash table |
-| SG2.11 | hook lines marked, ≤16, a function hook → replaced line; one `STREET` namespace |
+| SG2.11 | hook lines marked, ≤16, a function hook → replaced line; one `STREET` namespace; a non-empty `block.placement` that the literal guard finds on exactly one `index.html` line |
 | SG2.12 | mandatory units present (S0.U00, S0.U01, S0.U02; S4.Ufog only when the atlas fog exists; S4.Unotices iff notices are consumed) |
-| SG2.13 | zero banned vocabulary |
+| SG2.13 | zero banned vocabulary (the ban covers all spec prose, not only player-facing text) |
 | SG2.14 | blindness; zero schema-path guesses |
 | SG2.15 | artifacts hashed |
+| SG2.16 | limits Street 3 gates on (spec reader returns `/fade/ms`, `/stream/{max_jobs_frame,tri_cap_frame,resident_tris}`, `/traffic/{s0,T,v0}`, `/traffic/tiers` and `/tiers/hysteresis`): `fade.ms` ≤ 250 (R6), `max_jobs_frame` an integer 1..6 (ST9), `tri_cap_frame`, `resident_tris`, `s0`, `T`, `v0` positive numbers, at least 3 caravan tiers with `in_R`/`out_R` hysteresis, and every hysteresis pair 0 < in_R < out_R ≤ 2200; an R6 or ST9 override relaxes only that bound; failures go to the spec fixer as `limits` items |
 
 ### 5.7 Street 3 — the walk test and the slice gates
 
@@ -322,13 +400,13 @@ the spec existed.
 | GS.2 | fingerprints `never === off === on === ref`, `walk_on === walk_off === ref`, both seeds | S0 |
 | GS.3 | street off: every view's calls, tris, geometries, textures, objects equal the reference exactly | S0 |
 | GS.4 | street on: every view within its caps; SV5 and SV9 on = off exactly | S0 |
-| GS.5 | zero clock, `W.rng` and `nowMs` in the block; every InstancedMesh carries instanceColor; one top-level name | S0 |
+| GS.5 | zero clock, `W.rng` and `nowMs` in the block and zero banned vocabulary in its string literals and the `/*ST-HOOK*/` lines (`vocab_hits`); every InstancedMesh carries instanceColor; one top-level name | S0 |
 | GS.6 | no pop (0 → ≥0.9 opacity in one step); ease ≤ 250 ms (R6) | S1 |
 | GS.7 | each tier threshold swaps once in, once out | S1 |
-| GS.8 | filigree anchors resolve, none in the block; `maps-site/**` + `docs/filigree/**` untouched | S0 |
-| GS.9 | console clean, both seeds, on and off | S0 |
-| GS.10 | the slice's spec `/checks` pass | S0 |
-| GS.X3 | only declared hook lines changed outside the block (restore invariant) | S0 |
+| GS.8 | filigree anchors resolve (and at least one filigree literal was recorded at preflight), none in the block; `maps-site/**` + `docs/filigree/**` untouched | S0 |
+| GS.9 | console clean, both seeds, on and off (the aborted font hosts are excluded, `console_errors_filter`) | S0 |
+| GS.10 | the slice's spec `/checks` pass (results matched by id only; a `--cdn-dir`/`--port` appended to a probe command no longer matters) | S0 |
+| GS.X3 | only declared hook lines changed outside the block, no declared insert hook twice (restore invariant) | S0 |
 | GS.X4 | the keydown handler and the `camera.near` line unchanged | S0 |
 | GS.X5 | the hash table parses (`#notices=u&s=a` reads seed `a`); seed writers keep `street=1` | S0 |
 | GS.X6 | `ANNALS.stats()` keys unchanged | S0 |
@@ -347,11 +425,25 @@ the spec existed.
 S4's gate is the final gate and re-checks every slice's `/checks`. The reference is `gates/baseline.json` until a
 re-baseline writes `state/3-build/off-ref.json`.
 
+Build details the table leaves out. Every unit runs and scores the restore check and syntax-checks `index.html`
+(every unit holds its lock); a non-index unit fails as `edited outside unit files: index.html` when the file's sha
+differs from the last index-touching unit's. The unit record is verified, not trusted: the writer returns
+`acceptance_n`, `runs_failed`, `spec_sha256`, `restore_sha`, the sorted `path:sha` list and `canon_len`, and the script
+compares them; the write and the owner-discard edit go through node scripts, not hand edits. The metrics reader has the
+probe's top-level paths in its prompt and returns an optional `not_found` list beside the 20-field digest. Fix units
+(from the diagnoser or the ledger) are rejected when a file path has a `.` or `..` segment, a `//`, a backslash or a
+leading `/`, when a dependency is neither a spec unit id nor a `fix-S<digit><n>` id, or when an acceptance `expect` is
+empty or whitespace. `re:` expectations are bounded: a pattern longer than 200 characters, with a backreference or with
+nested or stacked quantifiers never matches, the tested output is cut to 2000 characters, and fix-unit acceptance with
+such a pattern is rejected (Street 2's spec checks that use `re:` get the same limit).
+
 ### 5.8 Street 4 — bare-street test
 
 On SV1, SV2, SV4 and SV7, three blind judges (opus/sonnet/opus; J0 sees the opposite A/B order to J1 and J2) see only
 the bare and the layered stills. Each names what one has and the other lacks using the bible's class names; an omission
-is confirmed in code when the probe counts that class on the layered view and not on the bare one.
+is confirmed in code when the probe counts that class on the layered view and not on the bare one. The blind stills come
+from two extra single-layer desktop probe runs in the capture step; a judge view whose layered/bare pair the capture
+could not identify fails SG4.2 with no judges run for it, and a gap is recorded.
 
 | id | criterion |
 |---|---|
@@ -361,9 +453,26 @@ is confirmed in code when the probe counts that class on the layered view and no
 | SG4.4 | caps met; far views quiet |
 | SG4.5 | zero fade violations; swaps 1+1 |
 | SG4.6 | zero banned words in STREET-block strings |
-| SG4.7 | coexistence clean (filigree anchors resolve and stay out of the block, restore, hash table, stats keys) |
+| SG4.7 | coexistence clean (filigree anchors resolve and stay out of the block, `restore_undeclared` empty and `restore(index.html)` sha256 equal to `sha_restore` in `state/3-build/index-ref.json` or `off-ref.json`, hash table, stats keys) |
 | SG4.8 | blind compliance |
-| SG4.9 | every lens returned in round 0; verify coverage ≥75% |
+| SG4.9 | every lens returned in round 0; verify coverage ≥75% (a verifier that returns `infra_error` counts against the kept fraction: the finding is ledgered unverified with why `infra` and a gap is recorded) |
+
+Cycles and prior ids. The default cycle is 1 + max(existing cycles, 0), and the already-exists refusal applies to the
+derived cycle as well as `args.cycle`. Prior ids, lenses and titles come from `gates/4-review-c<k-1>.json` (its
+`punch_items [{id, lens, title}]`), falling back to `punch-list-c<k-1>.json`. A prior id counts as fixed only when a
+finding re-reporting it was verified and either did not reproduce or was refuted; every other prior id goes under "Not
+re-checked" and into `gate.not_rechecked` and `punch_ids`. The finding cap keeps re-reported prior ids first (a capped
+or no-evidence prior id lands in `not_rechecked`); the dedup re-tags a match to an open prior id as a reopen and never
+drops it, and a dupe is accepted only when `of` names an earlier candidate or an exact seen title. The gate record
+`gates/4-review-c<k>.json` is written with the digest-checked `recordD` (`canon_len` and top-level array lengths), like
+the findings file; the list is `punch-list-c<k>.{md,json}` and the plain `punch-list.{md,json}` is only a copy of the
+latest. The shot pruner runs before the punch integrator, in the "Punch list" phase: `cited/` files are named
+`<NN>-<basename>` and each shot item's `evidence.ref` in the punch list points at its `cited/` copy (the `#x,y,w,h`
+region is kept). Finders, reproducers and refuters get the sandbox recipe and always use `--port 0` plus the capture's
+kept `--cdn-dir`, whatever `args.port` is; verifiers run in batches of 6. Street 4 dies when `street-bible.json`
+`classes[]` is empty, records a gap when no class label matches any judge view's `classes_on` key (a harness fault, not
+a build fault), and retries a failed metrics-reader node script once (`infra` only when both attempts fail). The
+newest `device_gate` value is `pass`, `fail`, `absent` or `stale` (§5.2).
 
 Lenses: determinism; performance and caps; pop and fade; caravan sense; canon and voice; the Marble City; weather and
 sky; layers and hash; phone; where the build flinched; owner-input fidelity (the toggles, the weather dial, the
@@ -444,17 +553,19 @@ itself on synthesized scripts in a temp dir (a faithful copy passes; a one-word 
 
 **(e) Plan mode**: `Workflow({name:'street-1-research', args:{date:'<today>', mode:'plan'}})` — expect a schedule and
 `pass:false`. In a fresh checkout Street 1 throws the density-bible refusal until Filigree 1 has passed; Streets 2–3
-return `chain_ok:false`; Street 4 throws until Street 3 has written its final gate.
+return `chain_ok:false`; Street 4 logs the missing Street 3 chain in plan mode (it throws only in a full run).
 
 **(f) Plumbing chain** in a scratch dir, never under `docs/`: the four jobs with `mode:'smoke'` and the same absolute
-`outDir`; smoke uses haiku/low and one item per fan-out, Street 3 writes only dry-run diffs; delete the dir afterwards.
+`outDir`; smoke uses haiku/low and one item per fan-out, Street 3 writes only dry-run diffs; delete the dir afterwards. Street 4
+dies on an unsatisfied `gates/3-build.json` chain only in full mode (smoke and plan log it), so `preview:true` is not
+needed in the smoke step. The smoke prompts show the smoke probe path (`<outDir>/tools/street-probe.js`), not the repo's.
 
-**(g0) Bootstrap the CDN directory** (once per sandbox; `--cdn-dir` is the only way the probe gets three and leaflet, since CDNs are blocked): `D=$(mktemp -d) && cd $D && npm pack three@0.128.0 leaflet@1.9.4 && for f in *.tgz; do mkdir -p "${f%.tgz}" && tar xzf $f -C "${f%.tgz}"; done`, then pass `--cdn-dir $D`. The exact layout the probe expects is the `SANDBOX_ST` string in the prelude (copied from `filigree-3-build.js` `SANDBOX`). Playwright comes from `NODE_PATH=/opt/node22/lib/node_modules` and Chromium from `/opt/pw-browsers/chromium-1194/`; both are environment-specific, and a failure to find either is reported by the probe as `infra_error` (never a gate fail). `tools/filigree-capture.js` does not exist, so there is no shortcut.
+**(g0) Bootstrap the CDN directory** (once per sandbox; `--cdn-dir` is the only way the probe gets three and leaflet, since CDNs are blocked): `D=$(mktemp -d) && (cd $D && npm pack leaflet@1.9.4 three@0.128.0 >/dev/null && mkdir leaflet three && tar xzf leaflet-1.9.4.tgz -C leaflet --strip-components=1 && tar xzf three-0.128.0.tgz -C three --strip-components=1)`, then pass `--cdn-dir $D` (the probe routes `<D>/three/build/three.min.js` and `<D>/leaflet/dist/<file>`; the same form as the filigree README §8 (f), and without `--strip-components=1` the files land under `package/` and every browser step fails as `infra_error`). The exact layout the probe expects is the `SANDBOX_ST` string in the prelude (copied from `filigree-3-build.js` `SANDBOX`). The probe aborts requests to `fonts.googleapis.com` and `fonts.gstatic.com` and excludes exactly those failures from `console_errors`, listing the filter in the output field `console_errors_filter`. Playwright comes from `NODE_PATH=/opt/node22/lib/node_modules` and Chromium from `/opt/pw-browsers/chromium-1194/`; both are environment-specific, and a failure to find either is reported by the probe as `infra_error` (never a gate fail). `tools/filigree-capture.js` does not exist, so there is no shortcut.
 
 **(g) App smoke**: the filigree README §8 (f) recipe (npm-packed three r128 and leaflet, Playwright from `NODE_PATH`,
 the Chromium path) — or simply `node tools/street-probe.js --fingerprint --seed epeshu --days 400 --cdn-dir <dir>`
 once the probe exists. Load `#s=epeshu` and `#s=tamar1374`, wait for `ANNALS.ready`, `simDays(400)`, zero console
-errors, with and without `street=1`.
+errors (the aborted font hosts excluded), with and without `street=1`.
 
 ## 9. Owner rulings
 
@@ -465,6 +576,14 @@ only there.
 
 **Confirm before Street 2:** ST1, ST2, ST5, ST8, ST10, ST12.
 
+Street 2 honours overrides of ST5, ST7, ST9 and ST19 (`args.streetRulings` or `docs/street/rulings.json`) and of R6
+(`docs/filigree/rulings.json`). The baked default answers (P-dark-hour `render`, P-shadows-default `on`, P-hash-param
+`street`, P-fade-ms 250) and the spec-shape and section constants then read "as the overridden ruling states", and the
+probe writer fills those answers from the ruling text. An ST5 override adds a `none` option to P-dark-hour. An ST7
+hash-param override must pass `PARAM_OK` (ST18) and flows into `hash.params`, `layers.param`, the minimum hash table
+and the S0.U00 text. The gate gaps record the overridden ids and the plan preview returns `overridden_baked`. An R6 or
+ST9 override relaxes only that bound of SG2.16; Street 3 still gates `fade.ms` ≤ 250 and `max_jobs_frame` ≤ 6.
+
 | id | question | default |
 |---|---|---|
 | ST1 | placement | the sim only, one STREET block plus declared hooks; the atlas, `docs/filigree/` and filigree tools never edited; the atlas-to-sim link belongs to "Sim ↔ atlas continuity" |
@@ -474,7 +593,7 @@ only there.
 | ST5 | gates at the dark hour | leaves drawn shut while the drawn eclipse lasts; presentation only, never a hindrance to the caravans; "the gates shut at the dark hour"; canon unconfirmed (a veto leaves them open) |
 | ST6 | obstacles | one-lane bridges and fords crossed in turn; toll halts hold a dwell; keyed on (seed, route, day); visual only |
 | ST7 | layers | rows only, no new keys; `street=1`, default off; sub-rows "roads and folk", "clouds", "weather", "shadows" (on; "held off for speed" at degrade step 3) |
-| ST8 | perf evidence | deterministic caps and exact off-identity in the sandbox; owner device run (fps ≥ 42, degrade step 0, 60 s descent) before the default flip |
+| ST8 | perf evidence | deterministic caps and exact off-identity in the sandbox; owner device run (fps ≥ 42, degrade step 0, 60 s descent, on the current index.html or it reads `stale`) before the default flip |
 | ST9 | workers | none; ≤6 quad jobs and a triangle cap per frame; a full LRU stays coarse |
 | ST10 | VTT export, party presence | out of scope (unsourced); the battle sheet is a separate owner-gated item, enabled by overriding this ruling with its scale |
 | ST11 | fog | the R13 function copied byte-identical with its helpers inside the STREET namespace; no fog sim state; a gap while the atlas has none |
@@ -510,9 +629,9 @@ parser before anything reads `notices=`.
 
 | job | typical agents | bound (plan-mode `agents_bound` / `bound`) |
 |---|---|---|
-| Street 1 | ≈80 | 180 |
-| Street 2 | ≈50 | 90 |
-| Street 3 | ≈40 per run (5–8 runs) | 190 per run at `maxUnits:6` |
+| Street 1 | ≈80 | 180 (plan-mode `agents_bound` is exactly 180: the critic goes through `crit()`, so each follow-up round counts 44) |
+| Street 2 | ≈50 | 90 (plan-mode `agents_max` 77: the Record phase is 8, gate + final ledger + two ledger checkpoints, crit each) |
+| Street 3 | ≈40 per run (5–8 runs) | 190 per run at `maxUnits:6`, `maxRounds:2` (plan-mode bound 190; Record is 2 + 4 × 2, the pruner going through `crit()`) |
 | Street 4 | ≈80 | 200 |
 
 A plan result above the bound means an arg was raised or a script grew: stop and note it. A full track is ≈80 + 50 +
@@ -532,15 +651,19 @@ the last two runs.
 - **The filigree density bible changed after Street 1** (a Filigree 1 re-run adding gaps). Streets 2 and 3 throw
   `the filigree density bible changed since Street 1; re-run street-1-research` (Streets 2, 3 and 4 throw the
   cited-rulings string; Street 4 does not compare the bible sha). Re-run Street 1 with `resume:true`:
-  the frozen `gates/views.json`, the baseline and every `research/q*.json` whose evidence re-hashes survive; the
+  the frozen `gates/views.json`, the baseline and every `research/q*.json` whose evidence re-hashes survive (the baseline
+  survives after Street 3 too: once index.html carries the STREET block it is kept and staleness is a recorded gap;
+  `views.json` is re-resolved on every run, and a moved focus dies with `fixtures changed (moved: …)`); the
   bible is re-validated against the new class ids and the blank-street gate runs again. Gate records of Streets 2–4
   are then stale and those jobs re-run in order (budget: the Street 1 re-run plus Street 2 again, ≈130 agents beyond
   §11).
 - **Street 1 run while Filigree 3 is mid-build.** Allowed, but `index.html` may still move. `gates/baseline.json`
   stores `index_sha`; Street 3 only re-measures the off reference whenever it differs (the `rebaselined` note); it does not
-  re-resolve view focuses. A moved focus (Filigree 3 moved the grid or a label focus) is caught by a Street 1 re-run
-  (`fixtures changed; delete docs/street/gates/views.json and docs/street/gates/view/ to re-freeze`) or by a gate
-  failure. Cheapest course: run Street 1 after Filigree 3 is checked.
+  re-resolve view focuses. A moved focus (Filigree 3 moved the grid or a label focus) is caught by a Street 1 re-run:
+  the freezer re-resolves the views every run, and an already-passed gate whose index.html changed since
+  `baseline.json` re-checks the views (recount + freezer) before returning `already passed`. A moved focus dies with
+  `fixtures changed (moved: SVn, …); delete docs/street/gates/views.json and docs/street/gates/view/ to re-freeze`
+  (plus a baseline note), or is caught by a gate failure. Cheapest course: run Street 1 after Filigree 3 is checked.
 - **Held for many runs.** Expected until the filigree build passes and its fix items close; the note names what holds.
 - **A fingerprint mismatch.** Bisect `never` against `off`: a difference means the hook itself touches sim state.
   `on` against `off` means a street path writes the world.
@@ -550,12 +673,21 @@ the last two runs.
   agent breaking the read-only rule (fix and re-run), or a filigree run overlapping it (runs are one at a time; re-run).
 - **The atlas fog function does not exist yet.** A recorded gap, never an invented function.
 - **A stuck Street 3 unit.** Fix it by hand, then re-run with `args.unstick ["<id>"]`; an obsolete fix unit gets
-  `args.discard`.
-- **`record-mismatch`.** As filigree: write the returned `gate`/`final_gate`/`state` by hand where returned; Street 2
-  returns none, so re-run with `resume:true`.
+  `args.discard`, and so does a fix unit whose dependency can never be met or that is done but did not cure its
+  criterion (§1.4).
+- **`record-mismatch`.** As filigree: Streets 1, 2 and 4 return `gate` (write it to the gate path by hand); Street 3 also
+  returns `final_gate` and `state`. The Street 2 ledger `state/2-plan.json` is not returned; a re-run with `resume:true`
+  rebuilds it from the files that re-hash, but a re-run on an unchanged bible, rulings and spec files with a passed gate
+  returns `already passed` and does not rewrite `street-spec.json` (to redo, delete `gates/2-plan.json` or pass
+  `resume:false`).
 - **Known limits.** Sandbox counts are not device frames: the default stays off until the owner's device run (ST8).
   The virtual clock could hide a real-clock dependency in street code; the static greps catch the syntax. The VTT
   battle sheet and party presence are out of scope until the owner rules (ST10). Design docs are snapshots.
+  The omen eclipse (`tickOmens` writes `W.eclipseUntil = performance.now() + 20000`, a hard-rule edge in sim code) is a
+  determinism debt the dossier wanted fixed "before any of this ships". This track only lists it: Street 1's bible must
+  carry it (SG1.12), and no street unit, gate or POLISH item fixes it, because the line is sim code outside the STREET
+  block. It stays an accepted, recorded debt; fixing it is a separate owner decision. Street code never reads it
+  (ST4).
 
 ## 13. Provenance
 

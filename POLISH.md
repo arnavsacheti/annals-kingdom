@@ -255,7 +255,8 @@ as for the filigree items; queue rules and reason codes (`held`, `blocked`, `pre
     (full list: `docs/street/README.md` §4).
   - Done when (blank-street gate): two blind appliers on different models (sonnet/high, opus/high),
     holding only the bible, the frozen views and their stills, the baseline and greps of
-    `index.html`, each name for every gate view SV1–SV8 (SV9, the far sky, is measured and frozen
+    `index.html` (and, for filigree class ids, the filigree density bible and `maps-site/data/`),
+    each name for every gate view SV1–SV8 (SV9, the far sky, is measured and frozen
     but not scored) the tier the bible's rule gives and six bible classes that must be present
     there, each with the bible's driving state and a source ref that resolves (sim literal,
     keyed-stream key, notice class, probe metric or filigree class id): tier exact 8/8; class
@@ -274,8 +275,8 @@ as for the filigree items; queue rules and reason codes (`held`, `blocked`, `pre
     §11 (180; plan mode needs Filigree 1 passed too) and stop if it grew. A thrown `prelude drift:
     …`, `anchor lost: …` or `missing inputs: …` is a run fault: no release, note it, fix per README
     §12 (never by editing a filigree script). Match thrown strings after the `<job>: ` prefix. On a
-    rerun keep `resume:true`: frozen views are never re-frozen (`fixtures changed; delete
-    docs/street/gates/views.json and docs/street/gates/view/ to re-freeze`).
+    rerun keep `resume:true`: frozen views are never re-frozen (`fixtures changed (moved: SV1, ...);
+    delete docs/street/gates/views.json and docs/street/gates/view/ to re-freeze`).
   - Blocked by: Filigree 1 (`docs/filigree/gates/1-research.json` pass, full, unforced, bible
     unchanged; otherwise the preflight throws `street research waits for the density bible …`,
     treated as blocked; this holds for `mode:'plan'` too, so the plan-mode check cannot be done
@@ -287,8 +288,9 @@ as for the filigree items; queue rules and reason codes (`held`, `blocked`, `pre
   - Prerequisites: the street delivery commit (scripts, `tools/street-drift.js`, README, dossier,
     todo-inputs, rulings, design docs) is in the checkout; verify with `ls
     .claude/workflows/street-1-research.js docs/street/README.md tools/street-drift.js && node
-    tools/street-drift.js`, and look for the delivery tag in `CHANGELOG.md`. Docs + the read-only
-    probe; never edits `index.html`, `maps-site/**` or `docs/filigree/**`.
+    tools/street-drift.js` (the first release cut after it absorbs the delivery commit; there is no
+    delivery tag). Docs + the read-only probe; never edits `index.html`, `maps-site/**` or
+    `docs/filigree/**`.
 
 - [ ] **Street 2 · Planning → street spec (USER REQUEST)** — from the street bible alone: the tiers
   and the refine rule (screen-space error off `CAM.radius`, hand-rolled in/out hysteresis pairs
@@ -312,14 +314,20 @@ as for the filigree items; queue rules and reason codes (`held`, `blocked`, `pre
     that may read ONLY `street-spec.{md,json}` answer the probes frozen before the spec existed at
     ≥90% each, with zero schema-path guesses; no spec-probe pointer is null; every bible must-rule
     traces to a spec rule and every spec rule to a unit with machine-checkable acceptance; the unit
-    DAG is acyclic with ≤9 units per slice and unit files only `index.html`, `tools/street-*.js` and
-    `docs/street/**`; every slice has a `/checks` list with the mandatory checks; caps for SV1–SV9
-    within the bible ceiling, the far views equal to the baseline; the determinism contract allows
-    only keyed streams and read-only sim state; every hook line is declared, marked and holds no
-    filigree anchor literal; new hash params never end in `s` and `notices=` is read only after the
-    S0 parser unit; no source-post name outside `## Provenance`; zero banned vocabulary. At most 2
-    fix rounds.
-  - Run: `Workflow({name:'street-2-plan', args:{date:'YYYY-MM-DD'}})`.
+    DAG is acyclic with ≤9 units per slice and unit files only `index.html`, `tools/street-probe.js`
+    and `docs/street/{fixtures,shots,device}/**`; every slice has a `/checks` list with the
+    mandatory checks; caps for SV1–SV9 within the bible ceiling, the far views equal to the
+    baseline; the determinism contract allows only keyed streams and read-only sim state; every
+    hook line is declared, marked, replaces one whole `index.html` line and holds no filigree
+    anchor literal; the block placement literal sits on exactly one `index.html` line; the spec's
+    fade.ms (≤250, R6), max_jobs_frame (≤6, ST9), tri_cap_frame, resident_tris and traffic s0/T/v0
+    are numbers, there are ≥3 caravan tiers, and every hysteresis pair sits inside 2200 (SG2.16);
+    fixed probe answers have no unfilled placeholders; new hash params never end in `s` and
+    `notices=` is read only after the S0 parser unit; no source-post name outside `## Provenance`;
+    zero banned vocabulary. At most 2 fix rounds.
+  - Run: `Workflow({name:'street-2-plan', args:{date:'YYYY-MM-DD'}})`. A re-run on an unchanged
+    bible, rulings and spec files returns `already passed` and leaves `street-spec.json` alone; to
+    redo, delete `gates/2-plan.json` or pass `resume:false`.
   - Blocked by: Street 1 (`docs/street/gates/1-research.json` pass, bible unchanged; the filigree
     density bible and the cited filigree rulings unchanged since Street 1; a thrown Error otherwise,
     treated as blocked).
@@ -332,10 +340,10 @@ as for the filigree items; queue rules and reason codes (`held`, `blocked`, `pre
   quads, tiers, queue, LRU, culling, ease; S2 near detail: facades, surface, props; S3 life: caravan
   tiers, render-only queues, crowds, gate leaves; S4 sky and layers: clouds, shadows row, weather
   dial, the R13 fog copy, the herald's tidings). Each run builds up to 6 ready units of the current
-  slice, every `index.html` unit strictly one at a time, and runs that slice's gate when the slice
-  is complete; everything ships behind the default-off street toggle. Leave unchecked between runs
-  with the returned note (`Street 3 slice Sx: n/m units …`); check off only when the workflow
-  returns `check_off: true`.
+  slice, strictly one at a time (every unit holds the `index.html` lock), and runs that slice's
+  gate when the slice is complete; everything ships behind the default-off street toggle. Leave
+  unchecked between runs with the returned note (`Street 3 slice Sx: n/m units …`); check off only
+  when the workflow returns `check_off: true`.
   - Input: `docs/street/street-spec.json` (units, checks, caps, hook lines, contracts) +
     `gates/views.json`, `gates/baseline.json`, `fixtures/tidings.json`.
   - Output: the `/* STREET */` block and the declared hook lines in `index.html`; probe extensions
@@ -345,22 +353,27 @@ as for the filigree items; queue rules and reason codes (`held`, `blocked`, `pre
   - Done when (walk test, in every slice gate and again in the final S4 gate): the `simDays(400)`
     fingerprint is identical with the street view never loaded, off and on, and with the camera
     walking the views street on and off, for `#s=epeshu` and `#s=tamar1374`; with the toggle off
-    every view's draw calls, triangles, geometries and objects equal the reference exactly; with it
-    on every view keeps its caps and the far views draw nothing extra; no street object pops in one
-    frame or eases longer than 250 ms (R6); each tier swaps once each way; oscillating and flying
-    away and back build no extra and leak nothing; zero clock, `W.rng` or `nowMs` reads in the
-    STREET block, every InstancedMesh there carries instanceColor, and only declared hook lines
-    changed outside it; `ANNALS.stats()` keys, the keys handler and the near plane unchanged; the
+    every view's draw calls, triangles, geometries, textures and objects equal the reference
+    exactly; with it on every view keeps its caps and the far views draw nothing extra; no street
+    object pops in one frame or eases longer than 250 ms (R6); each tier swaps once each way;
+    oscillating and flying away and back build no extra and leak nothing; zero clock, `W.rng` or
+    `nowMs` reads and zero banned vocabulary in the STREET block's strings, every InstancedMesh
+    there carries instanceColor, only declared hook lines changed outside it and no declared insert
+    hook is duplicated; `ANNALS.stats()` keys, the keys handler and the near plane unchanged; the
     hash table parses (`notices=` never read as the seed); queue positions equal at 30 and 60
     virtual fps; the filigree anchors still resolve and `maps-site/` + `docs/filigree/` are
     byte-unchanged; the slice's spec checks pass; the console stays clean.
   - Run: `Workflow({name:'street-3-build', args:{date:'YYYY-MM-DD'}})`. A unit stuck after 3 failed
-    runs is queued once directly above this item; fix it by hand, then re-run with `args.unstick
-    ["<id>"]` (or `args.discard ["fix-S<n><k>"]` for an obsolete fix unit).
-  - Blocked by: Street 2 (`gates/2-plan.json` pass, spec unchanged; a thrown Error otherwise); open
+    runs is queued once directly above this item (one line); fix it by hand, then re-run with
+    `args.unstick ["<id>"]` (or `args.discard ["fix-S<n><k>"]` for an obsolete fix unit, one whose
+    dependency can never be met, or a done fix unit queued as `Street 3 stuck criterion <S> <id>`
+    because it did not cure its criterion).
+  - Blocked by: Street 2 (`gates/2-plan.json` pass, spec unchanged; the filigree density bible and
+    the cited filigree rulings unchanged since Street 1; a thrown Error otherwise); open
     `Street data (S3) — …` items (a returned `reason:'blocked'`). **Held** — a returned
     `reason:'held'`: no release, note it, take the next item — while filigree holds the sim:
-    `docs/filigree/gates/3-build.json` not a full unforced pass, or "Filigree 3" not checked, or any
+    `docs/filigree/gates/3-build.json` not a full unforced pass or not fresh against the current
+    `sheet-spec.json`, or "Filigree 3" not checked, or any
     unchecked `Filigree 3 stuck unit` / `Filigree 4 punch c` / `Filigree data —` item (with ST15
     strict also until the latest Filigree 4 gate passes).
   - Prerequisites: holds `index.html` while running; never touches `maps-site/`, `docs/filigree/` or
@@ -375,9 +388,10 @@ as for the filigree items; queue rules and reason codes (`held`, `blocked`, `pre
   survive reproduce + refute + severity.
   - Input: the finished street view (`gates/3-build.json` pass), the bible, the spec, the frozen
     views and caps.
-  - Output: `docs/street/punch-list.{md,json}` ("Why the bare street is worse", "Where we flinched",
-    "Device gate"), findings `docs/street/findings/`, capture `docs/street/review-c<k>/` (metrics
-    and cited shots tracked), gate `gates/4-review-c<k>.json`; also `state/4-review.json`.
+  - Output: `docs/street/punch-list-c<k>.{md,json}` ("Why the bare street is worse", "Where we
+    flinched", "Device gate"; the plain `punch-list.{md,json}` is a copy of the latest), findings
+    `docs/street/findings/`, capture `docs/street/review-c<k>/` (metrics and cited shots tracked),
+    gate `gates/4-review-c<k>.json`; also `state/4-review.json`.
   - Done when (bare-street gate): on SV1, SV2, SV4 and SV7 at least 2 of 3 blind judges
     (opus/sonnet/opus, fixed A/B order) prefer the layered view to the bare one, and each lists ≥3
     omissions that the probe's class counts confirm (present layered, absent bare); fingerprints
@@ -386,14 +400,23 @@ as for the filigree items; queue rules and reason codes (`held`, `blocked`, `pre
     major; no lens died in round 0.
   - Run: `Workflow({name:'street-4-review', args:{date:'YYYY-MM-DD'}})`; optional
     `args.preview:true` (findings only, under `docs/street/preview/`, never a polish result).
-  - Blocked by: Street 3 (`gates/3-build.json` pass; else `review must wait for the finished street
-    view`, treated as blocked).
-  - Prerequisites: none. Docs-only. On fail the returned punch items go DIRECTLY ABOVE this entry
-    and this item stays unchecked for a re-review (at most 2 cycles, then the owner decides; ST13).
-    Punch items edit `index.html` only inside the STREET block or its declared hooks and obey the
-    same hold as Street 3. On pass the owner may flip the street view on by default only after an
-    owner-hardware `tools/street-probe.js --device` run records smoothed fps ≥42 and degrade step 0
-    over a 60 s descent (ST8; the return names it `device_gate`).
+  - Blocked by: Street 3 (`gates/3-build.json` a full unforced pass with the spec unchanged since
+    its final gate, and the cited filigree rulings unchanged; else `review must wait for the
+    finished street view`, treated as blocked). A cycle-2 run returns `reason:'blocked'` while a
+    cycle-1 punch item is still open.
+  - Prerequisites: none (a cycle-2 run is blocked while cycle-1 punch items are open). Docs-only.
+    On fail the returned punch items go DIRECTLY ABOVE this entry and this item stays unchecked
+    for a re-review (at most 2 cycles, then the owner decides; ST13). Punch items edit `index.html`
+    only inside the STREET block or its declared hooks, and may also edit `tools/street-probe.js`;
+    they obey the same hold as Street 3 and never edit anything under `docs/street/` (spec,
+    `gates/views.json`, `gates/baseline.json`, `fixtures/`). A defect in the spec becomes a re-run
+    of street-2-plan, and one in the frozen views, baseline or fixtures a re-run of
+    street-1-research; the item's fix then starts with "re-run street-2-plan:" or "re-run
+    street-1-research:". The minor-items line cites `docs/street/punch-list-c<k>.md`. On pass the
+    owner may flip the street view on by default only after an owner-hardware
+    `tools/street-probe.js --device` run records smoothed fps ≥42 and degrade step 0 over a 60 s
+    descent on the current `index.html` (ST8; the return names it `device_gate`: pass, fail, absent
+    or stale).
 
 - [ ] **Street battle sheet (OWNER-GATED, ST10)** — a top-down orthographic export of the current
   street view with a square grid at the scale the owner sets in ST10 (for example 5 ft squares at 70

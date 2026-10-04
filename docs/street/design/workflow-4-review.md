@@ -1,3 +1,5 @@
+> Planning snapshot (2026-10-04): the script in `.claude/workflows/` is the source of truth; where this document and the script disagree, the script wins.
+
 # Workflow 4 · `street-4-review.js` — Street 4 · Review → punch list
 
 > Planning snapshot, 2026-10-04 (final integrated plan). Where the committed script and this document disagree, the
@@ -14,12 +16,12 @@ export const meta = {
   whenToUse: 'Run as the POLISH item "Street 4 · Review → punch list" after docs/street/gates/3-build.json passed: Workflow({name:"street-4-review", args:{date:"YYYY-MM-DD"}}). Docs-only; its punch items go directly above the Street 4 entry.',
   phases: [
     {title: 'Preflight', detail: 'drift, anchors, chain (Street 3 final gate), cycle, prior punch ids, frozen views and caps'},
-    {title: 'Capture', detail: 'one probe run (all views on/off, paths, phone, fingerprints, shots) + digest-checked metrics reader'},
+    {title: 'Capture', detail: 'one probe run (all views on/off, paths, phone, fingerprints, shots), two single-layer still runs for the blind pairs + digest-checked metrics reader'},
     {title: 'Find', detail: 'eleven single-lens finders, <=2 findings each in round 0, <=1 later'},
     {title: 'Verify', detail: 'dedup -> reproduce -> refute -> severity per fresh finding; <=2 extra rounds'},
     {title: 'Bare-street gate', detail: '3 blind judges x 4 views (opus/sonnet/opus, fixed A/B order); omissions confirmed in code from probe class counts'},
-    {title: 'Punch list', detail: 'opus/xhigh integrator -> punch-list.md/.json and the inserts'},
-    {title: 'Record', detail: 'findings, gates/4-review-c<k>.json, state/4-review.json; cited shots only'}
+    {title: 'Punch list', detail: 'shot pruner, then the opus/xhigh integrator -> punch-list-c<k>.md/.json and the inserts'},
+    {title: 'Record', detail: 'findings, gates/4-review-c<k>.json, state/4-review.json (digest-checked)'}
   ]
 }
 ```
@@ -27,9 +29,9 @@ export const meta = {
 ## 2. Args
 
 Shared + `force`. Job keys: `streetRulings`, `port`, `preview` (boolean; findings only, written under
-`docs/street/preview/`, `pass` forced false, never a polish result), `cycle` (1..2; default 1 + the count of non-preview
-`gates/4-review-c*.json`; a third cycle is refused, ST13; an explicit cycle whose gate exists is refused unless
-`force`). First body line: `checkArgs(['streetRulings', 'port', 'preview', 'cycle'])`.
+`docs/street/preview/`, `pass` forced false, never a polish result), `cycle` (1..2; default 1 + max(existing cycles, 0);
+a third cycle is refused, ST13; the already-exists refusal applies to the derived cycle as well as an explicit one, unless
+`force` or `preview`). First body line: `checkArgs(['streetRulings', 'port', 'preview', 'cycle'])`.
 
 ## 3. Constants
 
@@ -64,10 +66,11 @@ const PRE4 = OBJ({missing: SA, anchors: ANCH, fil_anchors: FILANCH, drift: DRIFT
   gate3: OBJ({exists: B, pass: B, mode: S, forced: B, spec_ok: B, tree_digest: S}),
   gate1: OBJ({fil_rulings_cited: {type: 'object', additionalProperties: S}}),
   fil_overrides: {type: 'object', additionalProperties: S}, st_overrides: {type: 'object', additionalProperties: S},
-  cycles: {type: 'array', items: I}, prior: OBJ({k: I, ids: SA, lenses: {type: 'object', additionalProperties: S}}),
-  class_labels: SA, caps: {type: 'object', additionalProperties: {type: 'object', additionalProperties: NN}},
-  device: {type: 'array', items: OBJ({path: S, fps_min: N, degrade_max: I})}, tree_digest: S})
-const CAPT = OBJ({metrics_path: S, metrics_sha256: S, shots_dir: S, infra_error: S})
+  cycles: {type: 'array', items: I}, prior: OBJ({k: I, ids: SA, lenses: {type: 'object', additionalProperties: S}, titles: {type: 'object', additionalProperties: S}}),   // from gates/4-review-c<k-1>.json punch_items [{id, lens, title}], falling back to punch-list-c<k-1>.json
+  class_labels: SA, punch_open: SA, restore_refs: SA, caps: {type: 'object', additionalProperties: {type: 'object', additionalProperties: NN}},
+  device: {type: 'array', items: OBJ({path: S, fps_min: N, degrade_max: I, index_sha: S})}, index_sha256: S, tree_digest: S})
+const CAPT = OBJ({metrics_path: S, metrics_sha256: S, shots_dir: S, cdn_dir: S, infra_error: S,
+  blind: {type: 'array', items: OBJ({view: S, layered_src: S, bare_src: S, layered: S, bare: S, layered_sha256: S, bare_sha256: S})}})   // the blind pairs come from two extra single-layer desktop runs
 const FIND = OBJ({lens: S, findings: {type: 'array', items: OBJ({id: S, title: S, where: S,
   evidence: OBJ({kind: {type: 'string', enum: ['shot', 'cmd', 'metric']}, ref: S}), repro_cmd: S, fix: S, unit_hint: S})}})
 const DEDUP = OBJ({fresh: SA, dupes: {type: 'array', items: OBJ({id: S, of: S})}})
@@ -84,20 +87,20 @@ const PUNCH = OBJ({md: S, json: S, sha_md: S, sha_json: S, items: {type: 'array'
 
 | label | phase | role → pair | prompt essentials (`PS(...)`) | schema |
 |---|---|---|---|---|
-| `preflight` (crit) | Preflight | mech → haiku/low | `ANCHOR_TASK`, `FIL_ANCHOR_TASK`, `DRIFT_TASK`; `gate3` from `gates/3-build.json` (+ its recorded tree digest); `gate1` stamps; rulings overrides; existing non-preview cycles; the prior cycle's punch ids and lenses; `class_labels` = `street-bible.json` `classes[].id`; `caps` = spec `/caps`; `device` files under `docs/street/device/`; `tree_digest` now | PRE4 |
-| `capture` (crit) | Capture | audit → sonnet/medium | `node tools/street-probe.js` with the full S4 capture flags + `--phone SV1,SV2` + `--fingerprint` (both seeds: never/off/on/walk) `--out ${RV}/review-c<k>/metrics.json --shots ${RV}/review-c<k>/shots/`; returns paths + sha only | CAPT |
-| `metrics reader` (one retry) | Capture | mech → haiku/low | the fixed digest script (workflow-3 DIGEST + phone + fingerprints); sha must equal the capture's | DIGEST |
-| `<Lnn> · <check>[ rN]` | Find | per LENSES | ONE lens; reads: the digest, the shots, the bible, the spec, index.html (STREET block), the rulings it names; ≤ FIND_CAP0 findings in round 0, ≤ FIND_CAP later; each with reproducible evidence (`shot#x,y,w,h` \| `cmd` \| `metric:<pointer>`), a `repro_cmd` that exits 0 when the defect is present, a fix and a unit hint; write `${RV}/findings/<Lnn>-c<k>-r<n>.json` | FIND |
-| `dedup` (optional) | Verify | mech → haiku/low | fuzzy second pass over the findings the code-side `seen` Set already passed (normalized title + where against seen ids, this run + prior cycle); its result can only remove more, never re-admit a finding the Set dropped | DEDUP |
-| `<id> · reproduce` | Verify | audit → sonnet/medium | run `repro_cmd` from a mktemp copy when it writes; reproduced = exit 0 and output matches the evidence | REPRO |
+| `preflight` (crit) | Preflight | mech → haiku/low | `ANCHOR_TASK`, `FIL_ANCHOR_TASK`, `DRIFT_TASK`; `gate3` from `gates/3-build.json` (+ its recorded tree digest); `gate1` stamps; rulings overrides; existing non-preview cycles; the prior cycle's punch ids, lenses and titles (from `gates/4-review-c<k-1>.json` `punch_items`, falling back to `punch-list-c<k-1>.json`); `class_labels` = `street-bible.json` `classes[].id` (empty = die); `punch_open` (open `Street 4 punch c<n>` lines); `restore_refs` (`sha_restore` of `index-ref.json` / `off-ref.json`); `caps` = spec `/caps`; `device` files under `docs/street/device/` with their `index_sha`, and `index_sha256` of the current index.html; `tree_digest` now | PRE4 |
+| `capture` (crit) | Capture | audit → sonnet/medium | `node tools/street-probe.js` with the full S4 capture flags + `--phone SV1,SV2` + `--fingerprint` (both seeds: never/off/on/walk) `--out ${RV}/review-c<k>/metrics.json --shots ${RV}/review-c<k>/shots/`, plus two single-layer desktop runs for the blind layered/bare stills (a judge view whose pair cannot be identified fails SG4.2 with no judges run, and a gap is recorded); keeps the `--cdn-dir`; returns paths + sha only | CAPT |
+| `metrics reader` (one retry) | Capture | mech → haiku/low | the fixed digest script (workflow-3 DIGEST + phone + fingerprints); sha must equal the capture's; a node failure is retried once and `infra` is returned only when both attempts fail | DIGEST |
+| `<Lnn> · <check>[ rN]` | Find | per LENSES | ONE lens; reads: the digest, the shots, the bible, the spec, index.html (STREET block), the rulings it names; ≤ FIND_CAP0 findings in round 0, ≤ FIND_CAP later; each with reproducible evidence (`shot#x,y,w,h` \| `cmd` \| `metric:<pointer>`), a `repro_cmd` that exits 0 when the defect is present, a fix and a unit hint; write `${RV}/findings/<Lnn>-c<k>-r<n>.json`; finders, reproducers and refuters get the sandbox recipe and always `--port 0` plus the capture's kept `--cdn-dir`, whatever `args.port` is | FIND |
+| `dedup` (optional) | Verify | mech → haiku/low | fuzzy second pass over the findings the code-side `seen` Set already passed (normalized title + where against seen ids, this run + prior cycle); its result can only remove more, never re-admit a finding the Set dropped; a match to an open prior id is re-tagged a reopen and never dropped, and a dupe is accepted only when `of` names an earlier candidate or an exact seen title | DEDUP |
+| `<id> · reproduce` | Verify | audit → sonnet/medium | run `repro_cmd` from a mktemp copy when it writes; reproduced = exit 0 and output matches the evidence; verifiers run in batches of 6 (VERIFY_CONC); an `infra_error` counts against the 75% kept fraction (ledgered unverified, why `infra`, gap recorded) | REPRO |
 | `<id> · refute` | Verify | judge → opus/high | refute with evidence or keep | REFUTE |
 | `<id> · severity` | Verify | triage → sonnet/low | blocker (breaks determinism, coexistence or the off identity) · major (a gate criterion or a cap) · minor · nit | SEVR |
 | `<SVn> · <Jk>` | Bare-street gate | J0 judge → opus/high, J1 deep → sonnet/high, J2 judge → opus/high | blind (`PS(…, true)`): see ONLY the two stills (A/B per `layeredIsA`); which shows the richer, more legible street at table distance; list the things present in one and absent in the other using ONLY these class names (the full bible list, present or not): `class_labels`; `files_read` | PANEL |
 | `voice grep` | Bare-street gate | mech → haiku/low | `VOCAB_ST` over every string literal inside the STREET block | VGREP |
 | `coexistence` | Bare-street gate | mech → haiku/low | `FIL_ANCHOR_TASK` (literals + in_street counts), workflow-3 `RESTORE_TASK` undeclared lines; the tree digest is recorded for information only | COEX |
-| `punch integrator` (crit) | Punch list | integ → opus/xhigh | write `${RV}/punch-list.md` ("Why the bare street is worse", "Where we flinched", "Device gate (ST8)") and `.json`; one item per surviving blocker/major, one grouped item for minor/nit; `done_when` = the finding's `repro_cmd` no longer exits 0 | PUNCH |
-| `shot pruner` | Record | mech → haiku/low | copy the shots the punch list cites to `${RV}/review-c<k>/cited/` (≤300 KB each); `shots/` stays git-ignored | PRUNE |
-| `record findings` / `record gate` / `record state` (crit) | Record | mech → haiku/low | `recordD` / `record` | RECD / REC |
+| `shot pruner` | Punch list | mech → haiku/low | runs BEFORE the integrator: copy the shots the findings cite to `${RV}/review-c<k>/cited/` named `<NN>-<basename>` (≤300 KB each); `shots/` stays git-ignored | PRUNE |
+| `punch integrator` (crit) | Punch list | integ → opus/xhigh | write `${RV}/punch-list-c<k>.md` ("Why the bare street is worse", "Where we flinched", "Not re-checked", "Device gate (ST8)") and `.json` (the plain `punch-list.{md,json}` is only a copy of the latest); one item per surviving blocker/major, one grouped item for minor/nit; each shot item's `evidence.ref` points at its `cited/` copy (the `#x,y,w,h` region kept); `done_when` = the finding's `repro_cmd` no longer exits 0 | PUNCH |
+| `record findings` / `record gate` / `record state` (crit) | Record | mech → haiku/low | `recordD` for the findings AND the gate record (`canon_len` and top-level array lengths, `punch_items [{id, lens, title}]`, `not_rechecked`, `punch_ids`) / `record` for the state | RECD / REC |
 
 ## 6. Control flow
 
@@ -111,11 +114,13 @@ const RVREL = PREVIEW ? OUT + '/preview' : OUT
 phase('Preflight')
 const pre = await crit(PS(PREFLIGHT4), {label: 'preflight', phase: 'Preflight', schema: PRE4, ...M('mech')})
 if (!pre) return done({reason: 'agent died: preflight'})
-if (!PREVIEW && !(pre.gate3 && pre.gate3.exists && pre.gate3.pass && pre.gate3.mode === 'full' && !pre.gate3.forced && pre.gate3.spec_ok)) die('review must wait for the finished street view (docs/street/gates/3-build.json pass)')
+if (!PREVIEW && !FORCE && MODE === 'full' && !(pre.gate3 && pre.gate3.exists && pre.gate3.pass && pre.gate3.mode === 'full' && !pre.gate3.forced && pre.gate3.spec_ok)) die('review must wait for the finished street view (docs/street/gates/3-build.json pass)')   // smoke and plan log it instead
+if (!pre.class_labels.length) die('street-bible.json has no classes (classes[].id is empty): SG4.2 cannot be scored')
 if (!pre.drift || pre.drift.ok !== true) die('prelude drift: …')
 if ((pre.missing || []).length) die('missing inputs: …')
 if (anchorsLost(pre.anchors).length) die('anchor lost: …')
-// CYCLE = A.cycle ?? 1 + pre.cycles.length (explicit values already validated above); the derived default only: CYCLE > 2 -> die('a third review cycle is refused (ST13): the owner decides')
+// CYCLE = A.cycle ?? 1 + max(0, ...pre.cycles); CYCLE > 2 -> die('a third review cycle is refused (ST13): the owner decides'); a derived or explicit CYCLE whose gate exists -> die('gates/4-review-c<k>.json already exists: …') unless preview/force
+// CYCLE > 1 with an open '- [ ] **Street 4 punch c<CYCLE-1> ' line (pre.punch_open) -> done({reason: 'blocked', blocked_by}) (not for preview, force or plan; plan lists blocked_by)
 // the explicit-cycle check runs before the preflight agent, so stub run 3 (cycle:3) throws the cycle bound first
 // plan -> done({reason: 'plan', schedule, agents_min, agents_max, bound: 200, over_bound, cycle})
 phase('Capture')      // capture (crit) -> metrics reader (sha check, one retry; else 'agent died: metrics reader'); infra -> done('infra')
@@ -129,8 +134,8 @@ phase('Verify')       // dedup in code: const seen = new Set(priorIds.map(norm) 
 //                       `if (lowBudget()) { log('budget: extra round skipped'); break }` (the guarded filigree-1 idiom)
 //                       and by a code counter `agents` (find + verify spawns) that stops at VERIFY_BOUND; leftovers recorded unverified as a gap
 phase('Bare-street gate')   // pipeline(JUDGE_VIEWS, (view, _item, vi) => parallel(J0, J1, J2 using layeredIsA(vi, j.id))); .filter(Boolean) and a missing judge fails SG4.2 for that view; voice grep; coexistence
-phase('Punch list')   // punch integrator (crit)
-phase('Record')       // shot pruner; recordD findings/c<k>.json; record gates/4-review-c<k>.json; record state/4-review.json
+phase('Punch list')   // shot pruner, then the punch integrator (crit)
+phase('Record')       // recordD findings/c<k>.json; recordD gates/4-review-c<k>.json; record state/4-review.json
 return done({...})
 ```
 
@@ -142,37 +147,37 @@ An omission by judge j at view v is **confirmed** when `d.views[v].classes_on[cl
 | id | criterion | threshold |
 |---|---|---|
 | SG4.1 | surviving blocker or major findings | 0 |
-| SG4.2 | per judge view: ≥2 of 3 judges prefer layered, and each of them lists ≥3 confirmed omissions | 4/4 views |
+| SG4.2 | per judge view: ≥2 of 3 judges prefer layered, and each of them lists ≥3 confirmed omissions; a view whose layered/bare pair the capture could not identify fails with no judges run | 4/4 views |
 | SG4.3 | fingerprints re-measured: both seeds `never === off === on`, `walk_on === walk_off` | equal |
 | SG4.4 | caps met on SV1–SV9 (digest vs spec `/caps`), SV5/SV9 on === off | all |
 | SG4.5 | fade: `appear.violations` = [], swaps 1+1 per threshold | both |
 | SG4.6 | `VOCAB_ST` hits in STREET-block string literals | 0 |
-| SG4.7 | coexistence: filigree anchors resolve and none sits inside the STREET block, `restore_undeclared` = [], hash table ok, stats keys unchanged (no tree-digest comparison here: filigree punch fixes may legitimately change `maps-site/` after Street 3; Street 3's GS.8 already proved per run that this track never wrote there) | all |
+| SG4.7 | coexistence: filigree anchors resolve and none sits inside the STREET block, `restore_undeclared` = [] and the sha256 of `restore(index.html)` equals `sha_restore` in `state/3-build/index-ref.json` or `off-ref.json`, hash table ok, stats keys unchanged (no tree-digest comparison here: filigree punch fixes may legitimately change `maps-site/` after Street 3; Street 3's GS.8 already proved per run that this track never wrote there) | all |
 | SG4.8 | blind compliance: each judge's `files_read` ⊆ its two stills | all |
-| SG4.9 | coverage: every lens returned in round 0; verify fan-outs ≥75% kept | all |
+| SG4.9 | coverage: every lens returned in round 0; verify fan-outs ≥75% kept (a verifier's `infra_error` counts against the fraction) | all |
 
 The device gate (ST8) is **reported**, not scored: `device_gate` = `pass` when a `docs/street/device/*.json` shows
-`fps_min ≥ 42` and `degrade_max === 0`, `fail` when one exists and does not, `absent` otherwise. The owner flips the
+`fps_min ≥ 42` and `degrade_max === 0`, `fail` when one exists and does not, `absent` otherwise, and `stale` when the newest file records no `index_sha` or one that differs from the sha256 of the current index.html (`pass` needs a matching sha; `tools/street-probe.js --device` must stamp `index_sha`, so until it does every device run reads as stale). The owner flips the
 street default only when Street 4 passed AND `device_gate === 'pass'`.
 
 ## 8. Bounds
 
 Preflight 2 + Capture 4 + Find 11 + Verify round 0 (dedup 1 + 22 × 3) 67 + extra rounds 2 × (11 + 1 + 11 × 3) = 90 +
-Gate 12 + 2 = 14 + Punch 2 + Record 1 + 2 × 3 = 7 → **197 (bound 200; typical ≈80)**.
+Gate 12 + 2 = 14 + Punch list 3 (pruner 1 + integrator crit 2) + Record 6 (findings, gate, state, crit each) → **197 (bound 200; typical ≈80)**.
 
 ## 9. Outputs and return
 
-Outputs: `docs/street/punch-list.{md,json}`, `findings/<Lnn>-c<k>-r<n>.json` + `findings/c<k>.json` (verified),
-`review-c<k>/metrics.json` + `review-c<k>/cited/` (tracked) + `review-c<k>/shots/` (git-ignored),
+Outputs: `docs/street/punch-list-c<k>.{md,json}` (plus `punch-list.{md,json}` as a copy of the latest), `findings/<Lnn>-c<k>-r<n>.json` + `findings/c<k>.json` (verified),
+`review-c<k>/metrics.json` + `review-c<k>/cited/` (tracked; `<NN>-<basename>`) + `review-c<k>/shots/` (git-ignored),
 `gates/4-review-c<k>.json`, `state/4-review.json`; with `preview:true` all of it under `docs/street/preview/`
 (git-ignored).
 
 | field | value |
 |---|---|
 | `pass` | gate pass, not preview, not forced, records read back |
-| `reason` | `''` · failing ids joined `, ` · `preview` · `forced: <reason>` · `infra` · `agent died: <label>` · `record-mismatch` · `plan` · `smoke` |
-| `polish_note` | `Street 4 c<k>: <s> surviving (<b> blocker, <m> major), bare-street <v>/4 views, device gate <pass|fail|absent>` |
-| `polish_inserts` | per surviving blocker/major: `- [ ] **Street 4 punch c<k> · <id> — <title>** — <fix>; unit hint: <hint>; edits index.html only inside the STREET block or declared hooks and obeys the street hold (docs/street/README.md §1.3); done when <repro_cmd> no longer exits 0`; plus one grouped `- [ ] **Street 4 punch c<k> · <n> minor/nit items (<ids>)** — fix each as listed in docs/street/punch-list.md; done when each listed item's evidence no longer reproduces` |
+| `reason` | `''` · failing ids joined `, ` · `blocked` (cycle 2 with an open cycle-1 punch item; `blocked_by`) · `preview` · `forced: <reason>` · `infra` · `agent died: <label>` · `record-mismatch` · `plan` · `smoke` |
+| `polish_note` | `Street 4 c<k>: <s> surviving (<b> blocker, <m> major), bare-street <v>/4 views, device gate <pass|fail|absent|stale>` |
+| `polish_inserts` | per surviving blocker/major: `- [ ] **Street 4 punch c<k> · <id> — <title>** — <fix>; unit hint: <hint>; edits index.html only inside the STREET block or declared hooks and obeys the street hold (docs/street/README.md §1.3); done when <repro_cmd> no longer exits 0`; plus one grouped `- [ ] **Street 4 punch c<k> · <n> minor/nit items (<ids>)** — fix each as listed in docs/street/punch-list-c<k>.md; done when each listed item's evidence no longer reproduces` |
 | `polish_inserts_above` | `'Street 4 · Review → punch list'` |
 | `changelog_line` | `- docs: Street 4 — review c<k> (<pass|fail>)` |
 | `cycle`, `device_gate`, `gate`, `gate_path`, `owner_rulings_used`, `street_rulings_used` | informational |

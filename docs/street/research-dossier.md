@@ -150,6 +150,10 @@ Low-confidence leads (unverifiable by both lenses, so **do not spec from them**)
     viewer-request volume (V2): detail is built only near the party.
 - **Determinism debts to fix before any of this ships:**
   - The omen eclipse lasts `performance.now()+20000` inside `tickOmens` (`:5328`), a hard-rule edge.
+    *[Corrected after the street script review, 2026-10-04: "to fix before any of this ships" is not enforced by the
+    street package. Street 1's bible must list this debt (SG1.12); no Street 2 unit, Street 3 gate or POLISH item
+    fixes it, because the line is sim code outside the STREET block. It stays an accepted, recorded debt (street code
+    never reads it; ST4), and fixing it is a separate owner decision, see README §12 "Known limits".]*
   - Precipitation (`:4216`), lightning, sheep wander and the hearth pick use `Math.random`. That is render-only, but
     the 3D layer must not copy it.
 - **Canon notes.**

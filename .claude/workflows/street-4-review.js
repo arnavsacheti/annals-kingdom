@@ -4,7 +4,7 @@ export const meta = {
   whenToUse: 'Run as the POLISH item "Street 4 · Review → punch list" after docs/street/gates/3-build.json passed: Workflow({name:"street-4-review", args:{date:"YYYY-MM-DD"}}). Docs-only; its punch items go directly above the Street 4 entry.',
   phases: [
     {title: 'Preflight', detail: 'drift, anchors, chain (Street 3 final gate), cycle, prior punch ids, frozen views and caps'},
-    {title: 'Capture', detail: 'one probe run (all views on/off, paths, phone, fingerprints, shots) + digest-checked metrics reader'},
+    {title: 'Capture', detail: 'one probe run (all views on/off, paths, phone, fingerprints, shots), two single-layer still runs for the blind pairs + digest-checked metrics reader'},
     {title: 'Find', detail: 'eleven single-lens finders, <=2 findings each in round 0, <=1 later'},
     {title: 'Verify', detail: 'dedup -> reproduce -> refute -> severity per fresh finding; <=2 extra rounds'},
     {title: 'Bare-street gate', detail: '3 blind judges x 4 views (opus/sonnet/opus, fixed A/B order); omissions confirmed in code from probe class counts'},
@@ -211,7 +211,7 @@ const JUDGE_VIEWS = ['SV1', 'SV2', 'SV4', 'SV7']
 const JUDGES = [{id: 'J0', role: 'judge'}, {id: 'J1', role: 'deep'}, {id: 'J2', role: 'judge'}]   // opus/high, sonnet/high, opus/high
 const layeredIsA = (vi, j) => (vi % 2 === 0) !== (j === 'J0')   // J0 sees the opposite order to J1 and J2; parity by view index
 const PHONE = ['SV1', 'SV2']   // 390x844
-const FIND_CAP0 = 2, FIND_CAP = 1, EXTRA_ROUNDS = 2, VERIFY_BOUND = 200, ROUND_TOKENS = 1500000   // ROUND_TOKENS: one extra round's budget floor
+const FIND_CAP0 = 2, FIND_CAP = 1, EXTRA_ROUNDS = 2, VERIFY_BOUND = 200, VERIFY_CONC = 6, ROUND_TOKENS = 1500000   // ROUND_TOKENS: one extra round's budget floor
 const LENSES = [
   {id: 'L01', role: 'deep', check: 'Determinism', lens: 'fingerprints (never/off/on/walk), STREET-block greps, every keyed-hash key equals the spec form, no W field written'},
   {id: 'L02', role: 'audit', check: 'Performance and caps', lens: 'caps per view, quads and tris built per frame, resident tris, the shadow pass with instanced casters, far quiet at SV5/SV9'},
@@ -260,7 +260,7 @@ const LENS_READS = {
   L10: 'the bible\'s classes per view and tier bands; the digest classes_on per view; the SV7 shots',
   L11: `${DOCS}/todo-inputs.json, ${DOCS}/README.md §9, ${TIDINGS}; the digest tidings, clouds, shadows_row and weather_dial; the descent path in the capture`}
 const DET_RULE = `Determinism (ST3, ST4): street code takes every random choice from the sim's keyed stream ${KEY_IDIOM} (index.html function makeStream = xmur3 -> sfc32; the sim has no mulberry32), cached per key and render-only; presentation time accumulates from dt only (ST.t); gen and sim code never call the unseeded random or any wall-clock timer (all banned by the project determinism rule), and the STREET block never names W.rng or nowMs; street code moves only mesh transforms (departDay, route and speed are never touched); no new sim state.`
-const FIX_RULE = 'A fix edits index.html only inside the /* STREET */ block or on a hook line the spec declares (each carries /*ST-HOOK*/), or tools/street-probe.js, or docs/street/ data; never maps-site/, docs/filigree/ or tools/filigree-*.'
+const FIX_RULE = 'A fix edits index.html only inside the /* STREET */ block or on a hook line the spec declares (each carries /*ST-HOOK*/), or tools/street-probe.js; never maps-site/, docs/filigree/ or tools/filigree-*, and never anything under docs/street/: the spec (street-spec.md/.json), the frozen views (gates/views.json), the baseline (gates/baseline.json) and the fixtures (fixtures/) are sha-checked by the Street 1-3 gates and the next review cycle, so editing one sends the track back to Street 1 or 2. A defect that lives in the spec is fixed by a re-run of street-2-plan, and one in the frozen views, baseline or fixtures by a re-run of street-1-research: fix then starts "re-run street-2-plan:" or "re-run street-1-research:" and says what must change.'
 const SEV_RUBRIC = 'blocker = breaks determinism (a fingerprint differs, a keyed-stream rule, a clock or W.rng use), coexistence (a filigree anchor, maps-site/ or docs/filigree/, an undeclared hook line) or the off identity (street=0 or no street param differs from the pre-street sim); major = fails a gate criterion (the Street 3 slice criteria or the Street 4 bare-street test) or a cap in the spec /caps; minor = a visible defect inside the spec\'s rules; nit = taste.'
 const TMPCOPY = `D=$(mktemp -d); tar -C ${REPO} --exclude=./.git -cf - . | tar -C $D -xf -; cd $D`
 
@@ -282,10 +282,11 @@ const PRE4 = OBJ({missing: SA, anchors: ANCH, fil_anchors: FILANCH, drift: DRIFT
   gate3: OBJ({exists: B, pass: B, mode: S, forced: B, spec_ok: B, tree_digest: S}),
   gate1: OBJ({fil_rulings_cited: {type: 'object', additionalProperties: S}}),
   fil_overrides: {type: 'object', additionalProperties: S}, st_overrides: {type: 'object', additionalProperties: S},
-  cycles: {type: 'array', items: I}, prior: OBJ({k: I, ids: SA, lenses: {type: 'object', additionalProperties: S}}),
-  class_labels: SA, caps: {type: 'object', additionalProperties: {type: 'object', additionalProperties: NN}},
-  device: {type: 'array', items: OBJ({path: S, fps_min: N, degrade_max: I})}, tree_digest: S})
-const CAPT = OBJ({metrics_path: S, metrics_sha256: S, shots_dir: S, infra_error: S})
+  cycles: {type: 'array', items: I}, prior: OBJ({k: I, ids: SA, lenses: {type: 'object', additionalProperties: S}, titles: {type: 'object', additionalProperties: S}}),
+  class_labels: SA, punch_open: SA, restore_refs: SA, caps: {type: 'object', additionalProperties: {type: 'object', additionalProperties: NN}},
+  device: {type: 'array', items: OBJ({path: S, fps_min: N, degrade_max: I, index_sha: S})}, index_sha256: S, tree_digest: S})
+const CAPT = OBJ({metrics_path: S, metrics_sha256: S, shots_dir: S, cdn_dir: S, infra_error: S,
+  blind: {type: 'array', items: OBJ({view: S, layered_src: S, bare_src: S, layered: S, bare: S, layered_sha256: S, bare_sha256: S})}})
 const DIGEST = OBJ({sha256: S, digest: S, infra_error: S,   // workflow-3 DIGEST + classes_off, phone, fps (fingerprints), digest, infra_error
   views: {type: 'object', additionalProperties: OBJ({off: MAPN, on: MAPN, classes_on: MAPI, classes_off: MAPI})},
   appear: OBJ({violations: {type: ['array', 'null'], items: S}, slowest_ms: NN}), swaps: {type: 'object', additionalProperties: OBJ({in: NI, out: NI})},
@@ -300,13 +301,13 @@ const DIGEST = OBJ({sha256: S, digest: S, infra_error: S,   // workflow-3 DIGEST
   console_errors: SA})
 const FIND = OBJ({lens: S, findings: {type: 'array', items: OBJ({id: S, title: S, where: S,
   evidence: OBJ({kind: {type: 'string', enum: ['shot', 'cmd', 'metric']}, ref: S}), repro_cmd: S, fix: S, unit_hint: S})}})
-const DEDUP = OBJ({fresh: SA, dupes: {type: 'array', items: OBJ({id: S, of: S})}})
-const REPRO = OBJ({id: S, reproduced: B, out: S})
-const REFUTE = OBJ({id: S, refuted: B, why: S})
+const DEDUP = OBJ({fresh: SA, dupes: {type: 'array', items: OBJ({id: S, of: S})}, reopens: {type: 'array', items: OBJ({id: S, of: S})}})
+const REPRO = OBJ({id: S, reproduced: B, out: S, infra_error: S})
+const REFUTE = OBJ({id: S, refuted: B, why: S, infra_error: S})
 const SEVR = OBJ({id: S, severity: {type: 'string', enum: SEV}, why: S})
 const PANEL = OBJ({prefer: {type: 'string', enum: ['A', 'B']}, omissions: {type: 'array', items: OBJ({class: S, where: S})}, files_read: SA})
 const VGREP = OBJ({hits: SA})
-const COEX = OBJ({fil_anchors: FILANCH, tree_digest: S, restore_undeclared: SA})
+const COEX = OBJ({fil_anchors: FILANCH, tree_digest: S, restore_undeclared: SA, sha_restore: S})
 const PUNCH = OBJ({md: S, json: S, sha_md: S, sha_json: S, items: {type: 'array', items: OBJ({id: S, severity: S, title: S, fix: S, unit_hint: S, done_when: S})}})
 const PRUNE = OBJ({kept: SA, deleted: SA, count_ok: B})
 
@@ -388,19 +389,22 @@ Also:
 3. gate1 = {fil_rulings_cited: parsed.fil_rulings_cited of ${GATE1}, verbatim ({} when absent)}.
 4. fil_overrides = the "overrides" object of ${FIL}/rulings.json; st_overrides = the "overrides" object of ${DOCS}/rulings.json ({} when a file or its key is absent; string values only).
 5. cycles = the sorted integers k of every ${OUTABS}/gates/4-review-c<k>.json that parses and does not carry "preview": true.
-6. prior = the earlier review cycle: k = ${A.cycle !== undefined ? A.cycle - 1 : 'the highest of cycles (0 when there is none)'}; ids = the "punch_ids" array of ${OUTABS}/gates/4-review-c<k>.json (fall back to the ids of items[] in ${OUTABS}/punch-list.json when that gate has none); lenses = {<id>: the "lens" of that item} for every item in items[] of ${OUTABS}/punch-list.json. {k: 0, ids: [], lenses: {}} when k is 0 or the gate is absent.
+6. prior = the earlier review cycle: k = ${A.cycle !== undefined ? A.cycle - 1 : 'the highest of cycles (0 when there is none)'}; ids = the "punch_ids" array of ${OUTABS}/gates/4-review-c<k>.json; lenses = {<id>: "lens"} and titles = {<id>: "title"} for every entry of the "punch_items" array of that same gate file (fall back to items[] of ${OUTABS}/punch-list-c<k>.json, that cycle's own list, when the gate has no punch_items; never read the unversioned punch-list.json). {k: 0, ids: [], lenses: {}, titles: {}} when k is 0 or the gate is absent.
 7. class_labels = the "id" of every entry of classes[] in ${BIBLE_JSON}, in file order.
 8. caps = from ${SPEC_JSON}: {"<SVn>": the /caps/<SVn>/on object (or /caps/<SVn> itself when it has no "on" key), every value a number or null} for every view under /caps.
-9. device = one entry per file ${DEVICE_DIR}/*.json, sorted by path: {path, fps_min: its minimum smoothed fps, degrade_max: its maximum degrade step}; [] when there is none.
+9. device = one entry per file ${DEVICE_DIR}/*.json, sorted by path: {path, fps_min: its minimum smoothed fps, degrade_max: its maximum degrade step, index_sha: the sha256 of the index.html it ran against (its "index_sha" or "index_sha256" key; "" when the file records none)}; [] when there is none. index_sha256 = sha256sum of ${REPO}/index.html now.
 10. tree_digest = sha256 over the sorted list of "<path> <sha256>" lines (paths relative to ${REPO}) for every file under ${REPO}/maps-site/ and ${FIL}/, joined with "\\n".
-Return {missing, anchors, fil_anchors, drift, gate3, gate1, fil_overrides, st_overrides, cycles, prior, class_labels, caps, device, tree_digest}.`
+11. punch_open = the text of every line of ${REPO}/POLISH.md matching ^- \\[ \\] \\*\\*Street 4 punch c[0-9]+ (the whole line; [] when none).
+12. restore_refs = the non-empty "sha_restore" strings of ${OUTABS}/state/3-build/index-ref.json and ${OUTABS}/state/3-build/off-ref.json (an absent file or key adds nothing).
+Return {missing, anchors, fil_anchors, drift, gate3, gate1, fil_overrides, st_overrides, cycles, prior, class_labels, punch_open, restore_refs, caps, device, index_sha256, tree_digest}.`
 const pre = await crit(PS(PREFLIGHT4), {label: 'preflight', phase: 'Preflight', schema: PRE4, ...M('mech')})
 if (!pre) return done({reason: 'agent died: preflight'})
 const g3 = pre.gate3 || {}
 const chainOk = !!(g3.exists && g3.pass && g3.mode === 'full' && !g3.forced && g3.spec_ok)
-if (!PREVIEW && !FORCE && !chainOk) die('review must wait for the finished street view (docs/street/gates/3-build.json pass)')
+if (!PREVIEW && !FORCE && !chainOk && MODE === 'full') die('review must wait for the finished street view (docs/street/gates/3-build.json pass)')
 if (!pre.drift || pre.drift.ok !== true) die('prelude drift: ' + driftIds(pre.drift))
 if ((pre.missing || []).length) die('missing inputs: ' + pre.missing.join(', '))
+if (!arr(pre.class_labels).map(String).filter(Boolean).length) die('street-bible.json has no classes (classes[].id is empty): SG4.2 cannot be scored')
 const lost = anchorsLost(pre.anchors)
 if (lost.length) die('anchor lost: ' + lost.join('; '))
 const {r: RUL, used: RUSED} = rulingsMerge(pre.fil_overrides)
@@ -409,9 +413,12 @@ const citedNow = Object.fromEntries(FIL_CITED.map(k => [k, RUL[k]]))
 const ruled = citedChanged((pre.gate1 || {}).fil_rulings_cited, citedNow)
 if (ruled.length && !PREVIEW && !FORCE) die('the cited filigree rulings changed since Street 1 (' + ruled.join(', ') + '); re-run street-1-research')
 if (!chainOk) log('chain not satisfied (gates/3-build.json): ' + (FORCE ? 'forced: ' + FORCE : 'preview run, findings only'))
-const CYCLE = A.cycle ?? (1 + arr(pre.cycles).length)
+const CYCLE = A.cycle ?? (1 + Math.max(0, ...arr(pre.cycles)))
 if (CYCLE > 2) die('a third review cycle is refused (ST13): the owner decides')
-if (A.cycle !== undefined && arr(pre.cycles).includes(A.cycle) && !FORCE && !PREVIEW) die(`gates/4-review-c${CYCLE}.json already exists: refusing to overwrite an earlier cycle's record (pass force with a reason to redo it)`)
+if (arr(pre.cycles).includes(CYCLE) && !FORCE && !PREVIEW) die(`gates/4-review-c${CYCLE}.json already exists: refusing to overwrite an earlier cycle's record (pass force with a reason to redo it)`)
+const PUNCH_HELD = CYCLE > 1 ? arr(pre.punch_open).map(String).filter(t => t.includes(`Street 4 punch c${CYCLE - 1} `)) : []   // cycle-1 punch items still open: the build is unfixed (they obey the street hold), so cycle 2 would re-measure it
+if (PUNCH_HELD.length && !PREVIEW && !FORCE && MODE !== 'plan') return done({reason: 'blocked', blocked_by: PUNCH_HELD, cycle: CYCLE, owner_rulings_used: RUSED, street_rulings_used: SUSED,
+  polish_note: `blocked: ${PUNCH_HELD.length} open Street 4 punch c${CYCLE - 1} item(s); no release, take the next item`})
 const PRIOR_IDS = CYCLE > 1 ? arr((pre.prior || {}).ids).map(String).filter(Boolean) : []
 const PRIOR_LENS = CYCLE > 1 ? Object.fromEntries(Object.entries((pre.prior || {}).lenses || {}).map(([k, v]) => [norm(k), String(v ?? '').trim().toUpperCase()])) : {}
 const LNS = cap(LENSES), JVIEWS = cap(JUDGE_VIEWS), JUD = cap(JUDGES)
@@ -419,7 +426,8 @@ const RX = Math.min(EXTRA_ROUNDS, ROUNDS)   // extra find rounds: the design's 2
 const nGate = JVIEWS.length * JUD.length + 2   // judges + voice grep + coexistence
 const RESERVE = nGate + 2 + 7   // gate + punch integrator (crit) + shot pruner and three records (crit)
 const dg = pre.device || [], dLast = dg.length ? dg[dg.length - 1] : null   // the newest device run decides (paths are dated)
-const DEVICE_GATE = !dLast ? 'absent' : (Number(dLast.fps_min) >= DEVICE_FPS && dLast.degrade_max === 0) ? 'pass' : 'fail'
+const IDX_SHA = String(pre.index_sha256 ?? '').trim().toLowerCase(), dSha = dLast ? String(dLast.index_sha ?? '').trim().toLowerCase() : ''
+const DEVICE_GATE = !dLast ? 'absent' : !(isHex(IDX_SHA) && dSha === IDX_SHA) ? 'stale' : (Number(dLast.fps_min) >= DEVICE_FPS && dLast.degrade_max === 0) ? 'pass' : 'fail'   // stale: the newest device run did not measure this index.html
 
 if (MODE === 'plan') {
   const nL = LNS.length
@@ -429,11 +437,11 @@ if (MODE === 'plan') {
     {phase: 'Find', agents_min: nL, agents_max: nL + RX * nL},
     {phase: 'Verify', agents_min: 0, agents_max: (1 + 3 * FIND_CAP0 * nL) + RX * (1 + 3 * FIND_CAP * nL), per_fresh_finding: 3},
     {phase: 'Bare-street gate', agents_min: nGate, agents_max: nGate},
-    {phase: 'Punch list', agents_min: 1, agents_max: 2},
-    {phase: 'Record', agents_min: 4, agents_max: 7}]   // shot pruner + findings, gate, state (crit each)
+    {phase: 'Punch list', agents_min: 2, agents_max: 3},   // shot pruner + integrator (crit)
+    {phase: 'Record', agents_min: 3, agents_max: 6}]   // findings, gate, state (crit each)
   const agents_min = schedule.reduce((t, x) => t + x.agents_min, 0), agents_max = schedule.reduce((t, x) => t + x.agents_max, 0)
   return done({reason: 'plan', schedule, agents_min, agents_max, bound: VERIFY_BOUND, over_bound: agents_max > VERIFY_BOUND, cycle: CYCLE,
-    chain_ok: chainOk, preview: PREVIEW, device_gate: DEVICE_GATE, prior_ids: PRIOR_IDS, owner_rulings_used: RUSED, street_rulings_used: SUSED,
+    chain_ok: chainOk, preview: PREVIEW, device_gate: DEVICE_GATE, prior_ids: PRIOR_IDS, blocked_by: PUNCH_HELD, owner_rulings_used: RUSED, street_rulings_used: SUSED,
     assumes: 'Verify max rests on the code-side caps of 2 findings per lens in round 0 and 1 per re-run lens later; fresh findings past the bound or the token budget are left unverified (a recorded gap)'})
 }
 
@@ -447,46 +455,65 @@ const infra = e => done({reason: 'infra', rounds, cycle: CYCLE, preview: PREVIEW
 // ---- Capture ----
 phase('Capture')
 const blindTriples = JVIEWS.map(v => [v, ...BLIND_TOK(JUDGE_VIEWS.indexOf(v))])
+const blindImg = (v, which) => `${CAPDIR}/shots/blind/${v}-${BLIND_TOK(JUDGE_VIEWS.indexOf(v))[which === 'layered' ? 0 : 1]}.jpg`   // the capture copies the desktop blind pairs to these exact names
 const capt = await crit(PS(`You own the browser for this review; you are its only capture step. Never judge and never summarise metrics.json: a separate reader extracts the measurements.
 ${SANDBOX_ST}
 1. From ${REPO}, run ONCE: node ${PROBE} ${CAPTURE_FLAGS} --port ${PORT} --cdn-dir <tmp> --out ${CAPDIR}/metrics.json --shots ${CAPDIR}/shots/
 ${PREVIEW ? '   This is a preview of a partial build: first run node ' + PROBE + ' --help and drop from the line above every flag it does not list (keep the rest unchanged).\n' : ''}2. Fingerprints, both seeds ${SEEDS.join(' and ')}: per seed s run node ${PROBE} --fingerprint --seed s --days ${FP_DAYS} --port ${PORT} --cdn-dir <tmp> five ways, each with --out to a file in your temp dir: no --layers flag (never), --layers street=0 (off), --layers street=1 (on), --walk ${VIEWS_JSON} --layers street=1 (walk_on), --walk ${VIEWS_JSON} --layers street=0 (walk_off). Then, with a node script that copies each run's fingerprint sha byte for byte and changes nothing else in the file, set the key fingerprint of ${CAPDIR}/metrics.json to {"<seed>": {"never": sha, "off": sha, "on": sha, "walk_on": sha, "walk_off": sha}} for both seeds.
-3. Blind stills for the bare-street panel: for each [view, layered name, bare name] of ${J(blindTriples)}, byte-copy the desktop still of that view with street=1 to ${CAPDIR}/shots/blind/<view>-<layered name>.jpg and its street=0 still to ${CAPDIR}/shots/blind/<view>-<bare name>.jpg.
-4. Every image stays under ${CAPDIR}/shots/ (git-ignored), at most 300 KB each. Edit no repo file and never the probe.
-Return {metrics_path (absolute), metrics_sha256 (sha256sum of the final metrics.json; '' when it was not written), shots_dir (absolute; ${CAPDIR}/shots), infra_error}: infra_error = the setup failure (probe missing, non-zero exit, port, browser or CDN), '' when there is none. A street defect is never an infra_error. On an infra error fill every other key with ''.`),
+3. Blind stills for the bare-street panel. Never infer a still's layer or size from the file names of step 1 (the combined run's naming is not fixed). Instead run the probe twice more, desktop size only (no --phone flag), one layer per run, each into its own fresh directory: node ${PROBE} --views ${VIEWS_JSON} --layers street=1 --port ${PORT} --cdn-dir <tmp> --out <tmp>/blind-on.json --shots <tmp>/blind-on/ and the same with --layers street=0, --out <tmp>/blind-off.json and --shots <tmp>/blind-off/. In each directory the still of a view is the one image whose file name contains that view id as a whole token (SV1 never matches SV10). For each [view, layered name, bare name] of ${J(blindTriples)}: layered_src = that view's still in <tmp>/blind-on/, bare_src = its still in <tmp>/blind-off/; byte-copy layered_src to ${CAPDIR}/shots/blind/<view>-<layered name>.jpg and bare_src to ${CAPDIR}/shots/blind/<view>-<bare name>.jpg. When a directory holds no such image, or more than one, for a view, leave that source and its copy "" (copy nothing for that view) rather than guess.
+4. Every image stays under ${CAPDIR}/shots/ (git-ignored), at most 300 KB each. Edit no repo file and never the probe. Keep the <tmp> directory holding the extracted three/ and leaflet/ (do not delete it): the verifiers reuse it.
+Return {metrics_path (absolute), metrics_sha256 (sha256sum of the final metrics.json; '' when it was not written), shots_dir (absolute; ${CAPDIR}/shots), cdn_dir (the absolute <tmp> passed as --cdn-dir), blind: [one entry per view of step 3: {view, layered_src, bare_src (absolute source paths), layered, bare (absolute paths of the copies), layered_sha256, bare_sha256 (sha256sum of each copy)}], infra_error}: infra_error = the setup failure (probe missing, non-zero exit, port, browser or CDN), '' when there is none. A street defect is never an infra_error. On an infra error fill every other key with '' (blind: []).`),
   {label: 'capture', phase: 'Capture', schema: CAPT, ...M('audit')})
 spent += 2
 if (!capt) return died('capture')
 if (String(capt.infra_error ?? '').trim()) return infra(capt.infra_error)
 const SHOTS = absP(String(capt.shots_dir || '').trim() || CAPDIR + '/shots').replace(/\/+$/, '')
 const METRICS = absP(String(capt.metrics_path || '').trim() || CAPDIR + '/metrics.json')
+const cdnRaw = String(capt.cdn_dir ?? '').trim().replace(/\/+$/, '')
+const CDN = cdnRaw.startsWith('/') && PATH_OK.test(cdnRaw) && !cdnRaw.split('/').includes('..') ? cdnRaw : ''   // reaches unquoted prompt lines
+// Every probe command after the capture runs in parallel with others: a fixed args.port would collide, so these steps always bind port 0.
+const VPROBE = `Every probe command in this step uses --port 0 (an OS-assigned free port; findings are checked in parallel, so a fixed port collides${PORT ? ', whatever --port the recipe above names' : ''}) and ${CDN ? `--cdn-dir ${CDN} (three/ and leaflet/ already extracted by the capture; skip npm pack; only if that directory is gone, build your own as the recipe says)` : '--cdn-dir <tmp> built as the recipe says'}.`
+const blindMap = {}, blindBadWhy = {}
+for (const v of JVIEWS) {
+  const es = arr(capt.blind).filter(e => e && String(e.view ?? '').trim() === v)
+  const e = es[0] || {}, ls = String(e.layered_src ?? '').trim(), bs = String(e.bare_src ?? '').trim()
+  const why = es.length !== 1 ? `${es.length} blind entries` : !ls || !bs ? 'no single still found per layer' : absP(ls) === absP(bs) ? 'layered and bare share one source still'
+    : absP(String(e.layered ?? '')) !== blindImg(v, 'layered') || absP(String(e.bare ?? '')) !== blindImg(v, 'bare') ? 'copies not at the neutral names'
+    : !isHex(e.layered_sha256) || !isHex(e.bare_sha256) ? 'copy hash missing' : ''
+  if (why) blindBadWhy[v] = why; else blindMap[v] = {layered_src: absP(ls), bare_src: absP(bs)}
+}
+if (Object.keys(blindBadWhy).length) gaps.push('blind stills not captured (the view fails SG4.2, no judge runs): ' + Object.entries(blindBadWhy).map(([v, w]) => `${v}: ${w}`).join('; '))
 const readerPrompt = `Mechanical read-back; judge nothing. Write the JavaScript between the BEGIN/END lines below, byte for byte, to rd.js in a fresh temp dir (mktemp -d; use your file-writing tool or a quoted heredoc so nothing expands). Then run, from ${REPO}: sha256sum ${METRICS} and node <that dir>/rd.js < ${METRICS}.
-Return the single JSON object that node prints, every key and value exactly as printed (do not round, reorder, trim, translate or drop anything; empty arrays, empty objects and nulls stay), plus sha256 = the hash sha256sum printed. If node fails, return sha256 and infra_error = its error message, with every other key empty.
+Return the single JSON object that node prints, every key and value exactly as printed (do not round, reorder, trim, translate or drop anything; empty arrays, empty objects and nulls stay), plus sha256 = the hash sha256sum printed. If node fails (a syntax error means rd.js was copied wrongly), return sha256 and infra_error = its error message, with every other key empty.
 BEGIN rd.js
 ${DIGEST_JS}END rd.js`
-let dig = null
+let dig = null, rdInfra = ''
 for (let t = 0; t < 2 && !dig; t++) {
   const r = await agent(PS(readerPrompt), {label: 'metrics reader' + (t ? ' (retry)' : ''), phase: 'Capture', schema: DIGEST, ...M('mech')})
   spent++
-  if (!r) continue
-  if (String(r.infra_error ?? '').trim()) return infra(r.infra_error)
+  if (!r) { rdInfra = ''; continue }
+  if (String(r.infra_error ?? '').trim()) { rdInfra = String(r.infra_error); log(`metrics reader: node failed (${oneLine(rdInfra).slice(0, 160)}), ${t ? 'giving up' : 'retrying'}`); continue }
+  rdInfra = ''
   if (r.digest !== digOf(r)) { log(`metrics reader: digest ${r.digest} does not match its own return (${digOf(r)}): mistranscribed, ${t ? 'giving up' : 'retrying'}`); continue }
   if (!isHex(r.sha256) || r.sha256 !== capt.metrics_sha256) { log(`metrics reader: sha ${r.sha256} differs from the capture's ${capt.metrics_sha256}, ${t ? 'giving up' : 'retrying'}`); continue }
   dig = r
 }
-if (!dig) return died('metrics reader')
+if (!dig) return rdInfra ? infra('metrics reader failed twice: ' + rdInfra) : died('metrics reader')
+{ const lset = new Set(arr(pre.class_labels).map(x => norm(String(x)))); if (!JVIEWS.some(v => Object.keys((dig.views[v] || {}).classes_on || {}).some(k => lset.has(norm(k))))) gaps.push('no class of street-bible.json classes[] matches a key of classes_on in any judge view of the digest: SG4.2 cannot confirm an omission (a harness fault, not the build)') }
 if (dig.console_errors.length) gaps.push('console errors during capture: ' + dig.console_errors.slice(0, 5).join(' | '))
 
 // ---- Find + Verify (loop until dry, <= RX extra rounds) ----
 const DIGTXT = J(Object.fromEntries(DIG_KEYS.map(k => [k, dig[k]])))
+const PRIOR_TITLES = CYCLE > 1 ? Object.fromEntries(Object.entries((pre.prior || {}).titles || {}).map(([k, v]) => [norm(k), oneLine(v)])) : {}
+const priorList = PRIOR_IDS.map(id => ({id, title: PRIOR_TITLES[norm(id)] || ''}))
 const priorTxt = PRIOR_IDS.length
-  ? `Open punch items from cycle ${CYCLE - 1}: ${PRIOR_IDS.join(', ')} (details in ${OUTABS}/punch-list.json). A defect that is one of these, still unfixed, is reported with id set to that punch id and fresh evidence; every other finding has id "".`
+  ? `Open punch items from cycle ${CYCLE - 1}: ${J(priorList)} (details in ${OUTABS}/punch-list-c${CYCLE - 1}.json). A defect that is one of these, still unfixed, is reported with id set to that punch id and fresh evidence; every other finding has id "".`
   : 'There is no prior review cycle: id is always "".'
 const seenTitles = {}
 const finderPrompt = (L, round) => `You are Street 4 review finder ${L.id} — ${L.check}. ONE lens only; report defects only through it:
 ${L.lens}
 Review only: edit no repo file. The one file you write is ${RV}/findings/${L.id}-c${CYCLE}-r${round}.json. Cycle ${CYCLE}, round ${round}.
-Read: the metrics digest at the end of this prompt (a fixed-script read of ${METRICS}, sha256 ${dig.sha256}); the capture ${METRICS} itself; the shots in ${SHOTS}/ (layered = street=1, bare = street=0; phone variants at 390x844 for ${PHONE.join(' and ')}); the street bible ${BIBLE_MD} and ${BIBLE_JSON}; the street spec ${SPEC_MD} and ${SPEC_JSON}; ${REPO}/index.html (the /* STREET */ block and the hook lines carrying ${HOOK_MARK}); the frozen views ${VIEWS_JSON}; ${LENS_READS[L.id]}.
+Read: the metrics digest at the end of this prompt (a fixed-script read of ${METRICS}, sha256 ${dig.sha256}); the capture ${METRICS} itself; the shots in ${SHOTS}/ (layered = street=1, bare = street=0; phone variants at 390x844 for ${PHONE.join(' and ')}; the file naming is the probe's own and not fixed, so take a still's layer and size from the probe's record of its shots in ${METRICS} or from node ${PROBE} --help, never guessed from a file name; the desktop layered/bare pairs captured one layer per run are known exactly: ${J(blindMap)}); the street bible ${BIBLE_MD} and ${BIBLE_JSON}; the street spec ${SPEC_MD} and ${SPEC_JSON}; ${REPO}/index.html (the /* STREET */ block and the hook lines carrying ${HOOK_MARK}); the frozen views ${VIEWS_JSON}; ${LENS_READS[L.id]}.
 Code anchors (pattern -> path:line as re-derived this run; cite code by pattern, never by line number alone):
 ${anchorMap(pre.anchors)}
 Rulings:
@@ -495,7 +522,8 @@ ${rulingText(STR.r, LENS_RULES[L.id].ST)}
 ${DET_RULE}
 ${VOCAB_ST_RULE}
 ${priorTxt}
-${round > 0 ? `Already reported by this lens: ${J((seenTitles[L.id] || []).slice())}; report only what is not in this list.\n` : ''}Every finding needs evidence {kind, ref} another agent can re-check: shot = ${SHOT_REF}; metric = a JSON pointer into ${METRICS} (e.g. /views/SV1/street=1/calls, as the file spells it); cmd = a shell command run from ${REPO}. repro_cmd = a shell command, run from ${REPO}, that exits 0 while the defect is present and non-zero once it is fixed; one that writes anything (the probe's --out, a build) first makes a temp copy (${TMPCOPY}) and runs there. where = the view id, file:pattern or layers row the defect sits at. A finding with an empty evidence.ref or repro_cmd is discarded.
+${round > 0 ? `Already reported by this lens: ${J((seenTitles[L.id] || []).slice())}; report only what is not in this list.\n` : ''}Every finding needs evidence {kind, ref} another agent can re-check: shot = ${SHOT_REF}; metric = a JSON pointer into ${METRICS} (e.g. /views/SV1/street=1/calls, as the file spells it); cmd = a shell command run from ${REPO}. repro_cmd = a shell command, run from ${REPO}, that exits 0 while the defect is present and non-zero once it is fixed; one that writes anything (the probe's --out, a build) first makes a temp copy (${TMPCOPY}) and runs there, with paths relative to the copy or written as $D and never an absolute ${REPO} path. Probe runs (fingerprint, cap, fade and hash defects) follow this recipe: ${SANDBOX_ST}
+${VPROBE} A repro_cmd that runs the probe carries --port 0 and that --cdn-dir explicitly, so a verifier can run it as written. where = the view id, file:pattern or layers row the defect sits at. A finding with an empty evidence.ref or repro_cmd is discarded.
 fix = the change to make. ${FIX_RULE} unit_hint = the street-spec unit id or the file the fix belongs in.
 Severity guide (for your ordering only; verifiers rate it): ${SEV_RUBRIC}
 Report at most ${round === 0 ? FIND_CAP0 : FIND_CAP} finding(s) this round, the most severe first; a later round asks again for what is left.
@@ -505,18 +533,22 @@ const fText = f => J({id: f.uid, lens: f.lens, title: f.title, where: f.where, e
 const reproducePrompt = f => `Reproduce ONE Street 4 review finding independently. Edit no repo file; write nothing outside a mktemp -d dir.
 Finding: ${fText(f)}
 Run its repro_cmd from ${REPO}; when the command writes anything (the probe's --out, a build, a generator) run it instead in a temp copy (${TMPCOPY}) with every ${REPO} in it rewritten to $D. Probe commands follow this recipe: ${SANDBOX_ST}
+${VPROBE} (A repro_cmd naming another --port or --cdn-dir is run with these instead; nothing else in it changes.)
 Then check the evidence: shot = open the image (shots live in ${SHOTS}/) and inspect the region; metric = read that pointer in ${METRICS}; cmd = run it from ${REPO}.
 reproduced = true only when repro_cmd exits 0 AND its output or the evidence shows the defect as described. out = the exit code, then the first 400 characters of the output.
-Return {id: "${f.uid}", reproduced, out}.`
+infra_error = the setup failure when you could not run the check at all (port in use, browser, CDN, npm, a probe crash before it measured anything), '' otherwise; with an infra_error set reproduced false. A command that ran and showed no defect is reproduced false with infra_error ''.
+Return {id: "${f.uid}", reproduced, out, infra_error}.`
 const refutePrompt = (f, rep) => `Try to refute ONE Street 4 review finding. Edit no repo file; write nothing outside a mktemp -d dir.
 Finding: ${fText(f)}
 An independent reproduction: ${J({reproduced: rep.reproduced, out: oneLine(rep.out).slice(0, 400)})}
-Re-check the evidence yourself (shots in ${SHOTS}/, metrics ${METRICS}, commands from ${REPO}; a writing command runs in a temp copy: ${TMPCOPY}).
+Re-check the evidence yourself (shots in ${SHOTS}/, metrics ${METRICS}, commands from ${REPO}; a writing command runs in a temp copy: ${TMPCOPY}). Probe commands follow this recipe: ${SANDBOX_ST}
+${VPROBE}
+If a setup failure (port, browser, CDN, npm, a probe crash before it measured anything) stops you re-checking, return infra_error = that failure and refuted false: never refute what you could not re-check. Otherwise infra_error = ''.
 Default refuted:true when the evidence does not hold; when the street bible (${BIBLE_MD}), the street spec (${SPEC_MD}, ${SPEC_JSON}) or a ruling below allows what it describes; or when the defect lies outside the street track (maps-site/, docs/filigree/, filigree code, or an index.html line that is neither in the /* STREET */ block nor a declared hook). refuted:false only when the defect is real, in the street track, and nothing allows it.
 Rulings:
 ${rulingText(RUL, FIL_CITED)}
 ${rulingText(STR.r, Object.keys(ST_RULINGS))}
-Return {id: "${f.uid}", refuted, why}.`
+Return {id: "${f.uid}", refuted, why, infra_error}.`
 const severityPrompt = f => `Rate the severity of ONE verified Street 4 finding with this fixed rubric: ${SEV_RUBRIC}
 Read the spec rule or gate criterion it touches before rating (spec ${SPEC_JSON}; Street 3's final gate ${GATE3}). Edit nothing.
 Finding: ${fText(f)}
@@ -527,6 +559,7 @@ const priorSet = new Set(PRIOR_IDS.map(norm))
 const seen = new Set(priorSet)
 const keyOf = f => priorSet.has(norm(f.id)) ? 'reopen ' + norm(f.id) : norm(f.title + ' ' + f.where)
 const survivors = [], unverified = [], dropped = [], deadLens = new Set(), lensCounts = {}
+const touched = new Set()   // norm(prior id) re-reported by a finder but lost before verification (cap, no evidence): not re-checked, never fixed
 let lensesNow = LNS
 for (let round = 0; ; round++) {
   const tag = round ? ' r' + round : ''
@@ -537,13 +570,18 @@ for (let round = 0; ; round++) {
   if (round > 0 && !fk.ok) gaps.push(`extra round ${round}: ${raw.length - fk.k.length}/${raw.length} finders died`)
   const candidates = []
   raw.forEach((res, i) => {
-    const L = lensesNow[i], lc = lensCounts[L.id] || (lensCounts[L.id] = {found: 0, no_evidence: 0, capped: 0, dupe: 0, fresh: 0, survived: 0, died: 0, unverified: 0})
+    const L = lensesNow[i], lc = lensCounts[L.id] || (lensCounts[L.id] = {found: 0, no_evidence: 0, capped: 0, dupe: 0, fresh: 0, survived: 0, died: 0, unverified: 0, not_reproduced: 0, refuted: 0, infra: 0})
     if (!res) { lc.died++; if (round === 0) deadLens.add(L.id); log(`agent died: ${L.id} finder r${round}` + (round === 0 ? ' (a missing lens, never "no findings")' : '')); return }
-    const all = arr(res.findings), capN = round === 0 ? FIND_CAP0 : FIND_CAP, k1 = all.slice(0, capN)
-    if (all.length > capN) { lc.capped += all.length - capN; log(`${L.id} r${round}: ${all.length - capN} finding(s) past the per-lens cap of ${capN} dropped`) }
+    const isPrior = f => !!f && priorSet.has(norm(f.id))
+    const all = arr(res.findings).map((f, j) => [f, j]).sort((a, b) => (isPrior(b[0]) - isPrior(a[0])) || a[1] - b[1]).map(x => x[0])   // stable: re-reported prior ids first, so the cap never drops one ahead of a new finding
+    const capN = round === 0 ? FIND_CAP0 : FIND_CAP, k1 = all.slice(0, capN)
+    if (all.length > capN) {
+      lc.capped += all.length - capN; log(`${L.id} r${round}: ${all.length - capN} finding(s) past the per-lens cap of ${capN} dropped`)
+      for (const f of all.slice(capN)) if (isPrior(f)) { touched.add(norm(f.id)); dropped.push({uid: `${L.id}.r${round}.cap`, lens: L.id, title: oneLine(f.title), prior_id: String(f.id), why: 'past the per-lens cap (prior id not re-checked)'}) }
+    }
     k1.forEach((f, j) => {
       lc.found++
-      if (!f || !f.evidence || !String(f.evidence.ref ?? '').trim() || !String(f.repro_cmd ?? '').trim()) { lc.no_evidence++; return }
+      if (!f || !f.evidence || !String(f.evidence.ref ?? '').trim() || !String(f.repro_cmd ?? '').trim()) { lc.no_evidence++; if (isPrior(f)) { touched.add(norm(f.id)); dropped.push({uid: `${L.id}.r${round}.${j + 1}`, lens: L.id, title: oneLine(f.title), prior_id: String(f.id), why: 'no evidence (prior id not re-checked)'}) } return }
       const g = {...f, lens: L.id, round, uid: `${L.id}.r${round}.${j + 1}`, prior_id: priorSet.has(norm(f.id)) ? String(f.id) : ''}
       g.key = keyOf(g)
       if (seen.has(g.key) && !g.key.startsWith('reopen ')) { lc.dupe++; dropped.push({uid: g.uid, lens: L.id, title: oneLine(g.title), why: 'seen'}); return }
@@ -556,16 +594,29 @@ for (let round = 0; ; round++) {
 
   phase('Verify')
   let fresh = candidates
-  if (fresh.length > 1 || PRIOR_IDS.length) {   // the optional fuzzy pass: it can only remove more, never re-admit
+  if (fresh.length > 1 || PRIOR_IDS.length) {   // the optional fuzzy pass: it removes only dupes of an earlier candidate or a seen title; a match to a prior punch id re-tags, never removes
+    const seenList = [...new Set(Object.values(seenTitles).flat())]
+    const openPrior = priorList.filter(p => !seen.has('reopen ' + norm(p.id)))
     const dd = await agent(PS(`Fuzzy duplicate pass, mechanical; judge nothing else and write nothing.
-Candidates (in order): ${J(fresh.map(f => ({id: f.uid, lens: f.lens, title: oneLine(f.title), where: oneLine(f.where)})))}
-Already seen (earlier rounds of this run, and the prior cycle's punch ids): ${J([...Object.values(seenTitles).flat(), ...PRIOR_IDS])}
-A candidate is a duplicate when it names the same defect at the same place as an EARLIER candidate in the list or as an already-seen item, in other words. Return {fresh: [ids that are not duplicates], dupes: [{id, of: the earlier candidate id or the seen title it duplicates}]}.`),
+Candidates (in order): ${J(fresh.map(f => ({id: f.uid, lens: f.lens, title: oneLine(f.title), where: oneLine(f.where), prior_id: f.prior_id})))}
+Already seen (titles reported earlier in this run): ${J(seenList)}
+A candidate is a duplicate when it names the same defect at the same place as an EARLIER candidate in the list or as an already-seen title, in other words; "of" is then that earlier candidate's id or that seen title, copied exactly.
+${openPrior.length ? `Open punch items from the previous cycle (never a reason to drop a candidate): ${J(openPrior)}. A candidate whose prior_id is "" but which names the same defect as one of these is a reopen: list it under reopens as {id, of: that punch id}, and keep it in fresh.` : 'There are no open punch items to match: reopens is [].'}
+Return {fresh: [ids that are not duplicates], dupes: [{id, of}], reopens: [{id, of}]}.`),
       {label: 'dedup' + tag, phase: 'Verify', schema: DEDUP, ...M('mech')})
     spent++
     if (dd) {
-      const ix = new Map(fresh.map((f, i) => [f.uid, i]))
-      const gone = new Set(arr(dd.dupes).filter(x => x && ix.has(x.id) && String(x.of ?? '').trim() && x.of !== x.id && (!ix.has(x.of) || ix.get(x.of) < ix.get(x.id))).map(x => x.id))
+      const ix = new Map(fresh.map((f, i) => [f.uid, i])), seenSet = new Set(seenList)
+      const priorOpen = new Map(openPrior.map(p => [norm(p.id), p.id]))
+      for (const x of arr(dd.reopens)) {   // re-tag only: a candidate that matches an open prior id is verified as that id's reopen
+        const f = x && ix.has(x.id) ? fresh[ix.get(x.id)] : null, pid = x ? priorOpen.get(norm(x.of)) : undefined
+        if (!f || f.prior_id || !pid || seen.has('reopen ' + norm(pid))) continue
+        f.prior_id = pid; f.key = 'reopen ' + norm(pid); seen.add(f.key); log(`dedup: ${f.uid} re-tagged as a reopen of ${pid}`)
+      }
+      const ofOk = x => { const of = String(x.of ?? '').trim(); return !!of && of !== x.id && (ix.has(of) ? ix.get(of) < ix.get(x.id) : seenSet.has(of)) }
+      const bad = arr(dd.dupes).filter(x => x && ix.has(x.id) && !ofOk(x))
+      if (bad.length) log(`dedup${tag}: ${bad.length} dupe claim(s) ignored (of names neither an earlier candidate nor a seen title)`)
+      const gone = new Set(arr(dd.dupes).filter(x => x && ix.has(x.id) && ofOk(x)).map(x => x.id))
       for (const f of fresh) if (gone.has(f.uid) && !f.prior_id) { lensCounts[f.lens].dupe++; dropped.push({uid: f.uid, lens: f.lens, title: oneLine(f.title), why: 'fuzzy dupe'}) }
       fresh = fresh.filter(f => !gone.has(f.uid) || f.prior_id)
     } else log('agent died: dedup' + tag + ' (optional; the code-side Set already ran)')
@@ -581,18 +632,25 @@ A candidate is a duplicate when it names the same defect at the same place as an
     log(`round ${round}: ${cut.length} of ${fresh.length} fresh finding(s) left unverified: the agent bound (${spent} spent, ${RESERVE} reserved, bound ${VERIFY_BOUND})`)
     gaps.push(`round ${round}: ${cut.length} fresh finding(s) left unverified by the agent bound (lenses ${[...new Set(cut.map(f => f.lens))].join(', ')})`)
   }
-  const ver = await pipeline(verify,
+  const infraOf = x => String((x && x.infra_error) ?? '').trim()
+  const ver = []
+  for (let c = 0; c < verify.length; c += VERIFY_CONC) ver.push(...await pipeline(verify.slice(c, c + VERIFY_CONC),   // bounded: every verifier may start probe runs
     async (_p, f) => { const rep = await agent(PS(reproducePrompt(f)), {label: `${f.uid} · reproduce`, phase: 'Verify', schema: REPRO, ...M('audit')}); if (!rep) throw new Error('reproduce died'); return {rep} },
-    async (r, f) => { if (r.rep.reproduced !== true) return {...r, ref: null}; const ref = await agent(PS(refutePrompt(f, r.rep)), {label: `${f.uid} · refute`, phase: 'Verify', schema: REFUTE, ...M('judge')}); if (!ref) throw new Error('refute died'); return {...r, ref} },
-    async (rf, f) => { if (!rf.ref || rf.ref.refuted !== false) return {...rf, sev: null}; const sev = await agent(PS(severityPrompt(f)), {label: `${f.uid} · severity`, phase: 'Verify', schema: SEVR, ...M('triage')}); if (!sev) throw new Error('severity died'); return {...rf, sev} })
+    async (r, f) => { if (r.rep.reproduced !== true || infraOf(r.rep)) return {...r, ref: null}; const ref = await agent(PS(refutePrompt(f, r.rep)), {label: `${f.uid} · refute`, phase: 'Verify', schema: REFUTE, ...M('judge')}); if (!ref) throw new Error('refute died'); return {...r, ref} },
+    async (rf, f) => { if (!rf.ref || rf.ref.refuted !== false || infraOf(rf.ref)) return {...rf, sev: null}; const sev = await agent(PS(severityPrompt(f)), {label: `${f.uid} · severity`, phase: 'Verify', schema: SEVR, ...M('triage')}); if (!sev) throw new Error('severity died'); return {...rf, sev} }))
   spent += 3 * verify.length
-  const vk = kept(ver, 'verify r' + round)
-  coverage.push({what: 'verify r' + round, ok: vk.ok, frac: vk.k.length + '/' + ver.length})
+  const infraIx = new Set(verify.map((_f, i) => i).filter(i => ver[i] && (infraOf(ver[i].rep) || infraOf(ver[i].ref))))
+  const vk = kept(ver.map((v, i) => infraIx.has(i) ? null : v), 'verify r' + round)   // an infra-blocked check is not a kept verdict (SG4.9)
+  coverage.push({what: 'verify r' + round + (infraIx.size ? ` (${infraIx.size} infra)` : ''), ok: vk.ok, frac: vk.k.length + '/' + ver.length})
+  if (infraIx.size) gaps.push(`round ${round}: ${infraIx.size} finding(s) unverified by a verifier setup failure: ${[...new Set([...infraIx].map(i => oneLine(infraOf(ver[i].rep) || infraOf(ver[i].ref)).slice(0, 120)))].slice(0, 3).join(' | ')}`)
   const survLenses = new Set()
   verify.forEach((f, i) => {
-    const v = ver[i]
-    if (!v) { unverified.push({uid: f.uid, lens: f.lens, prior_id: f.prior_id, title: oneLine(f.title), why: 'verifier died'}); lensCounts[f.lens].unverified++; log(`unverified (a verifier died): ${f.uid} ${oneLine(f.title)}`); return }
-    if (v.rep.reproduced !== true || !v.ref || v.ref.refuted !== false || !v.sev) return
+    const v = ver[i], lc = lensCounts[f.lens], base = {uid: f.uid, lens: f.lens, prior_id: f.prior_id, title: oneLine(f.title)}
+    if (!v) { unverified.push({...base, why: 'verifier died'}); lc.unverified++; log(`unverified (a verifier died): ${f.uid} ${oneLine(f.title)}`); return }
+    if (infraIx.has(i)) { const e = infraOf(v.rep) || infraOf(v.ref); unverified.push({...base, why: 'infra', detail: oneLine(e).slice(0, 200), stage: infraOf(v.rep) ? 'reproduce' : 'refute'}); lc.unverified++; lc.infra++; log(`unverified (infra): ${f.uid} ${oneLine(e).slice(0, 120)}`); return }
+    if (v.rep.reproduced !== true) { dropped.push({...base, why: 'not reproduced', out: oneLine(v.rep.out).slice(0, 200)}); lc.not_reproduced++; return }
+    if (!v.ref || v.ref.refuted !== false) { dropped.push({...base, why: 'refuted', refute_why: oneLine(v.ref && v.ref.why).slice(0, 200)}); lc.refuted++; return }
+    if (!v.sev) { unverified.push({...base, why: 'no severity'}); lc.unverified++; return }
     survivors.push({...f, severity: v.sev.severity, severity_why: oneLine(v.sev.why), reproduce_out: oneLine(v.rep.out).slice(0, 400), refute_why: oneLine(v.ref.why)})
     lensCounts[f.lens].survived++
     survLenses.add(f.lens)
@@ -611,7 +669,6 @@ A candidate is a duplicate when it names the same defect at the same place as an
 // ---- Bare-street gate ----
 phase('Bare-street gate')
 const LABELS = arr(pre.class_labels).map(String).filter(Boolean)
-const blindImg = (v, which) => `${SHOTS}/blind/${v}-${BLIND_TOK(JUDGE_VIEWS.indexOf(v))[which === 'layered' ? 0 : 1]}.jpg`
 const pairOf = (v, vi, jid) => layeredIsA(vi, jid) ? [blindImg(v, 'layered'), blindImg(v, 'bare')] : [blindImg(v, 'bare'), blindImg(v, 'layered')]
 const panelBody = ([a, b]) => `Two stills of the same place from the same camera: A = ${a} and B = ${b}. Open no other file and run nothing.
 At table distance, which still shows the richer, more legible street, the one you would rather run a scene in?
@@ -620,12 +677,12 @@ Return {prefer: "A" or "B", omissions: [{class: a name from the list, exactly as
 const coexPrompt = `Coexistence read (write nothing outside a mktemp -d dir).
 A. ${FIL_ANCHOR_TASK}
 Put that object under "fil_anchors".
-B. restore_undeclared = every line of ${REPO}/index.html that lies outside the lines from the one containing "/* STREET */" through the one containing "/* /STREET */", contains "${HOOK_MARK}", and does not equal exactly some /hook_lines[].line of ${SPEC_JSON}; [] when none.
+B. Restore check (a node script in the temp dir): read ${REPO}/index.html and ${SPEC_JSON} (/hook_lines: [{line, replaces}]). Delete the lines from the first line containing "/* STREET */" through the first line after it containing "/* /STREET */" (inclusive; none when absent). Then for every remaining line that contains "${HOOK_MARK}": if it equals some hook_lines[].line exactly, replace it with that entry's replaces (delete the line when replaces is null); otherwise keep it and list it in restore_undeclared. sha_restore = sha256 of the joined result (lines joined with "\\n"); restore_undeclared is [] when none.
 C. tree_digest = sha256 over the sorted list of "<path> <sha256>" lines (paths relative to ${REPO}) for every file under ${REPO}/maps-site/ and ${FIL}/, joined with "\\n".
-Return {fil_anchors, tree_digest, restore_undeclared}.`
+Return {fil_anchors, tree_digest, restore_undeclared, sha_restore}.`
 const voicePrompt = `Vocabulary grep, mechanical (write nothing outside a mktemp -d dir). With a node script, take the lines of ${REPO}/index.html strictly between the line containing "/* STREET */" and the line containing "/* /STREET */"; extract every string literal (single- and double-quoted strings and the literal parts of template strings; skip comments); test each with new RegExp(${J(VOCAB_ST.source)}, "i"). Return {hits: ["<line number>: <literal>" for every literal that matches]} ([] when none match or the block is absent).`
 const [panels, vg, cx] = await parallel([
-  () => pipeline(JVIEWS, (view, _item, vi) => parallel(JUD.map(j => () => agent(PS(panelBody(pairOf(view, JUDGE_VIEWS.indexOf(view), j.id)), true),
+  () => pipeline(JVIEWS, (view, _item, vi) => blindBadWhy[view] ? [] : parallel(JUD.map(j => () => agent(PS(panelBody(pairOf(view, JUDGE_VIEWS.indexOf(view), j.id)), true),
     {label: `${view} · ${j.id}`, phase: 'Bare-street gate', schema: PANEL, ...M(j.role)})))),
   () => agent(PS(voicePrompt), {label: 'voice grep', phase: 'Bare-street gate', schema: VGREP, ...M('mech')}),
   () => agent(PS(coexPrompt), {label: 'coexistence', phase: 'Bare-street gate', schema: COEX, ...M('mech')})])
@@ -638,6 +695,7 @@ JVIEWS.forEach((v, vi) => {
   const gvi = JUDGE_VIEWS.indexOf(v), res = arr(arr(panels)[vi]), vw = dig.views[v] || null
   let qualified = 0, missing = 0
   const union = new Set()
+  if (blindBadWhy[v]) { perView[v] = {ok: false, judges_qualified: 0, judges_missing: JUD.length, confirmed: [], blind: 'not captured: ' + blindBadWhy[v]}; return }
   JUD.forEach((jd, ji) => {
     const r = res[ji] || null, lA = layeredIsA(gvi, jd.id), layeredSide = lA ? 'A' : 'B'
     if (!r) { missing++; deadJudges.push(`${v} · ${jd.id}`); judgeRows.push({view: v, judge: jd.id, role: jd.role, layered_is_a: lA, died: true}); return }
@@ -674,9 +732,9 @@ const fadeOk = Array.isArray(dig.appear.violations) && dig.appear.violations.len
 const lits = Object.entries(((cx || {}).fil_anchors || {}).literals || {}), inStreet = Object.entries(((cx || {}).fil_anchors || {}).in_street || {})
 const htRows = arr(dig.hash_table), htHave = new Set(htRows.map(x => x.hash))
 const coex = {coexistence_read: !!cx, fil_literals: lits.length, fil_unresolved: lits.filter(([, x]) => !x).map(([k]) => k), fil_in_street: inStreet.filter(([, n]) => n > 0).map(([k, n]) => `${k}: ${n}`),
-  restore_undeclared: cx ? arr(cx.restore_undeclared) : null, hash_table_bad: htRows.filter(x => !x.ok).map(x => x.hash), hash_table_missing: HASH_TABLE_MIN.filter(h => !htHave.has(h)),
+  restore_undeclared: cx ? arr(cx.restore_undeclared) : null, sha_restore: cx ? cx.sha_restore : '', restore_refs: arr(pre.restore_refs), restore_sha_ok: !!cx && isHex(cx.sha_restore) && arr(pre.restore_refs).includes(cx.sha_restore), hash_table_bad: htRows.filter(x => !x.ok).map(x => x.hash), hash_table_missing: HASH_TABLE_MIN.filter(h => !htHave.has(h)),
   writer_roundtrip: dig.writer_roundtrip, stats_keys: dig.stats_keys, tree_digest: cx ? cx.tree_digest : '', tree_digest_gate3: g3.tree_digest || '', tree_digest_preflight: pre.tree_digest || ''}
-const coexOk = !!cx && lits.length > 0 && !coex.fil_unresolved.length && !coex.fil_in_street.length && coex.restore_undeclared.length === 0
+const coexOk = !!cx && lits.length > 0 && !coex.fil_unresolved.length && !coex.fil_in_street.length && coex.restore_undeclared.length === 0 && coex.restore_sha_ok
   && htRows.length > 0 && !coex.hash_table_bad.length && !coex.hash_table_missing.length && dig.writer_roundtrip === true && sameList(dig.stats_keys, STATS_KEYS)
 const vHits = vg ? arr(vg.hits) : null
 coverage.unshift({what: 'lenses run in round 0 (a dead finder is a missing lens, never "no findings")', ok: deadLens.size === 0, frac: (LNS.length - deadLens.size) + '/' + LNS.length + (deadLens.size ? ' dead: ' + [...deadLens].join(', ') : '')})
@@ -688,7 +746,7 @@ criteria.push(
   C('SG4.4', 'caps met on SV1-SV9 (digest vs spec /caps); SV5 and SV9 on === off', capRows, 'all', capRows.every(x => x.ok)),
   C('SG4.5', 'fade: appear.violations = []; hysteresis swaps exactly 1 in + 1 out per threshold', {violations: dig.appear.violations, swaps: dig.swaps}, 'both', fadeOk),
   C('SG4.6', 'VOCAB_ST hits in STREET-block string literals', {hits: vHits, grep_ran: !!vg}, '0', !!vg && vHits.length === 0),
-  C('SG4.7', 'coexistence: filigree anchors resolve and none sits inside the STREET block; restore_undeclared = []; hash table ok; stats keys unchanged (tree digest for information only)', coex, 'all', coexOk),
+  C('SG4.7', 'coexistence: filigree anchors resolve and none sits inside the STREET block; restore_undeclared = [] and restore(index.html) sha equals the Street 3 index-ref/off-ref stamp; hash table ok; stats keys unchanged (tree digest for information only)', coex, 'all', coexOk),
   C('SG4.8', 'blind compliance: each judge read only its two stills', {bad_reads: badReads}, '0 reads outside the two stills', badReads.length === 0 && judgesAlive > 0),
   C('SG4.9', 'coverage: every lens returned in round 0; verify fan-outs >=75% kept', coverage, 'all', coverage.every(x => x.ok)))
 const failing = criteria.filter(c => !c.pass).map(c => c.id)
@@ -703,26 +761,47 @@ const items = ranked.map((f, i) => {
     fix: oneLine(f.fix), unit_hint: oneLine(f.unit_hint), prior_id: f.prior_id, done_when: dw, finding: f.uid}
 })
 const flinched = items.filter(x => x.lens === 'L10' || (x.prior_id && PRIOR_LENS[norm(x.prior_id)] === 'L10')).map(x => x.id)
-const fixedSince = PRIOR_IDS.filter(id => !survivors.some(f => norm(f.prior_id) === norm(id)) && !unverified.some(u => norm(u.prior_id) === norm(id)) && !deadLens.has(PRIOR_LENS[norm(id)] || '?'))
+const fixedSince = PRIOR_IDS.filter(id => !survivors.some(f => norm(f.prior_id) === norm(id)) && !unverified.some(u => norm(u.prior_id) === norm(id)) && !touched.has(norm(id)) && !deadLens.has(PRIOR_LENS[norm(id)] || '?') && dropped.some(d => norm(d.prior_id) === norm(id) && (d.why === 'not reproduced' || d.why === 'refuted')))
 const notRechecked = PRIOR_IDS.filter(id => !survivors.some(f => norm(f.prior_id) === norm(id)) && !fixedSince.includes(id))
-if (notRechecked.length) gaps.push(`prior punch ids not re-checked (their lens died or a finding went unverified): ${notRechecked.join(', ')}`)
-const pl = await crit(PS(`You are the punch-list integrator for Street 4 review cycle ${CYCLE}${PREVIEW ? ' (a preview: findings only, never the durable list)' : ''}. If ${OUTABS}/punch-list.json exists (an earlier cycle's list), read it first${PREVIEW ? ' (read only)' : ', BEFORE you overwrite it'}. Then write two files:
-1. ${RV}/punch-list.json = {"date":"${DATE}","cycle":${CYCLE},"items":ITEMS} with ITEMS below verbatim: keep every item, field, id and the order; add or drop nothing (2-space indent).
-2. ${RV}/punch-list.md, with these sections:
+if (notRechecked.length) gaps.push(`prior punch ids not re-checked (never re-reported with a verified reproduce or refute verdict: lens died, finding unverified, capped, or no evidence): ${notRechecked.join(', ')}`)
+// Pruner first: cited stills are copied under collision-free names and every shot ref is re-pointed to the tracked copy before the list is written.
+const citedPlan = []
+for (const x of items) {
+  if (!x.evidence || x.evidence.kind !== 'shot') continue
+  const src = shotPath(x.evidence.ref)
+  if (src && !citedPlan.some(c => c.src === src)) citedPlan.push({src, dest: `${CAPDIR}/cited/${pad2(citedPlan.length + 1)}-${src.split('/').pop().replace(/[^A-Za-z0-9._-]/g, '_')}`})
+}
+const pr = await agent(PS(`Housekeeping, mechanical. Write nothing except what is named here.
+1. Create ${CAPDIR}/cited/ and copy into it ONLY these images, each from "src" to exactly "dest" (skip a src that does not exist; a JPEG over 300 KB is re-encoded at a lower quality to fit): ${J(citedPlan)}. Remove any other file already in ${CAPDIR}/cited/.
+2. Leave ${SHOTS}/ in place (it is git-ignored) and never touch metrics.json.
+3. count_ok = the number of files now in ${CAPDIR}/cited/ equals the number of listed srcs that exist (${citedPlan.length} listed).
+Return {kept: [absolute paths now in ${CAPDIR}/cited/], deleted: [files removed from cited/], count_ok}.`),
+  {label: 'shot pruner', phase: 'Punch list', schema: PRUNE, ...M('mech')})
+spent++
+if (!pr) { log('agent died: shot pruner'); gaps.push('shot pruner died: cited/ not built; punch items cite the git-ignored shots/ paths') }
+else {
+  if (!pr.count_ok || arr(pr.kept).length > citedPlan.length) gaps.push(`shot pruner count check: ${arr(pr.kept).length}/${citedPlan.length} cited images`)
+  const keptSet = new Set(arr(pr.kept).map(k => absP(k))), to = new Map(citedPlan.filter(c => keptSet.has(c.dest)).map(c => [c.src, c.dest]))
+  for (const x of items) { const src = x.evidence && x.evidence.kind === 'shot' ? shotPath(x.evidence.ref) : '', d = to.get(src); if (d) x.evidence = {...x.evidence, ref: String(x.evidence.ref).replace(/[^\s'"`(<[]+?\.(?:jpe?g|png)(?![A-Za-z0-9])/i, () => d)} }
+}
+const pl = await crit(PS(`You are the punch-list integrator for Street 4 review cycle ${CYCLE}${PREVIEW ? ' (a preview: findings only, never the durable list)' : ''}. ${CYCLE > 1 ? `Read ${OUTABS}/punch-list-c${CYCLE - 1}.json (the previous cycle's own list, read only) for the previous titles. ` : ''}Then write four files (each cycle has its own pair; the unversioned pair is only a copy of the latest list and is never read as a prior list):
+1. ${RV}/punch-list-c${CYCLE}.json = {"date":"${DATE}","cycle":${CYCLE},"items":ITEMS} with ITEMS below verbatim: keep every item, field, id and the order; add or drop nothing (2-space indent).
+2. ${RV}/punch-list-c${CYCLE}.md, with these sections:
    ## Punch list: the items ranked by severity (blocker, major, minor, nit) and then by lens (${LENSES.map(L => L.id + ' ' + L.check).join('; ')}); each with id, severity, title, where, evidence, fix, unit hint and done when.
    ## Why the bare street is worse: per judge view, the confirmed omissions below and which judges preferred the layered still (name the judges J0/J1/J2 only; never call a still A or B).
    ## Where we flinched: the items ${J(flinched)} (lens L10, Where the build flinched); write "none survived verification" when that list is empty.
-   ## Device gate (ST8): the device gate is "${DEVICE_GATE}" (${dLast ? `newest run ${dLast.path}: fps_min ${dLast.fps_min}, degrade_max ${dLast.degrade_max}` : 'no docs/street/device/*.json yet'}); the owner flips the street default only when Street 4 passed AND the device gate is "pass" (ST7, ST8).
-   ## Fixed since cycle ${CYCLE - 1}: ${CYCLE > 1 ? 'the prior ids listed as fixed below, with their titles from the previous punch-list.json; then, under "Not re-checked", the not-re-checked ids (never call them fixed)' : 'write "First review cycle."'}
+   ## Device gate (ST8): the device gate is "${DEVICE_GATE}" (${dLast ? `newest run ${dLast.path}: fps_min ${dLast.fps_min}, degrade_max ${dLast.degrade_max}, index sha ${dSha ? (dSha === IDX_SHA ? 'matches the current index.html' : 'differs from the current index.html: stale') : 'not recorded: stale'}` : 'no docs/street/device/*.json yet'}); the owner flips the street default only when Street 4 passed AND the device gate is "pass" (ST7, ST8).
+   ## Fixed since cycle ${CYCLE - 1}: ${CYCLE > 1 ? 'the prior ids listed as fixed below, with their titles from the previous punch-list-c${CYCLE - 1}.json; then, under "Not re-checked", the not-re-checked ids (never call them fixed)' : 'write "First review cycle."'}
    ## Gate: one row per criterion (id, measured in brief, threshold, pass).
+3. ${RV}/punch-list.json = a byte copy of the c${CYCLE} json; 4. ${RV}/punch-list.md = a byte copy of the c${CYCLE} md.
 ${VOCAB_ST_RULE}
 ITEMS = ${J(items)}
-Gate criteria = ${J(criteria.map(c => ({id: c.id, desc: c.desc, threshold: c.threshold, pass: c.pass})))}
+Gate criteria = ${J(criteria.map(c => ({id: c.id, desc: c.desc, measured: JSON.stringify(c.measured === undefined ? null : c.measured).slice(0, 400), threshold: c.threshold, pass: c.pass})))}
 Per judge view = ${J(perView)}
 Judges = ${J(judgeRows.map(r => ({view: r.view, judge: r.judge, died: r.died, prefers_layered: !!r.prefers_layered, confirmed: r.confirmed || []})))}
 Fixed since cycle ${CYCLE - 1} = ${J(fixedSince)}
 Not re-checked = ${J(notRechecked)}
-Re-read both files; return {md: the md path, json: the json path, sha_md: sha256sum of the md file, sha_json: sha256sum of the json file, items: [{id, severity, title, fix, unit_hint, done_when}] as written}.`),
+Re-read the c${CYCLE} files; return {md: the c${CYCLE} md path, json: the c${CYCLE} json path, sha_md: sha256sum of the c${CYCLE} md file, sha_json: sha256sum of the c${CYCLE} json file, items: [{id, severity, title, fix, unit_hint, done_when}] as written}.`),
   {label: 'punch integrator', phase: 'Punch list', schema: PUNCH, ...M('integ')})
 spent += 2
 if (!pl || !isHex(pl.sha_json) || !isHex(pl.sha_md)) return died('punch integrator')
@@ -730,37 +809,28 @@ if (arr(pl.items).map(x => x.id).join(',') !== items.map(x => x.id).join(',')) {
 
 // ---- Record ----
 phase('Record')
-const citedSrc = [...new Set(items.filter(x => x.evidence && x.evidence.kind === 'shot').map(x => shotPath(x.evidence.ref)).filter(Boolean))]
-const pr = await agent(PS(`Housekeeping, mechanical. Write nothing except what is named here.
-1. Create ${CAPDIR}/cited/ and copy into it ONLY these images (flat, keep each basename; skip a path that does not exist; a JPEG over 300 KB is re-encoded at a lower quality to fit): ${J(citedSrc)}. Remove any other file already in ${CAPDIR}/cited/.
-2. Leave ${SHOTS}/ in place (it is git-ignored) and never touch metrics.json.
-3. count_ok = the number of files now in ${CAPDIR}/cited/ equals the number of listed images that exist (${citedSrc.length} listed).
-Return {kept: [absolute paths now in ${CAPDIR}/cited/], deleted: [files removed from cited/], count_ok}.`),
-  {label: 'shot pruner', phase: 'Record', schema: PRUNE, ...M('mech')})
-if (!pr) { log('agent died: shot pruner'); gaps.push('shot pruner died: cited/ not built') }
-else if (!pr.count_ok || arr(pr.kept).length > citedSrc.length) gaps.push(`shot pruner count check: ${arr(pr.kept).length}/${citedSrc.length} cited images`)
-if (unverified.length) gaps.push(`${unverified.length} finding(s) unverified (a verifier died or the agent bound was reached)`)
+if (unverified.length) gaps.push(`${unverified.length} finding(s) unverified (a verifier died or hit a setup failure, or the agent bound was reached)`)
 const findingsRec = {date: DATE, job: JOB, cycle: CYCLE, preview: PREVIEW, metrics_sha256: dig.sha256,
   verified: survivors.map(f => ({uid: f.uid, lens: f.lens, round: f.round, severity: f.severity, title: oneLine(f.title), where: oneLine(f.where), evidence: f.evidence, repro_cmd: f.repro_cmd, fix: oneLine(f.fix), unit_hint: oneLine(f.unit_hint), prior_id: f.prior_id, reproduce_out: f.reproduce_out, refute_why: f.refute_why, severity_why: f.severity_why})),
   unverified, dropped}
 const gate = gateObj({criteria, rounds, rulings_used: RUSED, street_rulings_used: SUSED, gaps, cycle: CYCLE, preview: PREVIEW, device_gate: DEVICE_GATE,
   chain_ok: chainOk, fil_rulings_cited: citedNow,
-  artifacts: [{path: RVREL + '/punch-list.md', sha256: pl.sha_md}, {path: RVREL + '/punch-list.json', sha256: pl.sha_json}, {path: CAPREL + '/metrics.json', sha256: dig.sha256}],
-  per_view: perView, judges: judgeRows, punch_ids: [...items.map(x => x.id), ...notRechecked], fixed_since: fixedSince, not_rechecked: notRechecked, dead_lenses: [...deadLens], lens_counts: lensCounts})
+  artifacts: [{path: RVREL + `/punch-list-c${CYCLE}.md`, sha256: pl.sha_md}, {path: RVREL + `/punch-list-c${CYCLE}.json`, sha256: pl.sha_json}, {path: CAPREL + '/metrics.json', sha256: dig.sha256}],
+  per_view: perView, judges: judgeRows, punch_ids: [...items.map(x => x.id), ...notRechecked], punch_items: items.map(x => ({id: x.id, lens: x.lens, title: x.title})), fixed_since: fixedSince, not_rechecked: notRechecked, dead_lenses: [...deadLens], lens_counts: lensCounts})
 if (PREVIEW) gate.pass = false
 const gatePath = `${RVREL}/gates/4-review-c${CYCLE}.json`
 const recs = await parallel([
   () => recordD(`${PVREL}findings/c${CYCLE}.json`, findingsRec, 'record findings'),
-  () => record(`${PVREL}gates/4-review-c${CYCLE}.json`, gate, 'record gate'),
+  () => recordD(`${PVREL}gates/4-review-c${CYCLE}.json`, gate, 'record gate'),
   () => record(`${PVREL}state/4-review.json`, {date: DATE, job: JOB, cycle: CYCLE, rounds, seen: [...seen], lens_counts: lensCounts, metrics_sha256: dig.sha256}, 'record state')])
 const recOk = recs.every(Boolean)
 const pass = gate.pass && !PREVIEW && recOk
 const minorItems = items.filter(x => !isBM(x))
-const inserts = PREVIEW ? [] : items.filter(isBM).map(x => `- [ ] **Street 4 punch c${CYCLE} · ${x.id} — ${x.title}** — ${x.fix}; unit hint: ${x.unit_hint || 'none'}; edits index.html only inside the STREET block or declared hooks and obeys the street hold (docs/street/README.md §1.3); done when ${x.done_when}`)
-if (!PREVIEW && minorItems.length) inserts.push(`- [ ] **Street 4 punch c${CYCLE} · ${minorItems.length} minor/nit items (${minorItems.map(x => x.id).join(', ')})** — fix each as listed in ${RVREL}/punch-list.md; done when each listed item's evidence no longer reproduces`)
+const inserts = PREVIEW ? [] : items.filter(isBM).map(x => `- [ ] **Street 4 punch c${CYCLE} · ${x.id} — ${x.title}** — ${x.fix}; unit hint: ${x.unit_hint || 'none'}; edits index.html only inside the STREET block or declared hooks, or tools/street-probe.js, never docs/street/ (a fix that starts "re-run street-" is that re-run instead, not an edit), and obeys the street hold (docs/street/README.md §1.3); done when ${x.done_when}`)
+if (!PREVIEW && minorItems.length) inserts.push(`- [ ] **Street 4 punch c${CYCLE} · ${minorItems.length} minor/nit items (${minorItems.map(x => x.id).join(', ')})** — fix each as listed in ${RVREL}/punch-list-c${CYCLE}.md (never by editing docs/street/; an item whose fix starts "re-run street-" is that re-run); done when each listed item's evidence no longer reproduces`)
 const reason = !recOk ? 'record-mismatch' : pass ? '' : PREVIEW ? 'preview' : FORCE ? 'forced: ' + FORCE : MODE !== 'full' ? MODE : failing.join(', ')
 return done({pass, reason, rounds, cycle: CYCLE, preview: PREVIEW, device_gate: DEVICE_GATE, gate, gate_path: gatePath,
-  outputs: [RVREL + '/punch-list.md', RVREL + '/punch-list.json', RVREL + '/findings/', CAPREL + '/metrics.json', CAPREL + '/cited/', gatePath, RVREL + '/state/4-review.json'],
+  outputs: [RVREL + `/punch-list-c${CYCLE}.md`, RVREL + `/punch-list-c${CYCLE}.json`, RVREL + '/punch-list.md', RVREL + '/punch-list.json', RVREL + '/findings/', CAPREL + '/metrics.json', CAPREL + '/cited/', gatePath, RVREL + '/state/4-review.json'],
   owner_rulings_used: RUSED, street_rulings_used: SUSED,
   polish_note: `Street 4 c${CYCLE}: ${survivors.length} surviving (${nBlock} blocker, ${nMajor} major), bare-street ${viewsOk}/${JUDGE_VIEWS.length} views, device gate ${DEVICE_GATE}` + (recOk ? '' : `; record-mismatch: write the returned gate to ${gatePath} by hand (README §12)`),
   polish_inserts: inserts, polish_inserts_above: 'Street 4 · Review → punch list',
