@@ -20,9 +20,12 @@ const JOB = 'filigree-2-plan'
 const A = (args && typeof args === 'object' && !Array.isArray(args)) ? args : {}
 const die = m => { throw new Error(JOB + ': ' + m) }
 const DATE = A.date
-if (!/^\d{4}-\d{2}-\d{2}$/.test(DATE || '')) die('args.date "YYYY-MM-DD" is required (scripts cannot read the clock)')
+const dayOk = d => { if (typeof d !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(d)) return false; const [y, m, n] = d.split('-').map(Number); return m >= 1 && m <= 12 && n >= 1 && n <= [31, (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0 ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1] }
+if (!dayOk(DATE)) die('args.date must be a "YYYY-MM-DD" string naming a real calendar day (scripts cannot read the clock)')
 const MODE = A.mode || 'full'
 if (!['full', 'smoke', 'plan'].includes(MODE)) die('args.mode must be full|smoke|plan')
+const PATH_OK = /^[A-Za-z0-9_\/.+-]+$/   // repo/outDir reach unquoted shell lines in prompts; this charset needs no quoting
+for (const k of ['repo', 'outDir']) if (A[k] != null && (typeof A[k] !== 'string' || !PATH_OK.test(A[k]))) die('args.' + k + ' must be a path string of letters, digits and _ / . + - only')
 const REPO = String(A.repo || '/home/user/annals-kingdom').replace(/\/+$/, '')
 if (!REPO.startsWith('/') || REPO.includes('//') || REPO.split('/').some(s => s === '.' || s === '..')) die('args.repo must be a normalized absolute path')
 const OUT = String(A.outDir || 'docs/filigree').replace(/\/+$/, '')
@@ -39,8 +42,9 @@ if (A.rulings != null && (typeof A.rulings !== 'object' || Array.isArray(A.rulin
 const RESUME = A.resume !== false
 const SHARED_ARGS = ['date', 'repo', 'outDir', 'mode', 'maxRounds', 'rulings', 'resume', 'force']
 function checkArgs(extra) { for (const k of Object.keys(A)) if (!SHARED_ARGS.concat(extra || []).includes(k)) die('unknown arg ' + k) }   // every job body calls this first, listing only its own keys
-const FORCE = A.force == null ? null : String(A.force).trim()
-if (FORCE !== null && (!FORCE || JOB === 'filigree-1-research')) die(JOB === 'filigree-1-research' ? 'args.force is not accepted by Job 1 (there is no earlier gate to skip)' : 'args.force must be a non-empty reason string')
+if (A.force != null && JOB === 'filigree-1-research') die('args.force is not accepted by Job 1 (there is no earlier gate to skip)')
+if (A.force != null && (typeof A.force !== 'string' || !A.force.trim())) die('args.force must be a non-empty reason string (omit it, never false or 0, for an unforced run)')
+const FORCE = A.force == null ? null : A.force.trim()
 const RULINGS = {
   R1: 'Peaks: principal peaks (▲ + canon range names Rhoshkhon, Sūs Gimīlīn, Aura-Hōth) from the country sheet; ridge names and heights from the region sheet down; once arrived a name or height is never dropped, generalized or replaced by a pin at closer zoom.',
   R2: 'Rank decides WHEN a name appears (its threshold), not HOW it is inked: one ink colour and one face family for landform and homestead names; at most one size step between ranks.',
@@ -51,7 +55,7 @@ const RULINGS = {
   R7: 'City sheet (z >= Z_TIER_D): nothing drawn at rest. Epēshu hover halos stay (invisible at rest); cursor-growing census pins are suppressed inside the city footprint at the city band; deep links still land.',
   R8: 'Ground: coast C1 (Pēshunor north coast, Epēshu-Sokundo-Kanae-Rhup-Tamaron), river town Aldorūs, painted city Epēshu, unless the pick panel scores an alternative >=1 point higher. Sheet one = the REGION sheet over C1, bbox x1216-1760 y1376-1664 (atlas px).',
   R9: 'Invented names are allowed where the land is unnamed: minted deterministically (xmur3(class+cellId) -> mulberry32 over the Patrinaic roots tool, reserved words excluded), prov "invented", every one listed in docs/filigree/names-for-owner.md; owner veto = add to the tool veto list and re-mint; no numeric cap.',
-  R10: 'Vocabulary: "coach posts" -> caravan halts / waystations; "artillery hours" and live-fire "range" wording dropped (the layer is muster days); "the 1864 sheet" -> the old survey (Imperial / War era sheets); "closures" -> shut ways; the shipped The Tithe-Yard / The Tithe-Barn POIs are renamed by a Job 3 unit to The Tribute-Yard / The Tribute-Barn (a rename, never a Job 1 gate failure; Job 4 F06 checks for exactly this pair).',
+  R10: 'Vocabulary: "coach posts" -> caravan halts / waystations; "artillery hours" and live-fire "range" wording dropped (the layer is muster days); "the 1864 sheet" -> the old survey (Imperial / War era sheets); "closures" -> shut ways; the shipped The Tithe-Yard / The Tithe-Barn POIs are renamed by a Job 3 unit to The Tribute-Yard / The Tribute-Barn, and the same unit rewords their description (d:) strings too (the Tithe-Yard\'s "harvest-tithe" -> "harvest-tribute"), so no "tithe" in any case remains in maps-site/index.html (a rename, never a Job 1 gate failure; Job 4 F06 checks this pair by name AND grep -ci tithe maps-site/index.html == 0).',
   R11: 'Data first: Job 3 needs POLISH "Traced road network" and "Census second pass" checked; args.overridePrereqs lets slice A (ground) run without them, never slices B-D.',
   R12: 'Notices (muster days, shut ways; player-facing label: the herald\'s tidings) load outside the release: a hash param notices=<url> or a local file import; one sample snapshot (fixed seed, fixed simDays) is committed; no mid-cycle pushes.',
   R13: 'Fog is a seeded function of (place, notices-snapshot sim day); no new sim weather state; never wall-clock.',
@@ -65,7 +69,7 @@ const RULINGS = {
   R21: 'Data contradictions (Aldorūs "out of sight of the sea" vs sea 77 px NE; Drāmūz marker 35 px off; Hordon/Maeges anchor) are recorded and queued as data items directly above the filigree job they block; filigree jobs never edit canon notes.',
   R22: 'Sheets cover the EPESHU_HF window [1060,1240]..[1860,2040] only; outside it there is no DEM, the bible states a no-DEM rule (fixture F12), and no relief is invented there.'
 }
-for (const [k, v] of Object.entries(A.rulings || {})) { if (!(k in RULINGS)) die('unknown ruling ' + k); if (typeof v !== 'string' || !v.trim()) die('ruling ' + k + ' must be a non-empty string') }
+for (const [k, v] of Object.entries(A.rulings || {})) { if (!Object.prototype.hasOwnProperty.call(RULINGS, k)) die('unknown ruling ' + k); if (typeof v !== 'string' || !v.trim()) die('ruling ' + k + ' must be a non-empty string') }
 function rulingsMerge(fileOverrides) {
   const r = {}, used = {}, fo = (fileOverrides && typeof fileOverrides === 'object') ? fileOverrides : {}
   for (const k of Object.keys(RULINGS)) {
@@ -89,7 +93,7 @@ const norm = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '
 async function crit(p, o) { return (await agent(p, o)) ?? (await agent(p, {...o, label: o.label + ' (retry)'})) }
 function kept(xs, what) { const k = xs.filter(Boolean); if (k.length < xs.length) log(`${what}: ${xs.length - k.length}/${xs.length} dropped`); return {k, ok: k.length >= Math.ceil(xs.length * 0.75)} }
 const RULE = `Repo root: ${REPO} (cd there before any command; use absolute paths). Write ONLY the files this prompt names (under ${OUTABS} unless it says otherwise); throwaway scripts go in a temp dir (mktemp -d), never in the repo. Never run git. Never edit POLISH.md, CHANGELOG.md, VERSION or anything under .claude/. Stamp date ${DATE} into every artifact you write. Return only the requested JSON.`
-const NOGIT_RULE = `Never run git. Run commands from ${REPO}. Write nothing except the files this prompt names. Return only the requested JSON.`   // blind actors: no repo-root, no date, no hints about the layout
+const NOGIT_RULE = `Never run git. Use absolute paths. Write nothing except the files this prompt names. Return only the requested JSON.`   // blind actors: no repo-root, no date, no hints about the layout
 const P = (body, blind) => (blind ? NOGIT_RULE : RULE) + '\n' + body   // EVERY agent() prompt is P(...) or starts with RULE
 const READBACK = 'Re-read the file you wrote, JSON.parse it, and return {path, sha256 (sha256sum of the file), parsed: true}.'
 const FILE_OK = f => !!f && /^[0-9a-f]{64}$/.test(f.sha256 || '') && f.parsed === true
@@ -110,7 +114,7 @@ const ANCHORS = [
   ['maps-site/index.html', 'function xmur3', 1], ['maps-site/index.html', 'function mulberry32', 1], ['maps-site/index.html', 'window.ATLAS=', 1],
   ['maps-site/index.html', '!/^#view=/.test(location.hash)', 1], ['maps-site/index.html', 'The Beacon Post', 0], ['maps-site/index.html', 'The Muster Ground', 0],
   ['maps-site/index.html', 'The Tithe-Yard', 0], ['maps-site/index.html', 'The Tithe-Barn', 0],
-  ['maps-site/index.html', 'The Tribute-Yard', 0], ['maps-site/index.html', 'The Tribute-Barn', 0]
+  ['maps-site/index.html', 'The Tribute-Yard', 0], ['maps-site/index.html', 'The Tribute-Barn', 0], ['maps-site/index.html', 'harvest-tithe', 0]
 ]
 const ANCHOR_TASK = `Re-anchor by pattern (never trust old line numbers). Save this JSON list of [path, literal] pairs to a temp file and run a short node script (so no shell quoting touches the literals, some contain quotes) that reads <repo>/<path> and finds each literal with String.indexOf. Return {"<literal>": "path:line" (1-based line of the first hit) | null, ...}. Pairs: ${JSON.stringify(ANCHORS.map(a => [a[0], a[1]]))}`
 const anchorsLost = got => ANCHORS.filter(a => a[2] && !(got || {})[a[1]]).map(a => a[0] + ' :: ' + a[1])
@@ -126,6 +130,7 @@ const C = (id, desc, measured, threshold, ok) => ({id, desc, measured, threshold
 function gateObj(o) { return {job: JOB, date: DATE, mode: MODE, forced_by: FORCE, rounds: 0, criteria: [], artifacts: [], rulings_used: {}, gaps: [], ...o, pass: MODE === 'full' && !FORCE && (o.criteria || []).length > 0 && (o.criteria || []).every(c => c.pass)} }
 function done(o) { return {job: JOB, date: DATE, mode: MODE, reason: '', rounds: 0, outputs: [], polish_note: '', polish_inserts: [], changelog_line: '', owner_rulings_used: {}, forced_by: FORCE, gate_path: null, ...o, pass: MODE === 'full' && !FORCE && !!o.pass} }
 // ==== end filigree prelude ====
+
 checkArgs(['ground'])
 const GROUND_KEYS = ['coast', 'river_town', 'city']
 const GROUND = A.ground == null ? null : A.ground
@@ -141,6 +146,8 @@ const SPEC_ROOTS = ['/picks', '/sheets', '/paint_order', '/sheet_one', '/label_r
   '/generators', '/rules', '/units', '/slices', '/slice_classes']
 const UNIT_ROOTS = ['/units', '/slices', '/slice_classes']   // appended by the unit planner, not the integrator
 const PAINT_ORDER_IDS = ['relief', 'contours', 'water', 'rust_road', 'reserves', 'homesteads', 'names_heights', 'city_grain', 'fog']
+const SHEET_ONE_FORBIDDEN = ['homesteads']   // brief p8: homesteads wait for the valley sheet; PAINT_ORDER_IDS is the all-sheet order, sheet one (region) never paints them
+const isHomestead = c => /homestead/.test(norm(String(c).replace(/^layer-/, '')))   // Job 1 names every homestead class by id or label
 const OVERLAY_IDS = ['old_survey', 'structures', 'caravan_halts', 'blazed_paths', 'muster_days', 'shut_ways']
 const OVERLAY_NOTE = 'Player-facing labels: the old survey, raised halls and steadings, caravan halts, blazed paths, muster days, shut ways (muster_days = levy muster-days, Tamar\'s dark hour, dragon flights). old_survey sits UNDER the live sheet; muster_days and shut_ways sit on top and are swappable.'
 const SHEET_ONE_BBOX = [1216, 1376, 1760, 1664]
@@ -202,7 +209,7 @@ const SECTIONS = [
   {sid: 's04', role: 'judge', title: 'Overlay stack, swap and hash', owns: ['/overlays', '/hash', '/toggle', '/notices'], rulings: ['R10', 'R12', 'R14', 'R18'],
     brief: `Overlay stack + swap + hash (R12, R14, R18). Overlay ids in order: ${OVERLAY_IDS.join(', ')}. ${OVERLAY_NOTE} The old survey is an era tile layer under the live base (opacity/swipe). Notices sit on top (player-facing label "the herald's tidings"; "notices" stays the file/param/schema name). Cover the layers=id@k=v,visible,opacity;… grammar, the default-off filigree=1 toggle + layers-panel row, hash composition through the #view= writer (${HASH_RULE}), and the notices schema {id,kind,voice,start_ab,end_ab,geom} + loading.`},
   {sid: 's05', role: 'audit', title: 'Palette', owns: ['/palette'], rulings: ['R3'],
-    brief: 'Palette (R3): line-work tokens (bone paper = the print, rust road, ocher arterials, rose-brown blocks, contour hair, wet-blue water line) as hex + night variants; WCAG contrast for labels. /palette/<token> = {day:"#rrggbb", night:"#rrggbb", use}.'},
+    brief: 'Palette (R3): line-work tokens (bone paper = the print, rust road, ocher arterials, rose-brown blocks, contour hair, wet-blue water line) as hex + night variants; WCAG contrast for labels. /palette/<token> = {day:"#rrggbb", night:"#rrggbb", use}. The print-sampled wash fills live under /paint/wash_hex (s11).'},
   {sid: 's06', role: 'deep', title: 'Relief, contours, heights, rivers', owns: ['/relief', '/rivers'], rulings: ['R20', 'R22'],
     brief: `Relief/contours/heights/hachures from EPESHU_HF (anchor const EPESHU_HF_URI) via the tools/filigree-dem.js decode: Imhof light from the upper left (azimuth 315°, altitude 45°, cool valley shadow), contour interval 5 m, index every 25 m, prominence >= 15 m, the no-DEM rule (R22, window ${WINDOW}), heights per R20, an imhof_check_cmd. Also rivers.json: the source rule + a print-overlap check (>= 90% of samples within 3 px of dark ink).`},
   {sid: 's07', role: 'audit', title: 'Names', owns: ['/names'], rulings: ['R9', 'R10'],
@@ -214,20 +221,21 @@ const SECTIONS = [
   {sid: 's10', role: 'audit', title: 'Data prerequisites and data truth', owns: ['/prerequisites'], rulings: ['R11', 'R21'],
     brief: `Data prerequisites + data truth (R11, R21): which slices need the roads / census / rivers; Drāmūz, Hordon and the Aldorūs contradiction queued as data items. /prerequisites = [{item, blocks:"F3-A".."F3-D", status, polish_title}] (polish_title = the exact ${REPO}/POLISH.md title when it is already queued, else "").`},
   {sid: 's11', role: 'deep', title: 'Paint on the base', owns: ['/paint'], rulings: ['R3'],
-    brief: 'A pooled-edge contrast pass on the land/water mask (reuse function washMake / function sampleCityMask) for coast, parks and reserves (method, band px, luminance delta); washes print-sampled; the real-colour check (ΔE <= 10 vs the print hue / biome).'},
+    brief: 'A pooled-edge contrast pass on the land/water mask (reuse function washMake / function sampleCityMask) for coast, parks and reserves (method, band px, luminance delta); washes print-sampled, each wash fill (water, reserves, fog, city tone, relief shading) given as explicit sampled hex at /paint/wash_hex/<name> (a #rrggbb string; drafters may use these for fills); the real-colour check (ΔE <= 10 vs the print hue / biome).'},
   {sid: 's12', role: 'audit', title: 'Fixtures and test contracts', owns: ['/fixtures', '/hook', '/capture', '/checks', '/generators'], rulings: ['R8', 'R17', 'R18', 'R19'],
     brief: `Fixtures + test contracts. /fixtures/views from these seeds (zoom = midpoint of the named sheet's band): ${JSON.stringify(VIEWS_SEED)}; masks: ${MASK_RULE} /hook = this contract VERBATIM plus pre_filigree_panes (the pane names present today, read from the pane-creation code in maps-site/index.html):\n${HOOK_CONTRACT}\n/capture = this contract VERBATIM:\n${CAPTURE_CONTRACT}\nPer-slice /checks as {id, cmd, expect} (a command printing JSON plus a condition on it, such as overlap >= 0.9); /generators = every tools/filigree-*.js, mint-names and build-gazetteer command.`}
 ]
 const RUBRIC = ['canon_fit', 'dem_window', 'data_ready', 'shield_even', 'table_play']
 const DEFAULT_GROUND = {coast: 'C1 (Pēshunor north coast, Epēshu-Sokundo-Kanae-Rhup-Tamaron)', river_town: 'Aldorūs', city: 'Epēshu'}
-const DRAFTER_ALLOWED = X => [OUTABS + '/sheet-spec.md', OUTABS + '/sheet-spec.json', OUTABS + '/spec/assets/', OUTABS + '/cold/' + X + '/']
+const coldDir = (X, tag) => `${OUTABS}/cold/${X}${String(tag || '').trim() ? '-' + String(tag).trim() : ''}`   // round-tagged (cold/A, cold/A-r1, …) so no drafter finds an earlier round's draft
+const DRAFTER_ALLOWED = (X, tag) => [OUTABS + '/sheet-spec.md', OUTABS + '/sheet-spec.json', OUTABS + '/spec/assets/', coldDir(X, tag) + '/']
 
 // ---- schemas (design § Agents and schemas) ----
 const S = {type: 'string'}, SA = {type: 'array', items: {type: 'string'}}, B = {type: 'boolean'}, N = {type: 'number'}, I = {type: 'integer'}
 const obj = (properties, required) => ({type: 'object', properties, required: required || Object.keys(properties)})
 const RULE3 = obj({id: S, from: SA, buildable: B})
 const PROBE = obj({id: S, q: S, kind: {type: 'string', enum: ['enum', 'number', 'name', 'hex', 'order', 'bool']}, source: {type: 'string', enum: ['bible', 'brief', 'ruling', 'spec']},
-  expected: {type: ['string', 'number', 'boolean', 'array']}, cite: S, pointer: S, tolerance: N}, ['id', 'q', 'kind', 'source'])
+  expected: {type: ['string', 'number', 'boolean', 'array']}, cite: S, pointer: S, tolerance: N, options: SA}, ['id', 'q', 'kind', 'source'])
 const PRE = obj({bible_gate_pass: B, bible_sha_ok: B, bible_sha256: S, spec_exists: B,
   rule_kinds: {type: 'object', additionalProperties: S},
   targets: {type: 'object', additionalProperties: {type: 'object', additionalProperties: {type: 'object', additionalProperties: N}}},
@@ -235,8 +243,9 @@ const PRE = obj({bible_gate_pass: B, bible_sha_ok: B, bible_sha256: S, spec_exis
   forbidden_by_sheet: {type: 'object', additionalProperties: SA},
   anchors: {type: 'object', additionalProperties: {type: ['string', 'null']}},
   rulings_overrides: {type: 'object', additionalProperties: S},
-  sections_ok: {type: 'array', items: obj({sid: S, path: S, sha256: S, rules: {type: 'array', items: RULE3}}, ['sid', 'path', 'rules'])},
-  probes_ok: B, probes_sha256: S, probes: {type: 'array', items: PROBE},
+  sections_ok: {type: 'array', items: obj({sid: S, path: S, sha256: S, rules: {type: 'array', items: RULE3}, fragment: {type: 'object', additionalProperties: {type: ['string', 'number', 'boolean', 'array', 'object', 'null']}}, anchors: {type: 'array', items: obj({path: S, pattern: S})}, open: SA}, ['sid', 'path', 'rules'])},
+  ledger_ctx: obj({bible_sha256: S, picks: obj({coast: S, river_town: S, city: S}), rulings_used: {type: 'object', additionalProperties: S}}, []),
+  probes_ok: B, probes_sha256: S, probes: {type: 'array', items: PROBE}, probes_stamp: obj({bible_sha256: S, rulings: {type: 'object', additionalProperties: S}}, []),
   probe_summary: {type: 'array', items: obj({id: S, ok: B})}},
   // required = the design's list exactly; bible_sha256 / ground_six / probes / probes_sha256 / sections_ok[].sha256 are optional extras that Record, G2.1 and the resume path read when present
   ['bible_gate_pass', 'bible_sha_ok', 'spec_exists', 'rule_kinds', 'targets', 'must_ids', 'rule_ids', 'class_ids', 'forbidden_by_sheet', 'anchors', 'rulings_overrides', 'sections_ok', 'probes_ok', 'probe_summary'])
@@ -253,29 +262,36 @@ const ANCH = obj({bad: SA})
 const INTEG = obj({md: S, json: S, sha_md: S, sha_json: S, rules: {type: 'array', items: RULE3}, roots_present: SA})
 const CROP = obj({jpg: S, json: S, sha256: S, parsed: B})
 const RED = obj({contradictions: {type: 'array', items: obj({a: S, b: S, fix: S})}})
-const UNITS = obj({units: {type: 'array', items: obj({
-  id: S, title: S, slice: {type: 'string', enum: SLICES},
-  kind: {type: 'string', enum: ['logic', 'tool', 'data', 'css', 'copy']}, files: SA,
+const UNIT_KINDS = ['logic', 'tool', 'data', 'css', 'copy'], ACC_KINDS = ['node', 'grep', 'json', 'capture']
+const unitItem = strict => obj({
+  id: S, title: S, slice: strict ? {type: 'string', enum: SLICES} : S,
+  kind: strict ? {type: 'string', enum: UNIT_KINDS} : S, files: SA,
   paint_order: I, depends_on: SA,
-  requires: {type: 'array', items: {type: 'string', enum: ['roads', 'census', 'rivers']}},
-  covers: SA, model: {type: 'string', enum: ['opus', 'sonnet', 'haiku']}, effort: {type: 'string', enum: ['low', 'medium', 'high', 'xhigh', 'max']},
-  acceptance: {type: 'array', items: obj({kind: {type: 'string', enum: ['node', 'grep', 'json', 'capture']}, cmd: S, expect: S})}},
-  ['id', 'title', 'slice', 'kind', 'files', 'paint_order', 'depends_on', 'requires', 'covers', 'acceptance'])},
+  requires: strict ? {type: 'array', items: {type: 'string', enum: ['roads', 'census', 'rivers']}} : SA,
+  covers: SA, model: strict ? {type: 'string', enum: ['opus', 'sonnet', 'haiku']} : S, effort: strict ? {type: 'string', enum: ['low', 'medium', 'high', 'xhigh', 'max']} : S,
+  acceptance: {type: 'array', items: obj({kind: strict ? {type: 'string', enum: ACC_KINDS} : S, cmd: S, expect: S})}},
+  ['id', 'title', 'slice', 'kind', 'files', 'paint_order', 'depends_on', 'requires', 'covers', 'acceptance'])
+const UNITS = obj({units: {type: 'array', items: unitItem(true)},
   slices: {type: 'object', additionalProperties: SA}, slice_classes: {type: 'object', additionalProperties: SA}})
 const HITS = obj({hits: SA})
 const VIOL = obj({violations: SA})
 const READER = obj({probe_values: {type: 'array', items: obj({id: S, value: {type: ['string', 'number', 'boolean', 'array', 'null']}})},
   sheet_one_layers: SA, paint_order: SA, must_classes: SA, forbidden_classes: SA, palette_hex: SA,
   river_town: obj({name: S, x: N, y: N}), must_label: SA,
-  views: {type: 'array', items: obj({id: S, sheet: S, x: N, y: N, zoom: N, mask: S})},
-  rule_ids: SA, sha_md: S, sha_json: S, prereq_unqueued: SA},
-  // required = the design's list exactly; sha_md / sha_json / prereq_unqueued are optional extras for Record and polish_inserts
-  ['probe_values', 'sheet_one_layers', 'paint_order', 'must_classes', 'forbidden_classes', 'palette_hex', 'river_town', 'must_label', 'views', 'rule_ids'])
+  views: {type: 'array', items: obj({id: S, sheet: S, x: N, y: N, zoom: N, mask: S})}, bands: {type: 'object', additionalProperties: {type: 'array', items: N}},
+  rule_ids: SA, sha_md: S, sha_json: S, prereq_unqueued: SA,
+  rules: {type: 'array', items: RULE3}, units: {type: 'array', items: unitItem(false)},
+  slices: {type: 'object', additionalProperties: SA}, slice_classes: {type: 'object', additionalProperties: SA},
+  checks: {type: 'object', additionalProperties: {type: 'array', items: obj({id: S, cmd: S, expect: S})}}},
+  // required = the design's list + the file-side rules/units/slices/slice_classes/checks G2.1 checks (never the planner's or fixers' returns) + the bands G2.13 checks; sha_md / sha_json / prereq_unqueued are optional extras for Record and polish_inserts
+  ['probe_values', 'sheet_one_layers', 'paint_order', 'must_classes', 'forbidden_classes', 'palette_hex', 'river_town', 'must_label', 'views', 'bands', 'rule_ids', 'rules', 'units', 'slices', 'slice_classes', 'checks'])
 const DRAFT = obj({svg: S, answers: {type: 'array', items: obj({id: S, value: {type: ['string', 'number', 'boolean', 'array']}, rule: S})},
   guesses: {type: 'array', items: obj({what: S, needed_for: S, spec_ref: S})}, files_read: SA})
 const SVGX = obj({layers: SA, colors: SA, labels: {type: 'array', items: obj({text: S, class: S, rank: S, x: N, y: N})}, shields: {type: 'array', items: obj({x: N, y: N})}})
 const RASTER = obj({pngs: SA, infra_error: S})
-const AUDIT = obj({verdicts: {type: 'array', items: obj({drafter: {type: 'string', enum: ['A', 'B']}, guess: S, class: {type: 'string', enum: ['answered', 'gap']}, quote: S, pointer: S})}})
+const SIZES = obj({sizes: {type: 'array', items: obj({path: S, bytes: N})}})
+const AUDIT = obj({verdicts: {type: 'array', items: obj({drafter: {type: 'string', enum: ['A', 'B']}, n: I, guess: S, class: {type: 'string', enum: ['answered', 'gap']}, quote: S, pointer: S})}})
+const HASHES = obj({hashes: {type: 'array', items: obj({path: S, sha256: S})}})
 const DIVERGE = obj({blocking: {type: 'array', items: obj({spec_rule: S, pointer: S, a: S, b: S})}, minor: SA})
 
 // ---- helpers ----
@@ -285,8 +301,16 @@ const asList = v => Array.isArray(v) ? v : String(v ?? '').split(/\s*(?:,|>|→)
 const sameList = (a, b) => a.length === b.length && a.every((x, i) => x === b[i])
 const percent = (a, b) => b ? Math.round(1000 * a / b) / 10 : 0
 const clamp5 = v => Math.max(1, Math.min(5, Math.round(Number(v) || 1)))
-const budgetLow = n => !!budget && typeof budget === 'object' && typeof budget.remaining === 'number' && budget.remaining < n
+const ROUND_TOKENS = 600000   // optional budget gate: ~16 agents (spec fixer, unit planner, checks, reader, cold gate) in one fix round
+const budgetLeft = () => {
+  try {
+    if (!budget || typeof budget !== 'object') return Infinity
+    const r = typeof budget.remaining === 'function' ? budget.remaining() : budget.remaining
+    return typeof r === 'number' ? r : Infinity
+  } catch (e) { return Infinity }
+}
 const sliceIx = s => SLICES.indexOf(s)
+const SHA_OK = h => /^[0-9a-f]{64}$/.test(h)
 const J = v => JSON.stringify(v)
 
 function probeFailures(ps) {
@@ -357,6 +381,9 @@ function unitFailures(u, sp) {
   }
   for (const c of pre.ground_six) { const o = classOwner[c] || []; if (o.length !== 1) f.push(`ground-six class ${c} belongs to ${o.length} slices (need exactly 1)`) }
   for (const x of units) {
+    if (!SLICES.includes(x.slice)) f.push(`${x.id}: slice ${J(x.slice)} is not one of ${SLICES.join('|')}`)
+    if (!UNIT_KINDS.includes(x.kind)) f.push(`${x.id}: kind ${J(x.kind)} is not one of ${UNIT_KINDS.join('|')}`)
+    x.acceptance.forEach((a, i) => { if (!ACC_KINDS.includes(a.kind)) f.push(`${x.id}: acceptance[${i}].kind ${J(a.kind)} is not one of ${ACC_KINDS.join('|')}`) })
     if (!Number.isInteger(x.paint_order) || x.paint_order < 0 || x.paint_order > 10) f.push(`${x.id}: paint_order must be 0..10`)
     if (!x.acceptance.length) f.push(`${x.id}: no acceptance`)
     x.acceptance.forEach((a, i) => { if (!String(a.cmd).trim() || !String(a.expect).trim()) f.push(`${x.id}: acceptance[${i}] needs a non-empty cmd and expect`) })
@@ -368,6 +395,32 @@ function unitFailures(u, sp) {
   const traced = new Set(sp.rules.flatMap(r => r.from))
   const untr = pre.must_ids.filter(m => !traced.has(m))
   if (untr.length) f.push('bible must rules not traced by any spec rule: ' + untr.join(', '))
+  return f
+}
+
+function checksFailures(rd) {   // Job 3's spec('<S>') criterion can never pass on an empty /checks/<S>, and no Job 3 fix unit can add one
+  const c = rd.checks || {}
+  return SLICES.flatMap(s => {
+    const xs = Array.isArray(c[s]) ? c[s] : []
+    if (!xs.length) return [`slice ${s}: /checks/${s} in sheet-spec.json is missing or empty (Job 3 needs at least one {id, cmd, expect} check per slice; s12 owns /checks)`]
+    const blank = xs.filter(x => !String((x || {}).id ?? '').trim() || !String((x || {}).cmd ?? '').trim() || !String((x || {}).expect ?? '').trim())
+    return blank.length ? [`slice ${s}: /checks/${s} has ${blank.length} check(s) without a non-empty id, cmd and expect`] : []
+  })
+}
+
+function viewFailures(rd) {   // gates/views.json is frozen from /fixtures/views: the seeds verbatim, zoom = midpoint of /sheets/<sheet>/band
+  const f = [], vs = rd.views, bands = rd.bands || {}, ids = vs.map(v => v.id), want = VIEWS_SEED.map(v => v.id)
+  if (!sameList([...ids].sort(), [...want].sort())) f.push(`view ids ${J(ids)} != ${J(want)}`)
+  for (const s of VIEWS_SEED) {
+    const v = vs.find(x => x.id === s.id)
+    if (!v) continue
+    if (lc(v.sheet) !== s.sheet) f.push(`${s.id}: sheet ${J(v.sheet)} != ${J(s.sheet)}`)
+    if (!(Math.abs(v.x - s.x) <= 0.05 && Math.abs(v.y - s.y) <= 0.05)) f.push(`${s.id}: centre ${v.x},${v.y} != ${s.x},${s.y}`)
+    if (norm(v.mask) !== norm(s.mask)) f.push(`${s.id}: mask ${J(v.mask)} != ${J(s.mask)}`)
+    const b = bands[s.sheet]
+    if (!Array.isArray(b) || b.length !== 2 || !b.every(Number.isFinite) || b[0] > b[1]) f.push(`${s.id}: /sheets/${s.sheet}/band ${J(b)} is not [zmin, zmax]`)
+    else if (!Number.isFinite(v.zoom) || Math.abs(v.zoom - (b[0] + b[1]) / 2) > 0.01) f.push(`${s.id}: zoom ${v.zoom} != midpoint ${(b[0] + b[1]) / 2} of /sheets/${s.sheet}/band`)
+  }
   return f
 }
 
@@ -388,8 +441,8 @@ function drawFailures(e, rd) {
   const seen = new Set(layers.concat(e.labels.map(l => norm(l.class))))
   const miss = rd.must_classes.filter(c => !seen.has(norm(c)))
   if (miss.length) f.push('must: classes missing ' + miss.join(', '))
-  const forb = rd.forbidden_classes.filter(c => seen.has(norm(c)))
-  if (forb.length) f.push('forbidden: classes drawn ' + forb.join(', '))
+  const forbSet = new Set(rd.forbidden_classes.concat(SHEET_ONE_FORBIDDEN).map(norm)), forb = [...seen].filter(c => forbSet.has(c) || isHomestead(c))
+  if (forb.length) f.push('forbidden: classes drawn ' + forb.join(', ') + (forb.some(isHomestead) ? ' (homesteads wait for the valley sheet; sheet one is the region sheet)' : ''))
   const pal = new Set(rd.palette_hex.map(lc).concat(['none', 'transparent']))
   const off = [...new Set(e.colors.map(lc))].filter(c => !pal.has(c))
   if (off.length) f.push('palette: colours outside it ' + off.join(', '))
@@ -409,8 +462,8 @@ Put that object under "anchors". Then check the following and write nothing:
 2. bible_sha256: sha256sum of ${OUTABS}/density-bible.json ('' if missing). bible_sha_ok: it equals the sha256 recorded for density-bible.json in that gate's "artifacts" ([{path, sha256}]); false if either is missing.
 3. From ${OUTABS}/density-bible.json (empty values when it is missing): rule_ids = rules[].id; rule_kinds = {id: kind}; must_ids = ids of rules whose kind is "must"; class_ids = classes[].id; ground_six = the union of every ground_classes.*.six, de-duplicated and sorted; forbidden_by_sheet = {<sheet>: sheets.<sheet>.forbidden}; targets = the bible's "targets" object verbatim ({per_view:{<sheet>:{<class>:n}}}).
 4. rulings_overrides = the "overrides" object of ${DOCS}/rulings.json ({} when the file is absent).
-5. The ledger ${OUTABS}/state/2-plan.json (absent = empty) has {sections:[{sid, path, sha256, rules}], probes_sha256, spec}. sections_ok = every recorded section whose path still exists and whose sha256sum equals the recorded sha256, as {sid, path, sha256, rules:[{id, from, buildable}]}.
-6. ${OUTABS}/gates/2-probes.json: probes_ok = it exists, parses, has frozen === true and a probes array, and (when the ledger records probes_sha256) its sha256sum equals that value. probes = its probes array verbatim when probes_ok, else []. probes_sha256 = its sha256sum ('' if missing). probe_summary = [{id, ok}] with ok = the probe has id, q, kind, source, plus a pointer when source is "spec" and expected + cite otherwise.
+5. The ledger ${OUTABS}/state/2-plan.json (absent = empty) has {sections:[{sid, path, sha256, rules, fragment, anchors, open}], probes_sha256, bible_sha256, picks:{coast, river_town, city}, rulings_used, spec}. sections_ok = every recorded section whose path still exists and whose sha256sum equals the recorded sha256, copied verbatim as {sid, path, sha256, rules:[{id, from, buildable}], fragment, anchors, open}. ledger_ctx = {bible_sha256, picks, rulings_used} copied verbatim from the ledger ({} fields omitted when absent).
+6. ${OUTABS}/gates/2-probes.json: probes_ok = it exists, parses, has frozen === true and a probes array, and (when the ledger records probes_sha256) its sha256sum equals that value. probes = its probes array verbatim when probes_ok, else []. probes_stamp = {bible_sha256, rulings} copied verbatim from that file's top-level keys of those names (omit a key that is absent). probes_sha256 = its sha256sum ('' if missing). probe_summary = [{id, ok}] with ok = the probe has id, q, kind, source, plus a pointer when source is "spec" and expected + cite otherwise.
 7. spec_exists = ${SPEC_MD} or ${SPEC_JSON} exists.`), {label: 'preflight', phase: 'Preflight', schema: PRE, ...M('mech')})
 if (!pre) return done({reason: 'agent died: preflight'})
 for (const [k, d] of [['bible_sha256', ''], ['ground_six', []], ['probes', []], ['probes_sha256', '']]) if (pre[k] == null) { pre[k] = d; log('preflight omitted optional ' + k) }
@@ -423,25 +476,36 @@ if (!chainOk) {
   log('gate chain not satisfied (Job 1 gate not pass, or the bible changed): ' + (FORCE ? 'forced: ' + FORCE : 'reported only in ' + MODE + ' mode'))
 }
 const probesResumed = RESUME && pre.probes_ok
-const resumedSec = RESUME ? pre.sections_ok.filter(x => SECTIONS.some(s => s.sid === x.sid)) : []
-const resumedIds = new Set(resumedSec.map(x => x.sid))
-const todoSections = cap(SECTIONS.filter(s => !resumedIds.has(s.sid)))
+const stamp = pre.probes_stamp || {}
+const probesStale = probesResumed && (!stamp.bible_sha256 || stamp.bible_sha256 !== pre.bible_sha256 || J(stamp.rulings || null) !== J(RUL))   // the fixed answers were derived from the bible and rulings in force when they were frozen
+const lctx = pre.ledger_ctx || {}
+const ctxMismatch = []   // a ledgered section was drafted against one bible, ruling set and ground; it resumes only when all three still match
+if (!lctx.bible_sha256 || lctx.bible_sha256 !== pre.bible_sha256) ctxMismatch.push('bible')
+if (Object.keys(RULINGS).some(k => (lctx.rulings_used || {})[k] !== RUSED[k])) ctxMismatch.push('rulings')
+const resumedAll = RESUME && !ctxMismatch.length ? pre.sections_ok.filter(x => SECTIONS.some(s => s.sid === x.sid) && x.fragment && typeof x.fragment === 'object') : []   // no stored fragment (older ledger): rewritten
+if (RESUME && ctxMismatch.length && pre.sections_ok.length) log('ledgered sections rewritten (' + ctxMismatch.join(' + ') + ' changed since they were written)')
+let resumedSec = resumedAll.filter(x => !sectionFailures([x]).length)   // a ledgered section whose rules break the format is rewritten, never resumed
+if (resumedSec.length < resumedAll.length) log('ledgered sections rewritten (rule-format failures): ' + resumedAll.filter(x => !resumedSec.includes(x)).map(x => x.sid).join(', '))
+let todoSections = cap(SECTIONS.filter(s => !resumedSec.some(x => x.sid === s.sid)))
 
 if (MODE === 'plan') {
   const nSec = todoSections.length
-  const schedule = [   // design § Preflight: Probes 1, Pick 1-6, Sections 12-36, Integrate 4-6, Units 1, Check 4-8, Gate 7, Fix <= 2x12, Record 3 (skipped phases count 0)
-    {phase: 'Probes', agents_min: probesResumed ? 0 : 1, agents_max: probesResumed ? 0 : 1},
-    {phase: 'Pick', agents_min: GROUND ? 0 : 1, agents_max: GROUND ? 0 : 6},
-    {phase: 'Sections', agents_min: nSec, agents_max: 3 * nSec},
-    {phase: 'Integrate', agents_min: 4, agents_max: 6},
-    {phase: 'Units', agents_min: 1, agents_max: 1},
-    {phase: 'Check', agents_min: 4, agents_max: 8},
-    {phase: 'Cold-cartographer gate', agents_min: 7, agents_max: 7},
-    {phase: 'Fix', agents_min: 0, agents_max: ROUNDS * 12},
-    {phase: 'Record', agents_min: 3, agents_max: 3}
+  // min = a run where no agent dies; max counts every crit() call twice (its retry) and every optional re-ask
+  const K = 2, GATE = 8, CHECKS = 3   // GATE = 2 drafters + 2 extractors + rasterize + png stat + guess auditor + divergence judge
+  const schedule = [
+    {phase: 'Preflight', agents_min: 1, agents_max: K},
+    {phase: 'Probes', agents_min: probesResumed ? 1 : 2, agents_max: probesResumed ? K : 3 * K},   // writer + one re-ask, then the readback
+    {phase: 'Pick', agents_min: GROUND ? 0 : 1, agents_max: GROUND ? 0 : 6},   // challenger + 3 pickers + 2 judges
+    {phase: 'Sections', agents_min: 2 * nSec + 1, agents_max: 3 * nSec + K},   // write + anchors (+ fix), then the early ledger record
+    {phase: 'Integrate', agents_min: 3, agents_max: K + 4},   // integrator, cropper, red-team (+ patcher, red-team 2)
+    {phase: 'Units', agents_min: 1, agents_max: 2 * K},   // planner + one fix
+    {phase: 'Check', agents_min: CHECKS + 1, agents_max: 2 * CHECKS + 1 + K},   // checks (+ fixer + checks again) + reader
+    {phase: 'Cold-cartographer gate', agents_min: GATE, agents_max: GATE},
+    {phase: 'Fix', agents_min: 0, agents_max: ROUNDS * (K + K + CHECKS + K + GATE)},   // spec fixer, unit planner, checks, reader, gate
+    {phase: 'Record', agents_min: 3, agents_max: 3 * K + K}   // three records (+ artifact hasher)
   ]
   const agents_min = schedule.reduce((t, x) => t + x.agents_min, 0), agents_max = schedule.reduce((t, x) => t + x.agents_max, 0)
-  return done({reason: 'plan', schedule, agents_min, agents_max, bound: 100, over_bound: agents_max > 100, chain_ok: chainOk, owner_rulings_used: RUSED})
+  return done({reason: 'plan', schedule, agents_min, agents_max, bound: 120, over_bound: agents_max > 120, chain_ok: chainOk, owner_rulings_used: RUSED})
 }
 
 let rounds = 0
@@ -453,6 +517,7 @@ const G20 = C('G2.0', 'preflight chain: Job 1 passed, bible unchanged', {bible_g
 phase('Probes')
 let probes, probesSha, probesAfterSpec = false
 if (probesResumed) {
+  if (probesStale) { const m = 'bible or rulings changed since the probes were frozen (or the file carries no stamp); delete gates/2-probes.json and sheet-spec.* and rerun'; if (MODE === 'full') die(m); log('frozen probes stale: ' + m) }
   probes = pre.probes; probesSha = pre.probes_sha256
   const bad = probeFailures(probes)
   if (bad.length) { if (MODE === 'full') die('frozen gates/2-probes.json is invalid and is never regenerated (' + bad.join('; ') + '); delete it and rerun with resume:false'); log('frozen probes invalid: ' + bad.join('; ')) }
@@ -466,9 +531,10 @@ write 30-40 closed-form probes a cartographer must answer to draw sheet one (the
 - At least 15 must be fixed probes (source "bible" | "brief" | "ruling"): the answer is determined by the bible, the brief or a ruling regardless of the ground pick and of choices the spec makes. Give expected and cite (exactly "B-xx" for a bible rule id, "brief pN", or "Rnn").
 - The rest are spec probes (source "spec"): freeze ONLY the question and a JSON pointer under one of these roots where the spec must hold the answer: ${SPEC_ROOTS.join(' ')} (for example /sheets/valley/band/0, /palette/rust_road/day, /picks/river_town/name). No expected value.
 - kind is one of enum | number | name | hex | order | bool; give tolerance for number probes; order answers are arrays in order.
+- The drafter sees only id, q, kind and options, and answers are scored by exact normalized match. So q must state the answer format: for enum and order probes put the closed option list in "options" (the exact tokens, in the bible's or spec's spelling) and say in q to answer with those tokens; for number probes name the unit and say how to round; for hex say "#rrggbb lowercase"; for bool say "true or false"; for name say which exact spelling form is wanted.
 - Cover: paint order positions (the brief's order is ${PAINT_ORDER_IDS.join(' > ')}), forbidden per sheet, the shield town, the fog layer's place vs names, appear ease, the overlay order (${OVERLAY_IDS.join(', ')}), the hex six on F02, palette tokens, and the city label rule.
 - ids P01, P02, ...
-Write ${OUTABS}/gates/2-probes.json as {"date":"${DATE}","frozen":true,"probes":[...]} (2-space indent), creating parent directories.
+Write ${OUTABS}/gates/2-probes.json as {"date":"${DATE}","frozen":true,"bible_sha256":"${pre.bible_sha256}","rulings":${J(RUL)},"probes":[...]} (2-space indent; keep the bible_sha256 and rulings values exactly as given), creating parent directories.
 ${bad.length ? 'Your previous probe set failed these checks; rewrite the file so all pass:\n- ' + bad.join('\n- ') + '\n' : ''}${READBACK} Also return the probes array you wrote.`
   let pr = await crit(P(probePrompt([])), {label: 'probe writer', phase: 'Probes', schema: PROBES, ...M('judge')})
   if (!FILE_OK(pr)) return died('probe writer')
@@ -481,8 +547,19 @@ ${bad.length ? 'Your previous probe set failed these checks; rewrite the file so
   }
   probes = pr.probes; probesSha = pr.sha256
 }
+{   // the scored array must be the file's: a second, independent read of gates/2-probes.json is compared with the array in hand
+  const rb = await crit(P(`Mechanical reader, no judging. Read ${OUTABS}/gates/2-probes.json, JSON.parse it and return {path, sha256 (sha256sum of the file), parsed: true, probes (its probes array, verbatim, every field of every probe)}. Write nothing.`), {label: 'probes readback', phase: 'Probes', schema: PROBES, ...M('mech')})
+  if (!FILE_OK(rb)) { if (MODE === 'full') die('probes readback failed: gates/2-probes.json could not be re-read'); log('probes readback failed (smoke, not enforced)') }
+  else {
+    const drift = []
+    if (probesSha && rb.sha256 !== probesSha) drift.push(`file sha ${rb.sha256} != ${probesSha}`)
+    if (J(rb.probes) !== J(probes)) drift.push('the probes array in hand differs from the file')
+    if (drift.length) { if (MODE === 'full') die('frozen probes drifted from gates/2-probes.json (' + drift.join('; ') + ')'); log('probes drift (smoke, not enforced): ' + drift.join('; ')) }
+    if (!probesSha) probesSha = rb.sha256
+  }
+}
 const specProbes = probes.filter(p => p.source === 'spec')
-const probeList = J(probes.map(p => ({id: p.id, q: p.q, kind: p.kind})))
+const probeList = J(probes.map(p => p.options && p.options.length ? {id: p.id, q: p.q, kind: p.kind, options: p.options} : {id: p.id, q: p.q, kind: p.kind}))
 
 // ---- Pick ----
 phase('Pick')
@@ -528,6 +605,10 @@ Evidence: the density bible (${BIBLE}) and ${DOSSIER} §7. Return {scores:[{cand
   }
 }
 const picksText = J({coast: picks.coast, river_town: picks.river_town, city: picks.city})
+if (resumedSec.length && GROUND_KEYS.some(k => norm((lctx.picks || {})[k]) !== norm(picks[k]))) {
+  log('ledgered sections rewritten (ground picks changed since they were written)')
+  resumedSec = []; todoSections = cap(SECTIONS)
+}
 
 // ---- Sections ----
 phase('Sections')
@@ -563,10 +644,18 @@ const secLost = todoSections.filter((s, i) => !secRes[i]).map(s => s.sid)
 const secLostTwice = resumedSec.length ? secLost : []
 if (secLost.length) log('sections dropped: ' + secLost.join(', ') + (secLostTwice.length ? ' (dropped again on a resume rerun: fails G2.1)' : ' (rerun with resume to retry them)'))
 const sk = kept(secRes, 'sections'); coverage.push(['sections', sk.ok, sk.k.length + '/' + secRes.length])
-const freshSec = sk.k.map(w => ({sid: w.sid, path: w.path, sha256: w.sha256, rules: w.rules.map(r => ({id: r.id, from: r.from, buildable: r.buildable}))}))
-const allSec = resumedSec.concat(freshSec)
-const secFails = sectionFailures(sk.k).concat(secLostTwice.map(sid => 'section lost twice: ' + sid))
+const freshSec = sk.k.map(w => ({sid: w.sid, path: w.path, sha256: w.sha256, rules: w.rules.map(r => ({id: r.id, from: r.from, buildable: r.buildable})), fragment: w.fragment, anchors: w.anchors, open: w.open}))
+// a section failing the rule format is left out of the ledger too, so the resume rerun rewrites it; the spec fixer cannot repair spec/sNN.md, so these failures never start a fix round
+const secBad = new Set(freshSec.filter(x => sectionFailures([x]).length).map(x => x.sid))
+if (secBad.size) log('sections failing the rule format (left out of the ledger): ' + [...secBad].join(', '))
+const allSec = resumedSec.concat(freshSec.filter(x => !secBad.has(x.sid)))
+const secFails = sectionFailures(resumedSec.concat(freshSec)).concat(secLostTwice.map(sid => 'section lost twice: ' + sid))
 if (resumedSec.length) log('sections resumed: ' + resumedSec.map(x => x.sid).join(', '))
+const ledgerOf = (probesH, specH) => ({job: JOB, date: DATE, sections: allSec, probes_sha256: probesH, bible_sha256: pre.bible_sha256, picks: {coast: picks.coast, river_town: picks.river_town, city: picks.city}, rulings_used: RUSED, spec: specH})
+{   // written now as well as in Record, so a later death or infra exit still leaves resumable sections
+  const early = await record('state/2-plan.json', ledgerOf(probesSha, {md_sha256: '', json_sha256: ''}), 'record ledger (sections)')
+  if (!early) log('section ledger not recorded after Sections; a later exit cannot resume them')
+}
 
 // ---- Integrate ----
 phase('Integrate')
@@ -574,7 +663,7 @@ const specShape = `sheet-spec.json shapes the gate reads by pointer:
 - /picks = {coast:{name}, river_town:{name, x, y}, city:{name, x, y}} (x, y in atlas px from maps-site/data);
 - /sheets/<country|region|valley|city> = {band:[zmin, zmax], must:[{class, rule}], forbidden:[classId]};
 - /paint_order = ${J(PAINT_ORDER_IDS)} exactly;
-- /sheet_one = {sheet:"region", bbox:${J(SHEET_ONE_BBOX)}, layers:[the paint_order ids painted on sheet one, in paint order], must_label:[every name that must be lettered on sheet one]};
+- /sheet_one = {sheet:"region", bbox:${J(SHEET_ONE_BBOX)}, layers:[the paint_order ids painted on sheet one, in paint order; never ${SHEET_ONE_FORBIDDEN.join(', ')}: homesteads wait for the valley sheet, so /sheets/region/forbidden lists every homestead class], must_label:[every name that must be lettered on sheet one]};
 - /palette/<token> = {day:"#rrggbb", night:"#rrggbb", use};
 - /overlays covers ${J(OVERLAY_IDS)} in stack order (${OVERLAY_NOTE});
 - /fixtures/views = [{id, sheet, x, y, zoom, mask, plate?}] from these seeds, each zoom resolved to the midpoint of its sheet's band, mask "" when none: ${J(VIEWS_SEED)}; /fixtures/masks = "${MASK_RULE}";
@@ -582,7 +671,7 @@ const specShape = `sheet-spec.json shapes the gate reads by pointer:
 - /hook = this text VERBATIM (+ pre_filigree_panes from s12):\n${HOOK_CONTRACT}
 - /capture = this text VERBATIM:\n${CAPTURE_CONTRACT}
 - /rules = every section rule [{id, text, from, buildable, section, anchors:[{path, pattern}]}]; every code anchor the spec relies on appears in the JSON as {path, pattern}.`
-const integPrompt = `You are the spec integrator. Read every section draft ${OUTABS}/spec/s01.md … s12.md (those that exist) and these fresh fragments: ${J(sk.k.map(w => ({sid: w.sid, fragment: w.fragment, open: w.open})))}
+const integPrompt = `You are the spec integrator. Read every section draft ${OUTABS}/spec/s01.md … s12.md (those that exist) and these section fragments (resumed and fresh): ${J(resumedSec.concat(sk.k).map(w => ({sid: w.sid, fragment: w.fragment, open: w.open})))}
 Also read the density bible (${BIBLE}), ${REUSE} and the research dossier ${DOSSIER}. Ground picks: ${picksText}.
 Rulings:
 ${rulingText(RUL, Object.keys(RULINGS))}
@@ -616,13 +705,13 @@ if (!red) log('red-team died: G2.9 is not clean')
 
 // ---- Units ----
 phase('Units')
-const unitPrompt = fails => `You are the unit planner. Read ${SPEC_MD}, ${SPEC_JSON} and ${REUSE}. Append to ${SPEC_JSON} (keep everything else byte-for-byte): "units", "slices" ({A|B|C|D: [unit ids]}) and "slice_classes" ({A|B|C|D: [bible class ids that slice must make visible]}). Return the three.
+const unitPrompt = fails => `You are the unit planner. Read ${SPEC_MD}, ${SPEC_JSON} and ${REUSE}. Set the three root keys of ${SPEC_JSON} (keep everything else byte-for-byte; when units, slices or slice_classes already exist, overwrite them in place, never duplicate or append a second copy; keep U00 and U01 under exactly those ids): "units", "slices" ({A|B|C|D: [unit ids]}) and "slice_classes" ({A|B|C|D: [bible class ids that slice must make visible]}). After writing, re-read the file, JSON.parse it and check that /units, /slices and /slice_classes equal what you return, then return the three exactly as in the file (the gate re-reads the file, not your return).
 Unit = {id:"U00".., title, slice, kind: logic|tool|data|css|copy, files:[repo paths], paint_order, depends_on:[ids], requires:[roads|census|rivers], covers:[spec rule ids], model?, effort?, acceptance:[{kind: node|grep|json|capture, cmd, expect}]}.
 - paint_order: 0 = infrastructure, 1-9 = ${PAINT_ORDER_IDS.map((x, i) => (i + 1) + ' ' + x).join(', ')}, 10 = overlays.
 - Slice A ground: U00 = files ["maps-site/index.html"], kind logic: it creates the /* FILIGREE */ … /* /FILIGREE */ block, implements the /hook contract with classes = the bible class ids, adds the default-off filigree=1 toggle + layers-panel row, and makes the #view= moveend writer keep trailing params. U01 = files ["tools/filigree-capture.js"], depends on U00, implements /capture. Then the relief bake reusing tools/filigree-dem.js, contours, water fill + pooled coast edge, rivers.json.
 - Slice B ink: mint tool + gazetteer source, steadings, rust coast road over the traced network, reserves wash, names + heights rank/collision pass, the single ${picks.river_town} shield.
 - Slice C city: ${picks.city} painted pass (grain, park voids, ocher arterials, pooled edges), seeded fog, street names on a threshold, hover-only halos.
-- Slice D stack: old survey under + swipe, notices schema/sample/import, structures / caravan halts / blazed paths / muster days / shut ways as toggled sheets, hash grammar + sheet= lock, two one-question plates, the R10 rename of the Tithe-Yard / Tithe-Barn POIs to The Tribute-Yard / The Tribute-Barn.
+- Slice D stack: old survey under + swipe, notices schema/sample/import, structures / caravan halts / blazed paths / muster days / shut ways as toggled sheets, hash grammar + sheet= lock, two one-question plates, the R10 rename of the Tithe-Yard / Tithe-Barn POIs to The Tribute-Yard / The Tribute-Barn; the same unit also rewords their d: description strings (the Tribute-Yard's becomes 'A walled yard where the harvest-tribute is weighed, counted, and grumbled over.'), and its acceptance includes {kind: grep, cmd: "grep -ci tithe maps-site/index.html", expect: "0"}.
 - At most 9 units per slice; no dependency on a later slice; no cycles.
 - Every acceptance item is machine-checkable: a command + its expected output. Prose is rejected. capture acceptance only in units that depend (directly or not) on U01.
 - index.html (the sim) only if a spec rule names it.
@@ -630,20 +719,19 @@ Unit = {id:"U00".., title, slice, kind: logic|tool|data|css|copy, files:[repo pa
 - slice_classes: only these bible class ids: ${pre.class_ids.join(', ')}; each of these ground-six classes in exactly one slice: ${pre.ground_six.join(', ')}.
 - model (opus|sonnet|haiku) and effort (low|medium|high|xhigh|max) are optional per unit.
 ${fails.length ? 'Your previous plan failed these code checks; fix them all:\n- ' + fails.join('\n- ') : ''}`
-let units = await crit(P(unitPrompt([])), {label: 'unit planner', phase: 'Units', schema: UNITS, ...M('judge')})
+const units = await crit(P(unitPrompt([])), {label: 'unit planner', phase: 'Units', schema: UNITS, ...M('judge')})
 if (!units) return died('unit planner')
-let unitFails = unitFailures(units, spec)
-if (unitFails.length) {
-  const u2 = await crit(P(unitPrompt(unitFails)), {label: 'unit planner (fix)', phase: 'Units', schema: UNITS, ...M('judge')})
+const planFails = unitFailures(units, spec)   // pre-check of the planner's return only; G2.1 re-runs unitFailures on what the spec reader finds in the file
+if (planFails.length) {
+  const u2 = await crit(P(unitPrompt(planFails)), {label: 'unit planner (fix)', phase: 'Units', schema: UNITS, ...M('judge')})
   if (!u2) return died('unit planner (fix)')
-  units = u2; unitFails = unitFailures(units, spec)
 }
 
 // ---- Check ----
 const checkPrompts = [
   `Mechanical anchor check, no judging. Collect every {path, pattern} object at any depth of ${SPEC_JSON}. Save them to a temp file and, with a short node script (String.indexOf, so no shell quoting touches the patterns), test that each pattern occurs in ${REPO}/<path>. Return {bad:["<path> :: <pattern>", ...]} for each one not found. Write nothing.`,
   `Mechanical leak check, no judging. Apply the case-insensitive regex /${LEAK.source}/i to (1) ${SPEC_MD} outside its "## Provenance" section and (2) every string value in ${SPEC_JSON}. Return {hits:["<file> :: <matched text> :: <context>", ...]}. Write nothing.`,
-  `Canon check of the player-facing strings in ${SPEC_MD} and ${SPEC_JSON} (labels, fiction names, plate questions, legend lines, notice voices). ${VOCAB_RULE} The old Tithe POI names are allowed only inside a "## Renames" section of the .md (exempt from this vocabulary rule). Return {violations:["<file> :: <text> :: <why>", ...]}. Write nothing.`
+  `Canon check of the player-facing strings in ${SPEC_MD} and ${SPEC_JSON} (labels, fiction names, plate questions, legend lines, notice voices). ${VOCAB_RULE} The old Tithe POI names (and the word "tithe") are allowed only inside a "## Renames" section of the .md AND in the rename unit's JSON fields (/units, /rules, /renames: title, covers, acceptance cmds and greps such as "grep -ci tithe maps-site/index.html") — exempt from this vocabulary rule; never flag those. Return {violations:["<file> :: <text> :: <why>", ...]}. Write nothing.`
 ]
 const CHECK_LABELS = ['anchor check', 'leak check', 'canon check']
 const CHECK_SCHEMAS = [ANCH, HITS, VIOL]
@@ -660,35 +748,51 @@ async function checkPhase(tag, allowFix) {
       const fx = await agent(P(`Fix these check findings in ${SPEC_MD} and ${SPEC_JSON}; keep rule ids, keep /hook and /capture verbatim, change nothing else.
 Broken anchors (rewrite to the current literal or drop): ${J(bad)}
 Leak hits (move the name into "## Provenance" or reword; the JSON may not contain them at all): ${J(hits)}
-Canon violations (reword in the Nīmlad voice; old Tithe names only inside "## Renames"): ${J(viol)}
+Canon violations (reword in the Nīmlad voice; old Tithe names only inside "## Renames" and in the R10 rename unit's JSON title/covers/acceptance, which you must leave verbatim so its grep acceptance still works): ${J(viol)}
 ${VOCAB_RULE}
 Return {md, json, sha_md, sha_json, rules:[{id, from, buildable}], roots_present}.`), {label: 'spec fixer · check' + tag, phase: 'Check', schema: INTEG, ...M('triage')})
       if (fx) spec = fx; else log('check fixer died')
     }
     ck = await runChecks(tag + ' (2)')
   }
-  const rd = await crit(P(`Mechanical reader, no judging. Read ${SPEC_JSON} (and sha256sum it and ${SPEC_MD}) and return, by these exact pointers:
+  const rd = await crit(P(`Mechanical reader, no judging. Do NOT extract by eye: write ONE short node script that reads ${SPEC_JSON}, resolves every pointer below itself (RFC 6901, JSON.parse and plain property access only), prints the result as JSON, and run it; also run sha256sum on ${SPEC_JSON} and ${SPEC_MD} and node-test the POLISH.md containment. Return the printed values verbatim, by these exact pointers:
 - probe_values: for each of ${J(specProbes.map(p => ({id: p.id, pointer: p.pointer})))} → {id, value at that JSON pointer (RFC 6901), or null when it does not resolve or is an object};
 - sheet_one_layers = /sheet_one/layers; paint_order = /paint_order; must_classes = /sheets/region/must[].class; forbidden_classes = /sheets/region/forbidden;
-- palette_hex = every /palette/*/day value, lowercase; river_town = /picks/river_town {name, x, y}; must_label = /sheet_one/must_label;
-- views = /fixtures/views as [{id, sheet, x, y, zoom, mask}] (mask "" when none); rule_ids = /rules[].id;
+- palette_hex = every /palette/*/day value and every /paint/wash_hex/* value (print-sampled wash fills), lowercase; river_town = /picks/river_town {name, x, y}; must_label = /sheet_one/must_label;
+- views = /fixtures/views as [{id, sheet, x, y, zoom, mask}] (mask "" when none); bands = {<sheet>: /sheets/<sheet>/band} for every key of /sheets; rule_ids = /rules[].id;
+- rules = /rules as [{id, from, buildable}]; units = /units verbatim (each unit with every field as stored in the file); slices = /slices; slice_classes = /slice_classes ({} when absent); checks = /checks verbatim as {<slice>: [{id, cmd, expect}]} ({} when absent; a slice key with no checks stays out or []);
 - sha_md, sha_json = sha256sum of ${SPEC_MD} and ${SPEC_JSON};
-- prereq_unqueued = the "item" of every /prerequisites entry whose polish_title is empty or whose title text does not occur in ${REPO}/POLISH.md.
+- prereq_unqueued = the "item" of every /prerequisites entry whose title is not queued in ${REPO}/POLISH.md. An entry is queued when its polish_title is non-empty and occurs in POLISH.md, OR the exact title "Filigree data — <item>" (the title this job's inserts use) occurs there.
 Missing values are [] / "" / 0, never invented. Write nothing.`), {label: 'spec reader' + tag, phase: 'Check', schema: READER, ...M('mech')})
   if (rd) for (const [k, d] of [['sha_md', ''], ['sha_json', ''], ['prereq_unqueued', []]]) if (rd[k] == null) { rd[k] = d; log('spec reader omitted optional ' + k) }
-  return {ck, rd}
+  if (rd) {   // the reader is one mechanical agent whose output is the ground truth for spec probes and draw checks: reject what is vacuous or malformed
+    rd.reader_fails = []
+    if (!rd.must_classes.length) rd.reader_fails.push('reader: /sheets/region/must is empty (the must-classes draw check would pass vacuously)')
+    if (!rd.palette_hex.length || !rd.palette_hex.every(h => /^#[0-9a-f]{6}$/.test(lc(h)))) rd.reader_fails.push('reader: /palette/*/day is empty or holds a non-#rrggbb value')
+    if (!rd.sheet_one_layers.length) rd.reader_fails.push('reader: /sheet_one/layers is empty')
+    for (const [ptr, xs] of [['/sheet_one/layers', rd.sheet_one_layers], ['/sheets/region/must', rd.must_classes]]) {   // G2.6 forbids homesteads on sheet one whatever the spec says
+      const home = xs.filter(isHomestead)
+      if (home.length) rd.reader_fails.push(`reader: ${ptr} lists ${home.join(', ')} (homesteads wait for the valley sheet; drafts that follow it fail G2.6 forbidden)`)
+    }
+    if (!rd.must_label.length) rd.reader_fails.push('reader: /sheet_one/must_label is empty')
+    if (!rd.rule_ids.length) rd.reader_fails.push('reader: /rules is empty')
+  }
+  const unitFails = rd ? unitFailures({units: rd.units, slices: rd.slices, slice_classes: rd.slice_classes}, {rules: rd.rules}) : []   // G2.1 reads the file Job 3 consumes
+  const checkFails = rd ? checksFailures(rd) : []
+  return {ck, rd, unitFails, checkFails}
 }
 
 // ---- Cold-cartographer gate ----
-const draftBody = X => `You are a cartographer who has never seen any source posts or plates. You may read ONLY ${SPEC_MD}, ${SPEC_JSON}, ${OUTABS}/spec/assets/* and your own output directory ${OUTABS}/cold/${X}/. Anything else you open (including the other drafter's directory, ${OUTABS}/gates/, the bible or the section drafts) is a violation. Do not use the web.
-Draw SHEET ONE as ${OUTABS}/cold/${X}/sheet-one.svg (create the directory):
+const draftBody = (X, tag) => `You are a cartographer who has never seen any source posts or plates. You may read ONLY ${SPEC_MD}, ${SPEC_JSON}, ${OUTABS}/spec/assets/* and your own output directory ${coldDir(X, tag)}/. Anything else you open (including any other directory under ${OUTABS}/cold/, ${OUTABS}/gates/, the bible or the section drafts) is a violation. Do not use the web.
+First empty your output directory: rm -rf ${coldDir(X, tag)} && mkdir -p ${coldDir(X, tag)} (anything left there from an earlier run is not your draft and must not be reused).
+Draw SHEET ONE from the spec as ${coldDir(X, tag)}/sheet-one.svg:
 - viewBox = its bbox in atlas px;
 - one <g id="layer-<id>"> per painted layer, in paint order;
 - every label is a <text> with data-class and data-rank, positioned in atlas px;
-- fills/strokes only as palette hex (or none);
+- fills/strokes only as palette hex or /paint/wash_hex values (or none);
 - the base may be embedded as <image>;
 - mark every overlay shield with a data-shield attribute and give its centre as data-x / data-y in atlas px.
-Answer every probe below (id, q, kind only): answers = [{id, value, rule (the spec rule id or section you used)}].
+Answer every probe below (id, q, kind, options only): answers = [{id, value, rule (the spec rule id or section you used)}]. Answer in exactly the format q asks for and, where a probe lists options, with exactly one of those tokens (an order probe: those tokens, as an array, in order); a paraphrase is scored wrong.
 Probes: ${probeList}
 List each guess you had to make as {what, needed_for, spec_ref (the spec section you looked in, or "")}.
 List every file you opened (absolute paths) in files_read.
@@ -696,8 +800,8 @@ Return {svg (its path), answers, guesses, files_read}.`
 async function coldGate(tag) {
   phase('Cold-cartographer gate')
   const pairs = await pipeline(['A', 'B'],
-    X => agent(P(draftBody(X), true), {label: 'drafter ' + X + tag, phase: 'Cold-cartographer gate', schema: DRAFT, ...M(X === 'A' ? 'deep' : 'judge')}),
-    (d, X) => d && agent(P(`Mechanical SVG extraction, no judging. With a short node script (regex/DOM parse) read ${OUTABS}/cold/${X}/sheet-one.svg and return:
+    X => agent(P(draftBody(X, tag), true), {label: 'drafter ' + X + tag, phase: 'Cold-cartographer gate', schema: DRAFT, ...M(X === 'A' ? 'deep' : 'judge')}),
+    (d, X) => d && agent(P(`Mechanical SVG extraction, no judging. With a short node script (regex/DOM parse) read ${coldDir(X, tag)}/sheet-one.svg and return:
 - layers: the id of every <g id="layer-…"> in document order;
 - colors: every fill / stroke value (attributes and style declarations), lowercase, de-duplicated, url(...) references skipped;
 - labels: every <text> as {text (trimmed text content), class (data-class), rank (data-rank as a string), x, y (numbers, atlas px)};
@@ -707,17 +811,28 @@ Write nothing.`), {label: 'svg extractor ' + X + tag, phase: 'Cold-cartographer 
   const live = ['A', 'B'].filter(X => slot[X])
   let raster = null
   if (live.length) {
-    raster = await agent(P(`Rasterize these SVG drafts with headless Chromium (Playwright from NODE_PATH=/opt/node22/lib/node_modules; the browser lives under /opt/pw-browsers; never run playwright install): ${live.map(X => `${OUTABS}/cold/${X}/sheet-one.svg -> ${OUTABS}/cold/${X}/sheet-one.png`).join('; ')}. Width 1600 px, each PNG <= 300 KB (re-encode smaller if needed). Return {pngs:[paths], infra_error:""}; if the browser cannot start, return infra_error = the message.`),
+    raster = await agent(P(`Rasterize these SVG drafts with headless Chromium (Playwright from NODE_PATH=/opt/node22/lib/node_modules; the browser lives under /opt/pw-browsers; never run playwright install): ${live.map(X => `${coldDir(X, tag)}/sheet-one.svg -> ${coldDir(X, tag)}/sheet-one.png`).join('; ')}. Width 1600 px, each PNG <= 300 KB (re-encode smaller if needed). Return {pngs:[paths], infra_error:""}; if the browser cannot start, return infra_error = the message.`),
       {label: 'rasterize' + tag, phase: 'Cold-cartographer gate', schema: RASTER, ...M('audit')})
     if (raster && raster.infra_error.trim()) return {infra: raster.infra_error.trim()}
   }
-  const both = live.length === 2 && !!raster
+  const pngWant = ['A', 'B'].map(X => `${coldDir(X, tag)}/sheet-one.png`)
+  let pngOk = false
+  if (live.length === 2 && raster) {
+    const listed = pngWant.every(w => raster.pngs.some(p => absP(p) === w))
+    if (!listed) log('rasterize did not list both PNGs: G2.8 not run')
+    else {
+      const sz = await agent(P(`Mechanical check, no judging. Run stat -c %s on each of ${pngWant.join(' ')} and return {sizes:[{path, bytes}]} (bytes 0 when the file is missing). Write nothing.`), {label: 'png stat' + tag, phase: 'Cold-cartographer gate', schema: SIZES, ...M('mech')})
+      pngOk = !!sz && pngWant.every(w => sz.sizes.some(x => absP(x.path) === w && x.bytes > 0))
+      if (!pngOk) log('PNG stat ' + (sz ? 'found a missing or empty PNG' : 'agent died') + ': G2.8 not run')
+    }
+  }
+  const both = pngOk
   const [aud, div] = await parallel([
-    async () => live.length ? agent(P(`Audit the cold drafters' guesses against the sheet spec ${SPEC_MD} and ${SPEC_JSON}. Guesses: ${J(live.map(X => ({drafter: X, guesses: slot[X].d.guesses})))}
-For each guess return {drafter, guess (its "what"), class: "answered" (the spec does answer it: quote the spec text) | "gap", quote, pointer: the JSON pointer under one of ${SPEC_ROOTS.join(' ')} the guess concerns, or "" for a choice outside that schema}. Write nothing.`), {label: 'guess auditor' + tag, phase: 'Cold-cartographer gate', schema: AUDIT, ...M('judge')}) : null,
-    async () => both ? agent(P(`Compare two independent drafts of sheet one: ${OUTABS}/cold/A/sheet-one.png and ${OUTABS}/cold/B/sheet-one.png, against the spec ${SPEC_MD} and ${SPEC_JSON} only (open nothing else). blocking = every place the drafts diverge on something a spec rule governs, as {spec_rule (the /rules id), pointer, a (what A drew), b (what B drew)}; minor = other differences, one line each. Write nothing.`), {label: 'divergence judge' + tag, phase: 'Cold-cartographer gate', schema: DIVERGE, ...M('judge')}) : null
+    async () => live.length ? agent(P(`Audit the cold drafters' guesses against the sheet spec ${SPEC_MD} and ${SPEC_JSON}. Guesses: ${J(live.map(X => ({drafter: X, guesses: slot[X].d.guesses.map((q, i) => ({n: i + 1, ...q}))})))}
+Return exactly one verdict per guess, none skipped. For each guess return {drafter, n (its number), guess (its "what"), class: "answered" (the spec does answer it: quote the spec text) | "gap", quote, pointer: the JSON pointer under one of ${SPEC_ROOTS.join(' ')} the guess concerns, or "" for a choice outside that schema}. Write nothing.`), {label: 'guess auditor' + tag, phase: 'Cold-cartographer gate', schema: AUDIT, ...M('judge')}) : null,
+    async () => both ? agent(P(`Compare two independent drafts of sheet one: ${pngWant.join(' and ')}, against the spec ${SPEC_MD} and ${SPEC_JSON} only (open nothing else). blocking = every place the drafts diverge on something a spec rule governs, as {spec_rule (the /rules id), pointer, a (what A drew), b (what B drew)}; minor = other differences, one line each. Write nothing.`), {label: 'divergence judge' + tag, phase: 'Cold-cartographer gate', schema: DIVERGE, ...M('judge')}) : null
   ])
-  return {slot, raster, aud, div, both}
+  return {tag, slot, raster, aud, div, both}
 }
 
 function scoreGate(g, rd) {
@@ -728,7 +843,7 @@ function scoreGate(g, rd) {
     const ans = new Map(s.d.answers.map(a => [a.id, a.value])), vals = new Map(rd.probe_values.map(v => [v.id, v.value]))
     const wrong = probes.filter(p => !probeEq(p, ans.get(p.id), p.source === 'spec' ? vals.get(p.id) : p.expected)).map(p => p.id)
     out.per[X] = {pct: percent(probes.length - wrong.length, probes.length), wrong,
-      draw: s.e ? drawFailures(s.e, rd) : ['extractor: agent died: svg extractor ' + X], blind: blindBad(s.d.files_read, DRAFTER_ALLOWED(X))}
+      draw: s.e ? drawFailures(s.e, rd) : ['extractor: agent died: svg extractor ' + X], blind: blindBad(s.d.files_read, DRAFTER_ALLOWED(X, g.tag))}
   }
   if (out.per.A && out.per.B) {
     out.wrongBoth = out.per.A.wrong.filter(id => out.per.B.wrong.includes(id))
@@ -737,8 +852,12 @@ function scoreGate(g, rd) {
     out.drawBoth = out.per.A.draw.filter(x => out.per.B.draw.some(y => y.split(':')[0] === x.split(':')[0]))
   }
   out.gaps = g.aud ? g.aud.verdicts.filter(v => v.class === 'gap' && underRoots(v.pointer)) : null
+  out.unaudited = []   // every (drafter, guess) pair needs a verdict, matched by number or by guess text; a skipped guess is never read as answered
+  if (g.aud) for (const X of ['A', 'B']) if (g.slot[X]) g.slot[X].d.guesses.forEach((q, i) => {
+    if (!g.aud.verdicts.some(v => v.drafter === X && (v.n === i + 1 || norm(v.guess) === norm(q.what)))) out.unaudited.push(`${X}#${i + 1}: ${q.what}`)
+  })
   if (g.aud) { const oos = g.aud.verdicts.filter(v => v.class === 'gap' && !underRoots(v.pointer)); if (oos.length) log('out-of-schema gaps (logged only): ' + oos.map(v => v.guess).join(' | ')) }
-  out.blocking = g.div ? g.div.blocking.filter(b => rd.rule_ids.includes(b.spec_rule)) : null
+  out.blocking = g.div ? g.div.blocking.filter(b => rd.rule_ids.includes(b.spec_rule) || underRoots(b.pointer) || (log('blocking divergence with unrecognised spec_rule kept (G2.8 fails on it): ' + J(b)), true)) : null
   return out
 }
 
@@ -747,31 +866,32 @@ function criteriaOf(st) {
   const nullPtr = specProbes.filter(p => { const v = rd.probe_values.find(x => x.id === p.id); return !v || v.value == null }).map(p => p.id)
   const dead = X => 'agent died: drafter ' + X
   const per = sc.per
-  const g21 = unitFails.concat(secFails)
+  const g21 = st.unitFails.concat(st.checkFails, secFails, pre.ground_six.length || !pre.class_ids.length ? [] : ['ground_six unavailable: preflight returned no ground-six classes although the bible has classes; slice coverage unchecked'])
   return [
     G20,
-    C('G2.1', 'traceability + DAG + acceptance + slices + mandatory U00/U01', g21.length ? g21 : 'ok', 'all code checks', !g21.length),
+    C('G2.1', 'traceability + DAG + acceptance + slices + mandatory U00/U01 + non-empty /checks per slice', g21.length ? g21 : 'ok', 'all code checks', !g21.length),
     C('G2.2', 'anchors resolve (by pattern)', ck[0] ? ck[0].bad : 'agent died: anchor check', '0 bad', !!ck[0] && !ck[0].bad.length),
     C('G2.3', 'leak check', ck[1] ? ck[1].hits : 'agent died: leak check', '0 hits', !!ck[1] && !ck[1].hits.length),
     C('G2.4', 'spec answers every spec probe pointer', nullPtr, '0 null', !nullPtr.length),
     C('G2.5', 'probe accuracy', {A: per.A ? per.A.pct : dead('A'), B: per.B ? per.B.pct : dead('B')}, 'each drafter >= 90%', !!per.A && !!per.B && per.A.pct >= 90 && per.B.pct >= 90),
     C('G2.6', 'draw checks', {A: per.A ? per.A.draw : dead('A'), B: per.B ? per.B.draw : dead('B')}, 'both drafts pass all', !!per.A && !!per.B && !per.A.draw.length && !per.B.draw.length),
-    C('G2.7', 'schema-path gap guesses', sc.gaps ? sc.gaps.map(v => v.drafter + ': ' + v.guess + ' @ ' + v.pointer) : 'agent died: guess auditor', '0', !!sc.gaps && !sc.gaps.length),
-    C('G2.8', 'blocking divergences', sc.blocking ? sc.blocking : g.both ? 'agent died: divergence judge' : 'not run: needs both drafts and the rasterized PNGs', '0', !!sc.blocking && !sc.blocking.length),
+    C('G2.7', 'schema-path gap guesses', !sc.gaps ? 'agent died: guess auditor' : sc.unaudited.length ? {gaps: sc.gaps.map(v => v.drafter + ': ' + v.guess + ' @ ' + v.pointer), auditor_incomplete: sc.unaudited} : sc.gaps.map(v => v.drafter + ': ' + v.guess + ' @ ' + v.pointer), '0 gaps; every guess audited', !!sc.gaps && !sc.gaps.length && !sc.unaudited.length),
+    C('G2.8', 'blocking divergences', sc.blocking ? sc.blocking : g.both ? 'agent died: divergence judge' : 'not run: needs both drafts and both rasterized PNGs confirmed on disk', '0', !!sc.blocking && !sc.blocking.length),
     C('G2.9', 'red-team contradictions', red ? red.contradictions : 'agent died: red-team', 'last pass 0', redClean),
     C('G2.10', 'canon/voice', ck[2] ? ck[2].violations : 'agent died: canon check', '0 violations', !!ck[2] && !ck[2].violations.length),
     C('G2.11', 'blind compliance (allowlist check on self-reported files_read)', {A: per.A ? per.A.blind : dead('A'), B: per.B ? per.B.blind : dead('B')}, '0 reads outside DRAFTER_ALLOWED', !!per.A && !!per.B && !per.A.blind.length && !per.B.blind.length),
-    C('G2.12', 'coverage (kept() on sections, pickers, judges)', coverage.map(([w, , m]) => w + ' ' + m), '>= 75% of each fan-out', coverage.every(([, ok]) => ok))
+    C('G2.12', 'coverage (kept() on sections, pickers, judges)', coverage.map(([w, , m]) => w + ' ' + m), '>= 75% of each fan-out', coverage.every(([, ok]) => ok)),
+    C('G2.13', 'gate views: /fixtures/views = V1-V7 seeds (sheet, centre, mask), zoom = band midpoint', st.viewFails.length ? st.viewFails : 'ok', '0 mismatches', !st.viewFails.length)
   ]
 }
 
 async function evaluate(tag, allowFix) {
-  const {ck, rd} = await checkPhase(tag, allowFix)
+  const {ck, rd, unitFails, checkFails} = await checkPhase(tag, allowFix)
   if (!rd) return {deadReader: 'spec reader' + tag}
   const g = await coldGate(tag)
   if (g.infra) return {infra: g.infra}
   const sc = scoreGate(g, rd)
-  const st = {ck, rd, sc, g}
+  const st = {ck, rd, sc, g, unitFails, checkFails, viewFails: viewFailures(rd).concat(rd.reader_fails || [])}
   st.criteria = criteriaOf(st)
   return st
 }
@@ -779,25 +899,25 @@ async function evaluate(tag, allowFix) {
 let st = await evaluate('', true)
 if (st.deadReader) return died(st.deadReader)
 if (st.infra) { log('infra: ' + st.infra); return done({reason: 'infra', rounds, owner_rulings_used: RUSED}) }
-const FIXABLE = ['G2.1', 'G2.2', 'G2.3', 'G2.4', 'G2.5', 'G2.6', 'G2.7', 'G2.8', 'G2.10', 'G2.11']
-const fixableFailing = s => s.criteria.filter(c => FIXABLE.includes(c.id) && !c.pass).map(c => c.id)
+const FIXABLE = ['G2.1', 'G2.2', 'G2.3', 'G2.4', 'G2.5', 'G2.6', 'G2.7', 'G2.8', 'G2.10', 'G2.11', 'G2.13']
+const fixableFailing = s => s.criteria.filter(c => FIXABLE.includes(c.id) && !c.pass && (c.id !== 'G2.1' || s.unitFails.length || s.checkFails.length)).map(c => c.id)   // G2.1 failing on section failures alone is not fixable here
 
 // ---- Fix ----
 while (rounds < ROUNDS && fixableFailing(st).length) {
-  if (budgetLow(14)) { log('budget low: fix round skipped; the gate fails on its own criteria'); break }
+  if (budgetLeft() < ROUND_TOKENS) { log(`budget: ${budgetLeft()} tokens left < ${ROUND_TOKENS}; fix round skipped; the gate fails on its own criteria`); break }
   rounds++
   const tag = ' r' + rounds
   phase('Fix')
   const {ck, rd, sc} = st
   const nullPtr = specProbes.filter(p => { const v = rd.probe_values.find(x => x.id === p.id); return !v || v.value == null })
   const cite = {
-    probes_both_wrong: sc.wrongBoth.map(id => { const p = probes.find(x => x.id === id); return {id, q: p.q, pointer: p.pointer || null} }),
+    probes_both_wrong: sc.wrongBoth.map(id => { const p = probes.find(x => x.id === id); return p.source === 'spec' ? {id, q: p.q, source: 'spec', pointer: p.pointer} : {id, q: p.q, source: p.source, cite: p.cite, expected: p.expected} }),
     null_pointers: nullPtr.map(p => ({id: p.id, q: p.q, pointer: p.pointer})),
     schema_gaps: sc.gaps || [], blocking_divergences: sc.blocking || [], draw_checks_both_failed: sc.drawBoth,
     leak_hits: ck[1] ? ck[1].hits : [], canon_violations: ck[2] ? ck[2].violations : [], broken_anchors: ck[0] ? ck[0].bad : [],
-    unit_failures: unitFails, roots_missing: SPEC_ROOTS.filter(r => !UNIT_ROOTS.includes(r) && !spec.roots_present.map(x => '/' + String(x).replace(/^\/+/, '')).includes(r))
+    unit_failures: st.unitFails, checks_missing: st.checkFails, view_mismatches: st.viewFails.length ? {mismatches: st.viewFails, seeds: VIEWS_SEED} : [], roots_missing: SPEC_ROOTS.filter(r => !UNIT_ROOTS.includes(r) && !spec.roots_present.map(x => '/' + String(x).replace(/^\/+/, '')).includes(r))
   }
-  const fx = await crit(P(`You are the spec fixer, round ${rounds}. Patch ${SPEC_MD} and ${SPEC_JSON} ONLY where cited below; keep every rule id, keep /hook and /capture verbatim, keep units/slices/slice_classes unless a unit failure is cited. Each "both wrong" probe means the spec is ambiguous there: make the answer explicit (never mention probes or drafters in the spec). Each null pointer: put the answer at exactly that JSON pointer. Each schema gap: state the missing decision at its pointer.
+  const fx = await crit(P(`You are the spec fixer, round ${rounds}. Patch ${SPEC_MD} and ${SPEC_JSON} ONLY where cited below; keep every rule id, keep /hook and /capture verbatim, keep units/slices/slice_classes unless a unit failure is cited. Each "both wrong" probe means the spec is ambiguous there: make the answer explicit (never mention probes or drafters in the spec). For a source "spec" probe, make the value at its pointer explicit. For a bible/brief/ruling probe, the correct answer is its "expected" value, fixed by its cite (B-xx = that density-bible rule in ${BIBLE}; brief pN = page N of ${BRIEF}; Rnn = that ruling below): align the spec with that rule, page or ruling so it states that answer unambiguously. Each null pointer: put the answer at exactly that JSON pointer. Each schema gap: state the missing decision at its pointer. View mismatches: rewrite /fixtures/views as one {id, sheet, x, y, zoom, mask} per seed (id, sheet, x, y and mask exactly as seeded, mask "" when none) with zoom = the midpoint of /sheets/<sheet>/band. Each checks_missing entry: write /checks/<slice> for that slice as [{id, cmd, expect}] (a command printing JSON plus a condition on it, as section s12 specifies) so every slice A-D has at least one.
 ${J(cite)}
 Rulings:
 ${rulingText(RUL, Object.keys(RULINGS))}
@@ -805,12 +925,11 @@ ${VOCAB_RULE}
 Return {md, json, sha_md, sha_json, rules:[{id, from, buildable}], roots_present}.`), {label: 'spec fixer' + tag, phase: 'Fix', schema: INTEG, ...M('judge')})
   if (!fx) return died('spec fixer' + tag)
   spec = fx
-  if (unitFails.length) {
-    const u3 = await crit(P(unitPrompt(unitFails)), {label: 'unit planner' + tag, phase: 'Fix', schema: UNITS, ...M('judge')})
+  const freshFails = unitFailures(units, spec), allUnitFails = st.unitFails.concat(freshFails.filter(x => !st.unitFails.includes(x)))   // the fixer may have changed the buildable rules
+  if (allUnitFails.length) {
+    const u3 = await crit(P(unitPrompt(allUnitFails)), {label: 'unit planner' + tag, phase: 'Fix', schema: UNITS, ...M('judge')})
     if (!u3) return died('unit planner' + tag)
-    units = u3
   }
-  unitFails = unitFailures(units, spec)
   st = await evaluate(tag, false)
   if (st.deadReader) return died(st.deadReader)
   if (st.infra) { log('infra: ' + st.infra); return done({reason: 'infra', rounds, owner_rulings_used: RUSED}) }
@@ -819,29 +938,42 @@ Return {md, json, sha_md, sha_json, rules:[{id, from, buildable}], roots_present
 // ---- Record ----
 phase('Record')
 const rd = st.rd
-const criteria = st.criteria
+const arts = [[OUT + '/sheet-spec.md', SPEC_MD, rd.sha_md], [OUT + '/sheet-spec.json', SPEC_JSON, rd.sha_json],
+  [OUT + '/density-bible.json', OUTABS + '/density-bible.json', pre.bible_sha256], [OUT + '/gates/2-probes.json', OUTABS + '/gates/2-probes.json', probesSha]]
+  .map(([path, abs, h]) => ({path, abs, sha256: lc(h)}))
+for (const [a, h] of [[arts[0], spec.sha_md], [arts[1], spec.sha_json]]) if (SHA_OK(a.sha256) && SHA_OK(lc(h)) && lc(h) !== a.sha256) { log(`${a.path}: reader sha ${a.sha256} != writer sha ${lc(h)}; re-hashed`); a.sha256 = '' }
+const unhashed = arts.filter(a => !SHA_OK(a.sha256))
+if (unhashed.length) {   // Job 3 refuses to start unless the recorded spec sha equals the file's, so an empty sha is re-read, never recorded under a pass
+  log('artifact shas missing, re-reading: ' + unhashed.map(a => a.path).join(', '))
+  const hr = await crit(P(`Mechanical check, no judging. Run sha256sum on each of ${unhashed.map(a => a.abs).join(' ')} and return {hashes:[{path, sha256}]} (sha256 "" when the file is missing). Write nothing.`),
+    {label: 'artifact hasher', phase: 'Record', schema: HASHES, ...M('mech')})
+  if (hr) for (const a of unhashed) { const h = hr.hashes.find(x => absP(x.path) === a.abs); if (h && SHA_OK(lc(h.sha256))) a.sha256 = lc(h.sha256) }
+}
+const noSha = arts.filter(a => !SHA_OK(a.sha256)).map(a => a.path)
+const criteria = st.criteria.concat([C('G2.14', 'artifact hashes recorded (sha256 of spec md/json, bible, probes)', noSha.length ? {missing: noSha} : 'ok', 'four 64-hex shas', !noSha.length)])
 if (probesAfterSpec) gaps.push('probes were written while a sheet spec already existed (resume:false rerun)')
 if (st.sc.gaps) for (const v of st.sc.gaps) gaps.push(`gap (${v.drafter}) ${v.pointer}: ${v.guess}`)
+for (const u of st.sc.unaudited || []) gaps.push('guess not audited: ' + u)
 for (const sid of secLost) gaps.push('section lost: ' + sid)
+for (const sid of secBad) gaps.push('section rule format failed (rewritten on the resume rerun): ' + sid)
 const gate = gateObj({criteria, rounds, rulings_used: RUSED, gaps, picks, pick_tally: pickTally, probes_written_after_spec: probesAfterSpec,
-  artifacts: [{path: OUT + '/sheet-spec.md', sha256: rd.sha_md}, {path: OUT + '/sheet-spec.json', sha256: rd.sha_json},
-    {path: OUT + '/density-bible.json', sha256: pre.bible_sha256}, {path: OUT + '/gates/2-probes.json', sha256: probesSha}]})
-const ledger = {job: JOB, date: DATE, sections: allSec, probes_sha256: probesSha, spec: {md_sha256: rd.sha_md, json_sha256: rd.sha_json}}
+  artifacts: arts.map(a => ({path: a.path, sha256: a.sha256}))})
+const ledger = ledgerOf(arts[3].sha256, {md_sha256: arts[0].sha256, json_sha256: arts[1].sha256})
 const recs = await parallel([
   () => record('gates/2-plan.json', gate),
   () => record('gates/views.json', {date: DATE, views: rd.views}),
   () => record('state/2-plan.json', ledger)
 ])
 const per = st.sc.per
-const nSlice = s => (units.slices[s] || []).length
+const nSlice = s => (rd.slices[s] || []).length
 const nDiv = st.sc.blocking ? st.sc.blocking.length : 'n/a'
 const failing = criteria.filter(c => !c.pass).map(c => c.id)
 const summary = {
   rounds, outputs: [OUT + '/sheet-spec.md', OUT + '/sheet-spec.json', OUT + '/spec/', OUT + '/gates/2-probes.json', OUT + '/gates/views.json', OUT + '/cold/', OUT + '/gates/2-plan.json'],
   gate_path: OUT + '/gates/2-plan.json', owner_rulings_used: RUSED,
-  polish_note: `sheet spec: ${rd.rule_ids.length} rules, ${units.units.length} units (A ${nSlice('A')} · B ${nSlice('B')} · C ${nSlice('C')} · D ${nSlice('D')}); cold drafters ${per.A ? per.A.pct : 'dead'}%/${per.B ? per.B.pct : 'dead'}% probes, ${nDiv} blocking divergences (round ${rounds})`,
+  polish_note: `sheet spec: ${rd.rule_ids.length} rules, ${rd.units.length} units (A ${nSlice('A')} · B ${nSlice('B')} · C ${nSlice('C')} · D ${nSlice('D')}); cold drafters ${per.A ? per.A.pct : 'dead'}%/${per.B ? per.B.pct : 'dead'}% probes, ${nDiv} blocking divergences (round ${rounds})`,
   polish_inserts: rd.prereq_unqueued.map(t => `- [ ] **Filigree data — ${t}**`),   // each placed directly above Filigree 3 (R21)
   changelog_line: '- docs: Filigree 2 — sheet spec for the table map (cold-cartographer gate ' + (gate.pass ? 'pass' : 'fail') + ')'
 }
 if (recs.some(x => !x)) return done({...summary, pass: false, reason: 'record-mismatch'})
-return done({...summary, pass: gate.pass, reason: gate.pass ? '' : (failing.length ? failing.join(', ') : MODE)})
+return done({...summary, pass: gate.pass, reason: gate.pass ? '' : FORCE ? 'forced: ' + FORCE : (failing.length ? failing.join(',') : MODE)})
