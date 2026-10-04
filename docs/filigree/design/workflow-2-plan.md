@@ -1,3 +1,5 @@
+> Planning snapshot (2026-10-04). The script in .claude/workflows/ is the source of truth; later fixes are not back-ported here.
+
 # Design — `.claude/workflows/filigree-2-plan.js` (Job 2: Planning → sheet spec)
 
 Implements brief p5, "2. Planning":
@@ -149,10 +151,12 @@ Script behaviour:
 - In `full` mode, `!(bible_gate_pass && bible_sha_ok) && !FORCE` → `die('planning must not start before the density bible exists (brief p5): gates/1-research.json is not pass, or the bible changed since')`.
 - In smoke/plan mode the same condition is logged only.
 - A lost required anchor → `die`.
-- `mode:'plan'` → return the schedule: Probes 1, Pick 1–6, Sections 12–36, Integrate 4–6, Units 1, Check 4–8, Gate 7, Fix ≤2×12, Record 3, bound ≈ 100.
+- `mode:'plan'` → return the schedule: Preflight 1–2, Probes 1–6 (fresh 2–6, resumed 1–2), Pick 1–6, Sections 2n+1..3n+2 (24–36 for 12 sections, plus the early ledger record), Integrate 3–6, Units 1–4, Check 4–9, Gate 8, Fix ≤2×17, Record 3–8, bound 120 (the plan result carries `bound`, `over_bound`, `agents_max` and `chain_ok`; an unsatisfied gate chain is reported, not enforced).
 
-**Probes** (phase `Probes`, judge, `crit`; skipped when `probes_ok && RESUME`). The probes are never regenerated
-across rounds or runs.
+**Probes** (phase `Probes`, judge, `crit`; skipped when `probes_ok && RESUME`, where `probes_ok` also requires the file's
+`bible_sha256` and `rulings` stamp to match the current bible and rulings, else it is stale in full mode). The probes are
+never regenerated across fix rounds, and across runs only `resume:false` regenerates them; a stale or invalid frozen file
+dies with a message telling the operator to delete it and rerun. A readback agent checks the written file.
 
 Prompt:
 - "The sheet spec does not exist yet and you must not look for one. From `density-bible.md/.json`, brief p5
@@ -160,13 +164,14 @@ Prompt:
   must answer to draw sheet one.
 - ≥15 must be `fixed`: the answer is determined by the bible, the brief or a ruling regardless of the ground pick
   and of choices the spec makes. Give `expected` and `cite` (`B-xx` | `brief pN` | `Rnn`).
+- A probe may carry an optional `options` field (the closed answer tokens for `enum` and `order` kinds); drafters see `{id, q, kind, options}`.
 - The rest are `spec` probes: freeze ONLY the question and a JSON pointer under SPEC_ROOTS where the spec must
   hold the answer (for example `/sheets/valley/band/0`, `/palette/rust_road/day`, `/picks/river_town/name`). No
   expected value.
 - Cover: paint order positions, forbidden per sheet, the shield town, the fog layer's place vs names, appear
   ease, the overlay order, the hex six on F02, palette tokens, and the city label rule."
 
-It writes `${OUTABS}/gates/2-probes.json`: `{date, frozen:true, probes:[…]}` and ends with `READBACK` (the script checks `FILE_OK`; a failure is treated like a dead agent).
+It writes `${OUTABS}/gates/2-probes.json`: `{date, frozen:true, bible_sha256, rulings, probes:[…]}` (an existing unstamped probe file is stale in full mode and must be deleted and regenerated) and ends with `READBACK` (the script checks `FILE_OK`; a failure is treated like a dead agent).
 
 Schema:
 `{"type":"object","properties":{"path":{"type":"string"},"sha256":{"type":"string"},"parsed":{"type":"boolean"},"probes":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"q":{"type":"string"},"kind":{"type":"string","enum":["enum","number","name","hex","order","bool"]},"source":{"type":"string","enum":["bible","brief","ruling","spec"]},"expected":{"type":["string","number","boolean","array"]},"cite":{"type":"string"},"pointer":{"type":"string"},"tolerance":{"type":"number"}},"required":["id","q","kind","source"]}}},"required":["path","sha256","parsed","probes"]}`.
@@ -293,7 +298,7 @@ A failure gets one re-ask of the unit planner with the failures, then it counts 
 check`), never a pass.
 - **`anchor check`** (mech): every anchor pattern in the spec resolves. Schema `{"type":"object","properties":{"bad":{"type":"array","items":{"type":"string"}}},"required":["bad"]}`.
 - **`leak check`** (mech): LEAK over `sheet-spec.md` outside `## Provenance` + all JSON strings. Schema `{"type":"object","properties":{"hits":{"type":"array","items":{"type":"string"}}},"required":["hits"]}`.
-- **`canon check`** (audit): player-facing strings in the spec vs `VOCAB_RULE` (prelude); `sheet-spec.md` keeps the old Tithe names only inside a `## Renames` section, which is exempt from `VOCAB_RULE` (not from LEAK). Schema `{"type":"object","properties":{"violations":{"type":"array","items":{"type":"string"}}},"required":["violations"]}`.
+- **`canon check`** (audit): player-facing strings in the spec vs `VOCAB_RULE` (prelude); `sheet-spec.md` keeps the old Tithe names only inside a `## Renames` section, which is exempt from `VOCAB_RULE` (not from LEAK); they are also allowed in the R10 rename unit's JSON title, covers and acceptance commands. Schema `{"type":"object","properties":{"violations":{"type":"array","items":{"type":"string"}}},"required":["violations"]}`.
 
 If any check reports a problem:
 1. **`spec fixer`** (triage) applies the fixes.
@@ -309,33 +314,33 @@ Then the **`spec reader`** (mech) runs. It reads `sheet-spec.json` and returns, 
 - `views`: `/fixtures/views`;
 - `rule_ids`.
 
-Schema (all keys required): `{"type":"object","properties":{"probe_values":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"value":{"type":["string","number","boolean","array","null"]}},"required":["id","value"]}},"sheet_one_layers":{"type":"array","items":{"type":"string"}},"paint_order":{"type":"array","items":{"type":"string"}},"must_classes":{"type":"array","items":{"type":"string"}},"forbidden_classes":{"type":"array","items":{"type":"string"}},"palette_hex":{"type":"array","items":{"type":"string"}},"river_town":{"type":"object","properties":{"name":{"type":"string"},"x":{"type":"number"},"y":{"type":"number"}},"required":["name","x","y"]},"must_label":{"type":"array","items":{"type":"string"}},"views":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sheet":{"type":"string"},"x":{"type":"number"},"y":{"type":"number"},"zoom":{"type":"number"},"mask":{"type":"string"}},"required":["id","sheet","x","y","zoom","mask"]}},"rule_ids":{"type":"array","items":{"type":"string"}}},"required":["probe_values","sheet_one_layers","paint_order","must_classes","forbidden_classes","palette_hex","river_town","must_label","views","rule_ids"]}`. **G2.4** = no probe pointer resolves to null.
+Schema (all keys required): `{"type":"object","properties":{"probe_values":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"value":{"type":["string","number","boolean","array","null"]}},"required":["id","value"]}},"sheet_one_layers":{"type":"array","items":{"type":"string"}},"paint_order":{"type":"array","items":{"type":"string"}},"must_classes":{"type":"array","items":{"type":"string"}},"forbidden_classes":{"type":"array","items":{"type":"string"}},"palette_hex":{"type":"array","items":{"type":"string"}},"river_town":{"type":"object","properties":{"name":{"type":"string"},"x":{"type":"number"},"y":{"type":"number"}},"required":["name","x","y"]},"must_label":{"type":"array","items":{"type":"string"}},"views":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sheet":{"type":"string"},"x":{"type":"number"},"y":{"type":"number"},"zoom":{"type":"number"},"mask":{"type":"string"}},"required":["id","sheet","x","y","zoom","mask"]}},"bands":{"type":"object","additionalProperties":{"type":"array","items":{"type":"number"}}},"rule_ids":{"type":"array","items":{"type":"string"}}},"required":["probe_values","sheet_one_layers","paint_order","must_classes","forbidden_classes","palette_hex","river_town","must_label","views","bands","rule_ids"]}` (`bands` = `{<sheet>: [zmin, zmax]}`; the real schema also requires the file-side `rules`, `units`, `slices` and `slice_classes`, which G2.1 checks instead of the planner's return). The reader is instructed to use a node script. **G2.4** = no probe pointer resolves to null.
 
 **Cold-cartographer gate** (phase `Cold-cartographer gate`).
 - **`drafter A`** (deep) and **`drafter B`** (judge) receive identical prompts (built with `P(body, true)`; the only
-  per-drafter difference is the output directory `<X>`):
+  per-drafter difference is the output directory `coldDir(X, tag)` = `cold/<X>` on the first pass and `cold/<X>-r<k>` in fix round k; the prompt starts with `rm -rf` + `mkdir -p` of that directory):
   - "You are a cartographer who has never seen any source posts or plates. You may read ONLY
     `${OUTABS}/sheet-spec.md`, `${OUTABS}/sheet-spec.json`, `${OUTABS}/spec/assets/*` and your own output directory
-    `${OUTABS}/cold/<X>/`. Anything else you open (including the other drafter's directory, `gates/`, the bible or
+    `${OUTABS}/cold/<X>/` (`cold/<X>-r<k>/` in fix round k). Anything else you open (including the other drafter's directory, `gates/`, the bible or
     the section drafts) is a violation. Do not use the web.
-  - Draw SHEET ONE as `${OUTABS}/cold/<X>/sheet-one.svg`:
+  - Draw SHEET ONE as `${OUTABS}/<coldDir>/sheet-one.svg`:
     - viewBox = its bbox in atlas px;
     - one `<g id="layer-<id>">` per painted layer, in paint order;
     - every label is a `<text>` with `data-class` and `data-rank`;
     - fills/strokes only as palette hex;
     - the base may be embedded as `<image>`.
-  - Answer every probe below (id, q, kind only).
+  - Answer every probe below (id, q, kind and options only).
   - List each guess you had to make, with the spec section you looked in (or null).
   - List every file you opened."
   - Schema: `{"type":"object","properties":{"svg":{"type":"string"},"answers":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"value":{"type":["string","number","boolean","array"]},"rule":{"type":"string"}},"required":["id","value","rule"]}},"guesses":{"type":"array","items":{"type":"object","properties":{"what":{"type":"string"},"needed_for":{"type":"string"},"spec_ref":{"type":"string"}},"required":["what","needed_for","spec_ref"]}},"files_read":{"type":"array","items":{"type":"string"}}},"required":["svg","answers","guesses","files_read"]}`.
-  - Blind check is an allowlist: `DRAFTER_ALLOWED(X) = [OUTABS + '/sheet-spec.md', OUTABS + '/sheet-spec.json', OUTABS + '/spec/assets/', OUTABS + '/cold/' + X + '/']`. Because each drafter may only touch its own `cold/<X>/`, one drafter reading the other's SVG is a violation.
+  - Blind check is an allowlist: `DRAFTER_ALLOWED(X, tag) = [OUTABS + '/sheet-spec.md', OUTABS + '/sheet-spec.json', OUTABS + '/spec/assets/', OUTABS + '/' + coldDir(X, tag) + '/']`. Because each drafter may only touch its own cold directory, one drafter reading the other's SVG is a violation.
   - Dead drafter: its slot stays `null` (positional A/B). A null drafter fails G2.5 and G2.6 for that side
     (`agent died: drafter A|B`) and is excluded from the divergence judge; it is never scored as zeros.
 - Then `pipeline(['A','B'], (X, _, i) => drafter(X), (d, X, i) => d && extract(d, X))`: stage callbacks are
   `(prev, item, index)`, the first stage receives `(item, item, index)`, and a null drafter short-circuits its
   extractor. Plus a separate rasterizer:
   1. **`svg extractor <X>`** (mech). A mechanical node/regex extraction, no judging. Schema `{"type":"object","properties":{"layers":{"type":"array","items":{"type":"string"}},"colors":{"type":"array","items":{"type":"string"}},"labels":{"type":"array","items":{"type":"object","properties":{"text":{"type":"string"},"class":{"type":"string"},"rank":{"type":"string"},"x":{"type":"number"},"y":{"type":"number"}},"required":["text","class","rank","x","y"]}},"shields":{"type":"array","items":{"type":"object","properties":{"x":{"type":"number"},"y":{"type":"number"}},"required":["x","y"]}}},"required":["layers","colors","labels","shields"]}`. Here `layers` are the `layer-*` ids in document order and `colors` are lowercase hex.
-  2. **`rasterize`** (audit; it drives Chromium): screenshots of both SVGs → `cold/<X>/sheet-one.png`. It is one agent, run after both drafters. Schema `{"type":"object","properties":{"pngs":{"type":"array","items":{"type":"string"}},"infra_error":{"type":"string"}},"required":["pngs","infra_error"]}`. A non-empty `infra_error` → `reason:'infra'`.
+  2. **`rasterize`** (audit; it drives Chromium): screenshots of both SVGs → `cold/<X>[-r<k>]/sheet-one.png`. It is one agent, run after both drafters. A mechanical **png stat** agent then confirms both PNGs are listed and non-empty on disk; the divergence judge runs only after that, otherwise G2.8 fails as `not run`. Schema `{"type":"object","properties":{"pngs":{"type":"array","items":{"type":"string"}},"infra_error":{"type":"string"}},"required":["pngs","infra_error"]}`. A non-empty `infra_error` → `reason:'infra'`.
 - **Scoring in code.** For each drafter:
   - **probes:**
     - fixed probes are compared with `expected`;
@@ -353,7 +358,7 @@ Schema (all keys required): `{"type":"object","properties":{"probe_values":{"typ
   (quote the spec text) or `gap`, with the SPEC_ROOTS pointer it concerns, or `''` for a choice outside the
   schema. **G2.7** counts gaps whose pointer is under SPEC_ROOTS. Out-of-schema gaps are logged only. Schema:
   `{"type":"object","properties":{"verdicts":{"type":"array","items":{"type":"object","properties":{"drafter":{"type":"string","enum":["A","B"]},"guess":{"type":"string"},"class":{"type":"string","enum":["answered","gap"]},"quote":{"type":"string"},"pointer":{"type":"string"}},"required":["drafter","guess","class","quote","pointer"]}}},"required":["verdicts"]}`.
-  A dead auditor makes G2.7 fail (`agent died: guess auditor`).
+  A dead auditor makes G2.7 fail (`agent died: guess auditor`). The auditor must also return a verdict for every guess each drafter listed; missing verdicts fail G2.7 (`measured.auditor_incomplete`) and are recorded in `gaps` as `guess not audited`.
 - **`divergence judge`** (judge) sees the two PNGs + the spec only. It returns
   `{blocking:[{spec_rule, pointer, a, b}], minor:[…]}`; schema `{"type":"object","properties":{"blocking":{"type":"array","items":{"type":"object","properties":{"spec_rule":{"type":"string"},"pointer":{"type":"string"},"a":{"type":"string"},"b":{"type":"string"}},"required":["spec_rule","pointer","a","b"]}},"minor":{"type":"array","items":{"type":"string"}}},"required":["blocking","minor"]}`. Code keeps only blocking items whose `spec_rule` ∈ the
   reader's `rule_ids`, which gives **G2.8**. A dead judge fails G2.8; it is not read as 0 divergences.
@@ -362,18 +367,20 @@ Schema (all keys required): `{"type":"object","properties":{"probe_values":{"typ
 | id | criterion | threshold |
 |---|---|---|
 | G2.0 | preflight chain: Job 1 passed, bible unchanged | true (not forced) |
-| G2.1 | traceability + DAG + acceptance + slices + mandatory U00/U01 | all code checks |
+| G2.1 | traceability + DAG + acceptance + slices + mandatory U00/U01, checked against the units/slices/slice_classes/rules the reader reads back from `sheet-spec.json`; also `ground_six unavailable`; section rule-format failures fail G2.1 but start no fix round | all code checks |
 | G2.2 | anchors resolve (by pattern) | 0 bad |
 | G2.3 | leak check | 0 hits |
 | G2.4 | spec answers every spec probe pointer | 0 null |
 | G2.5 | probe accuracy | each drafter ≥90% |
-| G2.6 | draw checks | both drafts pass all |
-| G2.7 | schema-path gap guesses | 0 |
-| G2.8 | blocking divergences | 0 |
+| G2.6 | draw checks (allowed colours: `/palette/*/day` plus `/paint/wash_hex/*`) | both drafts pass all |
+| G2.7 | schema-path gap guesses; every listed guess audited | 0 gaps, 0 unaudited |
+| G2.8 | blocking divergences (a near-miss or empty `spec_rule` still counts as blocking); the judge runs only after the png stat confirms both PNGs | 0 |
 | G2.9 | red-team contradictions | last pass 0 |
 | G2.10 | canon/voice | 0 violations |
 | G2.11 | blind compliance (allowlist check on self-reported `files_read`) | 0 reads outside `DRAFTER_ALLOWED` |
 | G2.12 | coverage (`kept()` on sections, pickers, judges) | ≥75% of each fan-out |
+| G2.13 | gate views: `/fixtures/views` = the V1–V7 seeds (sheet, centre, mask), each zoom = the midpoint of its sheet's band; vacuous reader output (empty must/palette/layers/labels/rules) also fails | 0 mismatches |
+| G2.14 | artifact hashes recorded: 64-hex sha256 for `sheet-spec.md`/`.json`, `density-bible.json`, `gates/2-probes.json` | four 64-hex shas |
 
 **Fix** (phase `Fix`, loop `round < ROUNDS` while failing).
 1. **`spec fixer`** (judge, `crit`). It patches only what is cited:
@@ -386,13 +393,13 @@ Schema (all keys required): `{"type":"object","properties":{"probe_values":{"typ
    - unit failures.
 
    It returns the integrator schema.
-2. Then Check + spec reader + the gate re-run, with new drafter labels ` r<round>`.
+2. Then Check + spec reader + the gate re-run, with new drafter labels ` r<round>`. A fix round is skipped when `budget.remaining()` is below 600000 tokens.
 3. The same frozen probes are used every round.
 
 **Record** (phase `Record`). Three `record()` calls:
 - `gates/2-plan.json`: `gateObj({criteria, rounds, artifacts:[spec md/json sha, bible sha, probes sha], picks, rulings_used, gaps})`.
 - `gates/views.json`: `{date, views}` from the spec reader.
-- `state/2-plan.json`: sections with path, sha and rules; probes sha; spec sha.
+- `state/2-plan.json`: `{job, date, sections:[{sid, path, sha256, rules, fragment, anchors, open}], probes_sha256, bible_sha256, picks, rulings_used, spec}`; an interim write after the Sections phase has empty spec shas. Resume holds after any exit that follows Sections, but sections are rewritten when the bible sha, rulings or ground picks change or the ledger lacks fragments.
 
 ## Return value
 ```
@@ -400,7 +407,7 @@ done({pass, reason, rounds,
   outputs: ['docs/filigree/sheet-spec.md', '…/sheet-spec.json', '…/spec/', '…/gates/2-probes.json', '…/gates/views.json', '…/cold/', '…/gates/2-plan.json'],
   gate_path: OUT + '/gates/2-plan.json', owner_rulings_used: RUSED,
   polish_note: `sheet spec: ${rules} rules, ${units} units (A ${a} · B ${b} · C ${c} · D ${d}); cold drafters ${pa}%/${pb}% probes, ${div} blocking divergences (round ${rounds})`,
-  polish_inserts: data items from /prerequisites not yet queued (R21), each "- [ ] **Filigree data — …**" placed directly above Filigree 3,
+  polish_inserts: data items from /prerequisites not yet queued (R21; an item is skipped if POLISH.md already has "Filigree data — <item>"), each "- [ ] **Filigree data — …**" placed directly above Filigree 3,
   changelog_line: '- docs: Filigree 2 — sheet spec for the table map (cold-cartographer gate ' + (pass ? 'pass' : 'fail') + ')'})
 ```
 
@@ -411,7 +418,7 @@ done({pass, reason, rounds,
 | `docs/filigree/spec/s01..s12.md` | section writers |
 | `docs/filigree/spec/assets/sheet-one-base.{jpg,json}` | base cropper |
 | `docs/filigree/sheet-spec.{md,json}` | integrator / patcher / unit planner / fixers |
-| `docs/filigree/cold/{A,B}/sheet-one.{svg,png}` | drafters / rasterizer |
+| `docs/filigree/cold/{A,B}/sheet-one.{svg,png}` (`cold/{A,B}-r<k>/` in fix round k) | drafters / rasterizer |
 | `docs/filigree/gates/2-plan.json`, `gates/views.json`, `state/2-plan.json` | `record()` |
 
 ## Loop bounds
@@ -420,4 +427,4 @@ done({pass, reason, rounds,
 - Unit planner: ≤2 asks.
 - Probe writer: ≤2 asks.
 - Section fixer: one pass.
-- Agents ≈ 58 for a clean pass, with a bound ≈ 100.
+- Agents ≈ 60 for a clean pass, with a bound 120 (each gate evaluation can run the extra png-stat agent; the Probes phase has a readback agent).

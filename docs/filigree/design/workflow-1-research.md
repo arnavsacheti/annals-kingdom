@@ -1,3 +1,5 @@
+> Planning snapshot (2026-10-04). The script in .claude/workflows/ is the source of truth; later fixes are not back-ported here.
+
 # Design — `.claude/workflows/filigree-1-research.js` (Job 1: Research → density bible)
 
 Implements brief p5 "1. Research" (input: the three plates, the Swiss layer list, the region the
@@ -7,8 +9,10 @@ This file also holds **§0, the shared prelude**. All four scripts carry it byte
 
 Evidence base, verified in this session (2026-10-04):
 - The `EPESHU_HF` decode gives a 768² RGB PNG with h = (R·256+G)/32 − 300.
-- Summit **328.19 m at atlas (1648.5, 1603.5)**; minimum −46.03 m.
-- Aldorūs grid (373, 276) → atlas (1448.5, 1527.5), h 139.3 m.
+- Cell-centre rule: DEM cell (gx,gy) covers atlas [1060+gx·800/768, +800/768) × [1240+gy·800/768, +800/768) and its
+  centre is at +0.5. `--at` returns the containing cell; `--bbox` takes the cells whose centre lies in the half-open box.
+- Summit **328.19 m in DEM cell 565,349 (centre 1649.06, 1604.06)**; minimum −46.03 m.
+- Aldorūs cell (373, 276), centre 1449.06, 1528.02, h 139.31 m.
 - Fixture cell stats are in the HEXES table below.
 - Anchors drift. `EPESHU_HF_URI` is at `index.html:7584`, not the dossier's 7578, and the `#view` guard is at
   `maps-site/index.html:3529`. So every script re-anchors **by pattern** (the `ANCHORS` constant) and never
@@ -231,7 +235,7 @@ The shared args come from the prelude: `date` (required), `repo`, `outDir`, `mod
 
 | id | cell | bbox x0,y0,x1,y1 | DEM h (m) | land frac | note (print / role) |
 |---|---|---|---|---|---|
-| F01 | 51,50 | 1632,1600,1664,1632 | 253..328 | 1.00 | summit cell: window maximum 328.19 at (1648.5,1603.5), edge of AURA-HŌTH lettering |
+| F01 | 51,50 | 1632,1600,1664,1632 | 252.72..328.19 | 1.00 | summit cell: window maximum 328.19 in DEM cell 565,349 (centre 1649.06,1604.06), edge of AURA-HŌTH lettering |
 | F02 | 43,49 | 1376,1568,1408,1600 | 136..151 | 1.00 | open plateau, blank on the print |
 | F03 | 41,47 | 1312,1504,1344,1536 | 126..135 | 1.00 | open, inside printed PĒSHUNOR lettering (collision test) |
 | F04 | 43,51 | 1376,1632,1408,1664 | 151..162 | 1.00 | open, DRANIMOS lettering, solid river at the edge |
@@ -240,7 +244,7 @@ The shared args come from the prelude: `date` (required), `repo`, `outDir`, `mod
 | F07 | 40,43 | 1280,1376,1312,1408 | -21..24 | 0.13 | Paerāndas islets |
 | F08 | 50,43 | 1600,1376,1632,1408 | -46..-43 | 0.00 | open sea (control) |
 | F09 | 45,47 | 1440,1504,1472,1536 | 137..142 | 1.00 | Aldorūs (1448.6,1527.5) + solid river: river-town control |
-| F10 | 38,44 | 1216,1408,1248,1440 | -15..100 | 0.72 | Epēshu ◉ (1236.1,1415): painted-city control |
+| F10 | 38,44 | 1216,1408,1248,1440 | -15..98.5 | 0.72 | Epēshu ◉ (1236.1,1415): painted-city control |
 | F11 | 35,44 | 1120,1408,1152,1440 | -42..65 | 0.26 | Lepon the Old ruin coast (1146.5,1420.2): old-survey control |
 | F12 | 83,6 | 2656,192,2688,224 | — (outside window) | — | open ground by the "Mountain Wall" marker (2676,206): no-DEM control |
 
@@ -276,7 +280,7 @@ names the kind-specific verifier. The anchor lens is added whenever a returned c
 |---|---|---|---|---|
 | q01 | Plate-one inventory per class (peak+height, homestead, reserve, river fork, coast road, shields, trails, ▲ glyphs, the braided river, the four-name valley knot); counts per class | brief PDF **p2** (Read `pages:"2"`) | deep | second-look |
 | q02 | What plates two and three keep vs delete; the rule that a POI pin must never stand in for a landform name | brief PDF **pp.2–4** (plate one p2, plate two p3, plate three p4) | deep | second-look |
-| q03 | Azlen city grain → measurable proxies (block grain scale, park void, arterial class, fog wash, contour hill, pooled edges, no chrome/pins), read from images | brief PDF **pp.3, 6** (Read `pages`); dossier §9 | deep | second-look |
+| q03 | Azlen city grain → measurable proxies (block grain scale, park void, arterial class, fog wash, contour hill, pooled edges, no chrome/pins), read from images | brief PDF **pp.4, 6** (Read `pages:"4,6"`; the brief has no Azlen image, so the proxies come from its text description); dossier §9 | deep | second-look |
 | q04 | Swiss stack → fiction layers (old survey, every structure, caravan halts, blazed paths, muster days, shut ways, colour base): swap semantics (base/under/over), data today, gap. Use the README reuse map; reuse the shipped Beacon Post / Muster Ground POIs; flag Tithe renames (R10) | brief pp.4–5; dossier §5; README § Reuse map | judge | refute + canon |
 | q05 | Coast walk band W (x1216–1400): everything the print draws per plate-one class (z5 tiles); what `maps_markers`/`city-anchors`/`named-ways`/`traced-roads`/`sea-lanes`/`wiki-places` carry inside the band; what plate-one classes are missing | `maps-site/tiles/5/`; `maps-site/data/{maps_markers,city-anchors,named-ways,traced-roads,sea-lanes,wiki-places}.json` | deep | second-look |
 | q06 | Coast walk band M (x1400–1580), same task | same | deep | second-look |
@@ -294,14 +298,15 @@ names the kind-specific verifier. The anchor lens is added whenever a returned c
 | q18 | Stamen Watercolor method (mask, blur, edge-darken) as a pooled-edge precedent: one web attempt; if egress is blocked, return a single claim with confidence low and `evidence.kind:'web', ref:'U'` | web | audit | — |
 
 Lens → role:
-- `second-look`: deep (sonnet/high). An independent re-read of the same page, crop or tiles.
+- `second-look`: deep (sonnet/high). A partly independent re-read of the same page, crop or tiles: it sees the claim text
+  without its evidence refs and must write its own reading first.
 - `refute`: judge. "Refute claims you can disprove with evidence; keep what you cannot."
 - `recount`: mech. Re-run the computation. For q09 it runs `tools/filigree-dem.js` twice: sha equal, plus these
   literals:
-  - `--at 1648.5,1603.5` → 328.19 ±0.1;
-  - `--at 1448.5,1527.5` → 139.3 ±0.5;
+  - `--at 1649,1604` → 328.19 ±0.1;
+  - `--at 1449,1528` → 139.31 ±0.5;
   - `--bbox` F08 → hmax < 0;
-  - `--bbox` F01 → hmin 253 ±1, hmax 328 ±1.
+  - `--bbox` F01 → hmin 252.72 ±1, hmax 328.19 ±1.
 - `canon`: audit. Voice, Kembar, A.B. and the VOCAB regex.
 - `anchor`: mech. Every `anchor` ref resolves (`grep -nF -e <literal> <file>`, quoting the literal properly; a literal
   containing a single quote is passed through a temp file or double quotes).
@@ -318,7 +323,10 @@ Lens → role:
 
 **Implementation appendix (helpers the prelude does not define).** Each is a plain function in the job body.
 - `ledgerOk(qid)`: true when `pre.ledger.questions` has `qid` with `sha_ok` (the evidence file re-hashed to the
-  recorded sha). `todo = cap(QUESTIONS.filter(q => !(RESUME && ledgerOk(q.qid))))`: resumed questions are
+  recorded sha) and, for a tool question (q09), the preflight DEM probe passes (otherwise the tool question re-runs and
+  rewrites `tools/filigree-dem.js`). The ledger holds only questions whose verify lenses all returned; a question with a
+  dead lens is left out of it (and out of `seen_questions`), so a resume re-runs it. It is written only in the Record
+  phase, so an abort before Record leaves no ledger. `todo = cap(QUESTIONS.filter(q => !(RESUME && ledgerOk(q.qid))))`: resumed questions are
   filtered first and `cap()` then truncates what is left (so in smoke the one kept question is the first
   un-resumed one); resumed questions contribute their recorded `claim_ids` and `struck`.
 - `researchPrompt(q)`: `P(` + the contents listed under "Research + Verify" + `)`.
@@ -378,7 +386,12 @@ Lens → role:
      - `tools/pgd2lexicon.js`, `tools/build-gazetteer.js`;
    - reads `${DOCS}/rulings.json` (`overrides` object, `{}` if absent);
    - reads `${OUTABS}/state/1-research.json` if present. For each recorded question it re-hashes `path` and reports
-     whether the sha matches.
+     whether the sha matches;
+   - runs the DEM probe (`tools/filigree-dem.js`, the G1.11 literals) and reports it as `dem`;
+   - reads `${OUTABS}/gates/1-research.json` if present (`gate_prev`): when the gate is pass on a bible that still
+     re-hashes, a resume run returns `pass:true` without re-running; if the ledger or `gates/1-hex-answers.json` is
+     missing it returns `record-incomplete` instead of rebuilding, and the operator deletes `gates/1-research.json` or
+     passes `resume:false` to redo Job 1.
 
    `rulings.json` is optional for Job 1 (absent = `{}`); if the owner or the polish run creates it, its shape is
    `{"date":"…","overrides":{},"confirmed":[]}`. Job 1 uses the defaults for R8, R10, R17, R19–R22 unless it overrides them.
@@ -408,14 +421,16 @@ Lens → role:
    - Blank-hex gate: 37;
    - Follow-up: ≤2×58;
    - Record: 3;
-   - total bound ≈ 215.
+   - total bound ≈ 224 (the plan result's `agents_bound`, counting `crit()` retries: one retry each for the preflight, hex cropper, integrator, ambiguity judge, patcher and the 3 records).
 3. **`hex cropper`** (mech, `crit`). For each HEX it crops the z5 tiles (2 screen px per atlas px) over the cell
    bbox plus one cell of margin (96 atlas px). It upscales ×2 to 384×384 (4 px per atlas px) and writes JPEG q85 to
    `${OUTABS}/gates/hex/<id>.jpg`. It then writes `${OUTABS}/gates/hexes.json` as
    `{date, unit:'z7 tile = 32 atlas px', hexes:[{id, cell, bbox, center, crop:{path, x0, y0, scale:4}}]}`, with no
    note field. It ends with `READBACK`. Schema: `{"type":"object","properties":{"hexes_path":{"type":"string"},"path":{"type":"string"},"sha256":{"type":"string"},"parsed":{"type":"boolean"},"crops":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"path":{"type":"string"}},"required":["id","path"]}}},"required":["hexes_path","path","sha256","parsed","crops"]}`; the script checks `FILE_OK`.
    - `gates/hexes.json` and `gates/hex/*.jpg` are **frozen** once written: on a rerun the cropper first checks that
-     all 12 crops and `hexes.json` exist and parse, and then returns them untouched.
+     all 12 crops and `hexes.json` exist and parse, and then returns them untouched. If the fixtures in the script no
+     longer match the frozen file, the run dies with `fixtures changed; delete gates/hex* to re-crop` rather than
+     silently reusing the old crops.
    - A missing crop counts as an invalid hex (G1.3) and against coverage (G1.10).
    - F12 comes from `tiles/5/20/1.jpg` and its neighbours.
 
@@ -452,7 +467,7 @@ const res = await pipeline(todo,
 1. **`bible integrator`** (integ = opus/xhigh, `crit`). It reads every `research/*.json`, the dossier §5–§9,
    `todo-inputs.json`, the brief, README § Reuse map, and the struck list. Instructions:
    - "never cite a struck claim";
-   - `rulingText(RUL, ['R1','R2','R3','R5','R6','R8','R9','R10','R17','R19','R20','R21','R22'])`;
+   - `rulingText(RUL, ['R1','R2','R3','R5','R6','R8','R9','R10','R11','R17','R19','R20','R21','R22'])` (R11 included);
    - the CHECKLIST keys;
    - the VOCAB rule.
 
@@ -461,7 +476,7 @@ const res = await pipeline(todo,
 ```
 {date, ground:{window:[1060,1240,1860,2040], sheet_one_bbox:[1216,1376,1760,1664]},
  rules:[{id:'B-01', text, kind:'must'|'forbidden'|'threshold'|'source'|'exempt', sheets:[…], cites:[claimId]}],   // ids stable across rounds
- sheets:{country|region|valley|city:{must:[ruleId], forbidden:[ruleId], band_hint}},
+ sheets:{country|region|valley|city:{must:[ruleId], forbidden:[ruleId], band_hint:'W'|'M'|'E'|''}},   // band_hint = the sheet-one coast band whose counts calibrated this sheet's targets, '' when none
  classes:[{id, label, fiction_name, rank, sheets:[…], forbidden_on:[…], source_kinds:['dem'|'data'|'print'|'mint'|'sim'],
            instance_rule, min_per_cell:{<groundClass>:n}, reuse:'<pattern anchor> | NEW:<machinery>'}],
  ground_classes:{<id>:{criteria:'mechanical test (DEM land_frac/h, window, anchor kind…)', six:[classId×6], exempt_rule:''}},
@@ -470,7 +485,12 @@ const res = await pipeline(todo,
  plates:{one:{classes:{<class>:n}}, two:{kept:[], deleted:[]}, three:{kept:[], deleted:[]}},
  city_grain:{block, park_void, arterial, fog_wash, contour_hill},     // each {rule, data_today, gap}
  targets:{per_view:{region:{<class>:n}, valley:{<class>:n}}},          // Job 4 G4.3 reads these
- prerequisites:[{item, blocks:'F3-A'|'F3-B'|'F3-C'|'F3-D', status}],
+ prerequisites:[{item, blocks:'F3-A'|'F3-B'|'F3-C'|'F3-D', status:'checked'|'open'|'missing'}],
+   // slices: F3-A ground (DEM-derived ground classes and the hex sampler; no data prerequisites), F3-B named things from
+   // data (roads, census, markers), F3-C fiction stack layers and overlay hooks, F3-D city grain, plates and the final
+   // gate. blocks = the earliest slice that cannot be built without the item ("Traced road network" and "Census second
+   // pass" -> F3-B (R11); "Data fetch cache-busting", "Tier-hidden markers" and "Sim ↔ atlas continuity" -> F3-C;
+   // "Uncharted-band softening" and "Region-chart zoom-through" -> F3-D); status comes from research q17
  checklist:{<27 keys>: ruleId}}
 ```
    Return schema:
@@ -483,21 +503,26 @@ const res = await pipeline(todo,
   "cited_claims":{"type":"array","items":{"type":"string"}}},
  "required":["md","json","sha_md","sha_json","rule_ids","class_ids","ground_classes","exempt_rules","forbidden_by_sheet","checklist_keys","cited_claims"]}
 ```
-   Code checks:
-   - G1.2: every CHECKLIST key ∈ `checklist_keys`.
-   - G1.8: `cited_claims ∩ STRUCK = ∅`.
+   Code checks (the integrator's own return only cross-checks; the scored read is the validator's, below):
+   - G1.2: every CHECKLIST key ∈ the validator's `checklist_keys`.
+   - G1.8: the validator's `cited_claims ∩ STRUCK = ∅`; a struck cite the integrator self-reports also fails.
 2. `parallel` of two mech agents. A barrier is fine here; there are only two.
    - **`bible validator`**: `JSON.parse` the bible. It checks:
      - required keys;
      - unique rule ids;
      - every `sheets.*.must/forbidden` id exists;
-     - `sheets.country.forbidden` covers a homestead-class rule;
-     - `sheets.city.forbidden` covers block labels;
+     - homestead and block checks are defined by `forbidden_on`: some class whose id or label matches /homestead/i lists
+       `country` and `region` in `forbidden_on`, and some class matching /block/i lists `city`;
+     - `sheets.country.forbidden` and `sheets.city.forbidden` are non-empty rule ids, and `sheets.region.forbidden`
+       holds a rule that forbids homesteads (brief p8);
      - every `ground_classes.*.six` has 6 distinct existing class ids or an `exempt_rule` that exists;
      - every class has `fiction_name`, `rank`, `source_kinds` and `instance_rule`;
      - `no_dem_rule` exists.
 
-     Schema: `{"type":"object","properties":{"ok":{"type":"boolean"},"failures":{"type":"array","items":{"type":"string"}}},"required":["ok","failures"]}`.
+     It also returns its own `sha_md`/`sha_json` (sha256 of both bible files), `checklist_keys` and `cited_claims`
+     read from `density-bible.json`. A dead validator fails G1.1, G1.2 and G1.8.
+
+     Schema: `{"type":"object","properties":{"ok":{"type":"boolean"},"failures":{"type":"array","items":{"type":"string"}},"sha_md":{"type":"string"},"sha_json":{"type":"string"},"checklist_keys":{"type":"array","items":{"type":"string"}},"cited_claims":{"type":"array","items":{"type":"string"}}},"required":["ok","failures","sha_md","sha_json","checklist_keys","cited_claims"]}`.
    - **`vocabulary grep`**: VOCAB over the `.md` outside `## Provenance`/`## Renames`, and over the JSON
      `fiction_name`/`label` strings. Schema: `{"type":"object","properties":{"hits":{"type":"array","items":{"type":"string"}}},"required":["hits"]}`.
 
@@ -545,6 +570,9 @@ Schema (`APPLY`):
   - `mint` → the class allows `mint` and the bible defines a mint key;
   - `sim` → `grep -F` finds the literal.
 - **The instance lies within the hex bbox ±16 px.** For a `print` ref, convert crop px with `x0 + px/4`.
+- **The source sits where the instance does:** a `dem` ref's x,y equals the instance within 1 px; a `data` entry's own
+  point or line lies in the hex ±16 px (`chart-pois` counts at its city anchor; an entry without coordinates fails); a
+  `print` pixel lies within 2 atlas px of the instance.
 
 Schema:
 `{"type":"object","properties":{"hex":{"type":"string"},"results":{"type":"array","items":{"type":"object","properties":{"actor":{"type":"string","enum":["A","B"]},"idx":{"type":"integer"},"ok":{"type":"boolean"},"why":{"type":"string"}},"required":["actor","idx","ok","why"]}}},"required":["hex","results"]}`.
@@ -569,9 +597,10 @@ Scoring is plain code, per hex:
   - it is non-null;
   - `blindBad(files_read, APPLIER_ALLOWED)` is empty, where `APPLIER_ALLOWED = [OUTABS + '/density-bible.md', OUTABS + '/density-bible.json', OUTABS + '/gates/hexes.json', OUTABS + '/gates/hex/', REPO + '/tools/filigree-dem.js', REPO + '/maps-site/data/', REPO + '/index.html', REPO + '/maps-site/index.html']` (the last two for `sim:` refs only);
   - `ground_class` ∈ bible;
-  - either `exempt_rule` ∈ `exempt_rules` and equals that ground class's exemption, or there are 6 items with
+  - either `exempt_rule` ∈ `exempt_rules` and equals that ground class's exemption (only F08 and F12 may be exempt; an
+    exemption on any other hex makes the applier invalid), or there are 6 items with
     distinct classes ∈ `class_ids`, none in `forbidden_by_sheet` for the hex's sheet, and every `rule` ∈ `rule_ids`.
-- `agree` = |classes A ∩ classes B|, or 6 when both cite the same exemption.
+- `agree` = |classes A ∩ classes B|, or 6 when both cite the same exemption (applies to F08 and F12 only).
 - A and B `ground_class` must be equal.
 - `resolved(X)` = the count of X's items with resolver ok.
 
@@ -583,17 +612,17 @@ an invalid applier (agree < 5 and `bible_silent` are the only thresholds; there 
 
 | id | criterion | threshold |
 |---|---|---|
-| G1.1 | bible files exist + validator ok | `ok && failures=[]` |
-| G1.2 | brief + v2 checklist covered | 27/27 keys → existing rule ids |
+| G1.1 | bible files exist + validator ok | `ok && failures=[]`, and the validator's sha256 of both bible files equals the integrator's or patcher's (the gate's artifacts record the validator's shas) |
+| G1.2 | brief + v2 checklist covered (validator's read of `density-bible.json`) | 27/27 keys → existing rule ids |
 | G1.3 | both appliers valid on every hex; same ground class | 12/12 |
 | G1.4 | class agreement | ≥5/6 on ≥10/12 hexes AND ≥4/6 on all 12 |
-| G1.5 | instance resolution | each applier ≥5/6 items resolve on every non-exempt hex; overall ≥90% |
+| G1.5 | instance resolution | each applier ≥5/6 items resolve on every hex except F08 and F12, which alone may be exempt (an exemption elsewhere makes the applier invalid, G1.3, and the hex is still scored); overall ≥90%, and 0% (not 100%) when nothing is scored |
 | G1.6 | bible silence | zero `bible_silent` |
 | G1.7 | vocabulary | zero hits |
-| G1.8 | struck claims | none cited |
+| G1.8 | struck claims (validator's read of `rules[].cites`) | none cited |
 | G1.9 | blind compliance (allowlist check on the appliers' self-reported `files_read`; README states it is not a guarantee) | zero reads outside `APPLIER_ALLOWED` |
-| G1.10 | coverage | every fan-out ≥75% kept |
-| G1.11 | DEM probe | q09 recount literals match and the tool is deterministic (two runs, same sha) |
+| G1.10 | coverage (resumed questions count as kept) | every fan-out ≥75% kept |
+| G1.11 | DEM probe (also run in the preflight) | q09 recount literals match and the tool is deterministic (two runs, same sha) |
 
 ### Follow-up (phase `Follow-up`; loop `round < ROUNDS` while the gate fails)
 1. **`completeness critic`** (judge). It turns `gaps` and the failing criteria into ≤5 follow-up questions
@@ -601,21 +630,25 @@ an invalid applier (agree < 5 and `bible_silent` are the only thresholds; there 
    - Dedup against `seenQ = new Set(pre.ledger.seen_questions.map(norm))` (restored from the ledger, so reruns do not
      re-ask), plus every question asked earlier in this run; the schema is
      `{"type":"object","properties":{"questions":{"type":"array","items":{"type":"object","properties":{"qid":{"type":"string"},"question":{"type":"string"},"reads":{"type":"array","items":{"type":"string"}},"role":{"type":"string","enum":["mech","triage","audit","deep","judge"]},"lens":{"type":"array","items":{"type":"string","enum":["anchor","second-look","refute","recount","canon"]}}},"required":["qid","question","reads","role","lens"]}}},"required":["questions"]}`.
-   - Zero fresh questions → `log('follow-up dry')` and stop.
-2. The fresh questions go through the same Research→Verify pipeline.
+   - `qid = f<r><n>`, where `r` is numbered on from the highest follow-up round in `state/1-research.json` so follow-up
+     qids never repeat across runs. An in-run G1.11 failure adds an `f<r>1` probe-rewrite question.
+   - Zero fresh questions runs a patch-only round (patcher, validator/vocab, re-gate); every follow-up round patches.
+2. The fresh questions (if any) go through the same Research→Verify pipeline.
 3. **`bible patcher`** (judge, `crit`). It edits only the bible sections named in `gaps`, never renumbers rule ids, and
    returns the integrator schema.
 4. Validator + vocabulary grep run again.
 5. The gate re-runs on all 12 hexes, because the bible changed. Labels get the suffix ` r<round>`.
 
 ### Record (phase `Record`)
-Three `record()` calls:
+Three records, written by `recordD` (a `record()` that also checks a code-side digest: the canonical JSON length and the
+length of every top-level array, so a truncated or altered copy is caught, besides `pass` and the criteria count):
 - `gates/1-research.json`: `gateObj({criteria, rounds, artifacts:[bible md/json sha, hexes.json sha], rulings_used: RUSED, gaps, hex_notes: HEXES})`.
 - `gates/1-hex-answers.json`: per hex, both appliers' items. Job 4 F05 checks that these instances exist on the
   dense render.
 - `state/1-research.json`: `{job, date, questions:[{qid, path, sha256, claim_ids, struck}], seen_questions:[…], bible_sha}`.
+  It lists only questions whose verify lenses all returned.
 
-If any `record()` returns null → `pass:false, reason:'record-mismatch'`, with the gate object in the return value.
+If any record returns null → `pass:false, reason:'record-mismatch'`, with the gate object in the return value.
 
 ## Return value
 ```
@@ -623,14 +656,14 @@ done({pass: gate.pass, reason: gate.pass ? '' : failing criterion ids joined, ro
   outputs: ['docs/filigree/density-bible.md', '…/density-bible.json', '…/gates/hexes.json', '…/gates/hex/', '…/gates/1-research.json', '…/gates/1-hex-answers.json', '…/research/', 'tools/filigree-dem.js'],
   gate_path: OUT + '/gates/1-research.json', owner_rulings_used: RUSED,
   polish_note: `density bible: ${n} rules, ${k}/12 hexes agree ≥5/6, ${res}% instances resolve, checklist 27/27 (round ${rounds})`,
-  polish_inserts: gate.pass ? [] : [gap items that block Job 2, as "- [ ] **Filigree gap — …**" lines, placed directly above Filigree 2],
+  polish_inserts: gate.pass ? [] : [one stable "- [ ] **Filigree gap — close G1.n (…)**" item per failing criterion id plus one pointer to the gaps list, placed directly above Filigree 2; the operator skips any already queued],
   changelog_line: '- docs: Filigree 1 — density bible for Leponnia (blank-hex gate ' + (pass ? 'pass' : 'fail') + ')'})
 ```
 
 ## Outputs (repo)
 | path | writer |
 |---|---|
-| `docs/filigree/research/q01..q18.json`, `f<r><n>.json` | research agents |
+| `docs/filigree/research/q01..q18.json`, `f<r><n>.json` (r numbered on from the ledger's highest round) | research agents |
 | `docs/filigree/gates/hex/F01..F12.jpg`, `gates/hexes.json` | hex cropper |
 | `docs/filigree/density-bible.{md,json}` | integrator / patcher |
 | `tools/filigree-dem.js` | q09 (read-only probe, pure Node; reused by Job 3's relief bake) |
@@ -640,4 +673,4 @@ done({pass: gate.pass, reason: gate.pass ? '' : failing criterion ids joined, ro
 - Follow-up rounds: ≤ `ROUNDS` (≤2), each ≤5 fresh questions.
 - Dedup key: `norm(question)` across rounds and runs (`seen_questions`).
 - One ambiguity judge per gate run.
-- Agents (`full` mode): ≈ 97 for a clean pass, with a bound ≈ 215. `mode:'plan'` prints the exact schedule.
+- Agents (`full` mode): ≈ 97 for a clean pass, with a bound ≈ 224 including `crit()` retries. `mode:'plan'` prints the exact schedule.

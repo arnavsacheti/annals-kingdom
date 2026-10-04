@@ -1,3 +1,5 @@
+> Planning snapshot (2026-10-04). The script in .claude/workflows/ is the source of truth; later fixes are not back-ported here.
+
 # Design — `.claude/workflows/filigree-4-review.js` (Job 4: Review → punch list)
 
 This implements brief p5–6, "4. Review".
@@ -41,8 +43,8 @@ const JOB = 'filigree-4-review'
 
 | arg | default | rule |
 |---|---|---|
-| `preview` | false | boolean. Allows a run on a partial build. Findings only; `pass` is forced false |
-| `cycle` | `1 + count(gates/4-review-c*.json)` | integer 1..2. A value above 2 → `die('review cycle cap reached (R16): escalate to the owner')` |
+| `preview` | false | boolean. Allows a run on a partial build (no `gates/3-build.json` needed). Findings only; `pass` is forced false. Writes only under `docs/filigree/preview/` (punch-list.{md,json}, findings/, review-c<k>/, gates/4-review-c<k>.json, state/4-review.json); it never overwrites the durable punch list, findings, gates or state and never prunes older cycles' `shots/` |
+| `cycle` | `1 + count(non-preview gates/4-review-c*.json)` (preview gates live in `preview/gates/` and are never counted) | integer 1..2. A value above 2 → `die('review cycle cap reached (R16): escalate to the owner')`. With an explicit `cycle`, the prior ids come from the `c<cycle-1>` gate, and a run whose `c<cycle>` gate already exists is refused unless `force` is set (preview exempt) |
 | `port` | 8544 | integer 1024..65535 |
 
 ## Agents and schemas
@@ -62,9 +64,9 @@ Schema: an object whose required keys are those names plus `anchors` and `ruling
 concretely.
 
 Script rules:
-- In `full` mode, `!build_pass && !A.preview && !FORCE` → `die('review must wait for the finished sheet (gates/3-build.json pass)')`.
+- In `full` mode, `!build_pass && !A.preview && !FORCE` → `die('review must wait for the finished sheet (gates/3-build.json pass)')`. This check runs before the missing-inputs check, so a premature run always names the gate it waits for.
 - `cycle > 2` → `die`.
-- `mode:'plan'` → schedule: Capture 1, Find 13, Verify 3×n, extra rounds ≤ROUNDS×(lenses with survivors + 3×fresh),
+- `mode:'plan'` → schedule: Capture 2..4 (capture plus retry, metrics reader plus retry), Find 13, Verify 3×n, extra rounds ≤ROUNDS×(lenses with survivors + 3×fresh),
   gate 12, Punch 1, Record 2, bound ≈ 260.
 
 ### Capture (phase `Capture`; audit, `crit`)
@@ -92,9 +94,9 @@ That covers V1–V7, dense (`filigree=1`) and sparse (toggle off), day/night and
 - edge luminance;
 - fog determinism.
 
-It returns a compact summary. The full data stays in `metrics.json`.
+The capture agent returns only `{metrics_path, shots_dir, metrics_sha256, infra_error}`. A separate mech **`metrics reader`** runs a fixed embedded node script over `metrics.json` and returns the fields below plus the file's sha256 and a digest, and the script checks that digest. A digest mismatch gets one retry, then `agent died: metrics reader`; a sha mismatch with the capture's is reason `infra`. Missing metrics are null and fail their criterion. The full data stays in `metrics.json`.
 
-Schema (required keys; inner objects typed with `additionalProperties`, never a bare `{}`):
+Metrics reader schema (required keys; inner objects typed with `additionalProperties`, never a bare `{}`):
 - `metrics_path`, `shots_dir`;
 - `views`: `{V:{dense:{named:n, heights:n, counts:{}}, sparse:{named:n, heights:n}}}`;
 - `cells`: `{F:{dense:{class:n}}}`;
@@ -133,7 +135,7 @@ Schema (`FIND`):
   "fix":{"type":"string"},"unit_hint":{"type":"string"},"prior_id":{"type":"string"}},
   "required":["title","severity_guess","location","evidence","fix","unit_hint","prior_id"]}}},"required":["lens","findings"]}
 ```
-Unused location fields are `''`. Code **rejects** any finding whose `evidence.ref` is empty.
+Unused location fields are `''`. Code **rejects** any finding whose `evidence.ref` is empty. A `shot` evidence ref has the fixed form `<absolute image path>#x,y,w,h`; shot punch items whose ref names no image are recorded in the gate's `gaps`. Verifiers run any repo-writing `cmd` evidence in a temp copy of the repo.
 
 **LENSES.** Each has one lens and one model/effort pair. The brief's five checks come first.
 
@@ -145,7 +147,7 @@ Unused location fields are `''`. Code **rejects** any finding whose `evidence.re
 | F04 | **Read every name aloud.** For every dense label: syllabify under the Patrinaic seams; the NAME repeat rule (anchor `NAME.used.has(n)`); ≤12 letters per word; no 4-consonant cluster; reserved words. Anything unsayable gets cut or rewritten, and the fix targets the generator source, never the JSON | audit |
 | F05 | **Flinch and generalize.** On the 12 fixtures (dense), are the six present? Do the Job-1 applier instances (`1-hex-answers.json`) exist by name or position? Across the sheet-one bbox: DEM local maxima ≥ prominence without a label, and valleys without contour hair | judge |
 | F06 | **Canon and voice.** `VOCAB_RULE`, the Kembar, A.B., `prov:'invented'` on every invented feature, the R10 rename done (The Tithe-Yard / The Tithe-Barn → The Tribute-Yard / The Tribute-Barn: the old strings are absent from `maps-site/index.html` and the new pair present) | audit |
-| F07 | **Determinism.** Every `/generators` command run twice gives equal sha; `grep -E CLOCK_GREP` over the FILIGREE block; fog seeded; `ANNALS.stats()` identical across two sim loads of `#s=epeshu` | deep |
+| F07 | **Determinism.** Every `/generators` command run twice inside a temp copy of the repo (tar without `.git` into `mktemp -d`, never in the repo) gives equal sha; `grep -E CLOCK_GREP` over the FILIGREE block; fog seeded; `ANNALS.stats()` identical across two sim loads of `#s=epeshu` | deep |
 | F08 | **Accessibility and phone ("cramped").** At 390×844: `min_label_gap_px` ≥ spec `spacing`, overlaps 0, no horizontal scroll, 44 px targets, focus order, reduced motion; night mode keeps day pixels | audit |
 | F09 | **Performance.** `loaf_p95_ms` vs spec `perf`; label counts vs caps | audit |
 | F10 | **Navigator.** The one-question plate (V7) label count ≤ its cap; "where can we go this week?" answerable in ≤2 clicks; search and `#place` stay filigree-free | audit |
@@ -210,11 +212,11 @@ omission counts only if all of these hold:
 | G4.2 | per view V2–V5: judges preferring dense, each listing ≥3 DOM-verified omissions | ≥2 of 3 judges on every view |
 | G4.3 | dense counts per class ≥ bible `targets.per_view[sheet]`, and sparse named ≤ dense named / 3 | every open view |
 | G4.4 | fixtures (dense): count of six classes present | ≥10/12 cells 6/6, none <4 |
-| G4.5 | read-aloud (F04) surviving findings | 0 |
+| G4.5 | read-aloud (F04) surviving findings, including any re-reported prior item first raised by F04; the F04 finder must have run | 0 |
 | G4.6 | stack: `tiles_refetched=0`, `node_identity_kept`, `!reload`, `roundtrip_equal`, `moveend_keeps_params` | all |
 | G4.7 | appear: `appear_violations=0`, `below_minzoom_visible=0` | true |
 | G4.8 | blind compliance of the judges (allowlist: `blindBad(files_read, [their two PNG paths])`) | 0 reads outside the two PNGs |
-| G4.9 | coverage | ≥75% of every fan-out |
+| G4.9 | coverage, including a `lenses run in round 0` row (a finder that died in round 0 fails it) | ≥75% of every fan-out |
 
 ### Punch list (phase `Punch list`; integ = opus/xhigh, `crit`)
 It reads the surviving findings, the gate measurements and the prior cycle's punch list, and writes:
@@ -222,15 +224,15 @@ It reads the surviving findings, the gate measurements and the prior cycle's pun
   1. ranked items, grouped first by brief check and then by severity;
   2. **"Why the sparse map is worse"**: the verified omissions per view;
   3. **"Where we flinched"**: from F05;
-  4. **"Fixed since cycle N-1"**.
-- `${OUTABS}/punch-list.json`: `{date, cycle, items:[{id:'P<cycle>-NN', severity, lens, location, evidence, fix, unit_hint, done_when, polish_md}]}`.
+  4. **"Fixed since cycle N-1"**: only prior ids that were actually re-checked; a "Not re-checked" sub-list holds the ids whose lens died. "Where we flinched" selects items whose `lens` or `prior_lens` is F05.
+- `${OUTABS}/punch-list.json`: `{date, cycle, items:[{id:'P<cycle>-NN', severity, lens, prior_lens, location, evidence, fix, unit_hint, done_when, polish_md}]}`.
   - `done_when` is copied from the finding's mechanical check (a metric, command or count).
 
 Return schema (the punch integrator ends with `READBACK` for `punch-list.json`, checked with `FILE_OK` on `sha_json`/`parsed`): `{"type":"object","properties":{"md":{"type":"string"},"json":{"type":"string"},"sha_md":{"type":"string"},"sha_json":{"type":"string"},"parsed":{"type":"boolean"},"items":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"severity":{"type":"string"},"polish_md":{"type":"string"}},"required":["id","severity","polish_md"]}}},"required":["md","json","sha_md","sha_json","parsed","items"]}`.
 
 ### Record (phase `Record`)
 Two `record()` calls:
-- `gates/4-review-c<cycle>.json` ← `gateObj({criteria, rounds, artifacts, rulings_used, gaps, cycle, omissions_by_view, judges})`.
+- `gates/4-review-c<cycle>.json` ← `gateObj({criteria, rounds, artifacts, rulings_used, gaps, cycle, omissions_by_view, judges, not_rechecked, dead_lenses})`. `fixed_since` lists only prior ids actually re-checked; `punch_ids` also lists the prior ids that were not re-checked, so they carry into the next cycle.
 - `state/4-review.json` ← `{cycle, seen_keys, lens_counts}`.
 
 ## Return value
@@ -257,6 +259,7 @@ cycle 2. The script refuses a third cycle (R16).
 ## Loop bounds
 - Extra find rounds: ≤ `ROUNDS`, re-running only lenses with survivors.
 - Three verifiers per fresh finding.
-- One capture.
+- One capture (plus its metrics reader).
 - 12 gate judges.
-- Agents ≈ 110–170 typical, bound ≈ 260. `mode:'plan'` prints the schedule first.
+- Finders are capped at 2 findings per lens in round 0 and 1 per re-run lens later. Fresh findings beyond the 260 bound or the token budget are left unverified, recorded as a gap, and end the loop; the optional `+Nk` token budget is honoured at about 30k tokens per agent.
+- Agents ≈ 110–170 typical (the metrics reader adds one or two), bound ≈ 260. `mode:'plan'` prints the schedule first.

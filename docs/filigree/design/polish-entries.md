@@ -1,3 +1,7 @@
+> **Superseded planning snapshot (2026-10-04).** The live queue text is `POLISH.md` and
+> [`../README.md`](../README.md) §1 (reason codes, placement, releases, the on-return table); the two blocks below are
+> the original drafts and are **not kept in sync**. Do not re-apply them.
+
 **Where it goes:**
 Locate by **title**, never by line number (lines shift between polish runs):
 - **Block 1** (the section header + Filigree 1–2) goes immediately after the item starting
