@@ -505,7 +505,7 @@ if (MODE === 'plan') {
     {phase: 'Record', agents_min: 3, agents_max: 3 * K + K}   // three records (+ artifact hasher)
   ]
   const agents_min = schedule.reduce((t, x) => t + x.agents_min, 0), agents_max = schedule.reduce((t, x) => t + x.agents_max, 0)
-  return done({reason: 'plan', schedule, agents_min, agents_max, bound: 120, over_bound: agents_max > 120, chain_ok: chainOk, owner_rulings_used: RUSED})
+  return done({reason: 'plan', schedule, agents_min, agents_max, bound: 125, over_bound: agents_max > 125, chain_ok: chainOk, owner_rulings_used: RUSED})
 }
 
 let rounds = 0

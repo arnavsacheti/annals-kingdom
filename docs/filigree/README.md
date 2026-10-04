@@ -183,7 +183,7 @@ real preflight, but a missing input does not behave the same way in every job:
 
 So a plan preview of Jobs 2 to 4 is meaningful only after the previous job has run. The `schedule` is for your
 decision: compare the returned bound (`agents_bound` for Jobs 1 and 3; `bound` and `agents_max` for Jobs 2 and 4) with
-the job's figure: Job 1 ≈ 224 agents (including `crit()` retries), Job 2 ≈ 120, Job 3 at `maxUnits:8` and `maxRounds:2`
+the job's figure: Job 1 ≈ 224 agents (including `crit()` retries), Job 2 ≈ 125, Job 3 at `maxUnits:8` and `maxRounds:2`
 276 for slices B and D (the hand-test slices) and 228 for A and C (its `polish_note` prints the computed figure), Job 4 ≈ 260. These are worst cases at default
 args, so the check fires only if you raised an arg or the script grew; if it does, stop and note it instead of
 running. Typical costs are in §11.
@@ -691,14 +691,14 @@ Data items found by Jobs 1–2 are queued directly above the job they block.
 | job | typical agents | bound | notes |
 |---|---|---|---|
 | 1 | ≈97 | ≈224 | 18 questions; 24 blind appliers + 12 resolvers per gate round; the bound includes `crit()` retries (one retry each for the preflight, hex cropper, integrator, ambiguity judge, patcher and the 3 records) |
-| 2 | ≈60 | ≈120 | 12 sections; 2 drafters per round |
+| 2 | ≈60 | ≈125 | 12 sections; 2 drafters per round |
 | 3 | ≈50 per run | ≈228 per run for slices A and C, ≈276 for B and D, at `maxUnits:8` | 3–6 runs in total |
 | 4 | ≈110–170 | ≈260 | 13 finders, 3 verifiers per fresh finding, 12 sparse judges |
 
 Notes on the bounds:
 - **Job 2.** Each gate evaluation can run one more agent (the png stat), and the Probes phase gains a readback agent. The
   plan-mode schedule is Preflight 1–2, Probes (fresh 2–6, resumed 1–2), Pick 1–6, Sections 2n+1..3n+2 (n = sections to
-  write), Integrate 3–6, Units 1–4, Check 4–9, Gate 8, Fix up to 2×17, Record 3–8; the plan result reports `bound: 120`
+  write), Integrate 3–6, Units 1–4, Check 4–9, Gate 8, Fix up to 2×17, Record 3–8; the plan result reports `bound: 125` (a fresh run with all 12 sections peaks at 121)
   and `over_bound`. A fix round is skipped when `budget.remaining()` is below 600000 tokens.
 - **Job 3.** The worst case is the sum of the per-phase maxima: Preflight 2, Build 12·(maxUnits + ROUNDS·4), Smoke
   2·(1+ROUNDS), Slice gate 3·(1+ROUNDS), Hand test 6 + 14·(1+ROUNDS) on slices B and D only, Fix units 6·ROUNDS, Record 7.
