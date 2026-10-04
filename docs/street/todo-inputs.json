@@ -1,0 +1,464 @@
+{
+ "post": {
+  "confirmed": [
+   "Best candidate: github.com/jeantimex/tokyo ('Procedural-Tokyo', a three.js driving game). It compiles PLATEAU CityGML (incl. tran), GSI DEM and OSM roads and rail (ODbL), plus Poly Haven CC0 textures. Medium confidence that it is the post's project",
+   "Offline compiler -> binary 256 m tiles streamed around the camera; meshing in Web Workers (src/world/meshing.js, src/shared/tileformat.js)",
+   "Facades textured by use (tile, concrete panel, plaster, brick tile, metal siding); windows with frames, mullions and interior-mapped rooms",
+   "Road markings: lane lines, zebra crossings, stop lines",
+   "Street trees: ez-tree up close, simple shapes far away; procedural sky with clouds; sun shadows scale with the view",
+   "Traffic signals cycle (src/world/props.js); vehicles, trains, headlamps lighting the road, white birds; cars follow expressway ramps (commit)",
+   "Settings panel (commits): clouds toggle (off by default), cars slider, headlight strength, info-panel checkbox, whole-city/progressive view toggle; N key for day/night; ?night=1 and ?radius= URL params",
+   "Commits dated 3-4 Oct 2026, the first page of the log only",
+   "Lookalike tanuu5/tokyo-auto-drive: single-file three.js r128, credited to Opus 5.5 on Claude Cowork, with no PLATEAU/OSM/GSI data. Not the post"
+  ],
+  "paraphrase_only": [
+   "post text, author, date, link (x.com blocked)",
+   "'Opus 5.5' built the candidate repo (README has no AI mention; co-authorship unverified)",
+   "traffic that OBEYS signals (only 'signals cycle' read)",
+   "a shadows layer toggle (not seen; clouds and cars controls were)",
+   "aerial photos in the build (GSI seamlessphoto exists; repo use unread)",
+   "high FPS figures / overload claims (no numbers read)",
+   "hosted demo (README gives only localhost:5280; About field unchecked)"
+  ]
+ },
+ "pieces": [
+  {
+   "piece": "tiling",
+   "tokyo": "offline compile to 256 m binary tiles",
+   "r128_route": "Runtime quadtree around CAM.focus. Each quad's detail is a pure function of (seed, quad id), so there are no tile files and no build step",
+   "sim_today": [
+    "index.html:501 CHUNKS=6",
+    "index.html:3170-3178 tree chunk InstancedMesh"
+   ],
+   "gap": "no quadtree for street detail; only trees are chunked",
+   "size": "M"
+  },
+  {
+   "piece": "refine rule (SSE / LOD)",
+   "tokyo": "near/far swaps; tiles refine around camera",
+   "r128_route": "hand-rolled SSE geomErr*H/(2d*tan(fov/2)) > ~16 px keyed off CAM.radius; hand-rolled hysteresis (r128 LOD has none)",
+   "sim_today": [
+    "index.html:7265-7266 hi/lo 2400/2200",
+    "index.html:3288-3295 label tiers",
+    "index.html:2312-2315 water near-detail fades",
+    "index.html:5949 CAM.t -> R"
+   ],
+   "gap": "no mid tiers, no per-building gating",
+   "size": "M"
+  },
+  {
+   "piece": "build budget / streaming queue",
+   "tokyo": "Web Worker meshing",
+   "r128_route": "time-sliced main-thread priority queue (<=6 jobs, ms cap per frame); Blob Worker optional but duplicates gen code",
+   "sim_today": [
+    "index.html:7279-7296 throttled rebuilds 700/2500/1200-4500/1500 ms",
+    "index.html:3076-3101 whole-settlement re-batch"
+   ],
+   "gap": "no per-frame ms budget; rebuilds are whole re-batches",
+   "size": "M"
+  },
+  {
+   "piece": "eviction / memory",
+   "tokyo": "(3DTilesRendererJS pattern) LRU with hard caps; full => stay coarse",
+   "r128_route": "Map-based LRU of built quads, geometry.dispose(); on full, raise SSE target",
+   "sim_today": [
+    "index.html:3077 dispose discipline"
+   ],
+   "gap": "no LRU, no tri/byte cap",
+   "size": "S"
+  },
+  {
+   "piece": "culling",
+   "tokyo": "own frustum culling",
+   "r128_route": "Frustum.intersectsSphere per quad group; frustumCulled=false on instanced meshes (r128 uses base-geometry sphere)",
+   "sim_today": [
+    "index.html:7262 chunk cull",
+    "index.html:3193 frustumCulled=false",
+    "index.html:3202 rocks",
+    "index.html:4405 sheep",
+    "index.html:4434 birds (never culled)"
+   ],
+   "gap": "per-quad cull; rocks/sheep/birds uncull'd",
+   "size": "S"
+  },
+  {
+   "piece": "fade-in",
+   "tokyo": "(TilesFadePlugin) 250 ms cross-fade",
+   "r128_route": "opacity/dither via the patched MAT.world onBeforeCompile; <=250 ms ease matching filigree R6",
+   "sim_today": [
+    "index.html:7265-7266 binary pop"
+   ],
+   "gap": "no fade at all",
+   "size": "S"
+  },
+  {
+   "piece": "facades",
+   "tokyo": "material by building use; mullions; interior-mapped rooms",
+   "r128_route": "near-only vertex-colour quads per archetype x tier (doors, lintels, courses, marble for Epēshu); separate near mesh, not in meshHi",
+   "sim_today": [
+    "index.html:1543 ARCH (12)",
+    "index.html:2702-2711 tier materials",
+    "index.html:2926 4 variants cached",
+    "index.html:825-836 windows",
+    "index.html:728-730 night glow",
+    "index.html:2869 capital wall marble"
+   ],
+   "gap": "no near-only detail, few variants, no marble city",
+   "size": "L"
+  },
+  {
+   "piece": "road / street surface",
+   "tokyo": "lane lines, zebras, stop lines",
+   "r128_route": "near-only ribbons: ruts, kerbs, gate thresholds, market paving, ford stones",
+   "sim_today": [
+    "index.html:2623-2655 ribbonInto three-band",
+    "index.html:2673 capital cobble only"
+   ],
+   "gap": "no relief or surface detail",
+   "size": "S"
+  },
+  {
+   "piece": "repeated props / instancing",
+   "tokyo": "instanced trees and cars",
+   "r128_route": "InstancedMesh with instanceColor (mandatory on MAT.world); one mesh per type (cart, pack donkey, figure, stall)",
+   "sim_today": [
+    "index.html:3208 instanceColor rule",
+    "index.html:3178",
+    "index.html:1883-1900 props merged in hi mesh"
+   ],
+   "gap": "stalls/props merged not instanced; no carts or figures",
+   "size": "M"
+  },
+  {
+   "piece": "traffic",
+   "tokyo": "cars and trains; signals cycle; cars follow ramps",
+   "r128_route": "Queueing is RENDER-ONLY: the visual offset along the route is a stateless f(seed, day, neighbours); the arrival day stays routePos = f(day) (index.html:3647). Closures as virtual stationary obstacles on a keyed-hash schedule. No IDM state is carried between frames and no render frame feeds an accumulator. (If a later ruling wants queueing to move arrival days, the IDM must step inside the sim tick at a fixed sim-dt and draw nothing from shared streams.) IDM = calcAccDet, piecewise free term",
+   "sim_today": [
+    "index.html:3647 position = f(sim day)",
+    "index.html:3616 300/480 m per day",
+    "index.html:3687 spawn",
+    "index.html:5228 bandit ambush only interaction",
+    "index.html:3737 arrival tolls",
+    "index.html:3738 arrival plague roll (W.rng.hist)",
+    "index.html:3748 trade chronicle (W.rng.hist)"
+   ],
+   "gap": "no queueing, dwell, right of way or gate/bridge stops",
+   "size": "L",
+   "determinism": "A queue that moved arrival day would shift every later W.rng.hist draw (:3738, :3748, :5228) and change simDays(400) depending on how the run was viewed"
+  },
+  {
+   "piece": "sky / clouds",
+   "tokyo": "procedural sky with clouds",
+   "r128_route": "cloud deck + moving cloud-shadow mask driven by W.weather; any per-cloud variation is a keyed hash, not a stream. Keyed hash in the R9 pattern: xmur3(seed+class+id+day) -> mulberry32 (filigree-1-research.js:54); no draw from W.rng.hist/gen/det (alters the world) or W.rng.amb (index.html:7161; per-frame draws make the view depend on frame rate)",
+   "sim_today": [
+    "index.html:3464 W.weather",
+    "index.html:5013 weather roll",
+    "index.html:6214 overcast dims only",
+    "index.html:6254 fog x0.72/x0.8"
+   ],
+   "gap": "no clouds; no fog state (must follow R13)",
+   "size": "M"
+  },
+  {
+   "piece": "shadows",
+   "tokyo": "sun shadows scale with view",
+   "r128_route": "already present; wire a toggle. The toggle must also respect degradeStep (index.html:6231 wantShadow requires degradeStep<3). The degrade ladder is one-way (:7332-7334), so once it reaches step 3 turning shadows on does nothing and the toggle must say so (disabled row, 'held off for speed')",
+   "sim_today": [
+    "index.html:6231 gate R<1650",
+    "index.html:6234 extent clamp",
+    "index.html:7179 2048^2",
+    "index.html:6166 shadowsOn never set",
+    "index.html:7332-7334 degrade ladder step 3 = shadows off, one-way"
+   ],
+   "gap": "no UI toggle; toggle ignored once degradeStep>=3",
+   "size": "S"
+  },
+  {
+   "piece": "layer UI",
+   "tokyo": "settings panel (clouds, cars slider, headlights)",
+   "r128_route": "layers rows + hash keys, default off (R18 pattern). New keys cannot reuse taken letters: C is watch mode (index.html:6112); H, L, F, T, G and M are also taken (:6108-6114), as are space, 1-5 and Escape. Pick free keys after checking the camera key handlers, or use rows only",
+   "sim_today": [
+    "index.html:6108-6114 keys",
+    "index.html:426-429 overlay menu",
+    "index.html:5923 #goto= parse"
+   ],
+   "gap": "no per-layer visibility panel",
+   "size": "S"
+  },
+  {
+   "piece": "terrain / drape",
+   "tokyo": "GSI elevation (DEM tiles) and aerial photos (seamlessphoto) compiled into the terrain; the owner's clause. Repo use of aerial photos is unread (low-confidence leads only)",
+   "r128_route": "No new data. Terrain = the existing heightfield grid; the 'aerial' drape = PatrinorModern.png (the Epēshu atlas). Any sub-cell relief for street detail (curbs, steps, ground noise) must be a deterministic f(seed, cell) laid over the cells, never a new height source. Per R22 (filigree-1-research.js:67) no relief is invented outside the EPESHU_HF window",
+   "sim_today": [
+    "index.html:492 N=768 heightfield grid, CELL ≈ 11.72 m",
+    "index.html:7578 hand-authored Epēshu heightfield (EPESHU_HF)",
+    "PatrinorModern.png (4390x2188, atlas drape; iCloud path in CLAUDE.md)",
+    "filigree-1-research.js:67 R22"
+   ],
+   "gap": "street detail at R≈9 m sits on 11.72 m terrain cells: buildings, ruts and figures need a sub-cell ground height that is f(seed, cell) and agrees with the grid at cell corners; no street-scale drape",
+   "size": "M"
+  },
+  {
+   "piece": "VTT scene",
+   "tokyo": "(none: the post is a viewer/driving game, not a tabletop tool)",
+   "r128_route": "UNSOURCED. Nothing read addresses table scale: no square or hex grid overlay, no top-down orthographic capture or export, no token or fog-of-war hand-off. Every VTT source read is Foundry/FXMaster (V3-V5); Owlbear docs were blocked",
+   "sim_today": [],
+   "gap": "the owner's headline use case ('interactive urban VTT scenes') has no spec; scale and export format unknown (see open_questions)",
+   "size": "?",
+   "sourced": false
+  },
+  {
+   "piece": "agent LOD (vehicles)",
+   "tokyo": "vehicles appear in more detail as the camera nears (owner: 'buildings and vehicles'); repo detail unread",
+   "r128_route": "Three tiers by distance: far = dot or impostor; mid = the current mesh; near = individual animals placed by IDM-spaced offsets (render-only, see traffic). Swap with a hand-rolled hysteresis band, since r128 THREE.LOD has none (M5). Near offsets use keyed hashes, not streams",
+   "sim_today": [
+    "index.html:3584 caravan = one fixed mesh (three pack animals + a drover) at every distance",
+    "index.html:3616 speeds",
+    "index.html:3647 routePos"
+   ],
+   "gap": "no far or near tier for caravans, cogs or armies; closer-camera fidelity exists for buildings only",
+   "size": "M"
+  },
+  {
+   "piece": "camera near plane",
+   "tokyo": "(not read)",
+   "r128_route": "dynamic near plane or log depth review at R~9 m",
+   "sim_today": [
+    "index.html:2214 near 2 far 30000",
+    "index.html:5949 R 9..11000"
+   ],
+   "gap": "depth precision at street level unchecked",
+   "size": "S"
+  }
+ ],
+ "bronze_age": [
+  {
+   "tokyo_feature": "traffic signals",
+   "analogue": "Town gates that shut at the dark hour, one-lane bridges and fords crossed by token, toll halts held as a dwell, and caravan halts. Each is a virtual stationary obstacle on a schedule that is a keyed hash of (seed, class, id, day), never a draw from a shared stream. Render-only: obstacles shape the visual queue offset and never move a caravan's arrival day. (Code term only: 'market ward'.)",
+   "sim_data": [
+    "index.html:6197 darkHour",
+    "index.html:7276 renderTod (render time, NOT sim time)",
+    "index.html:3737 tolls",
+    "docs/filigree/todo-inputs.json:161 caravan halts",
+    "index.html:6197 darkHour pure function of sun direction"
+   ],
+   "canon_notes": "The dark hour must be re-derived from sim day for any obstacle schedule. Whether gates shut at the dark hour is not canon-confirmed. Player-facing wording: 'gates shut at the dark hour', never 'curfew' (medieval civic word). Use 'caravan halts / waystations', never 'coach posts' (R10). Keyed hash in the R9 pattern: xmur3(seed+class+id+day) -> mulberry32 (filigree-1-research.js:54); no draw from W.rng.hist/gen/det (alters the world) or W.rng.amb (index.html:7161; per-frame draws make the view depend on frame rate)"
+  },
+  {
+   "tokyo_feature": "car-following traffic",
+   "analogue": "Caravan strings of pack donkeys and carts spaced IDM-style (large s0 and T, donkey-pace v0). They bunch and queue at gates as a render-only offset, a stateless f(seed, day, neighbours); the arrival day stays routePos = f(day) (index.html:3647)",
+   "sim_data": [
+    "index.html:3584 three pack animals + drover",
+    "index.html:3616 speeds",
+    "index.html:3647 routePos",
+    "index.html:3738 arrival plague roll",
+    "index.html:3748 trade chronicle",
+    "index.html:5228 ambush"
+   ],
+   "canon_notes": "CONSTRAINT, not a question: queueing must not alter sim output. Moving an arrival day shifts every later W.rng.hist draw (:3738, :3748, :5228), so simDays(400) would depend on how the run was viewed; and an accumulator fed by render frames makes the step count depend on frame rate. Otherwise the IDM steps inside the sim tick at a fixed sim-dt and draws nothing from shared streams. Kanesh karum caravans (10-50 donkeys, traders outside walls) are a real-world analogue, low confidence, not Nimlad canon. 'Cog' is a medieval ship-type already in shipped prose (index.html:3404); do not spread it into new prose"
+  },
+  {
+   "tokyo_feature": "pedestrians / crowd life",
+   "analogue": "Market-day crowds in the market quarter, placed by a keyed hash of (seed, settlement, day) and scaled by s.pop. Near-only instanced figures. Keyed hash in the R9 pattern: xmur3(seed+class+id+day) -> mulberry32 (filigree-1-research.js:54); no draw from W.rng.hist/gen/det (alters the world) or W.rng.amb (index.html:7161; per-frame draws make the view depend on frame rate)",
+   "sim_data": [
+    "index.html:1664-1694 market ward dd<0.30",
+    "index.html:4486 hearth smoke R<420",
+    "index.html:1883-1900 stalls"
+   ],
+   "canon_notes": "Market-day calendar not canon; propose and get a ruling"
+  },
+  {
+   "tokyo_feature": "clouds toggle",
+   "analogue": "Cloud deck and cloud shadows driven by W.weather (overcast, rain, storm). Cloud placement and drift are keyed hashes of (seed, day), render-only; no per-frame draws from W.rng.amb",
+   "sim_data": [
+    "index.html:3464",
+    "index.html:5013",
+    "index.html:6214"
+   ],
+   "canon_notes": "Tamar's dark hour is a separate global grade, like FXMaster's filter lane"
+  },
+  {
+   "tokyo_feature": "shadows toggle",
+   "analogue": "wire shadowsOn to a layers row; the row must show 'held off for speed' once degradeStep reaches 3 (index.html:7332-7334, one-way)",
+   "sim_data": [
+    "index.html:6166",
+    "index.html:6231"
+   ],
+   "canon_notes": "Respect degradeStep (:6231)"
+  },
+  {
+   "tokyo_feature": "traffic toggle",
+   "analogue": "Caravans and cogs, armies, crowds and sheep as one 'roads and folk' layer. The Trade overlay already shows volume",
+   "sim_data": [
+    "index.html:3616",
+    "index.html:4571 updateArmies",
+    "index.html:4453 sheep R<2200",
+    "index.html:3737 W.routeVolume"
+   ],
+   "canon_notes": ""
+  },
+  {
+   "tokyo_feature": "weather effects",
+   "analogue": "Rain and snow particles exist. Fog and mist come from the filigree R13 seeded function of (place, notices-snapshot sim day). Add a density dial and roof masks",
+   "sim_data": [
+    "index.html:3464 no fog state",
+    "index.html:4213 1500-pt precip",
+    "index.html:6254 fog modulation",
+    ".claude/workflows/filigree-1-research.js:58 R13"
+   ],
+   "canon_notes": "Never add fog as a W.weather state; never wall-clock"
+  },
+  {
+   "tokyo_feature": "session-specific overlays",
+   "analogue": "Shut ways (closed roads, barriers), muster days (levy lighting, dragon flights) and party presence, loaded as notices outside the release (the herald's tidings). The party position acts as a viewer-request volume for street detail",
+   "sim_data": [
+    "docs/filigree/todo-inputs.json:217 shut ways",
+    "docs/filigree/todo-inputs.json:194 muster days",
+    ".claude/workflows/filigree-1-research.js:57 R12",
+    "index.html:3663 CAM.follow only hook",
+    "docs/filigree/todo-inputs.json:199 dragon flights",
+    "index.html:5390 dragon myth chronicle (tonshar)"
+   ],
+   "canon_notes": "Player-facing label 'the herald's tidings' (filigree-1-research.js:57, R12). Party in Epēshu, 1374 A.B."
+  },
+  {
+   "tokyo_feature": "procedural facades",
+   "analogue": "Mudbrick, plaster and stone with lintels and doors. Epēshu's marble quarter, lamp-lit at night and in the dark hour",
+   "sim_data": [
+    "index.html:2702-2711",
+    "index.html:7624-7634 Epēshu districts are labels only",
+    "index.html:2869 marble-pale walls",
+    "maps-site/data/wiki-places.json:240 Blue Temple of Thobrauk (Epēshu page text)"
+   ],
+   "canon_notes": "Epēshu, the Marble City, has no marble houses today. Blue Temple of Thobrauk: wiki-places.json:240 (Wood Quay, northern edge)"
+  },
+  {
+   "tokyo_feature": "interactive urban VTT scenes",
+   "analogue": "UNSOURCED. A gridded, top-down street battle map with tokens and fog of war; nothing read specifies it. Only FXMaster/Foundry (V3-V5) informs the weather and session-overlay half",
+   "sim_data": [],
+   "canon_notes": "Scale and export format need an owner ruling",
+   "sourced": false
+  }
+ ],
+ "filigree_links": {
+  "connects": [
+   "The caravan-halts class has no sim entity (docs/filigree/todo-inputs.json:161, :170). The street view can render it",
+   "Shut ways (todo-inputs.json:217) and muster days (:194) are the same notice classes",
+   "R6 reveal grammar, threshold + ease <=250 ms (filigree-1-research.js:51), equals the 250 ms tile fade",
+   "R7 city sheet draws nothing at rest at Z_TIER_D (filigree-1-research.js:52). The 3D view picks up past it",
+   "R13 fog function (filigree-1-research.js:58) shared by both apps",
+   "R18 default-off toggle pattern (filigree-1-research.js:63)",
+   "R12 notices channel outside release (filigree-1-research.js:57)",
+   "R10 vocabulary (filigree-1-research.js:55)",
+   "Bible class ids (docs/filigree/README.md:545) reused, not reinvented",
+   "POLISH.md:132 Sim <-> atlas continuity is the deep-link home (#goto= parsed at index.html:5923)",
+   "POLISH.md:119 Trackpad feel gains a third camera path"
+  ],
+  "conflicts": [
+   "Strict 1->4 queue ('strictly in order', POLISH.md:26) with gate preflights (POLISH.md:31); a street view has no slot, and amending Jobs 1-2 forces re-runs",
+   "Job 3 holds maps-site/index.html (POLISH.md:182) and leaves the sim untouched unless a unit names it (filigree-3-build.js:445). Its smoke/syntax gates still run on BOTH files (POLISH.md:173), so concurrent sim edits can fail filigree gates",
+   "R22 limits sheets to the EPESHU_HF window (filigree-1-research.js:67); no invented relief outside",
+   "A fog state in W.weather would contradict R13",
+   "Atlas #view= writer drops trailing params (docs/filigree/README.md:347; U00 fixes). A new street key must not clobber #goto=, #s= or filigree=1"
+  ]
+ },
+ "perf_budget": [
+  "Baseline ~1.6M tris, ~50 draw calls (docs/research/web-performance.md:4); stay near it",
+  "rAF work <~15 ms, ~10 ms safer; 120 Hz halves it (web-performance.md:8)",
+  "Locked 30 Hz beats a dropping 60 Hz (web-performance.md:12)",
+  "No task >50 ms; slice quad builds with a per-frame ms cap (web-performance.md:15)",
+  "Hold smoothed fps >=42 or trip the one-way degrade ladder (index.html:7330-7334)",
+  "Instance or merge; every MAT.world InstancedMesh needs instanceColor (index.html:3208)",
+  "No per-frame allocation; pool like _frust/_pm (web-performance.md:27)",
+  "Street-level shadow box 140 m half-extent at 2048^2 (index.html:6234, 7179); instanced casters multiply the shadow pass",
+  "Weather baseline one 1500-point Points draw (index.html:4213)",
+  "DPR cap 2 / 1.6 at <=760 px (index.html:2209)",
+  "Near-only detail as its own mesh, not in meshHi (whole re-batch per 700 ms; index.html:3076-3101)",
+  "Measure with ANNALS.stats() (index.html:7517); per-LOD budgets are unmeasured (web-performance.md:58)"
+ ],
+ "shape_options": [
+  {
+   "id": "A",
+   "summary": "Fold into the four filigree jobs as extra inputs and criteria. Job 1's bible records the street view as a named build need. Job 2's spec adds street-view units. Job 3 builds them. Job 4 reviews them",
+   "pros": [
+    "one queue, one gate chain",
+    "shared class ids, R13 fog and the R6 reveal grammar by construction",
+    "no new workflow files"
+   ],
+   "cons": [
+    "Jobs 1-2 are atlas/2D-scoped; amending them later forces re-runs (POLISH.md:26, :31)",
+    "Job 3 holds maps-site/index.html, and sim edits interleave with its gates on both files (POLISH.md:173)",
+    "bloats a 2D brief with 3D perf work",
+    "BLOCKER: adding street units to sheet-spec after Job 2 passed is a changed spec; Job 3's preflight throws on that (POLISH.md:178), and R15 (filigree-1-research.js:60) makes each re-run cut another patch release"
+   ]
+  },
+  {
+   "id": "B",
+   "summary": "A separate four-job sim track (street-1-research ... street-4-review) with its own saved workflows, queued after Filigree 4",
+   "pros": [
+    "clean file ownership: index.html only",
+    "own perf gates (fps>=42, calls/tris via ANNALS.stats)",
+    "no re-run of filigree jobs"
+   ],
+   "cons": [
+    "duplicate research on fog, notices and vocabulary; risk of drift from R-rulings",
+    "waits for Filigree 4 or races its gates (same start rule as C: after gates/3-build.json passes, nothing sim-touching while Filigree 4 fix units are open)",
+    "four more workflow files to maintain",
+    "Release cadence: R15 (filigree-1-research.js:60) cuts a patch per filigree job and CLAUDE.md squashes all WIP into one commit per cut, so street-track commits must not sit unpushed across a filigree cut or the squash mixes the two tracks"
+   ]
+  },
+  {
+   "id": "C",
+   "summary": "Hybrid. One shared research digest (this one) plus a street-track ruling addendum that cites R6/R10/R12/R13/R18 by id (R13 fog, R12 notices, R6 thresholds, class ids). A separate build/review track for the sim street view, started after gates/3-build.json passes, with no sim-touching work while Filigree 4 fix units are open (R16, up to 2 cycles; Job 3 units may edit the sim index.html when a unit names it, filigree-3-build.js:445, and its smoke gate runs on both apps, POLISH.md:173; queue rule POLISH.md:8: if another workflow holds the file, take the next item)",
+   "pros": [
+    "one source of rulings for both apps",
+    "sim builds never contend with Job 3's file lock",
+    "the street view can consume filigree notices and the fog function as-is"
+   ],
+   "cons": [
+    "the addendum must be a NEW street-track doc that cites the R-rulings read-only. It must not edit filigree-1-research.js R-text or docs/filigree/*: Job 3's preflight needs the Job 2 gate to pass with the spec unchanged (POLISH.md:178), and R17 forces a Job 1 re-run",
+    "two tracks to sequence",
+    "shared deep-link work (POLISH.md:132) must be scheduled between them",
+    "Release cadence: R15 (filigree-1-research.js:60) cuts a patch per filigree job and CLAUDE.md squashes all WIP into one commit per cut, so street-track commits must not sit unpushed across a filigree cut or the squash mixes the two tracks"
+   ]
+  }
+ ],
+ "constraints": [
+  "World gen and sim are a pure function of the seed: W.rng streams only, never Math.random, Date.now or performance.now in sim code",
+  "Single file index.html, vanilla JS, three.js r128 via CDN, no build. No 3DTilesRendererJS (needs >=0.167), no BatchedMesh (r170+), no LOD hysteresis (dev-only)",
+  "Every InstancedMesh on MAT.world carries instanceColor",
+  "Reuse CAM.radius as the single zoom signal",
+  "Fog is the R13 seeded function; no new W.weather state",
+  "Ship default-off behind a hash key + layers row (R18); notices outside the release (R12)",
+  "Bronze-age Nīmlad / Kembar voice; R10 banned words",
+  "Agents run no git; never commit index.html mid-workflow",
+  "Smoke: #s=epeshu + a procedural seed, simDays(400), zero console errors",
+  "Queueing/crowds/clouds are render-only: stateless f(seed, day, neighbours); arrival day stays routePos = f(day) (index.html:3647). No render frame feeds an integration accumulator",
+  "Keyed hashes for new randomness: xmur3(seed+class+id+day) -> mulberry32 (R9 pattern). Never draw from W.rng.hist/gen/det (alters the world) or per-frame from W.rng.amb (index.html:7161)",
+  "New player-facing words: no 'curfew' (use 'gates shut at the dark hour'); 'cog' exists at index.html:3404 but is not spread; 'market ward' is a code term only",
+  "Layer keys: C (watch, :6112), H, L, F, T, G, M (:6108-6114), space, 1-5, Escape are taken; shadows toggle is inert once degradeStep>=3"
+ ],
+ "risks": [
+  "The post's headline features (signal-obeying traffic, a shadows toggle) are unverified. Do not spec them as Tokyo precedent",
+  "New queueing or crowd state changes the sim's output for a seed unless it is render-only f(seed, day, place)",
+  "The dark hour is render-time (renderTod), so a sim-side curfew needs its own sim-day derivation",
+  "Existing determinism edges: omen eclipse performance.now() (index.html:5328); Math.random in precip, lightning, sheep and hearth. Do not copy them",
+  "Street-level detail can trip the one-way fps<42 degrade ladder for the whole app",
+  "The near plane at 2 m may z-fight sub-metre detail at R~9 m",
+  "Concurrent sim edits can fail Filigree Job 3 gates",
+  "Drifted sim anchors in docs/filigree/todo-inputs.json (3694, 3511, 3871, 5831); re-anchor by pattern",
+  "Epēshu's districts are labels only; authoring a layout may conflict with canon or the atlas chart",
+  "A queue offset that leaks into arrival day, or an accumulator fed by render frames, breaks simDays(400) determinism",
+  "Sub-cell street relief on 11.72 m cells can disagree with the grid or invent relief outside EPESHU_HF (R22)"
+ ],
+ "open_questions": [
+  "Post identity: author, date, link; is it jeantimex/tokyo, kolom1234 or webtrackerxy; does any make vehicles obey signals?",
+  "Placement: sim (3D index.html), atlas (2D Leaflet at Z_TIER_D+), or a sim view deep-linked from the atlas city zoom?",
+  "Scope: Epēshu only (canon, inside EPESHU_HF) or every procedural settlement? Is Epēshu's district layout authored or generated?",
+  "Gate canon: do gates shut at the dark hour? Is there a Patrinaic word for gate, toll or market (lexicon/patrinaic.json)?",
+  "VTT: must the street view export a gridded battle map (square or hex), and at what scale (feet or metres per square)? Top-down orthographic capture, token and fog-of-war hand-off are all unsourced",
+  "Budget: tri and call budget for a street-level frame on a phone is unmeasured",
+  "Workers: Blob Workers duplicate gen code; are time-sliced main-thread builds enough?",
+  "Camera near plane: is a dynamic near plane needed at R≈9 m?"
+ ]
+}

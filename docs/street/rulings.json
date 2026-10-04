@@ -1,0 +1,6 @@
+{
+  "date": "2026-10-04",
+  "about": "owner overrides of the street rulings ST1..ST19 (empty = defaults; ST3, ST4, ST18 are fixed); filigree R overrides live only in docs/filigree/rulings.json",
+  "overrides": {},
+  "confirmed": []
+}

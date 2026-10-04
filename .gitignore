@@ -1,3 +1,6 @@
 .netlify/
 docs/filigree/shots/
 docs/filigree/review-c*/shots/
+docs/street/shots/
+docs/street/review-c*/shots/
+docs/street/preview/

@@ -25,4 +25,8 @@ those counts.
   (verified 2026-10-04, feeds `docs/filigree/`)
 - `filigree-for-the-table.pdf` — the owner's brief (v2, 8 pages) for the table map; not a digest.
   Authoritative input to `docs/filigree/`, which splits it into four jobs.
+- `streamed-streets.md` — the 3D city post (owner's paraphrase) decoded into r128 methods (screen-space-error
+  refine, a bounded queue + LRU that stays coarse, 250 ms fades, render-only IDM spacing) and bronze-age readings
+  (fords and one-lane bridges in turn, toll halts, gates at the dark hour, the herald's tidings); verified
+  2026-10-04 by two lenses per claim, outside the counts above; feeds `docs/street/`
 

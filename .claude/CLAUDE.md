@@ -72,6 +72,9 @@ three.js r128 via CDN, no build step). Themed to the owner's D&D campaign
   `.claude/workflows/filigree-{1-research,2-plan,3-build,4-review}.js`, one job per polish
   run, queued in POLISH.md; guide, gates and durable outputs in `docs/filigree/` (read its
   README first).
+- Street-view work runs as four saved workflows
+  `.claude/workflows/street-{1-research,2-plan,3-build,4-review}.js` (queued after the
+  filigree jobs; Street 3 waits for the filigree hold); guide in `docs/street/README.md`.
 
 ## Deployment targets (planned)
 - `sim.princexizor.ddns.net` — this sim as the campaign's living-world window
