@@ -17,3 +17,6 @@ open questions where *no* claim survived — genuine gaps, not oversights.
   Pompeii precedent for chart-matched towns, preindustrial semantic growth
 - `web-performance.md` — frame budgeting (INP, Long Animation Frames), draw-call
   hygiene with measurements, Leaflet tile knobs, the raster pipeline zoom math
+- `cartographic-filigree.md` — the Collison/Azlen filigree thread and the geo.admin stack decoded; why the
+  zoom feels smooth (Leaflet 1.9.4 vs the atlas); the Swiss layers in fiction; the `EPESHU_HF` relief window
+  (verified 2026-10-04, feeds `docs/filigree/`)

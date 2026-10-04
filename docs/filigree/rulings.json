@@ -1,0 +1,6 @@
+{
+  "date": "2026-10-04",
+  "about": "Owner overrides of the Filigree rulings R1-R22. Defaults and questions: docs/filigree/README.md §9. Put a ruling id and its replacement text under overrides; list the ids the owner has signed off under confirmed.",
+  "overrides": {},
+  "confirmed": []
+}

@@ -1,0 +1,627 @@
+{
+ "_meta": {
+  "date": "2026-10-04",
+  "digest": "digest.md",
+  "brief": "docs/research/filigree-for-the-table.pdf (v2)",
+  "anchor_convention": "'index.html:' = sim (repo root); 'maps-site/index.html:' = atlas. Always prefix atlas anchors explicitly",
+  "note": "fiction_layers and candidates are CANDIDATES; the density bible (Research stage) decides"
+ },
+ "sheets": {
+  "country": {
+   "today": [
+    "maps-site/index.html:813-822 era base tiles z0-5 (256px JPG, detectRetina, maxNativeZoom 5/4 retina)",
+    "maps-site/index.html:226-238 tier A/B CSS pane gating (major regions + seas, then settlements)",
+    "maps-site/data/realms.geojson 8 realms",
+    "maps-site/data/named-ways.json:6 Sun Road trace (prov trace, approximate) + East-West Road",
+    "maps-site/data/sea-lanes.json:34 four sea lanes (prov invented)",
+    "raster: 15 double-ring majors, hand-lettered names"
+   ],
+   "missing": [
+    "peak/ridge names and heights as overlay data: the label slot exists (maps_markers.json has 3 'Mountains and Hills' markers drawn as ▲ in pane pMtn 622, maps-site/index.html:1200-1201) but none of the three is in Leponnia; 5 'Bodies of Water' draw as ≈ in pWater 618. Canon seed for ridge names: Rhoshkhon mountains and Sūs Gimīlīn (wiki-places.json:150). Heights derivable from EPESHU_HF inside the Leponnia window",
+    "river geometry (rivers only in raster)",
+    "wired road network: maps-site/data/traced-roads.json 46 unnamed polylines not loaded (loader maps-site/index.html:3535-3554)",
+    "label ranks + collision (none: maps-site/index.html:1220-1237)",
+    "one-shield rule (only the river town gets a sign)"
+   ],
+   "forbidden": [
+    "homesteads (brief)",
+    "(derived) ridge names/heights",
+    "(derived) blazed paths",
+    "(derived) block grain"
+   ]
+  },
+  "region": {
+   "today": [
+    "maps-site/index.html:3487 atlas-labels at tier C",
+    "maps-site/index.html:1203,1227 lesser census pins (pLesser) + proximity growth maps-site/index.html:1253-1275",
+    "maps-site/data/minor-regions.geojson 7",
+    "maps-site/index.html:1151 District borders layer (actually dotted ROADS per canon, POLISH.md:13)"
+   ],
+   "missing": [
+    "ridge names + heights (brief: always; but see brief conflict (a) in workflows.conflicts). No atlas file holds them; derive heights from EPESHU_HF inside the window, canon seeds Rhoshkhon / Sūs Gimīlīn",
+    "reserves as green wash polygons",
+    "continuous rust coast road",
+    "region-chart footprint anchoring (POLISH.md:30)"
+   ],
+   "forbidden": [
+    "(derived) homestead dots — wait for valley sheet",
+    "(derived) contour hair",
+    "(derived) block grain"
+   ]
+  },
+  "valley": {
+   "today": [
+    "nothing authored in open country z6-8",
+    "maps-site/index.html:1833-1835 base fades 1->0.12 over z6.2-8 (overzoom of z5)",
+    "maps-site/index.html:557-568,1995 uncharted grain at z>6.8 outside cities",
+    "maps-site/index.html:767 Z_OPEN_MAX=8.0"
+   ],
+   "missing": [
+    "homestead dots",
+    "contour hair",
+    "river forks",
+    "the blazed path",
+    "authored raster or vector band z6-8"
+   ],
+   "forbidden": [
+    "(derived) block grain and city POIs",
+    "(derived) shields except the river town"
+   ]
+  },
+  "city": {
+   "today": [
+    "maps-site/data/detail-charts.json:37 Epēshu chart 3914x4200; :45 Summarch 4245x3951",
+    "maps-site/data/chart-pois.json:2 Epēshu 19 POIs; :137 Summarch 9",
+    "maps-site/index.html:2018 POIs at z>=8",
+    "maps-site/index.html:2166 genCityCanvas seeded plans via ensureCityGen maps-site/index.html:2968-3001",
+    "maps-site/index.html:1923-1936 per-city tone wash sampled from atlas hue",
+    "maps-site/index.html:1941-1950 invented road stubs",
+    "maps-site/index.html:2068-2088 registerCityOverlay hot-swap",
+    "prototypes/parcels-roofs.html, prototypes/epeshu-chart.html (block/parcel/roof grain, not shipped)"
+   ],
+   "missing": [
+    "fog washes as weather (source undecided: W.weather index.html:3464 has only clear/overcast/rain/snow/storm, no fog; use a seeded function of place + snapshot sim day, or a new sim weather state on W.rng.hist; never wall-clock)",
+    "painted (non-UI) treatment: rose-brown blocks, ocher arterials, park voids",
+    "label ranks on charts",
+    "pooled-edge contrast pass"
+   ],
+   "forbidden": [
+    "labels on every block (Azlen rule: texture before type)",
+    "UI chrome",
+    "pins (CONFLICT with shipped work: Epeshu's 19 POI halos POLISH.md v0.8.5 and census pins that grow toward the cursor POLISH.md:56 v0.9.12; spec must say hover-only halos meet the Azlen rule or are suppressed on the painted sheet; proposed: hover-only halos stay, nothing at rest)",
+    "fog as decoration (fog is weather)"
+   ]
+  },
+  "overlays": {
+   "today": [
+    "maps-site/index.html:826 setEra swap (not an under-layer; not in hash)",
+    "maps-site/index.html:3332-3334 era radios",
+    "maps-site/index.html:3499 handleHash (#journey,#chart,#company,#faction,#place,#view)",
+    "maps-site/index.html:3616 layers control (overlay-only, no opacity, no hash)",
+    "maps-site/index.html:1157 THEMES presets",
+    "prototypes/atlas-night.html:50 split A/B prototype"
+   ],
+   "missing": [
+    "under/over stack order: old survey UNDER live sheet (a raster era layer in tilePane z 200, NOT a vector pane between pRealm 410 and pWater 618; spec as two stacked tile layers with zIndex/opacity or a compareRatio swipe), notices ON TOP",
+    "era + layer state in hash (copy geoadmin layers=id@k=v,visible,opacity;...)",
+    "compare: swipe (compareRatio), fade, spyglass",
+    "notices data file (range days, shut ways) swappable per session",
+    "sim->atlas notice export (fixed seed + simDays snapshot)",
+    "DM-driven sheet lock/reveal (brief p8 'when they commit to a valley, swap'): e.g. #sheet=valley&at=Aldorūs with zoom clamps",
+    "notice schema in-fiction source voice (old local, innkeeper's slip, levy-master's board)",
+    "notices loaded outside the release: hash/URL param, local file import, or separately cached notices URL (release rule 'only push at version cuts' and POLISH.md:35 VERSION cache-busting do not change between sessions), or a documented exception"
+   ],
+   "forbidden": [
+    "notices drawn into the base raster",
+    "anything that needs a redraw to pull (brief review test)"
+   ]
+  }
+ },
+ "fiction_layers": [
+  {
+   "swiss_id": "ch.swisstopo.zeitreihen@year=1864",
+   "swiss_meaning": "Journey Through Time; 1864 = end of Dufour 1:100k era (inference); old survey under the live sheet",
+   "fiction_candidates": [
+    "the Imperial sheet (golden age)",
+    "the War sheet (War of the Patrons 1124-1133)",
+    "old names before the sack of Lepon (745 A.B.)",
+    "what the elders call the road"
+   ],
+   "data_today": [
+    "maps-site/index.html:819-822",
+    "maps-site/index.html:826",
+    "maps-site/index.html:3332-3334",
+    "maps-site/tiles-imperial/, tiles-war/ z0-5"
+   ],
+   "canon_notes": "era is a base swap today (a tilePane base layer, z 200); never in hash. The brief's full row is 'dead roads, old spellings, forest that grew back': unchecked whether tiles-imperial/ and tiles-war/ differ in roads and forest as well as borders and names (tiles are byte-different from tiles/; one ocean tile looked identical by eye; land-tile side-by-side not done). Old-name layer would need lexicon etymology (unchecked). Invented knoll/homestead names must be generated deterministically via the Patrinaic roots tool with reserved-word exclusion and regenerated through tools/build-gazetteer.js. Spec the stack as two tile layers (zIndex/opacity or compareRatio swipe), not a custom pane"
+  },
+  {
+   "swiss_id": "ch.bfs.gebaeude_wohnungs_register",
+   "swiss_meaning": "every registered building",
+   "fiction_candidates": [
+    "steadings",
+    "herders' folds",
+    "granaries",
+    "wayside Kembar shrines",
+    "wells",
+    "ruined towers"
+   ],
+   "data_today": [
+    "maps-site/index.html:2166",
+    "maps-site/data/city-anchors.json (136 cities)",
+    "maps-site/data/gazetteer.json (village 13, town 3, ruin 1)",
+    "maps-site/index.html:1227"
+   ],
+   "canon_notes": "homestead = named dot, never a town glyph; all open-country structures prov invented, names from Patrinaic roots. If the layer reuses the generated POI pool (maps-site/index.html:2819-2830), rename or strip 'The Tithe-Yard' (:2820) and 'The Tithe-Barn' (:2829): tithe is church vocabulary"
+  },
+  {
+   "swiss_id": "ch.bav.haltestellen-oev",
+   "swiss_meaning": "public-transport halts as a network",
+   "fiction_candidates": [
+    "caravan halts / waystations",
+    "ferry stairs",
+    "fords",
+    "cog landings",
+    "beacon posts (reuse shipped POI)"
+   ],
+   "data_today": [
+    "maps-site/index.html:1306 JSTOPS (party-route waypoints)",
+    "maps-site/data/sea-lanes.json:34",
+    "index.html:3694 caravans",
+    "index.html:3511 W.routes"
+   ],
+   "canon_notes": "brief: the only places a shield is earned; no halt entity exists in sim (index.html:3871) or atlas. The brief's fiction name 'coach posts' (Swiss-stack table, Research, Implementation) is ANACHRONISTIC for bronze-age Nimlad like 'artillery': renamed 'caravan halts / waystations'; the density bible must not copy it through. 'Beacon posts' already ships as a generated POI (maps-site/index.html:2821; POLISH.md:81 v0.9.8): reuse, do not duplicate. Transit ranked with roads: one rank table for halts and ways. Range-day 'levy muster-days' anchor to 'The Muster Ground' POI (maps-site/index.html:2830)"
+  },
+  {
+   "swiss_id": "ch.swisstopo.swisstlm3d-wanderwege",
+   "swiss_meaning": "blazed hiking paths",
+   "fiction_candidates": [
+    "cairned ways",
+    "drove-tracks",
+    "shrine-paths"
+   ],
+   "data_today": [
+    "maps-site/data/named-ways.json (2)",
+    "maps-site/data/traced-roads.json (46, unloaded)",
+    "sim cairns"
+   ],
+   "canon_notes": "dotted = MAJOR roads only; minor paths are not on the print, so all invented; never draw a path dotted"
+  },
+  {
+   "swiss_id": "ch.vbs.schiessanzeigen",
+   "swiss_meaning": "scheduled hazard zones that turn on and off",
+   "fiction_candidates": [
+    "levy muster-days on the sling-fields",
+    "the army in the field (Pebros encamped at Lepon until Yuleday)",
+    "bandit-held stretches",
+    "Tamar's dark hour (daily hazard window)",
+    "rite-days closing a precinct",
+    "dragon flights (W.dragon, same fixed-seed snapshot)"
+   ],
+   "data_today": [
+    "index.html:3346-3353 chron",
+    "index.html:5203 W.banditCamps",
+    "index.html:5228-5235 ambush",
+    "index.html:7236-7239 Pebros camp",
+    "index.html:3474 W.dragon; index.html:5390 dragon wake event"
+   ],
+   "canon_notes": "brief's 'artillery hours' has no bronze-age reading: drop. 'dragon flights' is sim-backed: W.dragon index.html:3474, wake event 'a dragon of the old brood, a child of Laegos' index.html:5390, and Lugal the Dragon in the Fell Mountains (wiki-places.json); make it a range-day candidate from the same fixed-seed snapshot. Levy muster-days anchor to the shipped 'The Muster Ground' POI (maps-site/index.html:2830). No start/end notice schema; sim->atlas px transform exists only inside window [1060,1240]..[1860,2040] (atlas = (1060,1240) + grid*800/768); sim covers Leponnia only"
+  },
+  {
+   "swiss_id": "ch.astra.wanderland-sperrungen_umleitungen",
+   "swiss_meaning": "closures and the detour that replaces them",
+   "fiction_candidates": [
+    "flooded fords",
+    "rockfall passes",
+    "plague-watched gates",
+    "war-shut gates",
+    "bandit-held road with the innkeeper's detour"
+   ],
+   "data_today": [
+    "index.html:5831 famine/plague flags",
+    "index.html:5228 ambush a.robbed",
+    "index.html:7239 Pebros"
+   ],
+   "canon_notes": "roads have no status field; no detour model; swap between sessions -> per-session file"
+  },
+  {
+   "swiss_id": "bgLayer ch.swisstopo.pixelkarte-farbe",
+   "swiss_meaning": "colour national map, relief already drawn",
+   "fiction_candidates": [
+    "PatrinorModern.png era pyramid (bone paper)"
+   ],
+   "data_today": [
+    "maps-site/tiles/ z0-5",
+    "maps-site/index.html:37 night invert",
+    "maps-site/data/maps_markers.json 3 Mountains and Hills + 5 Bodies of Water (panes pMtn 622, pWater 618; maps-site/index.html:1200-1201, 804)",
+    "index.html:7578-7588 EPESHU_HF (sim DEM, Leponnia window)"
+   ],
+   "canon_notes": "brief: contours first, names second; no relief/contours/rivers in any atlas file, but the sim has a DEM inside the Leponnia window: EPESHU_HF index.html:7578-7588 is a 768^2 PNG, height=(R*256+G)/32-300 m, traced from atlas window px [1060,1240]..[1860,2040] incl. the Aura-Hoth heights inland of Tamaron. Transform atlas = (1060,1240) + grid*800/768 (Aldorus sim 373/276 index.html:7639 -> 1448.5/1527.5 vs city-anchors.json:52 1448.6/1527.5). C1, Aldorus, Epeshu are inside the window, so contours, Imhof relief, hachures and peak heights for sheet one are DERIVED from the seed, not invented. Only ground outside Leponnia lacks a DEM. 3 'Mountains and Hills' markers exist (Mountain Wall, Far Mountains, Fell Mountains; maps_markers.json), none in Leponnia"
+  }
+ ],
+ "smoothness": [
+  {
+   "piece": "tile pyramid",
+   "leaflet_mechanism": "GridLayer tileZoom=Math.round(zoom), one level CSS-scaled (GridLayer.js ~L552)",
+   "atlas_today": "maps-site/index.html:813-822 z0-5 x3 eras, 860 tiles/~9MB each",
+   "gap": "no authored level past z5; retina native capped at 4"
+  },
+  {
+   "piece": "generalized geometry per zoom",
+   "leaflet_mechanism": "none; swap layers per zoom band manually",
+   "atlas_today": "maps-site/index.html:927 crSpline once per feature at fixed density (1287,1375,1417,1623)",
+   "gap": "per-band geometry sets for rivers/roads/paths (country/region/valley)"
+  },
+  {
+   "piece": "per-layer minzoom/maxzoom",
+   "leaflet_mechanism": "tile layers only (_pruneTiles removes outside range ~L422-427); markers/paths none",
+   "atlas_today": "maps-site/index.html:3477-3489 tiers A/B/C on zoomend + CSS maps-site/index.html:226-238; tier D live maps-site/index.html:1994",
+   "gap": "per-layer and per-label-rank gates instead of three pane tiers"
+  },
+  {
+   "piece": "fractional zoom + interpolated style",
+   "leaflet_mechanism": "zoomSnap:0 legal; no style interpolation",
+   "atlas_today": "maps-site/index.html:776 zoomSnap 0; only base/overlay opacity ramps maps-site/index.html:1833-1835; literal weights/fonts",
+   "gap": "drive --z CSS var on zoom event, calc() stroke/font, continuous pane ramps; eased wheel (maps-site/index.html:869-896 jumps instantly)"
+  },
+  {
+   "piece": "crossfade",
+   "leaflet_mechanism": "fixed 200ms per-tile JS fade (~L326), prune 250ms (~L887), parents retained z-5 (~L438)",
+   "atlas_today": "maps-site/index.html:777 fadeAnimation:true (default, no-op); hand-built base->city ramp maps-site/index.html:1833-1835",
+   "gap": "sheet-to-sheet crossfade between layers via opacity ramps; longer fade needs GridLayer subclass"
+  },
+  {
+   "piece": "overzoom",
+   "leaflet_mechanism": "maxNativeZoom in GridLayer _clampZoom",
+   "atlas_today": "z5 stretched to Z_STREET 11.5 (maps-site/index.html:767), faded to 0.12 by z8; uncharted grain maps-site/index.html:557-568",
+   "gap": "authored valley band z6-8 or honest softness ramp (POLISH.md:33)"
+  },
+  {
+   "piece": "appear effect (v2)",
+   "leaflet_mechanism": "tile fade only",
+   "atlas_today": "maps-site/index.html:226 tier opacity transition .2s",
+   "gap": "per-rank stagger: names arrive after their ink"
+  }
+ ],
+ "candidates": {
+  "coast": [
+   {
+    "name": "C1 Pēshunor / Aura-Hoth-Hanath north coast",
+    "bbox": "x1236-1725 y1415-1585",
+    "anchors": [
+     "maps-site/data/city-anchors.json:12 Sokundo",
+     "maps-site/data/named-ways.json:6",
+     "maps-site/data/sea-lanes.json:34",
+     "maps-site/data/wiki-places.json:150"
+    ],
+    "rec": "PICK: shares ground with Aldorūs and Epēshu",
+    "print_anchor": "z5 tiles (9..11, 11); Paerandas marker maps_markers.json:135"
+   },
+   {
+    "name": "C2 Lamor / Marble Gulf west coast",
+    "anchors": [
+     "maps-site/data/city-anchors.json:82 Mīth Mirdānak",
+     "maps-site/data/city-traits.json:630 Lepon island fort"
+    ],
+    "rec": "second; best old-survey/history sheet"
+   },
+   {
+    "name": "C3 Rhoshkhon / Gulf of Drāmūz",
+    "anchors": [
+     "maps-site/data/city-anchors.json:159 Shengo",
+     "maps-site/data/city-anchors.json:141 Drāmūz"
+    ],
+    "rec": "third; only coast backed by a named range (Sūs Gimīlīn); Drāmūz/Shengo are inside the EPESHU_HF window so heights derivable"
+   }
+  ],
+  "river_town": [
+   {
+    "name": "Aldorūs",
+    "xy": [
+     1448.6,
+     1527.5
+    ],
+    "anchors": [
+     "maps-site/data/city-anchors.json:52",
+     "maps-site/data/city-traits.json:222",
+     "index.html:7639"
+    ],
+    "rec": "PICK: only ringed place upstream of Sokundo; sparse invented record. city-traits.json:222 'Sits well inland on the Leponnian plateau, out of sight of the sea entirely' (biome plateau, condition faded). DATA CONTRADICTION to queue: city-anchors.json:52 puts the sea 77 px NE. Neighbours Kanae (86 px) and Sokundo (88 px) must lose their shields under 'only the river town gets a shield', else the rule that rejected Reketis (Aglaz 46 px) is applied unevenly. Heights/contours derivable from EPESHU_HF (inside window); river geometry still not in data",
+    "print_observations": [
+     "river runs past its west side",
+     "dotted road hugs the coast, Paerandas offshore (marker maps_markers.json:135 at 1337,1335)"
+    ],
+    "print_anchor": "z5 tile (11,11) = atlas x1408-1535, y1408-1535 holds Aldorus; no committed crop (add under docs/research/ or queue)",
+    "neighbours": {
+     "Kanae": {
+      "dist_px": 86,
+      "shield": "lost"
+     },
+     "Sokundo": {
+      "dist_px": 88,
+      "shield": "lost"
+     }
+    }
+   },
+   {
+    "name": "Kardunash",
+    "anchors": [
+     "maps-site/data/city-traits.json:573"
+    ],
+    "rec": "second; canon eastern border, but walls survive the hand-cover test"
+   },
+   {
+    "name": "Rēketis",
+    "anchors": [
+     "maps-site/data/city-anchors.json:62"
+    ],
+    "rec": "weakest; Aglaz 46px away fails only-shielded-place (rule must be applied evenly to Kanae/Sokundo vs Aldorus)"
+   }
+  ],
+  "painted_city": [
+   {
+    "name": "Epēshu",
+    "anchors": [
+     "maps-site/data/detail-charts.json:37",
+     "maps-site/data/chart-pois.json:2",
+     "maps-site/data/city-traits.json:238"
+    ],
+    "rec": "PICK: painted chart, 19 POIs, party is here, hinterland Sokundo+Aldorūs"
+   },
+   {
+    "name": "Summarch",
+    "anchors": [
+     "maps-site/data/detail-charts.json:45",
+     "maps-site/data/chart-pois.json:137",
+     "maps-site/data/city-traits.json:673"
+    ],
+    "rec": "second; only 9 POIs, far NW"
+   },
+   {
+    "name": "Drāmūz",
+    "anchors": [
+     "maps-site/data/maps_markers.json:200 (y 1769, wrong)",
+     "maps-site/data/city-anchors.json:141 (y 1733.8, right)"
+    ],
+    "rec": "third; generated plan only; fix 35px marker first"
+   }
+  ]
+ },
+ "reusable_facts": {
+  "research": [
+   "plate-one inventory: named peaks+heights, homestead dots, reserve washes, coast road, river forks, one shielded town (brief)",
+   "Azlen city inventory: block grain, park voids, ocher arterials, fog washes, contour hills (brief)",
+   "no atlas file holds rivers or homesteads; relief/contours/heights inside window [1060,1240]..[1860,2040] come from sim EPESHU_HF (bake into atlas relief, contours and heights = first-class implementation input). Rivers and homesteads prov invented unless traced. 'Peaks: none in any file' is wrong: 3 Mountains and Hills markers exist, none in Leponnia",
+   "Swiss layer -> fiction table (digest §5)",
+   "post dates by snowflake: Collison 2026-09-29, Azlen 2026-10-01",
+   "shared geoadmin URL shows only the base: all six overlays are ,f (hidden)",
+   "plates two/three KEEP: plate two = Queens Peak + Pole Mountain as icon pins, Cazadero, Guerneville, two park pins, hillshade, creek names (South Fork Gualala River, Austin Creek); plate three = Goat Rock, Toners Place, Dreamwood, Camp Thayer, Black Mountain Retreat Center pin, shields 1/116",
+   "plates two/three DELETE (both): all heights, most knoll names, contour hair, trails, rust coast road colour, most homesteads",
+   "forbidden-list lesson: a commercial pin replaced a landform name (Black Mountain survives only as a retreat pin); a POI pin must never stand in for a landform name",
+   "plate-one items missing from first inventory: braided river; river-valley 'knot' (Guerneville, Rio Nido, Villa Grande, Monte Rio = four names, not one town); plural highway shields; peak glyphs; dashed trails + secondary road through Cazadero; 'ocean a flat blue' (vs Azlen's watercolor water); 'a shed-scale name sits in the same ink as a peak'",
+   "brief fiction names to rename: 'coach posts' -> caravan halts / waystations (anachronism); 'artillery hours' dropped",
+   "Leponnia wiki page (wiki-places.json:150) names the Rhoshkhon mountains and Sūs Gimīlīn: canon seed for ridge names"
+  ],
+  "planning": [
+   "forbidden lists per sheet (digest §6)",
+   "label ranks via weighted greedy bbox pass (labelgun model, archived 2025-04-09; own ~50 lines)",
+   "pane order (maps-site/index.html:802-805): the old survey is a raster era layer in tilePane (z 200), NOT a vector pane; spec as two stacked tile layers with zIndex/opacity or compareRatio swipe. pWater 618 holds water LABELS (water fill needs a new low pane); pCityWash 449 / pCity 450 already sit in the under band; notices above pRouteWp 640. See pane_table",
+   "hash grammar to copy: layers=id@k=v,visible,opacity;... + timeSlider + compareRatio; insert into handleHash maps-site/index.html:3499 without clobbering entity hashes (maps-site/index.html:3528 guard)",
+   "Imhof: one global upper-left light with local adjustment; aerial perspective",
+   "palette: bone paper (base raster), rust coast road, ocher arterials, rose-brown blocks, wet-blue water"
+  ],
+  "implementation": [
+   "bake EPESHU_HF into atlas relief, contours and heights (FIRST-CLASS INPUT; atlas = (1060,1240) + grid*800/768; offline, committed); hachures from its gradients",
+   "continuous ramps follow worldOpacityUpdate maps-site/index.html:1988-1996",
+   "deeper raster: z6 or 512px tiles; keep retina maxNativeZoom-1 maps-site/index.html:815; TIER_CEIL pinned maps-site/index.html:768",
+   "seed generated sheets by name (mulberry32, as ensureCityGen maps-site/index.html:2968)",
+   "reuse registerCityOverlay maps-site/index.html:2068 for painted sheets",
+   "AI upscale offline only, baked + committed; expect seams/hallucination (davidoesch README; ControlNet tile)",
+   "sim notices: fixed seed + fixed simDays snapshot of W.chron/W.banditCamps/W.dragon; never ANNALS.fate()",
+   "new data via getJSON null-tolerant loader maps-site/index.html:3535",
+   "invented knoll/homestead names: deterministic via Patrinaic roots tool with reserved-word exclusion; regenerate via tools/build-gazetteer.js; never hand-edit",
+   "paint order -> pane_table (water fill needs a new low pane)"
+  ],
+  "review": [
+   "density vs plate one, not vs a VTT map",
+   "city vs Azlen: painted or UI?",
+   "stack swap: era + notices toggled without redraw; hash round-trip",
+   "read every name aloud; gazetteer/Patrinaic blocks are generated — fix sources",
+   "hand-cover test on Aldorūs: ridge names must exist",
+   "retina: TIER_CEIL stays pinned; night CSS keeps day pixel-identical (maps-site/index.html:37)"
+  ]
+ },
+ "camps": {
+  "paint_on_base": [
+   "fog washes as weather on city sheet",
+   "bone-paper raster stays the ground",
+   "pooled-edge contrast from existing land/water masks (maps-site/index.html:1923 washMake, maps-site/index.html:2940 sampleCityMask)",
+   "real colours: sample print hue (washMake already does), no imposed palette; conflict with planning palette -> palette for drawn line work, print-sampled hue for washes"
+  ],
+  "names_on_threshold": [
+   "far zoom almost empty: tier A already major regions + seas only (maps-site/index.html:226-233)",
+   "valley zoom indecent: weighted label ranks",
+   "selective label masking (today only text-shadow halo maps-site/index.html:157); printed raster names may collide with overlay labels (atlas-structure.md:53)",
+   "appear effect: data steps on a threshold, ink eases over a few tenths of a zoom",
+   "street names on a threshold at city zoom (answers Google/Apple dropping names); minimum label spacing at phone width"
+  ],
+  "one_question_view": [
+   "Contents plates already one-question presets (maps-site/index.html:1157 THEMES, maps-site/index.html:3677)",
+   "candidate plate: Where can we go this week? (roads, halts, shut ways, range days only) - EXTENDS the shipped 'Roads & Waters' plate (CHANGELOG 0.11.0), not a new view",
+   "candidate plate: What is around us? (valley sheet at party place)",
+   "journey mode #journey and search maps-site/index.html:3430 for navigators"
+  ],
+  "data_prerequisites": [
+   "POLISH.md:13 traced road network (District borders are roads; audit East-West Road vs river)",
+   "POLISH.md:44 census second pass (orphan ring-dots, Pish)",
+   "Drāmūz marker 35px error maps-site/data/maps_markers.json:200; Hordon/Maeges anchor duplicate (new)",
+   "river polylines traced from solid lines (new)",
+   "POLISH.md:33 uncharted-band softening",
+   "POLISH.md:30 region-chart zoom-through",
+   "POLISH.md:38 tier-hidden markers intercept clicks",
+   "POLISH.md:41 sim<->atlas deep-link parity",
+   "POLISH.md:35 data fetch cache-busting"
+  ],
+  "v2_trend_map": {
+   "transit ranked with roads": "one rank table for halts and ways",
+   "multi-layer road dashes": "canon dotted major roads as casing + dot layers, tied to POLISH.md:13",
+   "buildings under/over railway": "z-rule for structure dots against ways",
+   "hachures follow the rock": "derived from EPESHU_HF gradients",
+   "viewer speed (Bay Atlas)": "performance budget citing docs/research/web-performance.md",
+   "cramped": "minimum label spacing at phone width",
+   "where's Waldo": "label ranks + one-question plates",
+   "Handmer personal layers": "existing maps-site/data/reviews.json as a party layer (loaded maps-site/index.html:3541)",
+   "Stamen Watercolor": "precedent for the pooled-edge pass; method unverified (needs source fetch)",
+   "Cartique / permission / MapTiler Landscape / OSM Swiss Style (State of the Map) / swissALTI3D / QGIS + Swiss Map Vector 25": "context and Imhof/ML relief precedents; sources unverified; atlas substitutes EPESHU_HF for swissALTI3D"
+  }
+ },
+ "constraints": [
+  "single-file vanilla JS, Leaflet 1.9.4 CRS.Simple, no build step",
+  "determinism: seeded streams only (W.rng.gen/hist/det/amb, mulberry32 by name); never Math.random/Date.now in generation",
+  "gazetteer.json, lexicon, PATRINAIC roots are generated — regenerate, never hand-edit",
+  "cartographic key canon: dotted = major roads, solid black = rivers, ring-dot settlement, double-ring Māgosh-class",
+  "invented geography carries prov invented (hearsay watermark); canon charts get no invented stubs",
+  "chronicle voice: bronze-age Nīmlad, Kembar, A.B.; no saint/abbey/priest/baron/artillery/pilgrim",
+  "TIER_CEIL stays pinned (5 retina / 6 otherwise)",
+  "night mode CSS scoped to body[data-theme=night]; day pixel-identical",
+  "new hash keys go into handleHash precedence; setHash uses replaceState",
+  "agents never run git; index.html edits sequential",
+  "notice files per session clash with 'only push at version cuts' and POLISH.md:35 VERSION-based cache-busting (version unchanged between sessions): load notices outside the release (hash/URL param, local file import, or separately cached notices URL) or record a documented exception",
+  "fog must be a seeded function of place + snapshot sim day, or a new sim weather state on W.rng.hist; never wall-clock (W.weather index.html:3464 has no fog)",
+  "no 'coach posts' / 'artillery' / 'tithe' in player-facing prose"
+ ],
+ "risks": [
+  "Bay Atlas stack (MapLibre/PMTiles/Mapzen) is owner's brief only — unverified",
+  "relief methods all need a DEM: one exists only inside the Leponnia window (EPESHU_HF, 768^2 over 800 px, ~1.04 atlas px/cell); none for the rest of the atlas",
+  "AI upscaling hallucinates and seams; seed reproducibility unverified",
+  "invented names may dilute canon; owner approval path unclear",
+  "per-frame SVG stroke/label updates may be costly (Renderer not read, unmeasured)",
+  "storage: each extra zoom ~4x tiles (z6 ~2.5k, z7 ~10k per era, x3 eras; estimate)",
+  "brief contradiction: no fade (p7) vs praised appear effect (p6)",
+  "labelgun archived; LabelTextCollision stale",
+  "sim covers Leponnia only (window [1060,1240]..[1860,2040]); transform exists: atlas = (1060,1240) + grid*800/768",
+  "DEPLOY.md:42 stale (says z0-4)",
+  "Stamen Watercolor method (mask/blur/edge-darken) unverified: needs a source fetch",
+  "brief claim 'swisstopo newer vector service = Mapbox vector tiles + MapLibre style' unverified (owner's brief)",
+  "tiles-imperial/tiles-war differences in roads/forest unchecked (only byte-different)"
+ ],
+ "already_queued": [
+  "POLISH.md:13 Traced road network (USER FLAG)",
+  "POLISH.md:30 Region-chart zoom-through",
+  "POLISH.md:33 Uncharted-band softening",
+  "POLISH.md:35 Data fetch cache-busting",
+  "POLISH.md:38 Tier-hidden markers intercept clicks",
+  "POLISH.md:41 Sim <-> atlas continuity",
+  "POLISH.md:44 Census second pass — orphan ring-dots & unmarkered towns",
+  "docs/research/map-interface-design.md:23 full view-state URL serialization (planned)",
+  "POLISH.md:28 Trackpad gesture feel (overlaps the 'eased wheel' gap at maps-site/index.html:869-896)",
+  "POLISH.md:44 tail: '◉ majors reveal a tier earlier' (a label-rank decision)",
+  "'Where can we go this week?' extends shipped 'Roads & Waters' plate (CHANGELOG 0.11.0)"
+ ],
+ "pane_table": {
+  "note": "proposed paint order (brief p5); pane numbers are proposals",
+  "rows": [
+   {
+    "order": 0,
+    "layer": "old survey (era)",
+    "host": "tilePane z200, lower tile layer"
+   },
+   {
+    "order": 1,
+    "layer": "live base + baked relief (EPESHU_HF)",
+    "host": "tilePane z200, upper tile layer"
+   },
+   {
+    "order": 2,
+    "layer": "contours",
+    "host": "new pane ~405"
+   },
+   {
+    "order": 3,
+    "layer": "water fill",
+    "host": "new low pane ~408 (pWater 618 is labels only)"
+   },
+   {
+    "order": 4,
+    "layer": "rust coast road",
+    "host": "new pane ~417; canon dotted roads stay"
+   },
+   {
+    "order": 5,
+    "layer": "reserves (green wash)",
+    "host": "new pane ~409"
+   },
+   {
+    "order": 6,
+    "layer": "homestead dots",
+    "host": "new pane ~418"
+   },
+   {
+    "order": 7,
+    "layer": "names + heights",
+    "host": "pMtn 622 / pLesser 623 / pSettle 624 with rank pass"
+   },
+   {
+    "order": 8,
+    "layer": "city grain",
+    "host": "pCityWash 449 / pCity 450"
+   },
+   {
+    "order": 9,
+    "layer": "fog",
+    "host": "new pane ~460; undecided whether it masks names (fog-last puts it over them)"
+   },
+   {
+    "order": 10,
+    "layer": "notices",
+    "host": "above pRouteWp 640, swappable"
+   }
+  ]
+ },
+ "workflows": {
+  "gate": "do not let planning start before the density bible exists, and do not let review become a vibe check (brief p5)",
+  "source": "brief pp.5-6, word for word",
+  "research": {
+   "input": "these three plates, the Swiss layer list, and whatever region the campaign already uses.",
+   "output": "a density bible, not a map. Walk the real coast once and list what plate one bothers to name — peak, height, homestead, reserve, river fork, coast road — and what plates two and three delete. Do the same for a city quarter in Azlen’s grain: block, park void, arterial, fog wash, contour hill. Pull the Swiss stack across and rename the layers in fiction: old survey, every structure, coach posts, blazed paths, range days, closures.",
+   "done_when": "you can point at a blank hex and say which six things must appear on it before it is allowed to be empty.",
+   "note_coach_posts": "'coach posts' is anachronistic: rename caravan halts / waystations",
+   "blank_hex": {
+    "unit": "the atlas has no hex grid; unit = one z7 tile (32 atlas px; a z5 tile is 128 px) or one league at a stated px scale (scale bar is Cyrikon-miles, scale unchecked)",
+    "six_things_for_open_ground": [
+     "contour hair",
+     "a named ridge with height",
+     "a water line or fork",
+     "a path or drove-track",
+     "a homestead dot",
+     "a cover wash"
+    ],
+    "not": "the plate-one six, which include a shielded town that cannot be on every hex"
+   }
+  },
+  "planning": {
+   "input": "the density bible and the region.",
+   "output": "a sheet spec. Pick one coast, one river town, one painted city. Set label ranks: peaks and heights always, homesteads as dots, reserves as a green wash, only the river town gets a shield. Decide the Azlen rule for the city: texture over type, fog as weather not as art. Lock the overlay order so the 1864 sheet sits under the live one, and closures and range notices sit on top and can be swapped between sessions. Name the palette: bone paper, rust coast road, ocher arterials, rose-brown blocks, wet-blue water.",
+   "done_when": "a cartographer who has not seen the posts could draw sheet one from the spec alone."
+  },
+  "implementation": {
+   "input": "the sheet spec.",
+   "output": "the table map. Draw relief first, contours tight enough to read as fingerprints, then water, then the rust coast road, then green reserves, then homestead dots, then names and heights, then the city grain and fog washes last. Build the overlays as separate sheets: old survey, structures, coach posts, blazed paths, range days, closures. Do not generalize a ridge to save ink. If a knoll has no name, invent one. The crime in plates two and three is omission.",
+   "done_when": "you can cover the settlement with a hand and still navigate by ridge names.",
+   "note": "relief/contours/heights baked from EPESHU_HF (see pane_table for paint order); invented names deterministic via Patrinaic roots tool + tools/build-gazetteer.js"
+  },
+  "review": {
+   "input": "the finished sheet plus the three plates and the Swiss layer list.",
+   "output": "a punch list. Check density against plate one, not against a normal virtual-tabletop map. Check the city against Azlen: does it look painted, or like a UI. Check the stack: can you pull the 1864 sheet, the closures, and the range notice without redrawing. Read every name aloud. Anything you cannot say at the table gets cut or rewritten. Mark the holes where you flinched and generalized.",
+   "done_when": "the sparse version of your own map makes you angry.",
+   "sparse_version": "produce it as a side-by-side at the same view: today's tiers against the new sheet (e.g. via the prototypes/atlas-night.html split). Otherwise 'makes you angry' cannot be checked."
+  },
+  "conflicts": [
+   "(a) planning 'peaks and heights always' (p5) vs 'What to steal' (p8) holding ridge names and heights back until the region sheet",
+   "(b) plate one 'same ink for shed and peak' vs label ranks",
+   "(c) planning palette (rust, ocher, rose-brown) vs v2 'real land colours, not a style palette': palette for drawn line work, print-sampled hue for washes",
+   "(d) Azlen 'texture over type' vs v2 Google/Apple dropping street names: street names on a threshold at city zoom",
+   "(e) country sheet 'nothing smaller than the one town' vs baked base that prints every ○ town and hand-lettered name at z0-5: accept the print or plan a de-lettered country raster"
+  ]
+ }
+}
