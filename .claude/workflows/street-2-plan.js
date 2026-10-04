@@ -199,6 +199,7 @@ async function recordD(rel, obj, label) {
 }
 // ---- end street config ----
 // ==== end street prelude ====
+const VOCAB_ST_RULE_FULL = `Banned vocabulary (case-insensitive regex ${VOCAB_ST.source}) is grepped over the WHOLE of street-spec.md outside the sections "## Provenance" and "## Renames", and over every label/row/text/player string in the JSON: prose, tables, notes, unit text and engineering commentary all count, not only player-facing text. A banned word anywhere in the spec body is a hit, so describe engineering concepts in bronze-age terms: "right-of-way rule" (not a word from the banned list), "gate schedule", "halt rule", "crossing order", "one-lane turn-taking", "foot traffic" as "folk on the road". Quote a source name (code identifier, old label, or banned term) only inside "## Provenance" or "## Renames". Bronze-age words: the gates shut at the dark hour; caravan halts and waystations; toll halts; fords and one-lane bridges crossed in turn; roads and folk. Voice: bronze-age Nīmlad, the nine Kembar, years A.B.`
 checkArgs(['streetRulings', 'port'])
 
 // ---- constants (design §3, literal) ----
@@ -536,7 +537,7 @@ if (!tidingsKeep) {
   const td = await crit(PS(`Write the herald's tidings fixture ${TIDINGS} (create fixtures/) in the R12 notices schema: ${src ? 'the schema of ' + (src.startsWith('maps-site/') ? REPO + '/' + src : FIL_SPEC + ' /contracts/notices') + ' (read-only); schema_source = "' + src + '"' : 'no committed notices schema exists yet, so use the notice classes of ' + BIBLE_JSON + ' (shut ways, muster days) and set schema_source = "bible"'}.
 Step 1, find the route id (write nothing yet): read ${VIEWS_JSON} for the SV4 bridge's x,z. In the sandbox below, load ${REPO}/index.html read-only at seed epeshu and in node/browser list ANNALS.world.routes (entries with an id and a polyline of points); pick the route whose polyline passes nearest the SV4 bridge point (ties: the lowest id) and use its id string verbatim. Do not use any probe flag: Street 3 adds them later and they may not exist.
 Step 2, write the fixture. Record shape (the notices schema's own field names win when a schema exists): {date, frozen, seed, day, schema_source, shut_ways: [{route: "<route id from step 1>", from_day: 120, to_day: 121, kind: "shut_way"}], muster_days: [{settlement: "<the Epēshu settlement id from ANNALS.world.settlements, matched by name>", day: 120, kind: "muster_day"}]}; when the bible supplies the schema, those field names stand.
-Content: {date: "${DATE}", frozen: true, seed: "epeshu", day: 120, schema_source, shut_ways: [exactly one shut way on the SV4 approach route: the route id of the W.routes entry through the SV4 bridge of ${VIEWS_JSON} (step 1 below)], muster_days: [exactly one muster day at Epēshu]} plus whatever fields the schema requires. Player-facing words: the herald's tidings, shut ways, muster days. ${VOCAB_ST_RULE}
+Content: {date: "${DATE}", frozen: true, seed: "epeshu", day: 120, schema_source, shut_ways: [exactly one shut way on the SV4 approach route: the route id of the W.routes entry through the SV4 bridge of ${VIEWS_JSON} (step 1 below)], muster_days: [exactly one muster day at Epēshu]} plus whatever fields the schema requires. Player-facing words: the herald's tidings, shut ways, muster days. ${VOCAB_ST_RULE_FULL}
 ${SANDBOX_ST}
 Rulings:
 ${rulingText(RUL, ['R12', 'R13'])}
@@ -600,7 +601,7 @@ ${SPEC_SHAPE}
 Rulings cited by this section:
 ${secRulings(s)}
 ${DET_RULE}
-${VOCAB_ST_RULE}
+${VOCAB_ST_RULE_FULL}
 ${NO_PROBE_TALK}
 ${LEAK_RULE}
 Return {sid: "${s.sid}", md, json (absolute paths), sha_md, sha_json (sha256sum of each), pointers (the owned pointers you filled), anchors (every "index.html :: <literal>" you cite), open (questions you could not settle)}.`),
@@ -638,7 +639,7 @@ ${SPEC_SHAPE}
 Rulings:
 ${rulingsAll}
 ${DET_RULE}
-${VOCAB_ST_RULE}
+${VOCAB_ST_RULE_FULL}
 ${NO_PROBE_TALK}
 Return {md, json (absolute paths), sha_md, sha_json (sha256sum of each), rule_ids (every rules[].id)}.`), {label: 'spec integrator', phase: 'Integrate', schema: INTEG2, ...M('integ')})
 if (!integ) return stop('agent died: spec integrator')
@@ -654,7 +655,7 @@ if (blocking.length) {
 ${J(blocking)}
 ${SPEC_SHAPE}
 ${DET_RULE}
-${VOCAB_ST_RULE}
+${VOCAB_ST_RULE_FULL}
 ${NO_PROBE_TALK}
 ${LEAK_RULE}
 Return {md, json, sha_md, sha_json, rule_ids}.`), {label: 'spec patcher', phase: 'Integrate', schema: INTEG2, ...M('judge')})
@@ -880,7 +881,7 @@ Mandatory units: ${J(Object.fromEntries(Object.entries(MANDATORY_UNITS).filter((
 Rulings:
 ${rulingsAll}
 ${DET_RULE}
-${VOCAB_ST_RULE}
+${VOCAB_ST_RULE_FULL}
 ${NO_PROBE_TALK}
 ${LEAK_RULE}
 Return {md, json, sha_md, sha_json (sha256sum of each), fixed (one line per item you fixed)}.`), {label: 'spec fixer' + tag, phase: 'Fix', schema: FIXR, ...M('judge')})

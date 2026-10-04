@@ -221,6 +221,33 @@ const SINCE = {fade: 'S1', swaps: 'S1', paths: 'S1', jobs: 'S1', vfps: 'S3', spa
 const sliceAtLeast = (sl, s) => SLICES.indexOf(sl) >= SLICES.indexOf(s)
 const canonJ = v => Array.isArray(v) ? v.map(canonJ) : v && typeof v === 'object' ? Object.fromEntries(Object.keys(v).sort().map(k => [k, canonJ(v[k])])) : v
 const CAPTURE_FLAGS = sl => '--views ' + VIEWS_JSON + ' --layers street=0,street=1 --metrics calls,tris,geoms,textures,objects,stats_keys' + (sliceAtLeast(sl, 'S0') ? ',classes,appear,swaps,jobs,resident --hash-table' : '') + (sliceAtLeast(sl, 'S1') ? ' --paths descent,oscillate,flyaway' : '') + (sliceAtLeast(sl, 'S3') ? ' --vfps 30,60 --queue-hash 600' : '') + (sliceAtLeast(sl, 'S4') ? ' --tidings ' + TIDINGS + ' --sky --fog-pairs 50' : '')   // flags exist from the slice whose units add them (S0.U01: S0-S3 set; S4 units: --tidings, --sky, --fog-pairs)
+// The probe's --out paths of every digest field (README §5.2 output contract: top level {tool_sha, index_sha, views, fingerprint, dark, paths, console_errors, console_errors_filter, infra_error}, extended by the S0-S4 probe units). The metrics reader reads exactly these; every unit that edits the probe is told to write them here; Street 4's digest reads the same paths first.
+const PROBE_OUT = {
+  views: '{<SVn>: {off: /views/<SVn>/off/{calls,tris,geoms,textures,objects} (the street=0 run), on: /views/<SVn>/on/{calls,tris,geoms,textures,objects,quads_per_frame,built_tris_per_frame,resident_tris} (the street=1 run), classes_on: /views/<SVn>/on/classes ({<class>: count})}} for every key <SVn> of /views',
+  appear: '{violations: /appear/violations (strings), slowest_ms: /appear/slowest_ms}',
+  swaps: '{<threshold>: {in: /swaps/<threshold>/in, out: /swaps/<threshold>/out}} for every key <threshold> of /swaps',
+  oscillate_builds: '{<class>: /paths/oscillate/builds/<class>} for every key <class> of /paths/oscillate/builds',
+  flyaway: '{geoms_first: /paths/flyaway/geoms_first, geoms_return: /paths/flyaway/geoms_return, geoms_reseed: /paths/flyaway/geoms_reseed, resident_max: /paths/flyaway/resident_max}',
+  jobs_max: '/paths/jobs_max (the per-frame maximum over every path run)',
+  built_tris_max: '/paths/built_tris_max (the per-frame maximum over every path run)',
+  vfps: '{h30: /vfps/h30, h60: /vfps/h60} (the --queue-hash hashes under --vfps 30 and 60)',
+  spacing: '{min_gap: /spacing/min_gap, dvis_over_dtrue: /spacing/dvis_over_dtrue} (at SV4)',
+  hash_table: '/hash_table ([{hash, ok, got}], verbatim)',
+  writer_roundtrip: '/writer_roundtrip',
+  stats_keys: '/views/SV1/on/stats_keys (in its order)',
+  inst_no_color: '/inst_no_color',
+  clouds: '{same_day_equal: /sky/clouds/same_day_equal, next_day_differs: /sky/clouds/next_day_differs, deck_matches_weather: /sky/clouds/deck_matches_weather}',
+  shadows_row: '{held_text: /sky/shadows_row/held_text, disabled: /sky/shadows_row/disabled, off_kills_shadow: /sky/shadows_row/off_kills_shadow, default_on_equal: /sky/shadows_row/default_on_equal}',
+  weather_dial: '{exact: /sky/weather_dial/exact, counts: /sky/weather_dial/counts (4 integers)}',
+  tidings: '{barriers: /tidings/barriers, musters: /tidings/musters, off_zero: /tidings/off_zero, atlas_equal: /tidings/atlas_equal (null when there is no atlas sample)}',
+  fog: '{present: /fog/present (the FILIGREE fog function exists), src_equal: /fog/src_equal, pairs_equal: /fog/pairs_equal (both null when present is false)}',
+  console_errors: '/console_errors (strings)'
+}
+const DEVICE_OUT = `the newest ${DOCS}/device/*.json by its dated file name: {fps_min: the minimum of /seconds/<i>/fps, degrade_max: the maximum of /seconds/<i>/degrade_step} (--device writes {date, index_sha, seconds: [{t, fps, degrade_step}]})`
+const PROBE_OUT_TEXT = Object.entries(PROBE_OUT).map(([k, v]) => '- ' + k + ' <- ' + v).join('\n')
+const DIG_SINCE = {views: 'S0', stats_keys: 'S0', inst_no_color: 'S0', console_errors: 'S0', hash_table: SINCE.hash_table, writer_roundtrip: SINCE.hash_table, appear: SINCE.fade, swaps: SINCE.swaps, oscillate_builds: SINCE.paths, flyaway: SINCE.paths,
+  jobs_max: SINCE.jobs, built_tris_max: SINCE.jobs, vfps: SINCE.vfps, spacing: SINCE.spacing, clouds: SINCE.clouds, shadows_row: SINCE.shadows_row, weather_dial: SINCE.weather_dial, tidings: SINCE.tidings, fog: SINCE.fog}   // the digest fields a slice's criteria score (hash_table and writer_roundtrip once S0.U02 is done, as GS.X5)
+const digReq = (sl, hashDone) => Object.keys(DIG_SINCE).filter(k => sliceAtLeast(sl, DIG_SINCE[k]) && (hashDone || !['hash_table', 'writer_roundtrip'].includes(k)))
 const reSafe = p => p.length <= 200 && !/\\[1-9k]/.test(p) && !/[+*}]\)?[+*{]/.test(p) && !/\([^()]*[+*][^()]*\)[+*{]/.test(p)   // length cap, no backreference, no nested or stacked quantifier
 const expectOk = (exp, out) => {   // acceptance and /checks are scored here, never by the agent that ran them
   const o = String(out ?? '').trim(), e = String(exp ?? '')
@@ -229,7 +256,7 @@ const expectOk = (exp, out) => {   // acceptance and /checks are scored here, ne
   if (e.startsWith('json:')) { try { return JSON.stringify(canonJ(JSON.parse(o))) === JSON.stringify(canonJ(JSON.parse(e.slice(5)))) } catch (x) { return false } }
   return o === e.trim()
 }
-const RESTORE_TASK = (tag) => `Restore check (write nothing; a node script in a mktemp -d dir): read ${REPO}/index.html and ${SPEC_JSON} (/hook_lines: [{line, replaces}]). Delete the lines from the first line containing "/* STREET */" through the first line after it containing "/* /STREET */" (inclusive; none when absent). Then for every remaining line that contains "${HOOK_MARK}": if it equals some hook_lines[].line exactly, replace it with that entry's replaces (delete the line when replaces is null); otherwise keep it and list it in undeclared. Return {sha_restore: sha256 of the joined result (lines joined with "\\n"), sha_index: sha256sum of index.html, undeclared, dup_hooks: the declared hook lines whose replaces is null that occurred more than once among the remaining lines (one entry per line text, with the count; [] when none), marked_n, block_lines, block_top_level: the names the block declares at its top level (const/let/var/function/class at brace depth 0 inside the block)} (${tag}).`
+const RESTORE_TASK = (tag) => `Restore check (write nothing; a node script in a mktemp -d dir): read ${REPO}/index.html and ${SPEC_JSON} (/hook_lines: [{line, replaces, anchor}]). Delete the lines from the first line containing "/* STREET */" through the first line after it containing "/* /STREET */" (inclusive; none when absent); the lines left are the remaining lines. On the remaining lines, before any replacement: marked_n = the number of lines containing "${HOOK_MARK}"; hooks_present = the distinct hook_lines[].line texts that some line equals exactly; dup_hooks = one entry "<line text> x<count>" per hook_lines[].line that more than one line equals ([] when none); misplaced = one entry per line that equals a hook_lines entry whose replaces is null and does not sit at that entry's anchor, where it sits at its anchor when the anchor is a non-empty string and the nearest line above it or the nearest line below it that does not contain "${HOOK_MARK}" contains the anchor text (String.indexOf); the entry is "<line text> (anchor <anchor>)", or "<line text> (no anchor declared)" when the anchor is missing or empty ([] when none). Then for every remaining line that contains "${HOOK_MARK}": if it equals some hook_lines[].line exactly, replace it with that entry's replaces (delete the line when replaces is null); otherwise keep it and list it in undeclared. Return {sha_restore: sha256 of the joined result (lines joined with "\\n"), sha_index: sha256sum of index.html, undeclared, dup_hooks, misplaced, hooks_present, marked_n, block_lines, block_top_level: the names the block declares at its top level (const/let/var/function/class at brace depth 0 inside the block)} (${tag}).`
 // Street 2's unit file allowlist (workflow-2-plan.md), applied here to diagnoser fix units and ledger fix units
 const UNIT_FILES_OK = /^(index\.html|tools\/street-probe\.js|docs\/street\/(fixtures|shots|device)\/.+)$/
 const UNIT_FILES_BAD = /^(maps-site\/|docs\/filigree\/|\.claude\/|tools\/filigree-|tools\/street-drift\.js$|docs\/street\/(gates|state|research)\/|docs\/street\/(street-bible|street-spec)\.|docs\/street\/rulings\.json$|server\.js$|POLISH\.md$|CHANGELOG\.md$|VERSION$)/
@@ -279,12 +306,12 @@ const NUMMAP = {type: 'object', additionalProperties: NN}
 const REFV = OBJ({views: {type: 'object', additionalProperties: NUMMAP}, fingerprint: {type: 'object', additionalProperties: OBJ({plain: S, walk: S})}, keydown_sha: S, view_dependent: B})
 const HOLD = OBJ({fil3: OBJ({exists: B, pass: B, mode: S, forced: B, spec_fresh: B}), fil4: {type: ['object', 'null'], properties: {k: I, pass: B}},
   f3_checked: B, open: SA, street_data_open: SA})
-const RESTORE = OBJ({sha_restore: S, sha_index: S, undeclared: SA, dup_hooks: SA, marked_n: I, block_lines: I, block_top_level: SA})
+const RESTORE = OBJ({sha_restore: S, sha_index: S, undeclared: SA, dup_hooks: SA, misplaced: SA, hooks_present: SA, marked_n: I, block_lines: I, block_top_level: SA})
 const PRE3 = OBJ({missing: SA, anchors: ANCH, fil_anchors: FILANCH, drift: DRIFT, hold: HOLD, restore: RESTORE,
   gate2: OBJ({exists: B, pass: B, mode: S, forced: B, spec_ok: B, spec_sha256: S}),
   gate1: OBJ({fil_bible_sha256: S, fil_rulings_cited: {type: 'object', additionalProperties: S}}),
   fil_bible_sha256_now: S, fil_overrides: {type: 'object', additionalProperties: S}, st_overrides: {type: 'object', additionalProperties: S},
-  spec: OBJ({units: {type: 'array', items: {type: 'object', additionalProperties: {type: ['string', 'number', 'boolean', 'array', 'object', 'null']}}}, checks: {type: 'object', additionalProperties: {type: 'array', items: OBJ({id: S, cmd: S, expect: S})}}, caps: {type: 'object', additionalProperties: {type: 'object', additionalProperties: NN}}, stream: {type: 'object', additionalProperties: NN}, traffic: {type: 'object', additionalProperties: NN}, hook_lines: {type: 'array', items: OBJ({line: S, replaces: {type: ['string', 'null']}})}, counts: OBJ({units_n: I, units_len: I, checks_n: I, checks_len: I, hook_n: I, hook_len: I, caps_n: I, caps_len: I}), fog_unit: B}),
+  spec: OBJ({units: {type: 'array', items: {type: 'object', additionalProperties: {type: ['string', 'number', 'boolean', 'array', 'object', 'null']}}}, checks: {type: 'object', additionalProperties: {type: 'array', items: OBJ({id: S, cmd: S, expect: S})}}, caps: {type: 'object', additionalProperties: {type: 'object', additionalProperties: NN}}, stream: {type: 'object', additionalProperties: NN}, traffic: {type: 'object', additionalProperties: NN}, hook_lines: {type: 'array', items: OBJ({line: S, replaces: {type: ['string', 'null']}, anchor: {type: ['string', 'null']}}, ['line', 'replaces'])}, counts: OBJ({units_n: I, units_len: I, checks_n: I, checks_len: I, hook_n: I, hook_len: I, caps_n: I, caps_len: I}), fog_unit: B}),
   ledger: {type: 'array', items: OBJ({id: S, status: S, runs_failed: I, spec_sha256: S, discarded: B, slice: S, title: S, last_failure: S, failed_criterion: S, unit: LOOSE}, ['id', 'status', 'runs_failed', 'spec_sha256', 'discarded'])},
   slice_gates: {type: 'object', additionalProperties: OBJ({exists: B, pass: B, spec_sha256: S})},
   index_ref: OBJ({exists: B, date: S, sha_restore: S, tool_sha: S, restore_ok: B, sha_restore_left: S, tree_ok: B, tree_digest_end: S, ref: REFV}, ['exists', 'date', 'sha_restore', 'tool_sha', 'restore_ok', 'sha_restore_left', 'tree_ok', 'tree_digest_end']),
@@ -311,7 +338,6 @@ const DIGEST = OBJ({sha256: S,
   weather_dial: OBJ({exact: B, counts: {type: 'array', items: I}}), tidings: OBJ({barriers: I, musters: I, off_zero: B, atlas_equal: {type: ['boolean', 'null']}}),
   fog: OBJ({present: B, src_equal: {type: ['boolean', 'null']}, pairs_equal: {type: ['boolean', 'null']}}), device: {type: ['object', 'null'], properties: {fps_min: N, degrade_max: I}},
   console_errors: SA, not_found: SA})
-DIGEST.required = DIGEST.required.filter(k => k !== 'not_found')   // optional: lists the digest fields the probe file lacked
 const STATIC = OBJ({clock_hits: I, rng_hits: I, nowms_hits: I, vocab_hits: I, inst_n: I, inst_color_n: I, restore: RESTORE, fil_anchors: FILANCH, street_in_block: {type: 'object', additionalProperties: I}, keydown_sha: S, near_line: B, tree_digest: S})
 const CHK = OBJ({results: {type: 'array', items: OBJ({id: S, cmd: S, out: S})}, infra_error: S})
 const DIAG = OBJ({units: {type: 'array', items: OBJ({id: S, slice: S, title: S, kind: S, files: SA, deps: SA, covers: SA, hooks: SA,
@@ -377,7 +403,7 @@ const PREFLIGHT3 = `Street 3 preflight. Read only: write nothing (throwaway node
 7. gate2, from ${OUTABS}/gates/2-plan.json: {exists (present and parses), pass: parsed.pass === true, mode: parsed.mode or "", forced: parsed.forced_by != null, spec_ok: its "artifacts" ([{path, sha256}]) has an entry for street-spec.json and every entry whose path ends in street-spec.json or street-spec.md records the sha256sum that file has now (false when the gate or a file is missing), spec_sha256: sha256sum of ${SPEC_JSON} ("" when missing)}.
 8. gate1, from ${OUTABS}/gates/1-research.json: {fil_bible_sha256: its "fil_bible_sha256", fil_rulings_cited: its "fil_rulings_cited" object verbatim}. fil_bible_sha256_now: sha256sum of ${FIL}/density-bible.json.
 9. fil_overrides: the "overrides" object of ${FIL}/rulings.json; st_overrides: the "overrides" object of ${DOCS}/rulings.json.
-10. spec, from ${SPEC_JSON}: units = /units verbatim (each {id, slice, title, kind, files, deps, covers, hooks, acceptance: [{id, kind, cmd, expect}], model?, effort?}); checks = /checks verbatim ({<slice>: [{id, cmd, expect}]}); caps = {<SVn>: /caps/<SVn>/on} (numbers only); stream = the numeric fields of /stream plus fade_ms = /fade/ms; traffic = the numeric fields of /traffic; hook_lines = /hook_lines verbatim ([{line, replaces}]); counts = computed by a node script FROM THE FILE, never from your copy: {units_n: /units length, units_len: JSON.stringify(/units).length, checks_n: total entries over all /checks arrays, checks_len: JSON.stringify(/checks).length, hook_n: /hook_lines length, hook_len: JSON.stringify(/hook_lines).length, caps_n: number of keys of your caps map, caps_len: JSON.stringify(your caps map).length}; fog_unit = some /units entry has id "S4.Ufog".
+10. spec, from ${SPEC_JSON}: units = /units verbatim (each {id, slice, title, kind, files, deps, covers, hooks, acceptance: [{id, kind, cmd, expect}], model?, effort?}); checks = /checks verbatim ({<slice>: [{id, cmd, expect}]}); caps = {<SVn>: /caps/<SVn>/on} (numbers only); stream = the numeric fields of /stream plus fade_ms = /fade/ms; traffic = the numeric fields of /traffic; hook_lines = /hook_lines verbatim ([{line, replaces, anchor}], every key as the file has it); counts = computed by a node script FROM THE FILE, never from your copy: {units_n: /units length, units_len: JSON.stringify(/units).length, checks_n: total entries over all /checks arrays, checks_len: JSON.stringify(/checks).length, hook_n: /hook_lines length, hook_len: JSON.stringify(/hook_lines).length, caps_n: number of keys of your caps map, caps_len: JSON.stringify(your caps map).length}; fog_unit = some /units entry has id "S4.Ufog".
 11. tidings, from ${TIDINGS}: {exists, shut_ways: the number of its shut-way entries, musters: the number of its muster-day entries at Epēshu}.
 12. ledger: one entry per *.json file directly in ${LEDGER_DIR}, except index-ref.json and off-ref.json: {id, status, runs_failed, spec_sha256, discarded: status === "discarded", slice, title, last_failure, failed_criterion, unit: for an id starting "fix-", the file's unit fields {id, slice, title, kind, files, deps, covers, hooks, acceptance, failed_criterion, model?, effort?}, else {}}.
 13. slice_gates: keys S0, S1, S2, S3, S4 = ${OUTABS}/gates/3-build-<key>.json and key final = ${OUTABS}/gates/3-build.json, each {exists (present and parses), pass: parsed.pass === true, spec_sha256: its "spec_sha256"}.
@@ -422,12 +448,25 @@ if (specGap.length) {
   if (MODE === 'full' && !FORCE && !chain.length) die(msg)
   log(msg + ' (reported only: ' + (FORCE ? 'forced' : chain.length ? 'chain not satisfied' : MODE + ' mode') + ')')
 }
+const hookGap = SPEC.hook_lines.filter(h => h && h.replaces == null && !(typeof h.anchor === 'string' && h.anchor.trim())).map(h => String(h.line))
+if (hookGap.length) {   // an insert hook's place is checked against its declared anchor; without one every placement of it fails the restore check
+  const msg = `street-spec.json /hook_lines declares ${hookGap.length} insert hook(s) (replaces null) without an anchor, so their placement cannot be checked (${hookGap[0]}): re-run street-2-plan`
+  if (MODE === 'full' && !FORCE && !chain.length) die(msg)
+  log(msg + ' (reported only: ' + (FORCE ? 'forced' : chain.length ? 'chain not satisfied' : MODE + ' mode') + ')')
+}
 
 // ---- schedule (code) ----
 const LEDGER = new Map(arr(pre.ledger).map(e => [String(e.id), {...e}]))
 const DISC = new Set(DISCARD)
 for (const id of UNSTICK) { const e = LEDGER.get(id); if (e && (e.runs_failed || 0) > 0) { e.runs_failed = 0; log(`unstick: ${id} runs_failed reset to 0 for this run`) } else log(`unstick: ${id} has no failed runs on record`) }
-const HOOK_SET = new Set(SPEC.hook_lines.map(h => String(h.line)))
+const HOOK_SET = new Set(SPEC.hook_lines.map(h => String(h.line))), HOOK_N = SPEC.hook_lines.length
+function hookWhy(rs) {   // hook-line faults the restore sha cannot see (deleted insert hooks leave no trace in it): a declared line twice, an insert hook away from its declared anchor, more marked lines than the spec declares
+  const r = obj(rs), dup = arr(r.dup_hooks), mis = arr(r.misplaced), und = arr(r.undeclared), pres = arr(r.hooks_present)
+  return [dup.length ? 'declared hook line appears more than once: ' + dup.slice(0, 3).join(' | ') : '',
+    mis.length ? 'declared insert hook not beside its declared anchor: ' + mis.slice(0, 3).join(' | ') : '',
+    !Number.isInteger(r.marked_n) || r.marked_n > HOOK_N ? `marked lines outside the block (${r.marked_n}) exceed the ${HOOK_N} hook_lines street-spec.json declares` : '',
+    Number.isInteger(r.marked_n) && !dup.length && r.marked_n !== pres.length + und.length ? `marked lines outside the block (${r.marked_n}) != declared hooks present (${pres.length}) + undeclared (${und.length})` : ''].filter(Boolean)
+}
 const fixSliceOf = id => { const m = /^fix-(S[0-4])\d+$/.exec(id); return m ? m[1] : '' }
 function unitWhy(u) {   // structural rules every fix unit must meet (Street 2's file allowlist, declared hooks, mechanical acceptance)
   if (!/^fix-S[0-4]\d+$/.test(u.id)) return 'id is not fix-S<slice digit><n>'
@@ -523,6 +562,7 @@ const filN = obj(pre.fil_anchors).n, filK = Object.keys(obj(obj(pre.fil_anchors)
 const faults = [specCopyBad.length ? `the preflight's copy of street-spec.json (${specCopyBad.join(', ')}) does not match the file's counts and lengths; nothing is scheduled from a truncated copy (re-run)` : '',
   !(filN > 0) || filK !== filN ? `filigree anchors unreadable: the preflight returned ${filK} literal(s) for ${filN} kept ANCHORS entr(ies) of filigree-1-research.js; the coexistence guard would be vacuous, so nothing is scheduled (re-run)` : '',
   arr(pre.restore.undeclared).length ? `restore invariant broken: ${pre.restore.undeclared.length} marked line(s) outside the STREET block are not declared hook lines (${pre.restore.undeclared.slice(0, 3).join(' | ')}); undo them by hand, then re-run` : '',
+  IR.exists && IR.restore_ok === false && hookWhy(pre.restore).length ? `restore invariant broken: the Street 3 run of ${IR.date || '?'} left hook lines outside the STREET block out of place and they are still there (${hookWhy(pre.restore)[0]}); undo them by hand, then re-run` : '',
   IR.exists && IR.restore_ok === false && HEX(IR.sha_restore) && pre.restore.sha_restore !== IR.sha_restore ? `restore invariant broken: the Street 3 run of ${IR.date || '?'} left a line outside the STREET block changed (restore sha ${IR.sha_restore_left || '?'} != stamp ${IR.sha_restore}) and restore(index.html) still differs from the stamp (now ${pre.restore.sha_restore}); undo the stray edit by hand (if only a later foreign edit of index.html remains, delete ${OUT}/state/3-build/index-ref.json and the next run re-baselines on the restored file), then re-run` : '',
   IR.exists && IR.tree_ok === false && HEX(IR.tree_digest_end) && pre.tree_digest === IR.tree_digest_end ? `coexistence broken: the Street 3 run of ${IR.date || '?'} changed maps-site/ or docs/filigree/ (tree digest now ${IR.tree_digest_end}) and the tree is unchanged since; restore those files from the last commit by hand (if the change was a legitimate filigree edit, delete ${OUT}/state/3-build/index-ref.json), then re-run` : ''].filter(Boolean)
 
@@ -545,11 +585,11 @@ if (MODE === 'plan') {
   const boundFor = n => schedFor(n).reduce((s, r) => s + r.agents_max, 0)
   const schedule = schedFor(nB), agentsMax = boundFor(nB), bound = boundFor(MAXU_RUN)
   return done({reason: 'plan', slice: SL, check_off: false, chain_ok: !chain.length, chain, held: heldBy.length > 0, held_by: heldBy, blocked_by: blockedBy, spec_gap: specGap,
-    owner_rulings_used: RUSED, street_rulings_used: STR.used, schedule, agents_max: agentsMax, agents_bound: bound, over_bound: bound > 190,
+    hook_gap: hookGap, owner_rulings_used: RUSED, street_rulings_used: STR.used, schedule, agents_max: agentsMax, agents_bound: bound, over_bound: bound > 190,
     units: batch.map(u => u.id), deferred, stuck: stuck.map(x => x.id), rest_of_slice: restOfSlice, gate_expected: gateLikely, faults,
     polish_note: `plan: slice ${SL} (${SLICE_NAME[SL]}), ${nB} unit(s) [${batch.map(u => u.id).join(', ')}], ${deferred.length} deferred, ${stuck.length} stuck; at most ${agentsMax} agents this run, ${bound} at maxUnits ${MAXU}, maxRounds ${ROUNDS} (README §11 bound 190)` +
       (chain.length ? '; chain not satisfied (a full run refuses: ' + chain[0] + ')' : '') + (heldBy.length ? '; held: ' + heldBy.join('; ') : '') + (blockedBy.length ? '; blocked by ' + blockedBy.length + ' open Street data (S3) item(s)' : '') +
-      (specGap.length ? '; spec gap: no /checks for slice ' + specGap.join(', ') : '') + (faults.length ? '; run fault (a full run throws): ' + faults[0] : '')})
+      (specGap.length ? '; spec gap: no /checks for slice ' + specGap.join(', ') : '') + (hookGap.length ? '; spec gap: ' + hookGap.length + ' insert hook(s) without an anchor' : '') + (faults.length ? '; run fault (a full run throws): ' + faults[0] : '')})
 }
 if (faults.length) die(faults[0])   // a run fault: the polish run leaves the box unchecked and the owner acts as the message says
 if (heldBy.length) return done({reason: 'held', check_off: false, held_by: heldBy, slice: SL, owner_rulings_used: RUSED, street_rulings_used: STR.used,
@@ -595,7 +635,7 @@ const FIL_LITS = Object.keys(obj(obj(pre.fil_anchors).literals))
 const hookEntries = u => SPEC.hook_lines.filter(h => u.hooks.includes(h.line))
 const hardRules = u => `Hard rules (rules 3 to 7 are checked in code at the slice gate by grep and count: clock, W.rng, nowMs, banned vocabulary in string literals, instanceColor, keydown, near line, anchors, the restore check; the rest are checked by the unit's judge and acceptance; a violation fails the unit):
 1. All street JS lives in ONE /* STREET */ … /* /STREET */ block of ${REPO}/index.html, each marker on its own line: one namespace const STREET = (function(){ … })() placed directly above the line holding the /block/placement literal of ${SPEC_JSON}; the block declares no other top-level name.
-2. Outside the block change only the hook lines this unit lists in "hooks", written exactly as /hook_lines of ${SPEC_JSON} gives them (each contains ${HOOK_MARK}); a hook that "replaces" a line replaces exactly that line. Touch no other line. This unit's hooks: ${J(hookEntries(u))}.
+2. Outside the block change only the hook lines this unit lists in "hooks", written exactly as /hook_lines of ${SPEC_JSON} gives them (each contains ${HOOK_MARK}); a hook that "replaces" a line replaces exactly that line; an inserted hook (replaces null) goes on its own line directly above or below the line holding its "anchor" text (only other hook lines may sit between), once. Touch no other line. This unit's hooks: ${J(hookEntries(u))}.
 3. Never call simAdvance, tickDay or processArrivals; never write departDay, route, speed or any W field; never name W.rng; never read nowMs or any clock: grep -E '${ST_CLOCK_GREP}' must find nothing in the block, and gen and sim code never gain such a call either. Every random choice is the keyed stream ${KEY_IDIOM} (the sim's own xmur3 -> sfc32 idiom, index.html function makeStream; the sim has no mulberry32), cached per key; presentation time is ST.t += dt.
 4. Every InstancedMesh gets setColorAt for every instance (instanceColor) before its first render (anchor "every InstancedMesh sharing MAT.world MUST carry instanceColor").
 5. Default off: without street=1 in the hash the block builds nothing and adds no scene object; ANNALS.stats() keys stay exactly ${J(STATS_KEYS)}; street metrics live under ANNALS.street.
@@ -612,7 +652,7 @@ ${rulingText(STR.r, IMPL_ST)}
 ${VOCAB_ST_RULE}
 Current anchors (re-derived this run; grep the pattern if a line moved):
 ${anchorText}
-${u.files.some(f => /^tools\/street-/.test(f)) ? `The probe ${PROBE} is the street track's instrument: extend it, never break it (every Street 1 flag and output field keeps its meaning). ${SANDBOX_ST}\n` : ''}${hardRules(u)}
+${u.files.some(f => /^tools\/street-/.test(f)) ? `The probe ${PROBE} is the street track's instrument: extend it, never break it (every Street 1 flag and output field keeps its meaning). The slice gate's metrics reader reads each figure ONLY at these --out paths (JSON Pointer; a figure elsewhere counts as not measured and fails the gate as a capture fault), so every figure your flags measure goes exactly there:\n${PROBE_OUT_TEXT}\n- device: ${DEVICE_OUT}\n${SANDBOX_ST}\n` : ''}${hardRules(u)}
 Return {id: "${u.id}", files_changed: [{path (repo-relative), sha256}], notes (one paragraph), dry}.`
 const syntaxPrompt = (u, targets) => `Mechanical syntax + restore check for unit ${u.id}, no judging; write nothing.
 1. Check ONLY these files (repo-relative to ${REPO}): ${J(targets)}. Each .html file: the CLAUDE.md "Verification" check (extract every inline <script> block without a src attribute and compile its body with new Function; a failure is "<file> block <n>: <message>"); each .js file: node --check; each .json file: JSON.parse. ok = every check passed; errors = one line per failure.
@@ -623,7 +663,7 @@ For each item run its cmd in a shell from ${REPO}; out = its stdout, trimmed, at
 Return {results: [{id, cmd, out}] one per item in the given order, infra_error: "" (or the setup failure: port, browser or CDN; never a failing item)}.`
 const fixPrompt = (u, st, k) => `You are fixing build unit ${u.id} (attempt ${k} of 2) after its check failed (scored in code).
 Syntax errors: ${J(st.syn ? st.syn.errors : [])}
-Restore report: ${J(st.syn ? st.syn.restore : null)} (the restored sha must stay ${pre.restore.sha_restore} and undeclared must be []: undo any edit outside the block that is not one of this unit's declared hook lines).
+Restore report: ${J(st.syn ? st.syn.restore : null)} (the restored sha must stay ${pre.restore.sha_restore}, undeclared, dup_hooks and misplaced must be [] and marked_n at most ${HOOK_N}: undo any edit outside the block that is not one of this unit's declared hook lines, keep each hook line once and each inserted hook directly beside its anchor line).
 Failing acceptance items (expect vs what the command printed): ${J(st.bad || [])}
 Fix the cause, never the check.
 ${IMPL_PROMPT(u)}`
@@ -675,7 +715,7 @@ async function buildUnit(u) {
     const bad = u.acceptance.filter(a => { const r = got.get(a.id); return !r || !expectOk(a.expect, r.out) }).map(a => ({id: a.id, cmd: a.cmd, expect: a.expect, out: got.has(a.id) ? String(got.get(a.id).out).slice(0, 400) : 'not reported'}))
     const restoreBad = [!touchesIndex(u) && syn.restore.sha_index !== idxNow ? 'edited outside unit files: index.html (its sha changed from ' + idxNow + ' to ' + syn.restore.sha_index + '; this unit does not list it; undo that edit)' : '',
       syn.restore.undeclared.length ? 'undeclared lines outside the block: ' + syn.restore.undeclared.slice(0, 3).join(' | ') : '',
-      arr(syn.restore.dup_hooks).length ? 'declared insert hook appears more than once: ' + arr(syn.restore.dup_hooks).slice(0, 3).join(' | ') : '',
+      ...hookWhy(syn.restore),
       syn.restore.sha_restore !== pre.restore.sha_restore ? 'restore sha changed (' + syn.restore.sha_restore + ' != ' + pre.restore.sha_restore + '): a line outside the block moved' : ''].filter(Boolean)
     if (touchesIndex(u) && HEX(syn.restore.sha_index)) idxNow = syn.restore.sha_index   // the legitimate editors move the reference; a stray edit by another unit never does
     return {syn, acc, infra, bad, restoreBad, ok: syn.ok === true && !restoreBad.length && !infra && u.acceptance.length > 0 && !bad.length}
@@ -777,16 +817,10 @@ Return {fps: {<seed>: {never, off, on, walk_on, walk_off}} (each the printed fin
 const capturePrompt = (sl, dir) => `Slice ${sl} gate capture; measure, never judge. ${SANDBOX_ST}
 From ${REPO} run: node tools/street-probe.js ${CAPTURE_FLAGS(sl)} --cdn-dir <tmp>${PORT_FLAG} --out ${dir}/metrics.json --shots ${dir}/ (create ${dir}/; images at most 300 KB each).
 Return {metrics_path: "${dir}/metrics.json", metrics_sha256 (sha256sum of that file), shots_dir: "${dir}/", infra_error ("" when the capture ran, else the setup failure: port, browser or CDN)}.`
-const readerPrompt = mpath => `Metrics reader, no judging; write nothing (a node script in a mktemp -d dir). Read ${mpath} (the street probe's output) and return sha256 = sha256sum of that file, plus this digest of it. Probe output paths (README probe contract): top level {tool_sha, index_sha, views: {<SVn>: {...}}, fingerprint, paths: {descent, oscillate, flyaway}, console_errors, infra_error}; views come from /views/<SVn>, path figures from /paths/<name>, errors from /console_errors. Before digesting, list the file's real key paths (a node walk to depth 4) and map each field below to the path that holds it, matching names case-sensitively and treating street=0 as off and street=1 as on. A field the file lacks gets its empty value (null for a number, [] for a list, {} for a map, false for a flag, "" for a string); never invent, estimate or round:
-- views: {<SVn>: {off: the street=0 metrics {calls, tris, geoms, textures, objects}, on: the street=1 metrics (the same keys plus every per-frame or resident figure it records for that view: quads_per_frame, built_tris_per_frame, resident_tris), classes_on: the per-class counts under street=1}};
-- appear: {violations: one string per recorded appear violation, slowest_ms: the longest recorded ease in ms}; swaps: {<threshold>: {in, out}};
-- oscillate_builds: {<class>: its builds on the oscillate path}; flyaway: {geoms_first, geoms_return, geoms_reseed, resident_max}; jobs_max and built_tris_max: the per-frame maxima over every path;
-- vfps: {h30, h60}: the queue hashes at virtual t = 10 s under 30 and 60 virtual fps; spacing: {min_gap, dvis_over_dtrue} at SV4;
-- hash_table: [{hash, ok, got}] verbatim; writer_roundtrip; stats_keys: the ANNALS.stats() key list in its order; inst_no_color: InstancedMeshes rendered without instanceColor;
-- clouds: {same_day_equal, next_day_differs, deck_matches_weather}; shadows_row: {held_text, disabled, off_kills_shadow, default_on_equal}; weather_dial: {exact, counts}; tidings: {barriers, musters, off_zero, atlas_equal (null when there is no atlas sample)}; fog: {present (the FILIGREE fog function exists), src_equal, pairs_equal (both null when absent)};
-- device: from the newest ${DOCS}/device/*.json, {fps_min (the lowest per-second fps), degrade_max (the highest degrade step)}; null when no such file exists;
-- console_errors: every console or page error the file records.
-List in not_found the name of every digest field you could not map to a path of the file (an empty list when all were found), so an absent figure is told apart from a measured zero.
+const readerPrompt = (mpath, req) => `Metrics reader, no judging; write nothing (a node script in a mktemp -d dir). Read ${mpath} (the street probe's --out file) and return sha256 = sha256sum of that file, plus the digest below. Each field has exactly ONE source, the JSON path given for it (JSON Pointer from the file's root; <SVn>, <threshold>, <class> and <i> range over the keys or indexes present at that level). Read exactly those paths with the node script: never search the file for look-alike keys, never rename, invent, estimate or round. A path the file lacks gives the empty value (null for a number, [] for a list, {} for a map, false for a flag, "" for a string); a non-string entry of a string list becomes its JSON text.
+${PROBE_OUT_TEXT}
+- device <- ${DEVICE_OUT}; null when no such file exists.
+not_found = the names, exactly as written, of the fields of ${J(req)} that the file lacks at their paths, wholly or in part (views: /views has no key, or some <SVn> lacks its off or on object or one of calls, tris, geoms, textures, objects in either); [] when every one is there. Never list another name: an absent field is a capture fault the script handles, never a measured zero.
 Return {sha256, not_found, views, appear, swaps, oscillate_builds, flyaway, jobs_max, built_tris_max, vfps, spacing, hash_table, writer_roundtrip, stats_keys, inst_no_color, clouds, shadows_row, weather_dial, tidings, fog, device, console_errors}.`
 const staticPrompt = `Static checks, no judging; write nothing (throwaway node scripts in a mktemp -d dir). Let ${BLOCK_RULE}.
 1. clock_hits = lines of BLOCK matching grep -E '${ST_CLOCK_GREP}'; rng_hits = lines of BLOCK matching grep -E 'W[.]rng'; nowms_hits = lines of BLOCK matching grep -E 'nowMs'. vocab_hits = the quoted string literals (single, double or backtick) inside BLOCK, plus the quoted string literals on the lines of ${REPO}/index.html containing ${HOOK_MARK}, that match the case-insensitive regex ${VOCAB_ST.source} (count each literal once).
@@ -803,11 +837,29 @@ Checks: ${J(checksFor(sl).map(c => ({id: c.id, cmd: c.cmd})))}
 Return {results: [{id, cmd (as given above, before anything is appended), out}] one per check in the given order, infra_error ("" or the setup failure)}.`
 
 const dead = l => 'agent died: ' + l
+// capture/mapping faults: a required digest field the reader did not find at its PROBE_OUT path (its not_found) or that reads back empty where the schema allows an empty value
+const digReqNow = sl => digReq(sl, doneNow.has('S0.U02'))
+function digFault(d, sl) {
+  if (!d) return []
+  const req = digReqNow(sl), D = d, V = obj(D.views), vids = Object.keys(REF.views).length ? Object.keys(REF.views) : Object.keys(V)
+  const nf = arr(D.not_found).map(String).filter(x => !Object.prototype.hasOwnProperty.call(DIGEST.properties, x) || req.includes(x))   // a digest field this slice does not score (device included) is no fault; an unknown name is
+  const has = {views: () => vids.length > 0 && vids.every(v => ['off', 'on'].every(l => M5.every(k => num(obj(obj(V[v])[l])[k])))),
+    stats_keys: () => arr(D.stats_keys).length > 0, appear: () => num(obj(D.appear).slowest_ms), swaps: () => Object.keys(obj(D.swaps)).length > 0,
+    oscillate_builds: () => Object.keys(obj(D.oscillate_builds)).length > 0, flyaway: () => ['geoms_first', 'geoms_return', 'geoms_reseed', 'resident_max'].every(k => num(obj(D.flyaway)[k])),
+    jobs_max: () => num(D.jobs_max), built_tris_max: () => num(D.built_tris_max), vfps: () => !!obj(D.vfps).h30 && !!obj(D.vfps).h60, spacing: () => num(obj(D.spacing).min_gap),
+    hash_table: () => arr(D.hash_table).length > 0, weather_dial: () => arr(obj(D.weather_dial).counts).length > 0}
+  return [...new Set(nf.concat(req.filter(k => has[k] && !has[k]())))]
+}
 function sliceCriteria(sl, g) {   // design §8; every pass argument is script arithmetic over readers, recounts and digests
   const {sm, gd, d, st, ck} = g
   const cg = [], cs = []
   const D = d || {}, V = obj(D.views), ST = st || null, SPC = SPEC
   const sls = sl === 'S4' ? SLICES : [sl]
+  {
+    const req = digReqNow(sl), bad = digFault(d, sl)
+    cs.push(C('GS.M', 'capture mapping: every digest field this slice scores was found at its probe output path (PROBE_OUT); a missing one is a capture/mapping fault (infra, no fix unit), never a street defect and never a pass', !d ? dead('metrics reader') : {required: req, missing: bad, not_found: arr(D.not_found).slice(0, 20)},
+      'none missing', !!d && !bad.length))
+  }
   {
     const ids = sls.flatMap(s => unitIdsOf(s)), notDone = ids.filter(id => !doneNow.has(id))
     cs.push(C('GS.1', 'every unit of the slice (S4: of every slice) done under the current spec sha and recorded', notDone.length ? {not_done: notDone, of: ids.length} : ids.length + '/' + ids.length, 'n/n', ids.length > 0 && !notDone.length))
@@ -869,8 +921,8 @@ function sliceCriteria(sl, g) {   // design §8; every pass argument is script a
       : !ck ? dead('gate checks') : infraOf(ck) ? 'infra: ' + ck.infra_error : {ok: want.length - bad.length, of: want.length, failing: bad}
     cs.push(C('GS.10', 'the slice\'s spec /checks pass by expectOk (S4: every slice\'s)', m10, 'all', !empty.length && !!ck && !infraOf(ck) && want.length > 0 && !bad.length))
   }
-  cs.push(C('GS.X3', 'hooks: only declared hook lines changed outside the block (restore sha unchanged, undeclared = [], no declared insert hook twice)', !ST ? dead('gate static') : {sha_restore: ST.restore.sha_restore, sha_restore_pre: pre.restore.sha_restore, undeclared: ST.restore.undeclared.slice(0, 5), dup_hooks: arr(ST.restore.dup_hooks).slice(0, 5)},
-    'both', !!ST && ST.restore.sha_restore === pre.restore.sha_restore && !ST.restore.undeclared.length && !arr(ST.restore.dup_hooks).length))
+  cs.push(C('GS.X3', 'hooks: only declared hook lines changed outside the block (restore sha unchanged, undeclared = [], no declared hook line twice, every insert hook beside its declared anchor, marked lines <= the declared hook_lines count)', !ST ? dead('gate static') : {sha_restore: ST.restore.sha_restore, sha_restore_pre: pre.restore.sha_restore, undeclared: ST.restore.undeclared.slice(0, 5), dup_hooks: arr(ST.restore.dup_hooks).slice(0, 5), misplaced: arr(ST.restore.misplaced).slice(0, 5), marked_n: ST.restore.marked_n, hooks_present: arr(ST.restore.hooks_present).length, hook_lines_declared: HOOK_N, hook_faults: hookWhy(ST.restore)},
+    'all', !!ST && ST.restore.sha_restore === pre.restore.sha_restore && !ST.restore.undeclared.length && !hookWhy(ST.restore).length))
   cs.push(C('GS.X4', 'the keydown handler and the camera.near line unchanged', !ST ? dead('gate static') : {keydown_sha: ST.keydown_sha, ref_keydown_sha: REF.keydown_sha, near_line: ST.near_line},
     'both', !!ST && HEX(REF.keydown_sha) && ST.keydown_sha === REF.keydown_sha && ST.near_line === true))
   if (sliceAtLeast(sl, SINCE.hash_table) && doneNow.has('S0.U02')) {
@@ -944,11 +996,13 @@ async function gateCycle(tag) {
       const cp = await crit(PS(capturePrompt(SL, dir)), {label: 'gate capture' + tag, phase: 'Slice gate', schema: CAPT, ...M('audit')})
       if (!cp || infraOf(cp) || !HEX(cp.metrics_sha256)) return {cp, d: null}
       const mpath = absP(cp.metrics_path)
-      let d = await agent(PS(readerPrompt(mpath)), {label: 'metrics reader' + tag, phase: 'Slice gate', schema: DIGEST, ...M('mech')})
-      if (!d || d.sha256 !== cp.metrics_sha256) {
-        log('metrics reader' + tag + ': ' + (d ? 'sha ' + d.sha256 + ' != capture ' + cp.metrics_sha256 : 'died') + '; one retry')
-        d = await agent(PS(readerPrompt(mpath)), {label: 'metrics reader (retry)' + tag, phase: 'Slice gate', schema: DIGEST, ...M('mech')})
-        if (d && d.sha256 !== cp.metrics_sha256) { log('metrics reader' + tag + ': sha still differs; the digest is discarded'); d = null }
+      const req = digReqNow(SL), shaOk = x => !!x && x.sha256 === cp.metrics_sha256
+      let d = await agent(PS(readerPrompt(mpath, req)), {label: 'metrics reader' + tag, phase: 'Slice gate', schema: DIGEST, ...M('mech')})
+      if (!shaOk(d) || digFault(d, SL).length) {
+        log('metrics reader' + tag + ': ' + (!d ? 'died' : !shaOk(d) ? 'sha ' + d.sha256 + ' != capture ' + cp.metrics_sha256 : 'required field(s) not found: ' + digFault(d, SL).join(', ')) + '; one retry')
+        const d2 = await agent(PS(readerPrompt(mpath, req)), {label: 'metrics reader (retry)' + tag, phase: 'Slice gate', schema: DIGEST, ...M('mech')})
+        if (shaOk(d2) && (!shaOk(d) || digFault(d2, SL).length <= digFault(d, SL).length)) d = d2
+        else if (!shaOk(d)) { log('metrics reader' + tag + ': sha still differs; the digest is discarded'); d = null }
       }
       return {cp, d}
     },
@@ -959,6 +1013,8 @@ async function gateCycle(tag) {
   const died = [sm ? null : 'smoke' + tag, gd ? null : 'gate determinism' + tag, cp ? null : 'gate capture' + tag, cp && !infraOf(cp) && !d ? (HEX(cp.metrics_sha256) ? 'metrics reader' : 'gate capture (no metrics sha256)') + tag : null,
     st ? null : 'gate static' + tag, ck ? null : 'gate checks' + tag].filter(Boolean)
   const infra = [sm, gd, cp, ck].filter(infraOf).map(x => x.infra_error.trim())
+  const gm = criteria.find(c => c.id === 'GS.M')
+  if (d && gm && !gm.pass) infra.push('metrics capture/mapping fault (GS.M): ' + digFault(d, SL).join(', ') + ' not found at the probe output paths; no fix unit (re-run; if it persists, the probe does not write those PROBE_OUT paths)')
   if (st && st.restore) lastRestore = st.restore
   return {tag, sm, gd, cp, d, st, ck, criteria, cgaps, scoredPass: criteria.every(c => c.pass), died, infra, dir: dir.replace(OUTABS, OUT) + '/'}
 }
@@ -974,7 +1030,7 @@ else {
 
 // ---- Fix units ----
 const specGapC = c => !!c.measured && typeof c.measured === 'object' && typeof c.measured.spec_gap === 'string'
-const fixable = c => !c.pass && c.id !== 'GS.1' && c.id !== 'GS.R' && !specGapC(c)   // units not done and spec gaps are no street defect
+const fixable = c => !c.pass && c.id !== 'GS.1' && c.id !== 'GS.R' && c.id !== 'GS.M' && !specGapC(c)   // units not done, capture/mapping faults and spec gaps are no street defect
 const streetFail = x => !!x && !x.infra.length && !x.died.length && x.criteria.some(fixable)
 while (cyc && rounds < ROUNDS && streetFail(cyc)) {
   const failed = cyc.criteria.filter(fixable)
@@ -1055,8 +1111,8 @@ if (treeOk === false) {
   const g8 = cyc ? cyc.criteria.find(c => c.id === 'GS.8') : null
   if (g8) { g8.pass = false; g8.measured = {...obj(g8.measured), tree_digest_end: treeEnd}; cyc.scoredPass = cyc.criteria.every(c => c.pass) }
 }
-const restoreOk = lastRestore.sha_restore === pre.restore.sha_restore && !arr(lastRestore.undeclared).length && !arr(lastRestore.dup_hooks).length
-if (!restoreOk) gaps.push(`restore invariant broken at the end of the run (restore sha ${lastRestore.sha_restore} != ${pre.restore.sha_restore}; undeclared ${arr(lastRestore.undeclared).length}): the next run refuses until the stray edit is undone`)
+const restoreOk = lastRestore.sha_restore === pre.restore.sha_restore && !arr(lastRestore.undeclared).length && !hookWhy(lastRestore).length
+if (!restoreOk) gaps.push(`restore invariant broken at the end of the run (restore sha ${lastRestore.sha_restore} vs ${pre.restore.sha_restore}; undeclared ${arr(lastRestore.undeclared).length}${hookWhy(lastRestore).length ? '; ' + hookWhy(lastRestore).join('; ') : ''}): the next run refuses until the stray edit is undone`)
 const stuckNew = Object.values(results).filter(r => r.runs_failed >= 3 && ((LEDGER.get(r.id) || {}).runs_failed || 0) < 3).map(r => ({id: r.id, title: ONE(r.title, 120), last_failure: ONE(r.last_failure, 600)}))
 const stuckNow = [...new Map(stuck.concat(stuckNew).map(x => [x.id, x])).values()]
 const perSlice = Object.fromEntries(SLICES.map(s => { const ids = unitIdsOf(s); return [s, {done: ids.filter(id => doneNow.has(id)).length, total: ids.length}] }))
@@ -1066,7 +1122,7 @@ const runState = {job: JOB, date: DATE, mode: MODE, slice: SL, spec_sha256: SPEC
   new_fix_units: newFixIds, rounds, gate_ran: !!cyc, rebaselined: !keep, off_ref: OFFREF_PATH.replace(OUTABS, OUT), restore_ok: restoreOk, tree_digest_pre: pre.tree_digest, tree_digest_end: treeEnd, tree_ok: treeOk,
   smoke: smokeOnly ? {console_errors: smokeOnly.console_errors.length, clock_hits: smokeOnly.clock_hits, rng_hits: smokeOnly.rng_hits, nowms_hits: smokeOnly.nowms_hits, infra_error: smokeOnly.infra_error} : null, gaps}
 // sha_restore is the reference this run measured against (kept or re-baselined), never a sha a failed unit or gate left behind; restore_ok/tree_ok tell the next preflight whether to refuse
-const indexRef = {date: DATE, sha_restore: pre.restore.sha_restore, restore_ok: restoreOk, sha_restore_left: lastRestore.sha_restore, undeclared_left: arr(lastRestore.undeclared).slice(0, 5),
+const indexRef = {date: DATE, sha_restore: pre.restore.sha_restore, restore_ok: restoreOk, sha_restore_left: lastRestore.sha_restore, undeclared_left: arr(lastRestore.undeclared).slice(0, 5), hook_faults_left: hookWhy(lastRestore).slice(0, 3),
   tree_ok: treeOk !== false, tree_digest_pre: pre.tree_digest, tree_digest_end: treeEnd, tool_sha: toolShaNow, off_ref: OFFREF_PATH.replace(OUTABS, OUT)}
 let gate = null, finalGate = null
 if (cyc) {
@@ -1092,7 +1148,7 @@ const reason = (unitInfra || (cyc && cyc.infra.length)) ? 'infra'
         : smokeBad ? 'smoke-fail'
           : failedIds.length || stuckNow.length || treeOk === false || !restoreOk ? 'units-failed'
             : MODE === 'full' ? '' : MODE
-const gateStatus = !cyc ? (GATE === 'skip' ? 'skipped' : 'not due') : cyc.infra.length ? 'infra' : cyc.scoredPass ? (gate.pass ? 'pass' : 'pass (scored; ' + (FORCE ? 'forced' : MODE) + ')')
+const gateStatus = !cyc ? (GATE === 'skip' ? 'skipped' : 'not due') : cyc.infra.length ? 'infra (' + ONE(cyc.infra[0], 200) + ')' : cyc.scoredPass ? (gate.pass ? 'pass' : 'pass (scored; ' + (FORCE ? 'forced' : MODE) + ')')
   : 'fail (' + cyc.criteria.filter(c => !c.pass).map(c => c.id).join(', ') + ')'
 const builtIds = builtOk.map(u => u.id).join(', ') || 'none built'
 const titles = builtOk.map(u => u.title || u.id).join('; ') || (cyc ? 'slice gate run' : 'no unit built' + (failedIds.length + infraIds.length ? ` (${failedIds.length + infraIds.length} failed)` : ''))

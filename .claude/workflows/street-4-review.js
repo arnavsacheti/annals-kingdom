@@ -216,14 +216,14 @@ const LENSES = [
   {id: 'L01', role: 'deep', check: 'Determinism', lens: 'fingerprints (never/off/on/walk), STREET-block greps, every keyed-hash key equals the spec form, no W field written'},
   {id: 'L02', role: 'audit', check: 'Performance and caps', lens: 'caps per view, quads and tris built per frame, resident tris, the shadow pass with instanced casters, far quiet at SV5/SV9'},
   {id: 'L03', role: 'audit', check: 'Pop and fade (R6)', lens: 'appear samples on the descent, hysteresis swaps on the sweep, oscillate builds'},
-  {id: 'L04', role: 'judge', check: 'Caravan sense', lens: 'queues at fords, one-lane bridges and toll halts read as bronze-age traffic; no overlap; render-only; gate leaves shut only in the drawn dark hour (ST5)'},
+  {id: 'L04', role: 'judge', check: 'Caravan sense', lens: 'queues at fords, one-lane bridges and toll halts read as bronze-age traffic; caravans gain detail on the descent (far dot or impostor, then the mesh, then individual animals, in_R/out_R hysteresis, swaps render-only); no overlap; render-only; gate leaves shut only in the drawn dark hour (ST5)'},
   {id: 'L05', role: 'audit', check: 'Canon and voice', lens: 'VOCAB_ST over new strings, R10 and ST16 words, the Patrinaic words (q12) used correctly, "cog" not spread, the nine Kembar, years A.B.'},
   {id: 'L06', role: 'deep', check: 'The Marble City', lens: 'does SV1/SV6/SV8 read as Epēshu: marble-pale stone tier (ST12), the Blue Temple of Thobrauk on Wood Quay, no invented district layout'},
   {id: 'L07', role: 'audit', check: 'Weather and sky', lens: 'cloud deck keyed to W.weather and the day, the R13 fog copy (or its recorded gap), the weather dial exact, no fog sim state'},
   {id: 'L08', role: 'audit', check: 'Layers and hash', lens: 'rows default off, street=1 composes with s= and goto=, the ST18 hash table, the shadows row at degrade 3, no new keys'},
   {id: 'L09', role: 'audit', check: 'Phone', lens: '390x844 at SV1/SV2: rows reachable, touch targets >= 44 px, no horizontal scroll, caps met, reduced motion honoured'},
   {id: 'L10', role: 'judge', check: 'Where the build flinched', lens: 'tiers that stop early, SV7 (procedural) missing near detail, a bible class absent at its view, a spec rule with no visible effect'},
-  {id: 'L11', role: 'judge', check: 'Owner-input fidelity', lens: 'the owner\'s toggles exist and work (clouds, shadows, roads and folk), the weather density dial, session overlays (the herald\'s tidings from fixtures/tidings.json), "detail emerges naturally" (far views quiet, detail arrives on the descent), and the VTT export and party presence stated out of scope (ST10) in the bible and README §9 rather than silently dropped'}
+  {id: 'L11', role: 'judge', check: 'Owner-input fidelity', lens: 'the owner\'s toggles exist and work (clouds, shadows, roads and folk), the weather density dial, session overlays (the herald\'s tidings from fixtures/tidings.json), "detail emerges naturally" (far views quiet, detail arrives on the descent: surfaces, crowds and caravans gain detail as the camera closes), and the VTT export and party presence stated out of scope (ST10) in the bible and README §9 rather than silently dropped'}
 ]
 const SEV = ['blocker', 'major', 'minor', 'nit']
 
