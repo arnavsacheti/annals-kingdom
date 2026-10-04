@@ -245,6 +245,7 @@ const VIEWS_JSON = OUTABS + '/gates/views.json', BASELINE = OUTABS + '/gates/bas
 const FIL_BIBLE = FIL + '/density-bible.json', FIL_SPEC = FIL + '/sheet-spec.json', Q09 = OUTABS + '/research/q09.json'
 const LEDGER = OUTABS + '/state/2-plan.json', GATE2 = OUTABS + '/gates/2-plan.json'
 const HOOK_MARK = '/*ST-HOOK*/'
+const HOOK_ANCHOR_RULE = `every hook whose replaces is null (an inserted hook) carries "anchor": a non-empty, single-line text copied verbatim from the one index.html line the hook goes directly above or below, occurring on EXACTLY ONE line of index.html (grep -cF -- "<anchor>" index.html prints 1; lengthen it until it does), never containing ${HOOK_MARK} and not contained in the hook's own line; a hook with a non-null replaces has anchor null`   // Street 3 refuses a spec with an unanchored insert hook and checks each insert sits beside its anchor
 const PROBE_KINDS = ['number', 'enum', 'string', 'order', 'pointer']
 const PROBE_SOURCES = ['bible', 'views', 'baseline', 'ruling', 'spec']
 const ACC_KINDS = ['node', 'grep', 'json', 'probe']
@@ -300,13 +301,14 @@ const READER = OBJ({   // the spec reader's read-back: the ONLY source the scrip
   caps_ceiling_over: SA, far_quiet_ok: B,
   determinism: OBJ({allowed_sources: SA, new_sim_state: SA, key_idiom: S, rng_in_acceptance: SA}),
   hash: OBJ({params: SA, consumes: SA, table: SA}),
-  hook_lines: {type: 'array', items: OBJ({line: S, replaces: {type: ['string', 'null']}})}, hook_map_ok: B,
+  hook_lines: {type: 'array', items: OBJ({line: S, replaces: {type: ['string', 'null']}, anchor: {type: ['string', 'null']}})}, hook_map_ok: B,
   block: OBJ({placement: S, namespace: S}),
   fog_unit: B, notices_unit: B,
   limits: OBJ({fade_ms: NN, max_jobs_frame: NN, tri_cap_frame: NN, resident_tris: NN, s0: NN, T: NN, v0: NN, hysteresis: {type: 'array', items: OBJ({tier: ANY, in_R: NN, out_R: NN})}, caravan_tiers: {type: 'array', items: OBJ({tier: ANY, in_R: NN, out_R: NN})}}),   // the spec values Street 3's gates read directly (SG2.16)
   pointers: {type: 'object', additionalProperties: ANY},
   sha_md: S, sha_json: S, sha_tidings: S, prereq_unqueued: SA})   // + sha_md/sha_json/sha_tidings (SG2.15 from an independent read) and prereq_unqueued (polish_inserts)
-const GUARD = OBJ({lost: SA, fil_literals_touched: SA, street_literals_touched: SA})
+const GUARD = OBJ({lost: SA, fil_literals_touched: SA, street_literals_touched: SA,
+  anchor_counts: {type: 'array', items: OBJ({line: S, anchor: {type: ['string', 'null']}, count: I})}})   // grep -cF line counts of each insert hook's anchor; scored in code (SG2.11)
 const READ2 = OBJ({answers: {type: 'object', additionalProperties: ANY}, guesses: {type: 'array', items: OBJ({id: S, why: S})}, files_read: SA})
 const AUDITG = OBJ({verdicts: {type: 'array', items: OBJ({id: S, schema_guess: B})}})
 const FIXR = OBJ({md: S, json: S, sha_md: S, sha_json: S, fixed: SA})
@@ -555,7 +557,7 @@ await checkpoint('probes')
 
 // ---- Sections ----
 phase('Sections')
-function SPEC_SHAPE_SHORT() { return 'tiers {bands [{tier, R_min, R_max}], refine {kind "sse", target_px, geom_err_m}, hysteresis [{tier, in_R, out_R}]}; fade {ms, method}; stream {max_jobs_frame, tri_cap_frame, resident_tris, lru, cull}; facades; surface; ground {rule}; props; crowds {key, scale}; traffic {s0, T, v0, obstacles [{class, key, rule}], tiers [{tier, in_R, out_R, repr}]}; gates {clock}; sky {clouds {key, states}, shadows {row_default}}; fog {source, helpers}; weather {steps}; layers {rows [{label, default}], param}; hash {params, consumes, parser {pattern, sites}, table [{hash, expect}]}; notices {schema_source, fixture, classes}; caps {SV1..SV9: {on: {' + CAP_METRICS.join(', ') + '}}}; probe {flags_added, api}; determinism {allowed_sources, new_sim_state, key_idiom, forbidden}; block {placement, namespace}; hook_lines [{line, replaces}]; static {checks}; checks {S0..S4: [{id, cmd, expect}]}; fixtures {views, baseline, tidings}; prerequisites [{item, blocks, polish_title}]; units' }
+function SPEC_SHAPE_SHORT() { return 'tiers {bands [{tier, R_min, R_max}], refine {kind "sse", target_px, geom_err_m}, hysteresis [{tier, in_R, out_R}]}; fade {ms, method}; stream {max_jobs_frame, tri_cap_frame, resident_tris, lru, cull}; facades; surface; ground {rule}; props; crowds {key, scale}; traffic {s0, T, v0, obstacles [{class, key, rule}], tiers [{tier, in_R, out_R, repr}]}; gates {clock}; sky {clouds {key, states}, shadows {row_default}}; fog {source, helpers}; weather {steps}; layers {rows [{label, default}], param}; hash {params, consumes, parser {pattern, sites}, table [{hash, expect}]}; notices {schema_source, fixture, classes}; caps {SV1..SV9: {on: {' + CAP_METRICS.join(', ') + '}}}; probe {flags_added, api}; determinism {allowed_sources, new_sim_state, key_idiom, forbidden}; block {placement, namespace}; hook_lines [{line, replaces, anchor}]; static {checks}; checks {S0..S4: [{id, cmd, expect}]}; fixtures {views, baseline, tidings}; prerequisites [{item, blocks, polish_title}]; units' }
 const SPEC_SHAPE = `street-spec.json (exact shape; a pointer named here holds exactly this):
 {date: "${DATE}", bible_sha256: "${BSHA}", rules: [{id: "SS-01", text, traces: [bible rule ids]}],
  tiers: {bands: [{tier, R_min, R_max}], refine: {kind: "sse", target_px, geom_err_m: {T0..T4}}, hysteresis: [{tier, in_R, out_R}]},   (out_R > in_R; all <= 2200, inside meshHi)
@@ -573,7 +575,7 @@ const SPEC_SHAPE = `street-spec.json (exact shape; a pointer named here holds ex
  probe: {flags_added: [...], api: ["on", "set", "stats", "settledHash", "queueHash", "parseHash", "pinDegrade"]},
  determinism: {allowed_sources: ${J(ALLOWED_SOURCES)}, new_sim_state: [], key_idiom: ${J(KEY_IDIOM)}, forbidden: [...]},
  block: {placement: "<index.html literal the block sits directly above>", namespace: "STREET"},
- hook_lines: [{line: "<exact final text incl. indentation, contains ${HOOK_MARK}>", replaces: "<exact original line>" | null}],   (at most ${HOOKS_MAX})
+ hook_lines: [{line: "<exact final text incl. indentation, contains ${HOOK_MARK}>", replaces: "<exact original line>" | null, anchor: "<verbatim text of the index.html line an inserted hook sits directly above or below>" | null}],   (at most ${HOOKS_MAX}; ${HOOK_ANCHOR_RULE})
  static: {checks: [...]},
  checks: {S0: [{id, cmd, expect}], S1: [...], S2: [...], S3: [...], S4: [...]},
  fixtures: {views: "gates/views.json", baseline: "gates/baseline.json", tidings: "fixtures/tidings.json"},
@@ -588,7 +590,7 @@ const SEC_NOTES = {
   s06: `${OVR.ST7 ? 'sky.shadows.row_default as the overridden ST7 states' : 'sky.shadows.row_default "on" (held off for speed at degradeStep >= 3, ST7)'}; weather.steps ${OVR.ST19 ? 'as the overridden ST19 states' : '[1, 0.75, 0.5, 0.25]'} scaling the drawn precipitation count only (ST19); fog.source "${FOG_SRC}"${FOG_OK ? ' (copy that function byte-identical with its helpers into the STREET namespace, ST11)' : ' (the atlas function does not exist yet: a recorded gap, nothing invented, ST11)'}.`,
   s07: `layers.param ${J(HASH_PARAM)}; rows ${OVR.ST7 ? 'as the overridden ST7 states' : '"roads and folk", "clouds", "weather", "shadows" (ST7)'}; hash.params [${J(HASH_PARAM)}] (each matches ^[a-z]+$, does not end in "s", is not s, goto or filigree); hash.consumes ["notices"] read only after the S0 parser fix (ST18) with parser {pattern "(?:^#|&)s=", sites 2}; hash.table includes ${J(HASH_TABLE)}; notices.fixture "fixtures/tidings.json" (${TIDINGS}).`,
   s08: `caps for every view ${CAP_VIEWS.join(', ')} with numeric ${CAP_METRICS.join(', ')} under "on"; each within the bible's caps_ceiling; SV5 and SV9 (far quiet) equal ${BASELINE} views calls, tris and objects; probe.api ["on", "set", "stats", "settledHash", "queueHash", "parseHash", "pinDegrade"] and probe.flags_added (the flags Street 3 adds to ${PROBE}; Street 1 literals unchanged).`,
-  s09: `determinism {allowed_sources ${J(ALLOWED_SOURCES)}, new_sim_state [], key_idiom ${J(KEY_IDIOM)}}; block {placement: an index.html literal the block sits directly above, namespace "STREET"} (ST1); at most ${HOOKS_MAX} hook_lines, each line carrying ${HOOK_MARK} and replacing exactly one original line (replaces) or inserted (replaces null), keeping the original indentation; no hook line or replaced line contains a street anchor literal (${J(ST_ANCHOR_LITS)}) or a filigree anchor literal (the index.html entries with flag 1 of const ANCHORS in ${REPO}/.claude/workflows/filigree-1-research.js, read-only).`,
+  s09: `determinism {allowed_sources ${J(ALLOWED_SOURCES)}, new_sim_state [], key_idiom ${J(KEY_IDIOM)}}; block {placement: an index.html literal the block sits directly above, namespace "STREET"} (ST1); at most ${HOOKS_MAX} hook_lines, each line carrying ${HOOK_MARK} and replacing exactly one original line (replaces) or inserted (replaces null), keeping the original indentation; ${HOOK_ANCHOR_RULE}; no hook line or replaced line contains a street anchor literal (${J(ST_ANCHOR_LITS)}) or a filigree anchor literal (the index.html entries with flag 1 of const ANCHORS in ${REPO}/.claude/workflows/filigree-1-research.js, read-only).`,
   s10: `checks for every slice S0..S4 as [{id, cmd, expect}]; every slice lists the ids ${J(MANDATORY_CHECKS)}; plus per slice ${J(SLICE_CHECKS)}${FOG_OK ? ' and S4 also "street.fog_copy"' : ''}; expect is ${EXPECT_GRAMMAR}; street.folk_row: with the "roads and folk" row off, the per-view object counts of the caravan, crowd and prop classes at SV1 and SV4 are 0, with it on they match the caps, and the fingerprint is identical either way; check commands never depend on randomness or a clock, and name the clock and random tokens only in bracket form (Math[.]random, Date[.]now, performance[.]now); fixtures {views "gates/views.json", baseline "gates/baseline.json", tidings "fixtures/tidings.json"}.`}
 const secFile = (s, ext) => `${OUTABS}/spec/${s.sid}.${ext}`
 const secRes = await pipeline(secTodo,
@@ -632,7 +634,7 @@ const secPresent = SECTIONS.filter(s => secResumed.includes(s) || secK.k.some(x 
 // ---- Integrate ----
 phase('Integrate')
 const integ = await crit(PS(`You are the spec integrator. Merge the section drafts ${secPresent.map(sid => `${OUTABS}/spec/${sid}.md + .json`).join(', ')} into ${SPEC_MD} and ${SPEC_JSON}. Read the street bible ${BIBLE_MD} and ${BIBLE_JSON} as the source of truth, ${VIEWS_JSON}, ${BASELINE} and ${TIDINGS}. Do not open ${PROBES} or anything under ${OUTABS}/cold/.
-1. ${SPEC_JSON}: every section's fragment at its pointers, in the shape below (leave out "units": the unit planner writes it next); rules = every section rule renumbered "SS-01", "SS-02", ... (stable from now on), each {id, text, traces: [bible rule ids]}; every bible rule of kind "must" is traced by at least one SS rule; prerequisites = [{item, blocks: "S0".."S4", polish_title}] for every data item the build needs that the bible lists as open or missing.
+1. ${SPEC_JSON}: every section's fragment at its pointers, in the shape below (leave out "units": the unit planner writes it next); /hook_lines: ${HOOK_ANCHOR_RULE}; rules = every section rule renumbered "SS-01", "SS-02", ... (stable from now on), each {id, text, traces: [bible rule ids]}; every bible rule of kind "must" is traced by at least one SS rule; prerequisites = [{item, blocks: "S0".."S4", polish_title}] for every data item the build needs that the bible lists as open or missing.
 2. ${SPEC_MD}: SELF-SUFFICIENT prose from which an engineer who never saw the source post builds the street view: one section per spec part, the rules list with ids, and the index.html citations as "index.html :: <literal>". Names of the source post, its repository and its data sources may appear ONLY in a final "## Provenance" section (ST17): nothing outside it may match /${LEAK_RE}/i, and no string of the json may. Old names that must stay quoted go only in a "## Renames" section.
 Resolve conflicts between sections in favour of the bible, the rulings and the determinism rule; list what you resolved under "## Provenance".
 ${SPEC_SHAPE}
@@ -664,13 +666,13 @@ Return {md, json, sha_md, sha_json, rule_ids}.`), {label: 'spec patcher', phase:
 
 // ---- Units ----
 phase('Units')
-const unitsW = await agent(PS(`You are the unit planner. Read ${SPEC_MD} and ${SPEC_JSON} (and the bible ${BIBLE_JSON} for context). Write "units" into ${SPEC_JSON} (overwrite it in place when present; keep every other key byte-for-byte):
+const unitsW = await agent(PS(`You are the unit planner. Read ${SPEC_MD} and ${SPEC_JSON} (and the bible ${BIBLE_JSON} for context). Write "units" into ${SPEC_JSON} (overwrite it in place when present; keep every other key byte-for-byte, except that you add the missing "anchor" to a /hook_lines entry with replaces null that lacks one):
 [{id, slice, title, kind: ${UNIT_KINDS.join(' | ')}, files: [repo-relative paths], deps: [unit ids], covers: [SS rule ids], hooks: [hook line literals, each exactly a /hook_lines line], acceptance: [{id, kind: ${ACC_KINDS.join(' | ')}, cmd, expect}], model?, effort?}]
 - Slices ${SLICES.map(s => s + ' ' + SLICE_NAME[s]).join(', ')}; ids "<slice>.U<nn>"; at most ${UNITS_PER_SLICE} units per slice; deps never point to a later slice; no cycles.
 - Mandatory units (exact ids): ${J(Object.fromEntries(Object.entries(MANDATORY_UNITS).filter(([k]) => k !== 'S4.Ufog' || FOG_OK)))}${FOG_OK ? '' : ' (no S4.Ufog: the R13 fog function does not exist yet, so the fog stays a recorded gap)'}. S4.Unotices depends on S0.U02.
 - files: only index.html, tools/street-probe.js or docs/street/fixtures|shots|device/...; never maps-site/, docs/filigree/, .claude/, tools/filigree-*, tools/street-drift.js, docs/street/gates|state|research/, the bible or the spec, docs/street/rulings.json, server.js, POLISH.md, CHANGELOG.md or VERSION.
 - covers: together the units cover every SS rule.
-- hooks: every hook line a unit adds is one /hook_lines line, copied exactly.
+- hooks: every hook line a unit adds is one /hook_lines line, copied exactly; an inserted hook (replaces null) goes directly above or below the index.html line holding its anchor, and ${HOOK_ANCHOR_RULE}.
 - acceptance: at least one item per unit, each machine-checkable: a command run from the repo root and its expected stdout; expect is ${EXPECT_GRAMMAR}. probe kind = a node ${PROBE} command. No command depends on randomness or a clock (a grep kind that counts clock or random tokens is fine).
 - model (opus | sonnet | haiku) and effort (low | medium | high | xhigh | max) optional per unit.
 ${DET_RULE}
@@ -691,7 +693,7 @@ async function runChecks(tag) {
 - caps: {<SVn>: {${CAP_METRICS.join(', ')}}} from /caps/<SVn>/on for ${CAP_VIEWS.join(', ')} (null for a missing or non-numeric value); caps_ceiling_over: "<SVn>.<metric>" wherever the spec value exceeds the bible's caps_ceiling.<SVn>.<metric> (metrics the ceiling names); far_quiet_ok: for SV5 and SV9 the spec's calls, tris and objects equal the baseline's views.<SVn> values.
 - determinism: {allowed_sources, new_sim_state, key_idiom} from /determinism; rng_in_acceptance: "<unit id or slice>:<acceptance or check id>" for every unit acceptance or /checks entry that would CALL the clock or random source: skip entries whose kind is grep, whose id is street.static_clock or street.static_rng, or whose cmd only names the tokens inside a grep, rg, includes, indexOf or regex text scan; flag the rest whose cmd matches /${ST_CLOCK_GREP}/.
 - hash: {params, consumes} from /hash, table: every /hash/table[].hash.
-- hook_lines: /hook_lines verbatim as [{line, replaces}]; hook_map_ok: every line contains "${HOOK_MARK}", no non-null replaces contains it, no two hooks replace the same line, and every line with a non-null replaces starts with the same leading whitespace as its replaces.
+- hook_lines: /hook_lines verbatim as [{line, replaces (null when missing), anchor (null when missing)}]; hook_map_ok: every line contains "${HOOK_MARK}", no non-null replaces contains it, no two hooks replace the same line, every line with a non-null replaces starts with the same leading whitespace as its replaces, and every entry whose replaces is null has a non-empty string anchor.
 - limits: {fade_ms: /fade/ms, max_jobs_frame, tri_cap_frame, resident_tris: from /stream, s0, T, v0: from /traffic (each the number there, or null when missing or not a JSON number), hysteresis: /tiers/hysteresis as [{tier, in_R, out_R}] (in_R / out_R null when not a JSON number; [] when missing), caravan_tiers: /traffic/tiers as [{tier, in_R, out_R}] (same null/[] rules)}.
 - block: {placement, namespace} from /block; fog_unit: some unit id is "S4.Ufog"; notices_unit: some unit id is "S4.Unotices".
 - pointers: {<pointer>: the value at that RFC 6901 pointer of the spec json (any type), or null when it does not resolve} for each of ${J([...new Set(specProbes.map(p => p.pointer))])}.
@@ -702,7 +704,8 @@ Missing values are [] / "" / false / null, never invented.`), {label: 'spec read
 1. lost: collect every "index.html :: <literal>" citation in ${SPEC_MD} (to the end of the line, surrounding backticks stripped) and in every string of ${SPEC_JSON}, plus /block/placement, goes to lost when it does not occur in ${REPO}/index.html. /block/placement must also be a non-empty string that occurs on EXACTLY ONE line of ${REPO}/index.html (split on the newline character, count the lines that contain it): empty goes to lost as "block.placement :: empty", a count above 1 as "<placement> :: ambiguous (<n> lines)". Every non-null /hook_lines[].replaces must equal EXACTLY one full line of ${REPO}/index.html (split on the newline character, compare whole lines with indentation, count the equal lines): count 0 goes to lost as "<replaces> :: not a whole line", count above 1 as "<replaces> :: ambiguous (<n> lines)".
 2. fil_literals_touched: read ${REPO}/.claude/workflows/filigree-1-research.js, take the text from the line that starts "const ANCHORS = [" through the next line that is exactly "]", evaluate it as an array literal, keep the entries whose path is "index.html" and whose flag is 1; every /hook_lines entry whose line or replaces contains one of those literals gives "<line> :: <literal>".
 3. street_literals_touched: the same for these street literals: ${STR_ANCH_TEXT}.
-Return {lost, fil_literals_touched, street_literals_touched}.`), {label: 'literal guard' + tag, phase: 'Check', schema: GUARD, ...M('mech')}),
+4. anchor_counts: for EVERY /hook_lines entry whose replaces is null or missing (an inserted hook), one {line, anchor: its anchor verbatim (null when missing or not a string), count}: count = the number printed by grep -cF for that anchor over ${REPO}/index.html, run as child_process.execFileSync("grep", ["-cF", "--", anchor, "${REPO}/index.html"]) so no shell quoting touches it (grep exits 1 when it prints 0: that is count 0, not an error); count 0 when the anchor is null or empty. Do not judge the counts; report them.
+Return {lost, fil_literals_touched, street_literals_touched, anchor_counts}.`), {label: 'literal guard' + tag, phase: 'Check', schema: GUARD, ...M('mech')}),
     () => agent(PS(`Leak grep (a node script in a mktemp -d dir; write nothing): the regex source ${J(LEAK_RE)} with flags "gi" over ${SPEC_MD} line by line, skipping the "## Provenance" section (a section runs to the next "## " heading), and over every string value anywhere in ${SPEC_JSON}. Return {hits: ["<file>:<line or json path>: <match>", ...]} (empty when clean).`), {label: 'leak grep' + tag, phase: 'Check', schema: VHITS, ...M('mech')}),
     () => agent(PS(`Vocabulary grep (a node script in a mktemp -d dir; write nothing): the regex source ${J(VOCAB_ST.source)} with flags "gi" over ${SPEC_MD} line by line, skipping the sections "## Provenance" and "## Renames" (a section runs to the next "## " heading), and over every string value under a "label", "row", "text" or "player" key anywhere in ${SPEC_JSON}. Return {hits: ["<file>:<line or json path>: <match>", ...]} (empty when clean).`), {label: 'vocabulary grep' + tag, phase: 'Check', schema: VHITS, ...M('mech')})
   ])
@@ -784,7 +787,17 @@ function evaluate(ck, gt) {
     hooks.length <= HOOKS_MAX ? '' : `${hooks.length} hook lines (max ${HOOKS_MAX})`,
     ...units.flatMap(u => arr(u.hooks).filter(h => !hookSet.has(h)).map(h => `${u.id}: undeclared hook ${J(h)}`)),
     rd.block && rd.block.namespace === 'STREET' ? '' : 'block.namespace ' + J(rd.block && rd.block.namespace),
-    rd.block && typeof rd.block.placement === 'string' && rd.block.placement.trim() ? '' : 'block.placement empty or missing'].filter(Boolean)
+    rd.block && typeof rd.block.placement === 'string' && rd.block.placement.trim() ? '' : 'block.placement empty or missing',
+    ...hooks.filter(h => h.replaces == null).map(h => {   // Street 3 refuses an unanchored insert hook and checks each insert sits beside its anchor
+      const a = typeof h.anchor === 'string' ? h.anchor : '', c = gd ? arr(gd.anchor_counts).find(x => x && x.line === h.line && x.anchor === a) : null
+      return !a.trim() ? `insert hook ${J(h.line)}: no anchor (replaces null needs one)`
+        : /[\r\n]/.test(a) ? `insert hook ${J(h.line)}: anchor ${J(a)} spans lines`
+        : a.includes(HOOK_MARK) ? `insert hook ${J(h.line)}: anchor ${J(a)} carries ${HOOK_MARK}`
+        : String(h.line).includes(a) ? `insert hook ${J(h.line)}: its own line contains its anchor ${J(a)}`
+        : c && Number.isInteger(c.count) && c.count !== 1 ? `insert hook ${J(h.line)}: anchor ${J(a)} is on ${c.count} index.html lines (want exactly 1)` : ''
+    })].filter(Boolean)
+  const s11u = !rd ? [] : !gd ? ['anchor counts unread (agent died: literal guard)']   // not the spec's fault: kept out of the fixer's items
+    : hooks.filter(h => h.replaces == null && typeof h.anchor === 'string' && h.anchor.trim() && !/[\r\n]/.test(h.anchor) && !arr(gd.anchor_counts).some(x => x && x.line === h.line && x.anchor === h.anchor && Number.isInteger(x.count))).map(h => `insert hook ${J(h.line)}: anchor not counted by the literal guard`)
   const uSlice = id => (units.find(u => u.id === id) || {}).slice
   const s12 = !rd ? [RD] : [
     ...['S0.U00', 'S0.U01', 'S0.U02'].filter(id => uSlice(id) !== 'S0').map(id => id + ' missing (or not in S0)'),
@@ -829,7 +842,7 @@ function evaluate(ck, gt) {
     C('SG2.8', 'caps: SV1-SV9 numeric (6 metrics), within the bible ceiling, SV5/SV9 equal the baseline', s8.length ? s8 : 'ok', 'all', !s8.length),
     C('SG2.9', 'determinism contract', s9.length ? s9 : 'ok', 'keyed-hash + sim-read-only; no new sim state; KEY_IDIOM; no clock/random in acceptance', !s9.length),
     C('SG2.10', 'hash params and the notices parser rule', s10.length ? s10 : 'ok', 'all', !s10.length),
-    C('SG2.11', 'hook lines: marked map, <= 16, unit hooks declared, one STREET namespace', s11.length ? s11 : 'ok', 'all', !s11.length),
+    C('SG2.11', 'hook lines: marked map, <= 16, unit hooks declared, every insert hook anchored to exactly one index.html line (grep -cF), one STREET namespace', s11.length || s11u.length ? s11.concat(s11u) : 'ok', 'all', !s11.length && !s11u.length),
     C('SG2.12', 'mandatory units present', s12.length ? s12 : 'ok', `S0.U00-U02; S4.Ufog iff the atlas fog exists (${FOG_OK}); S4.Unotices iff notices consumed`, !s12.length),
     C('SG2.13', 'vocabulary (VOCAB_ST)', !ck.vc ? 'agent died: vocabulary grep' : arr(ck.vc.hits).length ? ck.vc.hits : 0, '0 hits', !!ck.vc && !arr(ck.vc.hits).length),
     C('SG2.14', 'blindness (allowlist check on self-reported files_read) and zero schema-path guesses', blind.length || guessBad.length ? {blind, guesses: guessBad} : 'ok', 'files_read within READER_ALLOWED; 0 schema guesses; every guess audited', !blind.length && !guessBad.length),
@@ -838,7 +851,7 @@ function evaluate(ck, gt) {
       `fade.ms ${OVR.R6 ? '>= 0 (R6 overridden)' : '<= 250 (R6)'}; max_jobs_frame integer ${OVR.ST9 ? '>= 1 (ST9 overridden)' : '1..6 (ST9)'}; the rest positive numbers; 0 < in_R < out_R <= ${MESH_HI}`, !s16.length)]
   const wrongBoth = sc.A && sc.B ? sc.A.wrong.filter(id => sc.B.wrong.includes(id)) : []
   const noise = sc.A && sc.B ? sc.A.wrong.concat(sc.B.wrong).filter(id => !wrongBoth.includes(id)) : []
-  return {criteria, sc, wrongBoth, noise, nullPtr, s1, s7, s8, s9, s10, s11, s12, s16, fileViol, guessBad, perSlice, units}
+  return {criteria, sc, wrongBoth, noise, nullPtr, s1, s7, s8, s9, s10, s11, s11u, s12, s16, fileViol, guessBad, perSlice, units}
 }
 const failingIds = ev => ev.criteria.filter(c => !c.pass).map(c => c.id)
 const NOT_FIXABLE = new Set(['SG2.0', 'SG2.15'])
@@ -873,6 +886,7 @@ while (rounds < ROUNDS && ev.criteria.some(c => !c.pass && !NOT_FIXABLE.has(c.id
 - A null pointer: put the decision at exactly that JSON pointer.
 - checks / caps / structure / mandatory unit / unit files / hooks / hash / determinism / limits items: correct /checks, /caps, /units, /hook_lines, /hash, /determinism, /fade, /stream, /traffic (its tiers included) or /tiers/hysteresis to the shape and rules below (acceptance expect is ${EXPECT_GRAMMAR}).
 - A schema guess: state the missing decision where the spec's structure promises it.
+- hooks items about an anchor: ${HOOK_ANCHOR_RULE} (check each with grep -cF against ${REPO}/index.html before you write it).
 - literal items: re-anchor to the current index.html literal (grep -nF) or drop the claim; a hook may not touch an anchor literal (move it to another line).
 - leak / vocabulary hits: reword, or move source names into "## Provenance".
 Cited items: ${J(items)}

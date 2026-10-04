@@ -1,5 +1,7 @@
 > Planning snapshot (2026-10-04): the script in `.claude/workflows/` is the source of truth; where this document and the script disagree, the script wins.
 
+> Superseded by the script: `hook_lines` entries are `{line, replaces, anchor}` (an insert hook, replaces null, carries a verbatim `anchor`, checked as SG2.11 and by the restore check's `misplaced`), and the metrics reader's per-field paths (`PROBE_OUT`), required `not_found` and GS.M live in `street-3-build.js`; `docs/street/README.md` §5.2, §5.4, §5.6 and §5.7 state the current contract.
+
 # Workflow 3 · `street-3-build.js` — Street 3 · Implementation → the street view (multi-run)
 
 > Planning snapshot, 2026-10-04 (final integrated plan). Where the committed script and this document disagree, the

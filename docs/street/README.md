@@ -294,7 +294,29 @@ exactly those failures are excluded from `console_errors` and the filter is list
 `console_errors_filter`. The one real-clock mode, `--device`, is owner-run on real hardware and writes
 `docs/street/device/<date>.json` (smoothed fps per second over a 60 s descent, the degrade step, and, as it must stamp,
 `index_sha`, the sha256 of the index.html it ran against); a pass (fps ≥ 42 throughout, degrade step 0, on the current index.html) is the
-precondition for flipping the default (ST8). Street 4 reads the newest device file as `pass`, `fail`, `absent` or
+precondition for flipping the default (ST8).
+The `--device` file shape is `{date, index_sha, seconds: [{t, fps, degrade_step}]}`; Street 3 reads `fps_min` (minimum
+`/seconds/<i>/fps`) and `degrade_max` (maximum `/seconds/<i>/degrade_step`) from the newest dated file.
+
+The S0-S4 probe extensions must write each digest field at exactly these `--out` paths (JSON Pointer; copied from
+`PROBE_OUT` in `street-3-build.js`, which is authoritative):
+
+- views: `/views/<SVn>/off/{calls,tris,geoms,textures,objects}` (the `street=0` run); `/views/<SVn>/on/{calls,tris,geoms,textures,objects,quads_per_frame,built_tris_per_frame,resident_tris}` (the `street=1` run); `/views/<SVn>/on/classes` (`{<class>: count}`)
+- appear: `/appear/violations` (strings), `/appear/slowest_ms`
+- swaps: `/swaps/<threshold>/{in,out}`
+- oscillate_builds: `/paths/oscillate/builds/<class>`
+- flyaway: `/paths/flyaway/{geoms_first,geoms_return,geoms_reseed,resident_max}`
+- jobs_max, built_tris_max: `/paths/jobs_max`, `/paths/built_tris_max` (per-frame maxima over every path run)
+- vfps: `/vfps/{h30,h60}` (the `--queue-hash` hashes under `--vfps 30` and `60`)
+- spacing: `/spacing/{min_gap,dvis_over_dtrue}` (at SV4)
+- hash_table: `/hash_table` (`[{hash, ok, got}]`); writer_roundtrip: `/writer_roundtrip`
+- stats_keys: `/views/SV1/on/stats_keys` (in order); inst_no_color: `/inst_no_color`
+- clouds: `/sky/clouds/{same_day_equal,next_day_differs,deck_matches_weather}`
+- shadows_row: `/sky/shadows_row/{held_text,disabled,off_kills_shadow,default_on_equal}`
+- weather_dial: `/sky/weather_dial/{exact,counts}` (`counts`: 4 integers)
+- tidings: `/tidings/{barriers,musters,off_zero,atlas_equal}` (`atlas_equal` null with no atlas sample)
+- fog: `/fog/{present,src_equal,pairs_equal}` (both equality flags null when `present` is false)
+- console_errors: `/console_errors` (strings) Street 4 reads the newest device file as `pass`, `fail`, `absent` or
 `stale` (no `index_sha`, or one that differs from the current index.html); until `--device` stamps `index_sha`, every
 device run reads as stale.
 
@@ -319,10 +341,13 @@ off reference: the **re-baseline**, recorded), and an unchanged one after a buil
 sha) and runs the probe and the keydown rule on that copy; `off-ref.json` gains `measured_on: 'restore(index.html)'`,
 and a probe that cannot serve another tree makes the result `infra`. `state/3-build/index-ref.json` stamps the
 reference this run measured against (`pre.restore.sha_restore`, kept or re-baselined), never the post-run restore sha,
-plus `restore_ok`, `sha_restore_left`, `undeclared_left`, `tree_ok`, `tree_digest_pre` and `tree_digest_end`, so the next
+plus `restore_ok`, `sha_restore_left`, `undeclared_left`, `hook_faults_left`, `tree_ok`, `tree_digest_pre` and `tree_digest_end`, so the next
 preflight refuses (`restore invariant broken:` or `coexistence broken:`, §1.6) instead of absorbing a stray edit. The
-proof also requires each declared insert hook to appear at most once (`dup_hooks`); a hook placed in the wrong function
-is still unchecked. The filigree anchors are read live from `filigree-1-research.js` and must still resolve (the
+proof also requires every declared insert hook to sit beside its declared `hook_lines[].anchor` (`misplaced`: the
+anchor text is on the nearest line above or below that is not itself a marked line), `dup_hooks` to cover every declared
+hook line (none may appear twice), and the marked lines outside the block to number at most the declared `hook_lines`
+count and exactly `hooks_present` + `undeclared`. A run that left hook faults makes the next preflight refuse, and
+`index-ref.json` gains `hook_faults_left` (the first three). The filigree anchors are read live from `filigree-1-research.js` and must still resolve (the
 preflight's `fil_anchors.n` is the kept entry count; a run fault when it is 0 or differs from the literal count), none
 may appear inside the block, and `maps-site/**` + `docs/filigree/**` must hash to the same tree digest after every run
 (GS.8). The shots pruner computes that tree rule at the end of every run, gate or not: a difference fails GS.8 when a
@@ -385,9 +410,9 @@ readback returns `canon_len`, which the script cross-checks.
 | SG2.8 | caps for SV1–SV9 numeric, within the bible ceiling; SV5 and SV9 equal the baseline |
 | SG2.9 | determinism contract: keyed hash + read-only sim state only; no new sim state; no clock or random token in acceptance commands (grep kinds, `street.static_clock`/`street.static_rng` and text scans that only name the tokens are skipped; tokens are written in bracket form) |
 | SG2.10 | hash params `^[a-z]+$`, not ending in `s`, not `s`/`goto`/`filigree`; `notices` consumed only with the S0 parser unit and the hash table |
-| SG2.11 | hook lines marked, ≤16, a function hook → replaced line; one `STREET` namespace; a non-empty `block.placement` that the literal guard finds on exactly one `index.html` line |
+| SG2.11 | hook lines marked, ≤16, a function hook → replaced line; every `hook_lines` entry with `replaces: null` carries `anchor` (verbatim single-line `index.html` text, exactly one occurrence, no `/*ST-HOOK*/`, not inside the hook's own line; a non-null `replaces` has anchor null), counted by the literal guard and scored here; one `STREET` namespace; a non-empty `block.placement` that the literal guard finds on exactly one `index.html` line |
 | SG2.12 | mandatory units present (S0.U00, S0.U01, S0.U02; S4.Ufog only when the atlas fog exists; S4.Unotices iff notices are consumed) |
-| SG2.13 | zero banned vocabulary (the ban covers all spec prose, not only player-facing text) |
+| SG2.13 | zero banned vocabulary: the ban covers the whole spec body of `street-spec.md` outside `## Provenance` and `## Renames`, plus every JSON `label`, `row`, `text` and `player` string |
 | SG2.14 | blindness; zero schema-path guesses |
 | SG2.15 | artifacts hashed |
 | SG2.16 | limits Street 3 gates on (spec reader returns `/fade/ms`, `/stream/{max_jobs_frame,tri_cap_frame,resident_tris}`, `/traffic/{s0,T,v0}`, `/traffic/tiers` and `/tiers/hysteresis`): `fade.ms` ≤ 250 (R6), `max_jobs_frame` an integer 1..6 (ST9), `tri_cap_frame`, `resident_tris`, `s0`, `T`, `v0` positive numbers, at least 3 caravan tiers with `in_R`/`out_R` hysteresis, and every hysteresis pair 0 < in_R < out_R ≤ 2200; an R6 or ST9 override relaxes only that bound; failures go to the spec fixer as `limits` items |
@@ -406,7 +431,8 @@ readback returns `canon_len`, which the script cross-checks.
 | GS.8 | filigree anchors resolve (and at least one filigree literal was recorded at preflight), none in the block; `maps-site/**` + `docs/filigree/**` untouched | S0 |
 | GS.9 | console clean, both seeds, on and off (the aborted font hosts are excluded, `console_errors_filter`) | S0 |
 | GS.10 | the slice's spec `/checks` pass (results matched by id only; a `--cdn-dir`/`--port` appended to a probe command no longer matters) | S0 |
-| GS.X3 | only declared hook lines changed outside the block, no declared insert hook twice (restore invariant) | S0 |
+| GS.X3 | only declared hook lines changed outside the block: restore sha unchanged, `undeclared` = [], no declared hook line twice, every insert hook beside its declared anchor, marked lines ≤ the declared `hook_lines` count (restore invariant) | S0 |
+| GS.M | every digest field the slice scores is found at its probe output path (`PROBE_OUT`); a miss is a capture/mapping fault, reason `infra`, no fix unit, never a pass | S0 |
 | GS.X4 | the keydown handler and the `camera.near` line unchanged | S0 |
 | GS.X5 | the hash table parses (`#notices=u&s=a` reads seed `a`); seed writers keep `street=1` | S0 |
 | GS.X6 | `ANNALS.stats()` keys unchanged | S0 |
@@ -429,8 +455,9 @@ Build details the table leaves out. Every unit runs and scores the restore check
 (every unit holds its lock); a non-index unit fails as `edited outside unit files: index.html` when the file's sha
 differs from the last index-touching unit's. The unit record is verified, not trusted: the writer returns
 `acceptance_n`, `runs_failed`, `spec_sha256`, `restore_sha`, the sorted `path:sha` list and `canon_len`, and the script
-compares them; the write and the owner-discard edit go through node scripts, not hand edits. The metrics reader has the
-probe's top-level paths in its prompt and returns an optional `not_found` list beside the 20-field digest. Fix units
+compares them; the write and the owner-discard edit go through node scripts, not hand edits. The metrics reader gets one explicit JSON
+path per digest field (`PROBE_OUT`, below) and reads only those; it returns `not_found`, which is required and limited to
+the fields the slice scores, beside the digest, and the read is retried once before GS.M fails. Fix units
 (from the diagnoser or the ledger) are rejected when a file path has a `.` or `..` segment, a `//`, a backslash or a
 leading `/`, when a dependency is neither a spec unit id nor a `fix-S<digit><n>` id, or when an acceptance `expect` is
 empty or whitespace. `re:` expectations are bounded: a pattern longer than 200 characters, with a backreference or with

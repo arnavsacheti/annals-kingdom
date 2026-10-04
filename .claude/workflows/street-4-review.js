@@ -197,6 +197,7 @@ async function recordD(rel, obj, label) {
 }
 // ---- end street config ----
 // ==== end street prelude ====
+const VOCAB_ST_RULE_SG = `Banned vocabulary (case-insensitive regex ${VOCAB_ST.source}) is grepped, with no exceptions, over every string literal (single- and double-quoted strings and the literal parts of template strings) between the "/* STREET */" and "/* /STREET */" lines of index.html; comments and identifiers are not scanned, and a single hit fails gate SG4.6. So no string literal in the STREET block may contain a banned word, whether or not it is player-facing: labels, class names, keys and engineering strings all count. Use bronze-age substitutes: the gates shut at the dark hour; caravan halts and waystations; toll halts; fords and one-lane bridges crossed in turn; roads and folk. Voice: bronze-age Nīmlad, the nine Kembar, years A.B.`
 checkArgs(['streetRulings', 'port', 'preview', 'cycle'])
 if (A.preview !== undefined && typeof A.preview !== 'boolean') die('preview must be a boolean')
 const PREVIEW = A.preview === true
@@ -520,7 +521,7 @@ Rulings:
 ${rulingText(RUL, LENS_RULES[L.id].R)}
 ${rulingText(STR.r, LENS_RULES[L.id].ST)}
 ${DET_RULE}
-${VOCAB_ST_RULE}
+${VOCAB_ST_RULE_SG}
 ${priorTxt}
 ${round > 0 ? `Already reported by this lens: ${J((seenTitles[L.id] || []).slice())}; report only what is not in this list.\n` : ''}Every finding needs evidence {kind, ref} another agent can re-check: shot = ${SHOT_REF}; metric = a JSON pointer into ${METRICS} (e.g. /views/SV1/street=1/calls, as the file spells it); cmd = a shell command run from ${REPO}. repro_cmd = a shell command, run from ${REPO}, that exits 0 while the defect is present and non-zero once it is fixed; one that writes anything (the probe's --out, a build) first makes a temp copy (${TMPCOPY}) and runs there, with paths relative to the copy or written as $D and never an absolute ${REPO} path. Probe runs (fingerprint, cap, fade and hash defects) follow this recipe: ${SANDBOX_ST}
 ${VPROBE} A repro_cmd that runs the probe carries --port 0 and that --cdn-dir explicitly, so a verifier can run it as written. where = the view id, file:pattern or layers row the defect sits at. A finding with an empty evidence.ref or repro_cmd is discarded.
@@ -794,7 +795,7 @@ const pl = await crit(PS(`You are the punch-list integrator for Street 4 review 
    ## Fixed since cycle ${CYCLE - 1}: ${CYCLE > 1 ? 'the prior ids listed as fixed below, with their titles from the previous punch-list-c${CYCLE - 1}.json; then, under "Not re-checked", the not-re-checked ids (never call them fixed)' : 'write "First review cycle."'}
    ## Gate: one row per criterion (id, measured in brief, threshold, pass).
 3. ${RV}/punch-list.json = a byte copy of the c${CYCLE} json; 4. ${RV}/punch-list.md = a byte copy of the c${CYCLE} md.
-${VOCAB_ST_RULE}
+${VOCAB_ST_RULE_SG}
 ITEMS = ${J(items)}
 Gate criteria = ${J(criteria.map(c => ({id: c.id, desc: c.desc, measured: JSON.stringify(c.measured === undefined ? null : c.measured).slice(0, 400), threshold: c.threshold, pass: c.pass})))}
 Per judge view = ${J(perView)}

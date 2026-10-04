@@ -296,6 +296,7 @@ const ANCH = {type: 'object', additionalProperties: {type: ['string', 'null']}}
 const DRIFT = OBJ({ok: B, checks: {type: 'array', items: OBJ({id: S, ok: B, detail: S})}})
 const FILANCH = OBJ({n: I, literals: ANCH, in_street: {type: 'object', additionalProperties: I}})
 // ---- job helpers (NOT in the prelude, so drift check D2 does not cover them): this block is pasted verbatim into W1-W4 after the schema atoms above ----
+const VOCAB_ST_BUILD_RULE = `Banned vocabulary (case-insensitive regex ${VOCAB_ST.source}) must not appear in any quoted string literal (single, double or backtick) inside the STREET block or on the declared hook lines of index.html, whatever the string is for: player-facing text, fiction names, street-class and row labels, tooltips, and engineering strings (ids, keys, log or error messages) all count, with no exempt section. Describe engineering concepts in bronze-age terms ("right-of-way rule", "gate schedule", "halt rule", "crossing order", "one-lane turn-taking", "folk on the road") and keep banned terms out of string literals. Bronze-age words: the gates shut at the dark hour; caravan halts and waystations; toll halts; fords and one-lane bridges crossed in turn; roads and folk. Voice: bronze-age Nīmlad, the nine Kembar, years A.B.`
 const driftIds = d => ((d && d.checks) || []).filter(c => !c.ok).map(c => c.id).join(', ') || 'no drift report'
 const citedChanged = (cited, now) => Object.keys(cited || {}).filter(k => (now || {})[k] !== cited[k])   // ids whose ruling text differs from the text Street 1 stamped
 const lowBudget = () => !!(budget && budget.total && budget.remaining() < ROUND_TOKENS)   // the filigree-1 idiom; every round gate is `if (lowBudget()) { log('budget: round skipped'); break }`
@@ -640,7 +641,7 @@ const hardRules = u => `Hard rules (rules 3 to 7 are checked in code at the slic
 4. Every InstancedMesh gets setColorAt for every instance (instanceColor) before its first render (anchor "every InstancedMesh sharing MAT.world MUST carry instanceColor").
 5. Default off: without street=1 in the hash the block builds nothing and adds no scene object; ANNALS.stats() keys stay exactly ${J(STATS_KEYS)}; street metrics live under ANNALS.street.
 6. Never put any of these literals inside the block (filigree anchors and the street flag-1 anchors): ${J(FIL_LITS.concat(ST_FLAG1))}. Never change the line "${NEAR_LINE};" (the near plane) or the keydown handler (window.addEventListener('keydown' …); add no new keys.
-7. Player-facing strings (row labels, class labels, tooltips, chronicle text) obey: ${VOCAB_ST_RULE} ST16: ${STR.r.ST16}
+7. Player-facing strings (row labels, class labels, tooltips, chronicle text) obey: ${VOCAB_ST_BUILD_RULE} ST16: ${STR.r.ST16}
 8. ${MODE === 'smoke' ? `SMOKE RUN: write your intended change as a unified diff to ${OUTABS}/dry/${u.id}.diff (create the directory), edit nothing, return files_changed [] and dry true.` : 'In smoke mode diffs go to <outDir>/dry/ and nothing is edited; this is a full run, so edit for real and return dry false.'}
 9. Edit ONLY this unit's files (repo-relative to ${REPO}): ${J(u.files)}; other units may be running at the same time on other files. Return files_changed with the sha256 (sha256sum after your edit) of every file you wrote.`
 const IMPL_PROMPT = u => `You are implementing build unit ${u.id} of the Street view (slice ${u.slice}, ${SLICE_NAME[u.slice] || ''}) in the Annals sim.
@@ -649,7 +650,7 @@ The spec rules it covers are the /rules entries of ${SPEC_JSON} with ids ${J(u.c
 Rulings:
 ${rulingText(RUL, IMPL_R)}
 ${rulingText(STR.r, IMPL_ST)}
-${VOCAB_ST_RULE}
+${VOCAB_ST_BUILD_RULE}
 Current anchors (re-derived this run; grep the pattern if a line moved):
 ${anchorText}
 ${u.files.some(f => /^tools\/street-/.test(f)) ? `The probe ${PROBE} is the street track's instrument: extend it, never break it (every Street 1 flag and output field keeps its meaning). The slice gate's metrics reader reads each figure ONLY at these --out paths (JSON Pointer; a figure elsewhere counts as not measured and fails the gate as a capture fault), so every figure your flags measure goes exactly there:\n${PROBE_OUT_TEXT}\n- device: ${DEVICE_OUT}\n${SANDBOX_ST}\n` : ''}${hardRules(u)}
@@ -1059,7 +1060,7 @@ Diagnose street defects only (never the probe's measurement, the checks or the o
 - deps: ids already done or among your new units (no cycles);
 - acceptance: mechanical only, a command plus its expected output as an exact string, "re:<regex>", "==N", "<=N", ">=N" or "json:<value>" (the script scores them in code);
 - failed_criterion: one of ${J(failedIdsC)}; at most one unit per criterion.
-Every unit obeys the build's hard rules: one /* STREET */ block, declared hook lines only, randomness only from ${KEY_IDIOM}, no clock, no W writes, instanceColor, default off, stats keys unchanged. ${VOCAB_ST_RULE}
+Every unit obeys the build's hard rules: one /* STREET */ block, declared hook lines only, randomness only from ${KEY_IDIOM}, no clock, no W writes, instanceColor, default off, stats keys unchanged. ${VOCAB_ST_BUILD_RULE}
 Re-read each file you wrote and JSON.parse it. Return {units: [every unit you wrote], ledger_written: [the absolute path of each file you wrote that parses]}.`), {label: 'diagnoser' + tag, phase: 'Fix units', schema: DIAG, ...M('judge')})
   if (!dg) { diagDied = 'diagnoser' + tag; break }
   const written = new Set(arr(dg.ledger_written).map(absP))
