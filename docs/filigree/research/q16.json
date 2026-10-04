@@ -1,0 +1,166 @@
+{
+ "qid": "q16",
+ "claims": [
+  {
+   "id": "q16-c01",
+   "text": "Method: each fixture crop is 96x96 atlas px at 4x with the hex as the central 128x128 crop px (32 atlas px); I measured dark ink (grey<90) inside the hex and the distance from the hex edge to named printed features, and classified every feature by eye as lettering (name text), glyph (ring-dot, double-ring, dotted road) or linework (coast, river, graticule, islets). Distances are atlas px, +-0.5.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "python3 on gates/hex/F01..F12.jpg using gates/hexes.json crop x0,y0,scale; hex bbox from todo constants (R17)"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q16-c02",
+   "text": "Summary by collision class. Printed lettering or settlement glyph INSIDE the hex: F01, F04, F09, F10, F11. Lettering only TOUCHING a hex edge or corner (a few ink px): F02, F05. Lettering/glyph hugging the hex within 0-5 px but no ink inside: F03, F06, F07 (4 px), F08 (2.8 px). Clear of any lettering or glyph (nearest ink about 12 px): F12 only.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "per-fixture claims q16-c03..q16-c15"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q16-c03",
+   "text": "F01 (cell 51,50) is filled by lettering and a glyph: the diagonal hand lettering AURA-HOTH / HANATH crosses the hex NE (letters of HANATH run through x1650-1666, y1594-1613, about 545 ink px inside), and the Perona ring-dot (centre about 1648,1632, r about 4) straddles the bottom edge centre, about 314 ink px of it inside; the Perona name label sits just below, 5.8 px outside the hex. About 5.3% of the hex is ink.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "gates/hex/F01.jpg (384x384 crop, scale 4, hex = central crop px 128..256; gates/hexes.json#hexes[0].crop); ink = grey<90 connected components, measured with PIL/numpy/scipy; F01 crop px 128..256; components (1650-1657,1594-1606),(1661-1666,1604-1613),(1644-1652,1628-1636)"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q16-c04",
+   "text": "F01 summit (the DEM window maximum, 328.19 m at 1649.06,1604.06) lies only 2.5 atlas px from the nearest HANATH letter ink, so a peak triangle plus height numeral at the summit collides with printed lettering; the README role line calls F01 'summit' but the print is not blank there.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "min distance from (1649.06,1604.06) to ink px in gates/hex/F01.jpg = 2.5; README.md#Fixed sample sets F01 row"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q16-c05",
+   "text": "F02 (cell 43,49) is effectively paper: only 107 ink px (0.65%) of the foot serif of a large spaced capital P clip the hex NE corner/right edge near x1404-1408,y1568-1579; the next printed items are the Aldorus label about 20+ px NE and a second large capital E at the NW, both outside. Blank enough for an overlay label, with the P serif the only touch.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "gates/hex/F02.jpg (384x384 crop, scale 4, hex = central crop px 128..256; gates/hexes.json#hexes[1].crop); ink = grey<90 connected components, measured with PIL/numpy/scipy; P component bbox 1404-1436 x 1547-1579, 107 px inside hex"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q16-c06",
+   "text": "F03 (cell 41,47) contains zero ink (0 px) but is wedged between printed lettering: the large spaced capital E touches the east edge (0.2 px), the Rēketis name label with its glyph is about 4.8 px off the SW/south side, the large capital L is about 17 px west and the small PĒSHUNOR letters P-E-S about 21 px north. It is a gap in the lettering, so any overlay label here would sit between or on top of printed letters.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "gates/hex/F03.jpg (384x384 crop, scale 4, hex = central crop px 128..256; gates/hexes.json#hexes[2].crop); ink = grey<90 connected components, measured with PIL/numpy/scipy; distances computed per feature rect"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q16-c07",
+   "text": "F04 (cell 43,51) is lettered: the printed letter O of DRANIMOS lies wholly inside the hex (x1396.5-1406,y1644.8-1655, 682 ink px) and the right edge of the M (x1375-1380.5, 354 px) overlaps the west edge; 6.3% ink. The solid river named in the README is NOT in the hex, the nearest river ink is about 15.8 px south (y>=1680).",
+   "evidence": {
+    "kind": "crop",
+    "ref": "gates/hex/F04.jpg (384x384 crop, scale 4, hex = central crop px 128..256; gates/hexes.json#hexes[3].crop); ink = grey<90 connected components, measured with PIL/numpy/scipy; README.md#Fixed sample sets F04 row"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q16-c08",
+   "text": "F05 (cell 42,45) carries a glyph, not name lettering: the north-coast dotted road runs along the hex top (about 10 dots, x1344-1377,y1442-1447, 4.3% ink), and the macron of the Ē of the small PĒSHUNOR lettering just touches the bottom-left corner (93 px at x1344.5-1348.8,y1470-1472, the remaining letters P, Ē, S sit at y1472-1485 just below). The hex is otherwise paper (inland strip).",
+   "evidence": {
+    "kind": "crop",
+    "ref": "gates/hex/F05.jpg (384x384 crop, scale 4, hex = central crop px 128..256; gates/hexes.json#hexes[4].crop); ink = grey<90 connected components, measured with PIL/numpy/scipy; Ē macron component 93 px in hex"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q16-c09",
+   "text": "F06 (cell 48,47) has no lettering inside: it is a coast line (thick black, NE sea above, about 10.5% ink) plus dotted-road dots at the SW corner (x1535-1546,y1529-1538). Printed names hug it: Kanae label about 9 px north, a region-lettering R about 2.3 px west, the Rhup ring-dot touching the SE corner (centre about 1567,1539.5, r about 3.5) and the Rhup label about 5 px south.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "gates/hex/F06.jpg (384x384 crop, scale 4, hex = central crop px 128..256; gates/hexes.json#hexes[5].crop); ink = grey<90 connected components, measured with PIL/numpy/scipy; distances from hex edge"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q16-c10",
+   "text": "F07 (cell 40,43) has no name lettering inside, but is the busiest linework hex (20.8% ink): about 8 islet/coast components and a coast tongue across the east. The spaced capital region lettering (P-A-E-R-A... along an arc) ends about 4 px north of the hex top edge, so labels for the islets compete with printed lettering immediately above.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "gates/hex/F07.jpg (384x384 crop, scale 4, hex = central crop px 128..256; gates/hexes.json#hexes[6].crop); ink = grey<90 connected components, measured with PIL/numpy/scipy; lettering rect y1344-1372 nearest ink 4.0 px from hex"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q16-c11",
+   "text": "F08 (cell 50,43) is open sea with no lettering or glyph inside; the only ink is a thin graticule line crossing the hex top (2.4% ink, running ENE-WSW, spans x1568-1664). A large italic sea-name capital R lies about 2.8 px off the SW corner (x1570-1598,y1393-1419).",
+   "evidence": {
+    "kind": "crop",
+    "ref": "gates/hex/F08.jpg (384x384 crop, scale 4, hex = central crop px 128..256; gates/hexes.json#hexes[7].crop); ink = grey<90 connected components, measured with PIL/numpy/scipy; graticule component 387 px inside; R distance 2.8 px"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q16-c12",
+   "text": "F09 (cell 45,47) is the most contested hex: the Aldorus ring-dot (centre about 1446.9,1526.9) is inside, the Aldorus name label (x1420-1474,y1531-1541) straddles the bottom edge with about 5 px of its top inside, the capital N of the PĒSHUNOR lettering clips the NE corner (about 83 ink px at x1465.8-1471.8,y1495-1506.5), and a solid river line crosses the upper-left of the hex; 11.6% ink. The one-shield overlay (R19) will sit on the ring and label.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "gates/hex/F09.jpg (384x384 crop, scale 4, hex = central crop px 128..256; gates/hexes.json#hexes[8].crop); ink = grey<90 connected components, measured with PIL/numpy/scipy; ring comp 627 px; N comp 83 px"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q16-c13",
+   "text": "F10 (cell 38,44) is filled with both glyphs and lettering: the Epēshu double-ring ◉ (centre about 1236,1415, 816 ink px) is inside at the top-right, the tail 'hu' of the diagonal Epēshu name label crosses the west edge (letters at x1216-1223.5,y1418-1427), and the dotted road leaves the ring and runs down the east side (x1239-1242,y1421-1439) beside the coast linework; 20.2% ink.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "gates/hex/F10.jpg (384x384 crop, scale 4, hex = central crop px 128..256; gates/hexes.json#hexes[9].crop); ink = grey<90 connected components, measured with PIL/numpy/scipy; ◉ component 816 px, 'hu' components 230+201 px"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q16-c14",
+   "text": "F11 (cell 35,44) is filled: letters 'pon' of the diagonal Lepon label sit in the NW/top-left (x1118-1138,y1406-1423, about 1000 ink px inside), the Lepon ring-dot (centre about 1146,1427, 646 px) is inside, dotted road dots run down the right side (x1146-1153,y1432-1441), plus coast linework and a thin grey graticule/meridian line crossing the west half; 19.6% ink. This is the Lepon ruin an old-survey/dead-way overlay must share with the printed name.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "gates/hex/F11.jpg (384x384 crop, scale 4, hex = central crop px 128..256; gates/hexes.json#hexes[10].crop); ink = grey<90 connected components, measured with PIL/numpy/scipy; components (1124.8-1131.5,1409-1416) 404 px,(1130-1138,1412.8-1422.8) 516 px, ring 646 px"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q16-c15",
+   "text": "F12 (cell 83,6) has 0 ink in the hex and no printed lettering or glyph within about 12 px (nearest ink 11.8 px, hand lettering 'all-by- / Hole' at lower left and a sloped capital at lower right); the Mountain Wall marker (2676,206) lies inside the hex and its nearest printed ink is 29 px away. Open paper, the cleanest fixture for the no-DEM rule (R22).",
+   "evidence": {
+    "kind": "crop",
+    "ref": "gates/hex/F12.jpg (384x384 crop, scale 4, hex = central crop px 128..256; gates/hexes.json#hexes[11].crop); ink = grey<90 connected components, measured with PIL/numpy/scipy; nearest ink 11.8 px; marker (2676,206) nearest ink 29.3 px"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q16-c16",
+   "text": "F01's README role 'summit' and F07's 'islets' mean overlay glyph classes will arrive where the print is busiest or lettered (F01 HANATH, F07 islets); the 'blank-hex' candidates at the print level are F12 (nothing within 12 px), F02 (0.65% ink) and F03 (0 ink but boxed in by letters).",
+   "evidence": {
+    "kind": "computed",
+    "ref": "sorted ink fractions in hex: F12 0, F03 0, F02 0.65, F08 2.36, F05 4.28, F01 5.34, F04 6.32, F06 10.47, F09 11.56, F11 19.59, F10 20.17, F07 20.83 (%)"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q16-c17",
+   "text": "This agrees with earlier research: q07 recorded F01 as 'bare land plus a Perona ring edge' (the ring is confirmed straddling the bottom edge, and the HANATH lettering also clips the NE), and q05 recorded that the Band W print letters only fragments of five region names.",
+   "evidence": {
+    "kind": "data",
+    "ref": "research/q07.json#summary; research/q05.json#summary"
+   },
+   "confidence": "medium"
+  }
+ ],
+ "gaps": [
+  "Identity of the large spaced capitals around F02/F03 (E, P, L; probably one region name) and of the capital R at F06 and F12's 'all-by- / Hole' lettering was not read; no name is asserted for them.",
+  "Overlay label positions were not measured here, so which overlay label actually collides in each hex (versus only the glyph classes) is not established; only the printed side is.",
+  "Ink threshold grey<90 on 4x-upsampled JPEG crops: thin graticule/river lines (lighter grey) may be partly missed, and F11's and F12's thin vertical line was not classified as graticule versus river.",
+  "Whether the README's F04 'solid river at the edge' refers to the river 15.8 px south (outside the hex) is inferred from the crop only."
+ ],
+ "summary": "Of the 12 fixtures, F01, F04, F09, F10 and F11 have printed lettering and/or ring-dot glyphs inside the hex (F09, F10 and F11 densest, with the settlement ring plus its name), F02 and F05 are only touched at a corner by a letter serif or macron, and F03, F06, F07 and F08 are ink-free or lettering-free inside but sit within 0-5 px of printed letters or rings. Only F12 is clear of printed lettering (nearest ink about 12 px). F01's summit is just 2.5 px from HANATH lettering, so the summit marker collides with print.",
+ "date": "2026-10-04"
+}

@@ -1,0 +1,126 @@
+{
+  "qid": "q03",
+  "claims": [
+    {
+      "id": "q03-c01",
+      "text": "Source limit: the brief holds no Azlen image. Page 4 shows only 'Plate three' (Sonoma: Goat Rock, Cazadero, Guerneville; caption 'Plate three. Paler again...'), and Azlen enters only as the paragraph 'The painted city' (San Francisco from the bay, a camera move over a painted sheet). The text gives no numeral for any Azlen property (no block size, no hue value, no fog opacity, no contour interval), so every threshold below is either a baseline measured on shipped repo assets or a Job 2 decision; none is a brief fact.",
+      "evidence": {
+        "kind": "pdf-page",
+        "ref": "docs/research/filigree-for-the-table.pdf p4 ('The painted city' paragraph + plate three caption)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q03-c02",
+      "text": "What the text names, taken verbatim as the seven things to prove: (1) peninsula as a cream sheet; (2) blocks in rose-brown grain; (3) parks as green voids; (4) hills on the west drawn with contour hair; (5) arterials in ocher; (6) water is watercolor, not a flat fill; (7) fog washes sit on the east bay and the Marin headlands 'like someone left the brush wet'. Plus three behaviours: 'Azlen's clip does not add labels', 'No UI chrome, no pins', and 'Zoom in and the grid becomes a textile / Zoom out and fog washes sit...'. The brief's own caveat: the clip is a camera move over a painted sheet and 'zooming reveals pixels... the wrong model for what appears at a given scale', so each proxy must be read at fixed zooms, not once on one raster.",
+      "evidence": {
+        "kind": "pdf-page",
+        "ref": "docs/research/filigree-for-the-table.pdf p4 ('The painted city', 2 paragraphs)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q03-c03",
+      "text": "Pooled edges, from the replies on page 6: Rasmus Andersson likes the watercolor for a practical reason, 'contrast gathers at the edges because that is where the paint pooled', so the coast and the parks read without a stroke. The brief gives the mechanism (contrast concentrates at the boundary) and the negative (no outline stroke) but not the direction (darker or more saturated) or any depth. Dossier section 9 already maps this to an edge-darkening pass on the existing land/water masks (washMake, sampleCityMask).",
+      "evidence": {
+        "kind": "pdf-page",
+        "ref": "docs/research/filigree-for-the-table.pdf p6 ('What they like'); docs/filigree/research-dossier.md#9 'Paint on the base'"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q03-c04",
+      "text": "PROXY P1 block grain scale. Measure: decorrelation length Lc = first lag (px) at which the horizontal and vertical luminance autocorrelation of built ground falls below 0.1, in 256x256 patches, reported in sheet px AND converted to screen px at each capture zoom; plus built-fill coverage = (rose-brown fill px)/(land px). Pass shape (direction from the brief, magnitude is a Job 2 setting): grain is fine and aperiodic (a textile, not a lattice), is sub-pixel tone when zoomed out and resolves into structure as the sheet is entered. Baseline measured on the shipped Epeshu chart Q1 (five 256x256 patches): autocorrelation 0.40-0.79 at lag 1; at lag 4 it is -0.12..0.09 in the dense patches (Marble Quarter, waterfront, forum core) and 0.18-0.34 in the looser southern and eastern patches; no periodic peak above 0.02 in the Marble Quarter patch, i.e. the existing fabric is already texture with Lc about 3-4 chart px, not a street lattice. Orange building fill is 13.4% of Q1 land px (outline px excluded, so a floor).",
+      "evidence": {
+        "kind": "computed",
+        "ref": "PIL on the 2048x2048 stitch of charts/epeshu z3 tiles x1..8,y5..12 (Q1): orange fill r>190,120<g<200,b<150,r-b>70; sea = within 14 of (119,153,136); 1-D row/column luminance autocorrelation, lags 0-64, patches at Q1 px (900,100),(700,600),(400,1400),(200,500),(1500,1300)"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q03-c05",
+      "text": "Scale conversion that every proxy needs (computed from shipped constants): the Epeshu chart is 3914x4200 px in a footprint box of 48.46x52.0 atlas px (FOOT_R capital 26), so 80.77 chart px = 1 atlas px, and cityMaxZ = 4 + log2(4200/52) = 10.336 (below Z_STREET 11.5). Screen px per chart px = 2^(z-10.336): 0.140 at z7.5 (tier D start), 0.198 at z8 (POI threshold), 0.396 at z9, 0.792 at z10, 1.00 at z10.34. So the Lc of 3-4 chart px is 0.6-0.8 screen px at z8 (tone) and reaches 2 screen px only at z>=9.34; the 4-px arterial bar reaches 1 screen px at z=8.34. 'The grid becomes a textile' therefore happens between about z8.3 and z9.3 on the shipped chart, and P1 must be sampled at z 8, 9, 10 and 10.34.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python3: s=4200/(2*26)=80.77; zmax=4+log2(s)=10.336; screen/chartpx=2^(z-zmax); anchors maps-site/index.html :: var FOOT_R={capital:26 ; maps-site/index.html :: var Z_STREET=11.5, Z_OPEN_MAX=8.0, Z_TIER_D=7.5 ; maps-site/data/detail-charts.json#Epēshu (w 3914, h 4200, maxz 3)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q03-c06",
+      "text": "PROXY P2 park void. Measure: connected regions of green fill that contain no building fill, counted and sized (px^2 and fraction of land) per quarter, plus the share of each region's interior covered by building fill (a void is about 0). The brief gives only 'parks as green voids' (void = absence of block grain, colour = green); no minimum area. Baseline on Q1: 8 green components >= 2000 px^2. The Mamban garden (chart-pois n=8, 'A vast garden of exotic and rare plants') is the one named park: 9,210 px^2 of visible green centred at (977,2200) plus a 5,156 px^2 navy badge disc sitting on it, about 14.4k px^2 = 2.2 atlas px^2 = 0.34% of Q1; it carries a dark outline stroke (seen on the crop; not measured numerically). The largest green component, 29,443 px^2 at (2272,2586), is the dark wood at the east edge of Q1, a forest block rather than a park. Non-built cream ground >= 2000 px^2: 40 components (21 at 2-5k, 10 at 5-10k, 6 at 10-20k, 1 at 20-50k, 1 at 50-200k, plus two of ~197-208k at the fringe fields); these are fields and open ground, not parks, so cream void area must not be counted as park void.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "PIL stitch of Q1 + 4-connected components: green g>r+4,g>b+4,r<150,g<150 ; cream r>225,g>225,b>170 ; crop Q1 px (769..1169,1927..2327) of POI 8; maps-site/data/chart-pois.json#Epēshu n=8"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q03-c07",
+      "text": "PROXY P3 arterial class. Measure: (a) number of distinct road classes by stroke width and their width ratios; (b) hue/saturation of the top class stroke tested against an ocher window; (c) whether class is carried by colour as well as width. The brief gives only 'arterials in ocher'; no class count, no widths. Baselines: the Epeshu chart's arterial is a slate bar about 4 px wide (RGB about (75,85,80), HSV 150 deg, s 0.12, v 0.33) in a cream corridor, so it fails 'ocher' by hue; its building fill is orange (RGB (225,171,118), HSV 30 deg, s 0.48). The generated plans (genCityCanvas) already have three width classes by stroke: primary roads lineWidth = roadHalf*1.5, street lanes laneW*1.5 = roadHalf*0.9, alleys max(1.1, roadHalf*0.34*0.9), with roadHalf = S*0.009 on a 2048 canvas = 27.6 : 16.6 : 5.6 px (1 : 0.60 : 0.20), but all in the same cream ROAD #f6f1e0 (HSV 46 deg, s 0.09), so class is carried by width only and ocher is a new colour channel, not a recolour of an existing one.",
+      "evidence": {
+        "kind": "anchor",
+        "ref": "maps-site/index.html :: var roadHalf=S*0.009 ; maps-site/index.html :: var GEN_SIZE=2048 ; maps-site/index.html :: g.strokeStyle=ROAD;g.lineWidth=roadHalf*1.5 ; PIL row scans of Q1 at y=590,610,640 around x=1558..1582 (slate run 3-4 px)"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q03-c08",
+      "text": "PROXY P4 fog wash. Measure from a fog-only alpha field F(x,y; seed, sim day) sampled at fixed zooms: (a) mean alpha in the built core disc vs in the water/outer ring (brief places fog on the east bay and the Marin headlands, i.e. water and far shores, not the dense blocks, so ring > core is the ordering test); (b) low-frequency check, no band energy at wavelengths below a fraction of the footprint (a wash, not a texture); (c) monotone fade with zoom (present zoomed out, absent entered); (d) determinism: identical field for identical (seed, day, place), different for a different day, never a function of wall-clock. Brief fixes the ordering and the zoom direction only; alpha magnitudes are unspecified. Source today: W.weather = { state: 'clear', until: 0, wind: 0 } with states clear/overcast/rain/snow/storm and no fog, so fog must be a seeded function of place and the snapshot sim day, or a new W.rng.hist weather state (open question in the dossier).",
+      "evidence": {
+        "kind": "anchor",
+        "ref": "index.html :: W.weather = { state: 'clear', until: 0, wind: 0 } ; index.html :: st = roll < 0.32 ? 'snow' : roll < 0.55 ? 'overcast' : roll < 0.64 ? 'storm' : 'clear' ; docs/filigree/research-dossier.md#6 'Fog source (determinism)'"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q03-c09",
+      "text": "PROXY P5 contour hill. Measure: contour levels derived from EPESHU_HF over the quarter, line weight in screen px (hair = at most about 1 px, set by Job 2), and the spatial rule that hill ground is read from the DEM, not copied from San Francisco's west. Q1 in atlas px is [1215.04,1404.85]..[1240.40,1430.20] (chart px / 80.77 from the box origin 1211.87,1389.0). DEM probe: land fraction 0.565, hmax 83.22 m at (1239.69,1430.10) (the SE corner of Q1), hmin -18.06 m; west half land fraction 0.183 (hmax 55.06 at the south edge x 1227.19), east half 0.947 (hmax 83.22). Epeshu's coast is on the west, so the high ground is south-east and 'hills on the west' does not transfer; a proxy keyed to compass side would fail on a correct sheet. At the 5 m interval named in the README reuse map this is 17 levels (0..80 m) over Q1. Resolution limit: the DEM cell is 1.0417 atlas px, so Q1 holds about 24x25 = 600 cells and one cell is about 84 screen px at z10.34; raw marching-squares contours would show 84-px stair steps at the deepest zoom, so a smoothing rule is a prerequisite, not a polish item. Valid only inside the window [1060,1240]..[1860,2040] (R22); outside it there is no relief to measure.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "node tools/filigree-dem.js --bbox 1215.04,1404.85,1240.4,1430.2 --min-prom 5 (also west half 1215.04,1404.85,1227.72,1430.2 and east half 1227.72,1404.85,1240.4,1430.2); cell size 800/768 = 1.0417; 81.0084*1.0417 = 84.4 screen px"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q03-c10",
+      "text": "PROXY P6 pooled edges. Measure: mean luminance (and saturation) of the fill as a function of distance d from the coast or park boundary on the paint side, binned (0-1, 1-4, 4-8, 8-16, 16-32, 32-64, 64+ px); pooled means a monotone gradient that concentrates contrast at d small, AND no stroke (no continuous constant-width dark line riding the boundary). The brief fixes only 'contrast gathers at the edges' and 'without a stroke'; band depth and amount are unspecified. Baseline on the shipped Epeshu chart Q1: the sea is a flat fill, mean luminance 140.9 at every depth from 4 px to 64+ px (137.8 in the single boundary px, 140.5 at 1-4 px; RGB 119,153,136 throughout), i.e. a spread of about 3 of 255 and no pooling; the coast is a thin cream rim line and the Mamban has a dark outline stroke, so the chart fails both halves. The generator uses a flat WATER '#7fa3a0' fill. Caveat: sea pixels were defined as within 14 of (119,153,136), which would hide a darkening larger than that; the stitch viewed by eye is flat teal to the rim, so the result stands.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "PIL Q1 stitch, multi-source BFS distance from non-sea pixels into sea (sea = |r-119|,|g-153|,|b-136| < 14); anchor maps-site/index.html :: WATER='#7fa3a0'"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q03-c11",
+      "text": "PROXY P7 no chrome, no pins. Measure at rest on the sheet capture: (a) count of visible marker/control pixels or elements over the sheet (target 0), (b) labels per block (target 0; street names only on a threshold, dossier conflict (d)), (c) count of numbered discs baked into the raster. Result for the shipped Epeshu chart: the live POI layer already passes at rest, since .poi-mk is background:transparent; color:transparent with a 0-alpha border and only :hover draws a ring (so 'hover-only halos' meet the rule, as the dossier proposes); BUT the chart raster itself carries printed numbered discs. Q1 holds 12 (n=1-11 and 14, exactly the 12 chart-pois.json entries inside Q1; the other 7 POIs n=12,13,15-19 lie outside), each 90-92 px across (about 1.13 atlas px; 18 screen px at z8, 91 at z10.34), navy RGB about (45,61,76) with a cream ring, 70,457 px = 1.68% of Q1. A 13th dark component (258 px, 9x36) is a fragment of the n=10 disc split by its numeral. These cannot be removed by any overlay decision and a de-lettered raster is explicitly out of scope, so on the Epeshu chart the pin test fails in the print itself; the spec must either accept the printed discs as canon legend badges or use a generated painted plan for the Azlen check.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "stitch of charts/epeshu z3 x1..8,y5..12 (half-scale view and crop Q1 px 513..913 x 727..1127); navy = b>r+10,r<80,g<95,b<110,b-r>20, components >= 200 px; maps-site/data/chart-pois.json#Epēshu (19 POIs, 12 in Q1 box [256,2304)x[1280,3328)); maps-site/index.html :: .poi-mk{display:flex;align-items:center;justify-content:center;width:26px;height:26px;"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q03-c12",
+      "text": "Colour words have no numerals, and the repo has two competing sources. The brief's words are cream, rose-brown, green, ocher, watercolor; the dossier proposes the split 'palette for drawn line work, print-sampled hue for washes' (planning palette vs the v2 'real colours' pushback). Baseline hues for tests that should be relative, not absolute hex: generated-plan roofs are terracotta, six of seven BLD entries at HSV 18-24 deg, s 0.51-0.65, v 0.66-0.84, one tan #cbb98f at 42 deg, s 0.30; the chart building fill is 30 deg, s 0.48, v 0.88; the cream ground CREAM #f0ead2 is 48 deg, s 0.13. So 'rose-brown' (redder and less orange than both) is not met by either and the check should be an ordering test (block hue below arterial hue, arterial hue near ocher, park hue green, water hue cool) rather than a hex match.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "colorsys HSV of '#c77b4e','#b86b41','#cf8659','#a85c3c','#bd7346','#d59468','#cbb98f','#f6f1e0','#f0ead2','#7fa3a0' and chart samples; docs/filigree/research-dossier.md#10 'Brief internal conflicts (c)' ; docs/filigree/research-dossier.md#8 'Palette'"
+      },
+      "confidence": "medium"
+    }
+  ],
+  "gaps": [
+    "No numeric threshold for any proxy exists in the brief (block pitch in screen px, minimum park-void area, contour hair width, fog alpha and depth, pooling band depth and amount, ocher hue window); the figures above are baselines from shipped assets. Job 2 must set each threshold and label it a spec decision.",
+    "The Azlen clip itself (a 13-second video) is not in the repo or the brief, so no property of the original could be measured; all seven properties come from one paragraph of text and two reply lines.",
+    "Fog source is undecided (W.weather has no fog state); P4's determinism test cannot be run until the source is chosen. Fog magnitude, and whether fog masks names, are open.",
+    "The block-grain, park, arterial and pooling baselines come from the DM-drawn Epeshu chart, not from a painted-city target or the generated plans; genCityCanvas plans were read from source only and not rendered, so whether a generated plan shows any park void (the source shows only a reserved market square, a temple rect and sage field blocks) is unmeasured.",
+    "The Mamban's dark outline stroke and the coast's cream rim were seen on crops but not measured numerically; the stroke-presence half of P6 has no number.",
+    "Capture protocol is undefined: P7 needs a stated sheet capture (map container with Leaflet controls and panels hidden or not) before 'no chrome' is testable; the dossier does not settle whether controls count.",
+    "Direction of pooling (darker, more saturated, or both) is not given by the brief; 'contrast' is the only word.",
+    "Relief proxies hold only inside the EPESHU_HF window (R22); no contour or hill test is possible for cities outside Leponnia, and raw DEM contours at about 84 screen px per cell at z10.34 need a smoothing rule that nobody has specified.",
+    "Autocorrelation was run on five 256x256 patches of one chart; the sample is small and the chart's colour classes were thresholded by hand (orange fill excludes outlines), so coverage fractions are floors and the Lc figures are medium confidence."
+  ],
+  "summary": "The brief has no Azlen image and no numbers, so seven proxies (block grain, park void, arterial class, fog wash, contour hill, pooled edges, no chrome/pins) are defined from its text, each with a measure, a pass shape and a baseline measured on the shipped Epeshu chart Q1, the generator constants and the DEM. Key findings: the chart's grain is aperiodic with a 3-4 chart px correlation length (sub-pixel until about z8.3), its sea is a flat fill and its arterial is slate rather than ocher, Q1 hills lie south-east not west, and the chart raster itself bakes in 12 numbered discs that fail the no-pins rule. Every threshold is left as a Job 2 decision.",
+  "date": "2026-10-04"
+}

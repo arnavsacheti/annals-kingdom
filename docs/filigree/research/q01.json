@@ -1,0 +1,187 @@
+{
+  "qid": "q01",
+  "claims": [
+    {
+      "id": "q01-c01",
+      "text": "Frame: plate one is one raster of 1199x830 px (about 624x432 pt on the page), no scale bar, no graticule, no legend and no title baked in; the sea fills the lower-left triangle from the left edge at about y=423 to the bottom edge at about x=380, and everything else is land. Inland labels run edge to edge and several are clipped by the frame, so the inventory below counts fully legible names and lists clipped ones apart.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,0,1199,830"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q01-c02",
+      "text": "Named peaks with a printed height: 25 fully legible (bold italic warm-brown name, small light italic numerals beneath, a filled ▲ beside it). Table Mountain 1,581; Devils Ribs 1,900; Big Oat Mountain 1,365; Little Oat Mountain 1,381; Pole Mountain 2,205; Black Mountain 1,617 (these six match the brief text); also The Island 1,211; High Rock 2,005; Rocky Mountain 1,440; The Island 1,207; Buck Knoll 2,057; Rabbit Knoll 1,624; Black Rock 1,312; Fox Mountain 1,358; Tater Knoll 1,575; Queens Peak 1,916; McCray Mountain 1,919; Little Black Mountain 1,962; Little Black Mountain 804; Sunrise Mountain 814; Gabes Rock 915; Neeley Hill 797; Starrett Hill 1,260; Mount Heller 846; plus one clipped at the right edge, Rock... Mount... 1,719 (name truncated, counted here as the 25th). Range 797-2,205; median 1,440. Two names repeat (The Island x2, Little Black Mountain x2), so peak names are not unique.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,0,600,420 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 600,0,599,420 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,410,600,420 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 600,410,599,420 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 320,250,560,420"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q01-c03",
+      "text": "Peak count beyond the 25: 2 more ▲ names print no height (Lookout Mountain, River Overlook, both in the lower-right river knot), giving 27 ▲-glyph named landforms; the brief gives 7 named knolls (Table Mountain, Devils Ribs, Goat Rock, Big Oat, Little Oat, Pole Mountain, Black Mountain) but the plate shows at least 27, so the brief names about a quarter of the peaks. Clipped extras: one height-only label \"1,332\" at the top edge (x about 287,y 0, name off-frame) and \"High Point...\" at the lower-right edge (no glyph or height visible).",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 800,530,400,300 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 250,0,80,20 | docs/research/filigree-for-the-table.pdf p2"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q01-c04",
+      "text": "▲ glyph class: every peak label carries a small filled dark-brown triangle placed beside the name, not a fixed side (above, left or right of the label depending on collision), at 27 glyphs counted (25 with height, 2 without). The glyph is the only point symbol the plate uses for landforms. Goat Rock is the exception to the brief: on the plate it is a plain dot-label with no ▲ and no height.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,0,600,420 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 800,530,400,300 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 250,270,200,100"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q01-c05",
+      "text": "Homestead and hamlet class (plain roman sans label in dark warm-grey ink with a small round dot, no ▲, no height): 10 outside the river knot: Seaview, Toners Place, Truth Home, Goat Rock, Fort Ross, Venado, Cazadero, Hale Place, Monte Rosa, Camp Thayer. The brief names five (Toners Place, Truth Home, Hale Place, Camp Thayer, Seaview); the plate carries five more (Goat Rock, Fort Ross, Venado, Cazadero, Monte Rosa).",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,0,600,420 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 600,0,599,420 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,410,600,420 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 320,250,560,420"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q01-c06",
+      "text": "Reserve class: 3 labelled green washes in green italic type with no dot or glyph: Fort Ross State Historic Park (coast, upper left, about x 60-330, y 410-640), Austin Creek State Recreation Area (largest, upper right, about x 800-1140, y 100-340), Jenner Headlands Preserve (south, label near x 540,y 745, the wash reaches up toward Pole Mountain). A fourth wash at the lower right near Mount Heller and Lookout Mountain carries a clipped grey-italic label \"Bohemian...\" Washes are soft pale green over the hillshade, with dashed or dotted fine boundary and trail lines inside; pale dashed-outline rectangles (about 3) in the upper centre are unlabeled parcels. A crude colour threshold puts washes at about 12.6% of the frame.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,0,1199,830 | PIL pixel test g-b>=22 & g>=r+2 & g>150 on p2 image: 125637 px of 995170 = 12.6% (includes some false positives; mask rendered to scratchpad green.png)"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q01-c07",
+      "text": "Coast road class: one thick rust-red road (about 5-6 px wide with a darker casing) glued to the shoreline, starting at the clipped green shield disc on the left edge (about x 2,y 422) and running south-east in one unbroken line past Fort Ross to the bottom edge; it then continues as the same rust class up the river valley through Duncans Mills side, Villa Grande, Monte Rio and Guerneville and east off-frame toward \"Santa...\" So there is one connected rust network, not separate coast and valley roads. Colour test finds 2,748 px rust-red.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,330,520,500 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,370,120,140 | PIL pixel test r>150 & g<100 & b<80 on p2 image: 2748 px rust"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q01-c08",
+      "text": "Secondary road class: a gold/ochre road with white-ish casing, thinner than the rust road: it runs from the top of the Cazadero valley south through Cazadero and Camp Thayer toward Duncans Mills, beside the blue river; a second gold stretch runs north from Guerneville past El Bonita, one gold branch runs Guerneville to Rio Nido, and one gold stretch south of Monte Rio. It is the road the brief does not mention (\"secondary road through Cazadero\").",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 430,270,360,560 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 939,370,260,330 | docs/filigree/todo-inputs.json#plate-one items missing"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q01-c09",
+      "text": "Trail and track classes (three line types, all warm brown, none labelled): (a) thin solid brown dendritic lines everywhere inland (tracks and minor roads); (b) dashed brown lines (footpaths), long runs crossing the whole inland frame, densest around Austin Creek and east of Cazadero; (c) fine dotted brown lines inside the park washes (Fort Ross, Austin Creek, Jenner Headlands, Bohemian). There are no trail names or numbers, and there are no trailhead symbols. Per-segment counts are not recoverable at this resolution.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 600,0,599,420 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,330,520,500"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q01-c10",
+      "text": "Highway shields: 2 on the frame. One legible: a green rounded-ellipse shield with white numerals \"116\" at about x 1039,y 628 (between Guernewood Park and Montesano, on the rust road). One clipped: a green disc at the left edge (about x 2,y 422) at the head of the coast road, numeral not legible (the todo inputs say plate three keeps shields 1/116, so this is most likely \"1\"). The brief says \"highway shields\" (plural); the plate therefore holds exactly one readable shield.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 980,590,120,80 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,370,120,140 | docs/filigree/todo-inputs.json#plates two/three KEEP"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q01-c11",
+      "text": "Rivers: blue lines carry no names anywhere on the plate. Three weights: (a) a thin light-blue stream across the upper left; (b) a main stem from the top-centre (about x 600,y 130) running south past Cazadero and Camp Thayer, thickening and bluer as it goes; (c) a wide pale-blue river along the lower right, from Guerneville down past Rio Nido, Northwood Heights and Villa Grande to the bottom edge. No creek labels (no South Fork Gualala River, no Austin Creek text) are printed.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,0,600,420 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 430,270,360,560 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 939,370,260,330"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q01-c12",
+      "text": "Braided river: the lower-right river is drawn as two or more parallel pale-blue channels with island loops and bars in the reach from Sheridan down past Duncans Mills to the bottom edge (about x 860-960, y 700-830), and a two-channel split also appears at Camp Thayer. This is the only place the river is braided; one braided reach counted. The reach upstream of Guerneville (Rio Nido side) is a single band.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 800,650,260,180 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 820,520,100,120"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q01-c13",
+      "text": "River forks and confluences: at least 3 visible with the naked eye: (1) the top-centre stem where a short tributary joins near Rocky Mountain / Black Rock (about x 840,y 112); (2) the split at Camp Thayer (about x 840,y 630); (3) the creek from the north joining the wide river at Guerneville (about x 1107,y 585). A further junction candidate lies in the upper left near Table Mountain. The exact count is not recoverable at this resolution.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 600,0,599,420 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 780,540,200,100 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 1040,540,150,100"
+      },
+      "confidence": "low"
+    },
+    {
+      "id": "q01-c14",
+      "text": "River-valley knot (lower right, bounding roughly x 880-1199, y 440-830, about a quarter of the frame by area): the brief names four settlements (Guerneville, Rio Nido, Villa Grande, Monte Rio), but the plate prints nine place names in the knot: Guerneville (bold sans, with dot, near x 1107,y 585), Rio Nido (plain sans with dot, about 1165,472), El Bonita, Guernewood Park, Montesano, Northwood Heights, Villa Grande (larger roman serif, no dot, about 990,726), Sheridan, Monte Rio (plain sans with dot, about 1030,756); plus three clipped at the frame edge (Duncans Mills at the bottom, \"Santa...\" and \"R...\" at the right). Four type ranks coexist in the knot: bold sans, serif, plain sans, bold italic ▲ names. In addition the knot holds 7 of the 27 ▲ landforms (Gabes Rock, Neeley Hill, Starrett Hill, Mount Heller, Lookout Mountain, River Overlook, High Point), the 116 shield, and the Bohemian wash.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 800,410,399,420 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 939,370,260,330 | docs/filigree/todo-inputs.json#plate-one items missing"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q01-c15",
+      "text": "Four-name valley knot as the brief states it: \"the only real settlement is a knot in the river valley at lower right: Guerneville, Rio Nido, Villa Grande, Monte Rio\". The names are four, not one town; they sit within about 320x390 image px (about 27% of frame width) of each other; no built-up area fill is visible, only fine street-like lines around Guerneville and El Bonita.",
+      "evidence": {
+        "kind": "pdf-page",
+        "ref": "docs/research/filigree-for-the-table.pdf p2 text, Plate one paragraph | docs/filigree/todo-inputs.json#plate-one items missing"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q01-c16",
+      "text": "Type hierarchy observed on the plate (the plate carries 49 full legible names: 27 ▲ landforms + 19 place labels + 3 reserves): peaks and reserves in italic (peaks bold warm-brown, reserves green), places in roman sans, the two principal places larger (Guerneville bold sans, Villa Grande serif). The brief says a shed-scale name sits in the same ink as a peak; on the plate peak and place labels share the dark warm-grey/brown ink family but differ in face (italic bold with height vs roman), so the claim holds for ink but not for face.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,0,1199,830 | docs/research/filigree-for-the-table.pdf p2 text, last sentence of Plate one paragraph"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q01-c17",
+      "text": "Ocean: a flat, unlabeled light-blue field (about 10.6% of the frame by colour test), no depth shading, no waves, no coastline stroke other than the cream land edge and the rust road; one faint crossed pair of hairlines in the water (a vertical at x about 74, a horizontal at y about 584) that looks like a tile seam or graticule stub. No sea name, no buoy, no rocks.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,400,400,430 | PIL pixel test b-r>35 & b>150 & x<560 & y>400 on p2 image: 105420 px of 995170 = 10.6%"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q01-c18",
+      "text": "Relief fill: the whole inland frame is covered by dense hillshade plus a fine warm-brown line texture (the brief calls it contour filigree \"so tight the ridges read as fingerprints\"); no contour numerals, index contours or spot heights other than the ▲ labels are printed, and contour lines cannot be separated from the dendritic track lines at this resolution. The hillshade texture is continuous across every inland part of the frame.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,0,600,420 | p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 320,250,560,420"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q01-c19",
+      "text": "Count per class (fully legible, 1199x830 frame): ▲ landforms 27 (25 with heights); homestead and hamlet dots 10; river-knot place names 9 (4 in the brief); reserves 3 labelled washes (+1 clipped); highway shields 1 legible (+1 clipped); coast road 1 continuous rust line; gold secondary-road runs 3; braided reaches 1; river-fork candidates at least 3; dotted/dashed/solid trail types 3; four-name knot 1. Clipped or truncated labels: 7 (1,332; Rock... Mount...; High Point; Duncans Mills; Santa...; R...; Bohemian...). On the brief text alone only 7 peaks, 5 homesteads, 3 reserves, 4 knot names would be counted, so the brief understates the plate by about 2.5x in names.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "p2 plate image 1199x830 (pdfimages -f 2 -l 2 -j docs/research/filigree-for-the-table.pdf); crop 0,0,1199,830 | docs/research/filigree-for-the-table.pdf p2 text"
+      },
+      "confidence": "medium"
+    }
+  ],
+  "gaps": [
+    "Height units are not printed on the plate or in the brief (Sonoma ground suggests feet; unverified).",
+    "Frame ground extent and scale are not stated in the brief (no coordinates, no scale bar), so names per square mile and the mapping of plate density onto z7 hexes (32 atlas px) or the F01-F12 fixture cells cannot be derived from this question alone.",
+    "Exact count of river forks, braid channels, dashed-trail segments, thin track lines and contour lines is not recoverable from the 1199x830 raster.",
+    "The clipped green disc at the left edge is not legible; that it is shield \"1\" is inferred from todo-inputs.json, not read from the plate.",
+    "Truncated names: the top-edge height \"1,332\", the right-edge peak \"Rock... Mount...\" 1,719, \"High Point...\", \"Bohemian...\", \"Santa...\", \"R...\", and \"Duncans Mills\" cannot be fully read.",
+    "Whether Lookout Mountain, River Overlook and High Point lack a printed height by design or only because of the crop is not established.",
+    "Reserve boundaries (washes vs dashed outlines) are not measured as polygons; the 12.6% wash share is a crude colour threshold with false positives."
+  ],
+  "summary": "Plate one prints 49 fully legible names on a 1199x830 frame (27 ▲ landforms of which 25 carry heights from 797 to 2,205, 19 dot/town labels, 3 reserve washes), far more than the brief lists (7 peaks, 5 homesteads, 3 reserves, 4 knot names). It also holds a single continuous rust coast road continuing up the valley, a gold secondary road through Cazadero, 2 highway shields (one clipped), one braided reach at lower right, three trail line types and an unlabeled flat-blue sea. The lower-right knot actually contains nine place names, not four, and no river or creek is named anywhere on the plate.",
+  "date": "2026-10-04"
+}

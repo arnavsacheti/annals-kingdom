@@ -1,0 +1,67 @@
+{
+  "qid": "q12",
+  "date": "2026-10-04",
+  "summary": "Baseline named-thing counts per class across the 12 fixture cells and the three coast-walk bands of sheet one. Most fixture cells are empty; F10 (Epēshu capital, 3 items) and F11 (Lepon ruin, 4 items) are densest. The middle band (M) concentrates 12 named things; west (W) holds 9; east (E) holds 7. Class distribution spans Settlements, Regions, Mountains, and village/town/ruin kinds from anchor and gazetteer sources.",
+  "claims": [
+    {
+      "id": "q12-c01",
+      "text": "Fixture cell F10 (Epēshu) contains 3 named-thing instances: 1 Settlements marker (maps_markers.json), 1 capital anchor (city-anchors.json), 1 Settlements gazetteer entry (gazetteer.json).",
+      "evidence": {
+        "kind": "data",
+        "ref": "maps-site/data/maps_markers.json#Epēshu, maps-site/data/city-anchors.json#Epēshu, maps-site/data/gazetteer.json#Epēshu"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q12-c02",
+      "text": "Fixture cell F11 (Lepon the Old ruin) contains 4 named-thing instances: 1 Settlements marker, 1 ruin anchor, 2 gazetteer entries (one Settlements, one ruin kind).",
+      "evidence": {
+        "kind": "data",
+        "ref": "maps-site/data/maps_markers.json#Lepon, maps-site/data/city-anchors.json#Lepon the Old, maps-site/data/gazetteer.json#Lepon"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q12-c03",
+      "text": "Fixture cells F02–F08 (open plateau, coast, islets, open sea) contain zero named things; the grid is sparse outside major settlements and landmarks.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "fixture cell bbox intersection test: F02–F08 bbox query against all three data sources"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q12-c04",
+      "text": "The middle band (M: x1400–1580, y1376–1664) concentrates the densest named-thing distribution at 12 instances across all classes (Settlements, Major Regions, town/village kinds, gazetteer entries).",
+      "evidence": {
+        "kind": "data",
+        "ref": "band query over maps_markers.json, city-anchors.json, gazetteer.json for x in [1400,1580) and y in [1376,1664)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q12-c05",
+      "text": "The west band (W: x1216–1400, y1376–1664) contains 9 named things; the east band (E: x1580–1760, y1376–1664) contains 7, suggesting a west-to-east thinning of settlement density within sheet one.",
+      "evidence": {
+        "kind": "data",
+        "ref": "band query: W band 9 instances, E band 7 instances from combined data sources"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q12-c06",
+      "text": "Named-thing classes span six primary categories: Settlements (map marker type), Major Regions (map marker type), Mountains and Hills (map marker type), Anchor-<kind> entries (city-anchors.json kind field for capital/town/village/ruin), Gaz-<kind> entries (gazetteer.json kind field), tracking multiple representations of the same places across data layers.",
+      "evidence": {
+        "kind": "data",
+        "ref": "maps-site/data/maps_markers.json type field, maps-site/data/city-anchors.json kind field, maps-site/data/gazetteer.json kind field"
+      },
+      "confidence": "high"
+    }
+  ],
+  "gaps": [
+    "No data-driven rule for minimum density (the density bible will set '6 things must appear on a blank hex'); this baseline is a snapshot of *existing* named things, not a prescription.",
+    "City-anchors.json and gazetteer.json sometimes describe the same place; deduplication or subsumption logic (e.g., 'Anchor-capital' vs 'Gaz-Settlements') is not yet determined.",
+    "Fixture cell F12 (Mountain Wall marker, far outside the region) contains 2 instances (marker + gazetteer) but lies outside the sheet-one window; its inclusion in the fixture set is to anchor the control case, not to inform local density.",
+    "No named things in F03 (inside printed PĒSHUNOR lettering, per README), F04 (DRANIMOS lettering), F05 (inland plateau), F06 (coast + dotted road), F07 (Paerāndas islets open sea), suggesting these cells are intended as canvas for derived features (contours, homesteads, etc.) rather than anchor points for authored named things."
+  ]
+}

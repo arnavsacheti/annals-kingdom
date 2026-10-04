@@ -1,0 +1,171 @@
+{
+ "qid": "q15",
+ "claims": [
+  {
+   "id": "q15-c01",
+   "text": "The brief defines the v2 split as two camps kept apart: one paints the sheet so it feels held (watercolour, fog washes, bone paper, edge contrast from pooled ink); the other ranks the ink so the far zoom stays almost empty and the valley zoom gets 'indecent'. The summary is 'Paint on the base. Names on a threshold.' Those who hate it want 'one sheet that answers one question'.",
+   "evidence": {
+    "kind": "pdf-page",
+    "ref": "docs/research/filigree-for-the-table.pdf p6, 'The trend', last paragraph"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q15-c02",
+   "text": "The p6 likes and tweaks that feed the rules are: the 'subtle appear effect' (reply under Azlen); pooled paint, 'contrast gathers at the edges because that is where the paint pooled, so the coast and the parks read without a stroke' (Rasmus Andersson); 'the real colors of the land, not a style palette'; 'Cramped' (Azlen reply); 'pretty maps do not fix bad data'; Google/Apple drop street names even zoomed in; and the split between atlas readers (every knoll named) and navigation users (clutter).",
+   "evidence": {
+    "kind": "pdf-page",
+    "ref": "docs/research/filigree-for-the-table.pdf p6, 'What they like' + 'The tweaks'"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q15-c03",
+   "text": "The brief's threshold mechanics are on p7: a layer has a minzoom/maxzoom, so 'names do not fade in from nothing. A layer is either in the style or it is not'. Fractional zoom interpolates width, text size and opacity, so 'the data steps. The ink eases.' The per-sheet forbidden lists are on p8 (country: no homesteads; region: ridge names and heights, reserves as a wash; valley: homestead dots, contour hair; city: block grain, park voids, ocher arterials, fog as weather, texture before type; overlays: old survey under, shut ways and muster days on top).",
+   "evidence": {
+    "kind": "pdf-page",
+    "ref": "docs/research/filigree-for-the-table.pdf p7 table rows 'minzoom / maxzoom', 'Fractional zoom'; p8 'What to steal'"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q15-c04",
+   "text": "ANSWER, the per-sheet rules. PAINT ON THE BASE. On every sheet the bone-paper ground is the print's own era raster: no imposed palette and no de-lettered raster (README R3, R5). On the country sheet that is the only paint. On the region sheet (sheet one, C1 coast) it adds a pooled-edge darkening along the coast, from the land/water mask, plus reserves as a print-hue wash. On the valley sheet it adds a pooled edge along river banks and coast. On the city sheet it adds pooled edges on coast and park voids, the print-hue tone wash under the plan, and fog as weather. Fog lies over block grain only, never over names on the country or region sheets (dossier §6 proposal).",
+   "evidence": {
+    "kind": "data",
+    "ref": "docs/filigree/research-dossier.md §6 'Pane table' note and §9 'Paint on the base'; docs/filigree/README.md §9 R3, R5; docs/filigree/todo-inputs.json#camps.paint_on_base"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q15-c05",
+   "text": "Real colours are already partly in code. washUrl tones the under-plan wash from the sampled atlas land hue (MASKQ[key].m.land) and falls back to LAND_TAN. washMake places it in pane pCityWash on the overlayOpacity ramp, and sampleCityMask builds the land/water mask by reading base tiles. A pooled-edge pass can reuse that mask, and its edge tint should be a darker step of the sampled hue, not a palette swatch (R3: palette for drawn line work, print-sampled hue for washes).",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "maps-site/index.html :: function washMake; maps-site/index.html :: function sampleCityMask; maps-site/index.html :: var q=MASKQ[key],tn=(q&&q.s&&q.m&&q.m.land)||LAND_TAN"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q15-c06",
+   "text": "The sim has no fog to read. The weather roll on W.rng.hist yields only snow, overcast, storm, clear or rain, and W.weather starts {state:'clear'}. City-sheet fog must therefore be a seeded function of (place, snapshot sim day), never wall-clock (README R13), and needs no sim change.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "index.html :: W.weather = ; index.html :: if(season === 3) st = roll < 0.32 ? 'snow' : roll < 0.55 ? 'overcast'"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q15-c07",
+   "text": "ANSWER, the per-sheet rules. NAMES ON A THRESHOLD. Country sheet (tiers A/B): A shows only major regions and seas; B adds settlements, peaks and canon ranges (R1), and a shield only on Aldorūs (R19). Region sheet (tier C and the atlas-labels class): ridge names and heights (bare numerals, R20) and the sheet's town names, ranked. Valley sheet (z6-8): homestead names, at or after their dots. City sheet (z >= Z_TIER_D 7.5): no block labels, and street or arterial names only on a threshold inside the city band (R4). Hover halos stay hover-only and nothing is drawn at rest (R7). One rule holds on every sheet: rank decides WHEN a name appears, not how it looks. One ink, one face family, at most one size step (R2).",
+   "evidence": {
+    "kind": "data",
+    "ref": "docs/filigree/README.md §9 R1, R2, R4, R7, R19, R20; docs/filigree/research-dossier.md §6 per-sheet 'Forbidden' lists; brief p8"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q15-c08",
+   "text": "Today's threshold already has the 'data steps' half but not the eased-ink half for names. updTier runs only on zoomend and toggles map-tier-a/b/c plus 'atlas-labels' at tier C. Labels switch with display:none to display:inline (.atlas-labels .mk .lbl), so they pop. The tier panes do ease, with opacity transition .2s, which is inside R6's <=250 ms bound. Lesser (census) labels stay display:none even at tier C.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "maps-site/index.html :: function updTier; maps-site/index.html :: .atlas-labels .mk .lbl{display:inline;}; maps-site/index.html :: transition:opacity .2s ease; maps-site/index.html :: .atlas-labels .mk.t-lesser .lbl{display:none;}"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q15-c09",
+   "text": "Appear-effect rule, resolving the brief's p6 praise against p7's 'names do not fade in from nothing' (README R6): presence is a hard threshold per rank. Ink then eases over <=0.25 zoom or <=250 ms, and a name lands at or after its own ink (dot, contour or way), never before it. The reuse point is worldOpacityUpdate, which already rides the live 'zoom' event with continuous baseOpacity/overlayOpacity ramps. A per-rank opacity ramp belongs there, not in the zoomend-only updTier.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "maps-site/index.html :: function worldOpacityUpdate; docs/filigree/README.md §9 R6; docs/filigree/research-dossier.md §4 'Appear effect (v2)' row"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q15-c10",
+   "text": "ANSWER, the per-sheet rules. ONE-QUESTION VIEWS. The shipped Contents plates are THEMES {whole, realms, roads, company}; 'company' also starts the journey at t=0. Map them as follows. Country sheet: 'realms' answers 'whose land is this?'. Overlays at any scale: 'Where can we go this week?' EXTENDS 'roads' with caravan halts, shut ways and muster days only (R10 vocabulary). Valley sheet: 'What is around us?' is the valley sheet at the party's place. Navigators keep search (doSearch), #place and #journey with no filigree, which serves the 'navigation users' camp.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "maps-site/index.html :: var THEMES=; maps-site/index.html :: function doSearch; maps-site/index.html :: function handleHash; docs/filigree/todo-inputs.json#camps.one_question_view"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q15-c11",
+   "text": "CRAMPED, computed: on a phone the name threshold arrives at a smaller scale than on desktop. fillZoom = 4 + log2(vh/2188) (snapped up to 0.05), and the tiers are thirds of TIER_CEIL - fitZoom, with TIER_CEIL = 5 on retina. For a 390 px-wide phone with map height 600-844 px, tier C (labels on) starts at z 4.05-4.22, which is 1.04-1.16 screen px per atlas px. For a 900 px-tall non-retina desktop it starts at z 4.92, which is 1.89 px per atlas px. Phones therefore switch labels on at about 0.6x the desktop scale. At phone tier C a 390 px viewport spans only about 336-377 atlas px, 62-69% of sheet one's 544 px width. Sheet one fits 390 px only at z 3.52, which is tier B, where atlas-labels is off.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "python3 q15.py (scratch): fillZoom/tierZoom formula from maps-site/index.html :: function fillZoom, function tierZoom, var TIER_CEIL=; NZ=4 from px()=map.unproject([x,y],NZ)"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q15-c12",
+   "text": "Name density on sheet one, computed: city-anchors.json has 12 places inside bbox 1216,1376,1760,1664: Epēshu, Sokundo, Kanae, Tamaron, Mago, Aldorūs, Rēketis, Āglaz, Pharzeban, Sardil, Perōna and Rhup. Their nearest-neighbour spacing is at least 45.9 atlas px (Rēketis-Āglaz), with Mago-Tamaron at 47.2 and Kanae-Sokundo at 58.3, and the median is 62.4. With estimated label boxes (22 px glyph, 5 px gap, 0.5 em per character at 13 px), Rēketis/Āglaz overlap at z 3.52 and 4.2. With an 8 px clearance, 3 pairs collide at z 3.52, 1 pair at z 4.2-4.5 and none from z 5.0.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "python3 q15.py over maps-site/data/city-anchors.json (sheet-one bbox, NN distance, screen boxes at z 3.52/4.2/4.5/5.0/5.5/6.0, scale 2^(z-4))"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q15-c13",
+   "text": "'Cramped' rule: the region sheet's rank pass enforces a minimum screen-space gap between label boxes, measured on the live container size at 390 px width. It is not inferred from the tier class, because the tier zoom shifts with viewport height. When a gap is violated, the lower-ranked name drops; it is never shrunk (R2 allows at most one size step). The Rēketis/Āglaz pair is the fixture: one name yields until the zoom where both fit. Nothing in the code enforces label spacing today. Markers carry no collision pass, the max-width:640px rules restyle only the header, search, links, footer and Contents, and pointer:coarse only enlarges the zoom buttons to 44 px.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "maps-site/index.html :: @media (max-width:640px); maps-site/index.html :: @media (pointer:coarse); maps-site/index.html :: function buildMarkers"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q15-c14",
+   "text": "Selective label masking: today the only knock-out is a text-shadow halo (three 3px var(--parch) shadows) on .mk .lbl. The base raster carries hand-lettered names (atlas-structure.md open question), and R5 accepts the print. So the masking rule knocks out OVERLAY lines (contours, rust road, river forks) under OVERLAY labels and leaves printed names untouched. On touch, the lesser-pin proximity lens is driven by mousemove only, so it does nothing on a phone.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "maps-site/index.html :: text-shadow:0 0 3px var(--parch),0 0 3px var(--parch),0 0 3px var(--parch); docs/research/atlas-structure.md :: the base raster already carries hand-drawn names; maps-site/index.html :: mc.addEventListener('mousemove'"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q15-c15",
+   "text": "Data truth ('pretty maps do not fix bad data'): of the 12 sheet-one places only Epēshu (Settlements, mag) and Tamaron (lesser, label hidden) have a maps_markers.json entry. The other 10 have no overlay marker, so today sheet one carries just two overlay labels (Epēshu, Leponnia). The region-sheet name layer must source the others from city-anchors.json and the gazetteer, not from a new hand list.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "python3 lookup of the 12 sheet-one anchor names in maps-site/data/maps_markers.json (type/minor/mag)"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q15-c16",
+   "text": "Data-truth gating, per README R11: Job 3 needs 'Traced road network' and 'Census second pass' checked (overridePrereqs allows slice A, the ground, only). The other prerequisites are found in POLISH.md by name at their current lines: Traced road network :13, Trackpad gesture feel :119, Region-chart zoom-through :121, Uncharted-band softening :124, Data fetch cache-busting :126, Tier-hidden markers intercept clicks :129, Census second pass :135. Data contradictions (Drāmūz 35 px, Hordon/Maeges, Aldorūs sea) are queued above the job they block, and canon notes are never edited (R21).",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "POLISH.md :: Traced road network; POLISH.md :: Census second pass; POLISH.md :: Uncharted-band softening; docs/filigree/README.md §9 R11, R21"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q15-c17",
+   "text": "Per sheet, the camps map to ONE question each, and paint and names never cross layers. Country: 'where is the coast, the river, the one town?' (paint is the print; names are tier A/B regions, seas, peaks and one shield). Region (sheet one): 'which valley do we commit to?' (pooled coast edge and reserves wash; ranked ridge and town names with the 390 px spacing rule). Valley: 'what is around us?' (pooled river edge; homestead names after their dots). City: 'where are park, arterial and fog?' (texture before type; fog seeded; no labels at rest). Overlays: 'where can we go this week?' (old survey under; shut ways and muster days on top; never drawn into the base). Outside window [1060,1240]..[1860,2040] no relief paint is invented (R22).",
+   "evidence": {
+    "kind": "pdf-page",
+    "ref": "docs/research/filigree-for-the-table.pdf p8 'What to steal' + 'At the table'; docs/filigree/README.md §9 R22"
+   },
+   "confidence": "medium"
+  }
+ ],
+ "gaps": [
+  "No minimum label-spacing figure is in the brief. The 8 px clearance and the 0.5 em per character width are estimates; the real EB Garamond label boxes need a browser measurement at 390x844.",
+  "The map container height on a 390 px phone is unmeasured: the header wraps under max-width:640px, so fitZoom and the tier-C zoom are bracketed for vh 600-844, not pinned.",
+  "The pooled-edge pass has no parameters (edge width, blur, darkening step). The Stamen Watercolor mask/blur/edge-darken method is unverified (needs a source fetch).",
+  "Whether fog masks names is undecided (dossier §6 pane-table note). The proposal here (fog over block grain only on the city sheet) is not a ruling.",
+  "Rulings R1-R7, R11, R13 and R19-R22 are README defaults. docs/filigree/rulings.json has empty overrides and empty confirmed, so the owner has not signed off.",
+  "The POLISH.md line anchors in the dossier/todo-inputs (:30, :33, :35, :38, :41, :44) have drifted. The 'sim <-> atlas deep-link parity' item was not found in POLISH.md by 'parity'.",
+  "Whether genCityCanvas plans have park voids and arterial classes was not checked, and neither was what a hover-only halo (R7) does on touch devices, which have no hover.",
+  "Collisions between overlay labels and the printed raster's hand-lettered names were not measured.",
+  "The 'Where can we go this week?' plate needs halt, shut-way and muster-day layers that do not exist yet."
+ ],
+ "summary": "The two camps map onto every sheet. Paint stays on the print-hued base: pooled edges from the existing land/water mask, washes from the sampled print hue, and seeded fog on the city sheet only. Names arrive on per-rank thresholds with ink easing at most 0.25 zoom or 250 ms, and each sheet answers one question through the Contents plates. 'Cramped' is real on phones: the tier-C label switch fires at about 0.6x the desktop scale (z 4.05-4.22), Rēketis/Āglaz collide there, so a screen-px spacing rule in the rank pass must drop lower-ranked names, and the data prerequisites (R11) gate the build.",
+ "date": "2026-10-04"
+}

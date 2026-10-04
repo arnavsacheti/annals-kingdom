@@ -1,0 +1,149 @@
+{
+ "qid": "q11",
+ "claims": [
+  {
+   "id": "q11-c01",
+   "text": "The sim name generator is NAME.place(r, grand) at index.html:631 inside const NAME (:626). It draws from 109 curated roots (PATRINAIC_ROOTS, :569) in domains terrain 36, quality 20, resource 21, world 17, beast 8, built 7 (91 distinct glosses), and 4 attested suffix rows: grand = -os, -or; common = -ban, -ila, -os, -on. Non-grand names are a two-root compound about 1 in 3 (pick(r,[0,0,1])), else root+suffix; compounds are modifier-first, head-final.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "index.html :: const PATRINAIC_ROOTS"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q11-c02",
+   "text": "The roots list is generated, not hand-edited: tools/pgd2lexicon.js curate() keeps only single clean con-words (/^[A-Za-zĀ-ſ']{2,9}$/, no affixes) whose FIRST loc gloss is in one of six DOMAINS strings, deduped by lowercase, from a 1365-word lexicon. So roots whose first gloss is not a domain word are invisible to the sim.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "tools/pgd2lexicon.js :: const ROOT_OK"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q11-c03",
+   "text": "The only reserved canon word is RESERVED = ['Nīmlad'] (tools/pgd2lexicon.js:88), enforced at extraction time only (skip in curate, line 94), so Nīmlad is not a root and cannot be minted as a bare root. Nothing in the runtime checks minted names against canon place names (wiki, gazetteer, markers).",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "tools/pgd2lexicon.js :: const RESERVED"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q11-c04",
+   "text": "Canon collisions are real: enumerating all root+suffix and compound outputs gives 7736 distinct names, and 5 of them equal atlas place names (Empheros, Nāron, Pontoron, Tamaron, Mīthrabash, matched exact-lowercase against gazetteer, wiki-places, maps_markers, city-anchors). Minting 9316 names through the real NAME.place hit 12 canon collisions; 625 names hit 3 (Pontoron, Tamaron, Nāron). A fold-diacritics canon blocklist (3364 tokens from those four files plus nimlad) is needed in the mint.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "node scratchpad/q11c.js + q11d.js: enumerate PATRINAIC_ROOTS x PATRINAIC_SUFS and root pairs via patJoin; compare to maps-site/data/{gazetteer,wiki-places,maps_markers,city-anchors}.json strings"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q11-c05",
+   "text": "The repeat rule is NAME.used.has(n) in the do-while at index.html:648, together with echo and tautology rejects: bad (same root twice or length > 10 for compounds), gloss tautology /\\b(\\w+)[- ]\\1\\b/ on the etymology, and /(..|...)\\1/ on the name (period-2/3 echo). The loop is capped at guard < 40 and then falls through, so a duplicate can still be returned; NAME.used.add(n) follows at :649 and NAME.used.clear() happens on world rebuild (:7157). used is one global Set and rerolls consume the shared stream, so which cell gets which name depends on call order.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "index.html :: NAME.used.has(n)"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q11-c06",
+   "text": "Seam rules are patJoin (index.html:~590-620), following the DM grammar section 2.2: vowel hiatus resolves by the PAT_HIATUS chart (long or diphthong second vowel wins, else long first survives, cascading), identical consonants degeminate, and a nasal before s or z deletes with compensatory lengthening. Word-initial i before a vowel is a glide (Ioph, Iet) and skips hiatus. Suffix connectors (g for -os, n for -or) are inserted only after a vowel-final root.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "index.html :: function patJoin(a, b)"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q11-c07",
+   "text": "Sayability is NOT enforced by the current generator beyond the seam rules and the echo/tautology rejects. In a 2000-name sample (length 3-11, mean 8.16) 55 names have a 4+ consonant run (Iophmhol, Uthphelila, Pithprāndo, Pithgharad), 7 have a 3+ vowel run (Nēiedban, Undoiet, Azruiet, Ghoioph), and 41 have a digraph pile-up. Proposed sayability filter for new classes: reject 4+ consonant runs, 3+ vowel runs, adjacent digraphs (ph|th|kh|sh|zh|gh twice), and length outside 4-10.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "node scratchpad/q11c.js (regexes over 2000 NAME.place outputs seeded makeStream(\"q11|2000\"))"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q11-c08",
+   "text": "Supply, whole pool: the non-grand pool has 12072 raw distinct strings under the tautology/echo rules, 7369 after the sayability filter, 7361 after also removing canon-token collisions. (The cheaper count that applies the sim's own length cap of 10 to compounds is 7736 distinct before sayability.) Feeding 9316 cells (every z7 hex of the 4390x2188 atlas) through the sim's loop yields only 7745 distinct names (1571 duplicates escape the guard), so one flat pool cannot name the whole atlas; the 625 cells of the DEM window fit with room to spare (625 of 625 distinct, 0 escapes).",
+   "evidence": {
+    "kind": "computed",
+    "ref": "node scratchpad/q11c.js and q11d.js (A all-nonGrand)"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q11-c09",
+   "text": "Supply, grand class: root+(os|or) gives 207 distinct names (205 sayable, 203 non-canon). Minting 300 grand names through NAME.place gives only 212 distinct, so grand names saturate near 205. The 15 Māgosh-class cities are covered; more than about 200 grand names is not possible without new suffix rows.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "node scratchpad/q11c.js (grand 300 -> 212) and q11d.js (B grand)"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q11-c10",
+   "text": "Supply per proposed filigree class (modifier-first, head-final; sayable and non-canon): landform (knoll or ridge: quality/beast/resource/world modifier + terrain head, plus terrain+os/on) 1428; waterside (modifier + ford, stream, spring, well, pond, lake or river head) 342; waystation/structure (modifier + wall, tower, bridge, road, port, town heads) 302; steading (terrain/beast/resource/quality stem + ban or ila) 147. The steading pool is the tightest: about 147 names, so a 12-cell fixture is fine but a window-wide homestead layer (625 cells) needs the wider pool (stem-suffix plus compounds, 7361) or more roots. Pools overlap, so the classes must share one used set.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "node scratchpad/q11d.js rows C-F; class head sets chosen by gloss, not canon-ruled"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q11-c11",
+   "text": "Roots the curated list misses but the lexicon holds, usable for landform and structure classes if the curation is widened: Sūs (summit, peak; also the canon seed Sūs Gimīlīn), Rhoshkhon (foothill, highland; canon), Hanath/Khuzul (knoll, hillock; Hanath is already in), Nēgel (ridge), Thārduk (thicket, grove, copse), Prānor (chasm, gorge), Ūgdos (wetland, marsh), Mākh (desert, waste), Azīmbash (watchtower), Khar (house, home), Lazban (mine, quarry), Ghāzban (orchard), Pherūban (vineyard), Gogban (pen, coop). Many already end in -ban (place of), a productive suffix. The lexicon has no entry for shrine, altar, granary, fold, steading, mill, hall, hut or beacon in a leading gloss, so those structure words need DM rulings or plain-English labels.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "lexicon/patrinaic.json :: words[].loc (searched leading glosses)"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q11-c12",
+   "text": "Proposed mint key: a pure function of (class, cellId), where cellId is the z7 hex cell \"cx,cy\" (cell covers [32cx,32cx+32) x [32cy,32cy+32), e.g. F01 = 51,50). Seed = xmur3(\"name|\"+seed+\"|\"+class+\"|\"+cx+\",\"+cy)() fed to mulberry32; both exist in maps-site/index.html (xmur3 :2100, mulberry32 :2104). Rerolls use a salt in the string (\"...|a\"+k), not stream consumption, so one cell's name never depends on another cell's visit order. The uniqueness check runs against a used set pre-seeded with the canon blocklist, the gazetteer and RESERVED; cells are minted in ascending cellId order so collisions resolve identically every run.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "maps-site/index.html :: function xmur3(s)"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q11-c13",
+   "text": "Where the mint must live: maps-site/index.html has xmur3/mulberry32 but no PATRINAIC_ROOTS, patJoin or NAME; those live only in index.html (:569-650). tools/build-gazetteer.js already carries canon etymologies and is the regeneration path the brief requires. So names should be minted offline (a tool that reuses the roots, suffixes and patJoin, run from tools/ and emitted as data into maps-site/data), not invented by hand and not re-implemented in the page. Doing it at runtime in the atlas would need patJoin ported into maps-site.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "tools/build-gazetteer.js :: const ETYM"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q11-c14",
+   "text": "The sim uses sfc32 via makeStream (index.html:~515), not mulberry32, and the sim's NAME.used is cleared per world; the atlas mint should use its own separate used set so that filigree names never depend on, or consume from, a sim seed. Fixing mulberry32 as the atlas stream is consistent with the constants in the task.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "index.html :: function makeStream(s)"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q11-c15",
+   "text": "Chronicle-voice and vocabulary: the existing outputs are bronze-age Patrinaic (Zōraukdrāg red-wolf, Mholban mountain-place). Pools proposed here contain no Christian-medieval words; the Tithe-Yard/Tithe-Barn fix is a separate ruling (R10) in maps-site, not a name-supply matter.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "inspection of 30 sampled outputs in node scratchpad/q11c.js"
+   },
+   "confidence": "medium"
+  }
+ ],
+ "gaps": [
+  "Sayability is judged by pattern only; no DM or phonology ruling on legal clusters (e.g. whether Pith+gharad or Uth+phel are acceptable) was found, so the filter thresholds are a proposal needing a nod.",
+  "The count of names each filigree class needs on the real map (peaks, homesteads, halts per cell) is not fixed in this research, so per-class sufficiency can only be stated against the 12 fixture cells and the 625 DEM-window cells.",
+  "Class head sets (which glosses count as landform, waterside, structure) were chosen by gloss; not DM-ruled. The six DOMAINS strings do not distinguish knoll from ridge from peak.",
+  "Whether new canon exists in the wiki (beyond the four atlas JSON files compared) that a minted name could collide with was not checked; the wiki contentIndex.json was not fetched.",
+  "Etymology gloss-tautology rule operates on English glosses; nothing validates the real Patrinaic meaning of compounds beyond the DM-attested -ban, -ila, -os, -on, -or affixes."
+ ],
+ "summary": "The sim generator draws 109 curated roots and 4 suffix rows through patJoin with a global NAME.used repeat check (index.html:648), giving about 7.4k sayable non-canon names (205 grand, about 1.4k landform, 300-350 each for waterside and structure, 147 steading) and colliding with 5 atlas names, so one flat pool cannot name all 9316 hexes. Proposed: mint offline in tools/ from (class, cellId) via xmur3/mulberry32 with salted rerolls, a canon blocklist and ascending-cell-order uniqueness.",
+ "date": "2026-10-04"
+}

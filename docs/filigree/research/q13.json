@@ -1,0 +1,140 @@
+{
+ "qid": "q13",
+ "claims": [
+  {
+   "id": "q13-c01",
+   "text": "Chronicle hook: function chron(cls,text,x,z,pri) pushes {day,cls,text,x,z,pri} onto W.chron (reset to [] per world at index.html:3446). Entries with pri>0 and non-null x,z are also pushed to W.beats (capped at 60). x,z are sim world metres (W_SIZE 9000), null for realm-wide items. cls values seen: realm, crown, war, fate, myth, reign, year, flavor. Hazard events are fate/myth with pri 5-10; day is the simulated day (not wall-clock).",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "index.html :: function chron(cls, text, x, z, pri){"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q13-c02",
+   "text": "Sim-to-atlas transform (derived): world x,z -> grid g=(x/9000+0.5)*(N-1) with N=768 (worldToGrid) -> atlas px = 1060+gx*800/768, 1240+gz*800/768. Verified: Epēshu gridX169/gridZ168 -> 1236.0,1415.0 equals city-anchors Epēshu 1236.1,1415; Lepon ruin grid 83,173 -> 1146.5,1420.2 equals city-anchors Lepon the Old. The transform is only valid for seed 'epeshu' (CUSTOM_MAP_DATA); procedural seeds have no atlas geography and must get no overlay.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "1060+g*800/768; index.html:866 gridToWorld; maps-site/data/city-anchors.json#Epēshu,#Lepon the Old"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q13-c03",
+   "text": "Pebros camp: not a W.* object. It is a label (addLabelRaw 'Pebros’s Camp') plus one chron('war', ..., pri 6) entry created once at world start from CUSTOM_MAP_DATA.pebrosCamp {gridX:88,gridZ:170}. Atlas position = 1151.67,1417.08, inside fixture hex F11 (bbox 1120,1408,1152,1440, Lepon ruin; 0.33 px from its east edge). Static canon (Yuleday campaign), so it can be a constant marker without reading the sim. Note the chron line is war-class with no later removal.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "index.html :: pebrosCamp: {gridX:88, gridZ:170}"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q13-c04",
+   "text": "Bandit camps: W.banditCamps = [] of {x,z,strength:60,ambushes,day,mesh,patrol}, max 3 live (spawn only while <3), spawned by spawnBanditCamp in woodland cells (W.B 2 or 3, not water) 120-320 m from a road point and >=520 m from any settlement, chron 'masterless men camped in the deep woods' (fate pri 5). removeCamp splices it when a crown patrol wins. Camps are therefore transient and random per run; W.banditKing is set when strength>150.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "index.html :: W.banditCamps.push(camp);"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q13-c05",
+   "text": "Ambush: no persistent ambush object. In tickBandits a caravan agent within 260 m of a camp has 10%*bandit-rate chance per tick to be robbed (a.robbed=true, qty*0.45, camp.ambushes++), emitting chron('fate','A caravan of <good> out of <src> was set upon near the woods...', p.x, p.z, 5) at the caravan position. An overlay can derive ambush marks only from W.chron entries by text/class (fate, pri 5, that sentence) or by watching camp.ambushes; there is no structured ambush record, so a stable key is the chron entry index.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "index.html :: camp.ambushes++;"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q13-c06",
+   "text": "Famine flag: settlement fields s.hunger (0..1), s.hungerFlag (set when hunger>0.4, cleared when <0.12), s.hungerDead, s.reliefFlag. Chronicle lines: hungerStart ('Hunger stalks the lanes of X') at >0.4, famineDeep ('The famine in X deepens') when hunger>0.6 and >60 days since last, hungerDead on easing. Position = settlement s.x,s.z. A famine overlay should read s.hungerFlag and tier by s.hunger>0.6. Note s.hunger drives deaths (1+hunger*7) and a 0.3/0.25 threshold elsewhere.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "index.html :: s.hungerFlag = true; s.reliefFlag = false;"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q13-c07",
+   "text": "Plague flag: s.plagueFlag (true from infect() until tickPlague finds the sickness gone), s.inf (infection 0..1, infect sets 0.03; ignored if s.inf>0.01 or s.sus<0.45), s.plagueDead. Chron fate pri 7 'Plague in X' on start and pri 6 'The pestilence in X has passed' on end. Spread by caravans (src.inf>0.06). An overlay reads s.plagueFlag per settlement; the sim already has its own 'plague' overlay mode (data-ov=\"plague\").",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "index.html :: s.plagueFlag = true;"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q13-c08",
+   "text": "Dragon: W.dragon = {name, state: sleeping|outbound|raiding|homing, sleepUntil:900, hoard:2500, dead, lair:{x:W.peak.x,z:W.peak.z}, mesh, target, phaseStart, phaseDur}. Phases last ~1.2/0.8/1.2 days; wakes with p<=0.0005/day when treasury>8000 (myth rate on); target is always W.settlements[0] (the capital); on return may be slain (D.dead) or tribute paid and sleeps 1800 days. Chron lines are myth class, pri 8-10, located at the capital or W.peak. Lair is W.peak = highest cell of carved W.H, so it is not a canon place; for seed epeshu it equals the raw-DEM maximum at about atlas 1649,1604 (328.19 m, prom 374) which falls in fixture hex F01 (cell 51,50), a derived claim that assumes hydrology carving only lowers cells.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "index.html :: W.dragon = { name: pick(dR,"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q13-c09",
+   "text": "Raw DEM maximum within the window is at atlas 1649.06,1604.06 (328.19 m); the next highest raw peak is 190.5 m, so W.peak identity is robust unless genHydrology carving lowers the summit by more than ~138 m (it carves river beds and lakes, not peaks).",
+   "evidence": {
+    "kind": "computed",
+    "ref": "node tools/filigree-dem.js --bbox 1060,1240,1860,2040 --min-prom 15"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q13-c10",
+   "text": "Weather: W.weather = {state, until, wind}; state is one of clear, rain, overcast, storm, snow (set by tickWeather per season, 2-6 day spells, wind angle 0..2pi). There is NO fog state anywhere in W.weather; the only 'fog' in index.html is shader distance fog (uFogCol/uFogNear/uFogFar) and the water shader. W.weather is realm-wide (no position), so a fog layer in the atlas cannot be driven by the sim (R13) and any atlas 'weather' cue must use only the 5 real states, or be a static decoration.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "index.html :: W.weather = { state: 'clear', until: 0, wind: 0 };"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q13-c11",
+   "text": "POIs in maps-site/index.html are not sim hooks: The Beacon Post and The Tithe-Yard are two of the 8 pool entries (odd = pick([...])) one of which is assigned per settlement by seeded R; The Muster Ground and The Tithe-Barn are two of 5 'civ' entries, assigned only to kind town or capital. Each is a generated, conjectural per-city POI placed by addPoi at polar offsets from the city centre with a seeded R, so which city carries which one is determined by the city seed, not by the sim. An overlay can only attach caravan-halt / muster-day cues to these POIs by looking them up by name per city after genCityCanvas, and a city may have none of them.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "maps-site/index.html :: {n:'The Beacon Post',d:'A tarred beacon on its post"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q13-c12",
+   "text": "Voice debt confirmed: 'tithe' (any case) occurs on exactly 2 lines of maps-site/index.html (2820: The Tithe-Yard POI with its d: harvest-tithe; 2829: The Tithe-Barn POI). Under R10 a Job 3 unit renames the pair to The Tribute-Yard / The Tribute-Barn and rewords harvest-tithe to harvest-tribute; any overlay code that looks POIs up by name must use the Tribute names or a name-agnostic key, not the Tithe names.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "grep -n -i tithe maps-site/index.html (lines 2820, 2829)"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q13-c13",
+   "text": "There is no live feed from the sim to the atlas page today: maps-site/index.html only links out to the sim (#simLink, sim.princexizor.ddns.net), and window.ATLAS exposes map, markers, party, factions, ready, find, fly, company, faction, groups, era, journey, stopJourney. The sim exposes window.ANNALS (world getter -> W, stats, simDays, fate) on a separate page/origin. So every sim hook above is readable only in the sim's own page; for the atlas they must be either a baked/static sample (sampled at a fixed seed and day, in the style of the planned 'notices sample') or a new bridge, and the README says any sim change is out of scope.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "maps-site/index.html :: window.ATLAS={map:map,markers:MARKERS,party:PARTY,factions:FACTIONS,ready:true,"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q13-c14",
+   "text": "Determinism: the hazards use W.rng.hist, so for seed epeshu the same day produces the same camps, famine and plague and ANNALS.simDays(n) is reproducible. That makes a baked sample (run simDays to a fixed day, dump W.banditCamps x,z, hungerFlag/plagueFlag settlements, dragon.state) reproducible and committable as a data file. Caveat: the opening chron and beats include draws that depend on UI rate sliders (readRates) which default to 1.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "index.html :: const R = W.rng.hist, wt = W.weather;"
+   },
+   "confidence": "medium"
+  }
+ ],
+ "gaps": [
+  "Not verified in a running browser: positions of W.banditCamps / hunger / plague at any given day for seed epeshu were not sampled; only static code was read. A Job 3 unit must bake the sample with ANNALS.simDays(n) on seed epeshu.",
+  "W.peak after genHydrology carving was not read at runtime; the F01 lair claim uses the raw DEM maximum (tools/filigree-dem.js), medium confidence.",
+  "Which of the shipped POIs (Beacon Post, Muster Ground, Tribute-Yard/Barn) actually exist on the epeshu cities (they are drawn at random per city seed) was not enumerated; count and positions unknown without running genCityCanvas.",
+  "Whether the sim should push a live feed to the atlas (a bridge) is a spec decision not settled by the sources; README declares any sim change out of scope.",
+  "Canon: no source read stating where on the atlas a 'caravan halt' or 'muster day' lives; only the two generic POIs exist."
+ ],
+ "summary": "Hooks live only in the sim page: chron(cls,text,x,z,pri) onto W.chron/W.beats, W.banditCamps (max 3, transient), s.hungerFlag/s.plagueFlag per settlement, W.dragon (lair = W.peak, atlas about 1649,1604 in F01), and W.weather has five states and no fog. The Pebros camp is a static CUSTOM_MAP_DATA constant at atlas 1151.67,1417.08 in F11, and sim grid maps to atlas by 1060/1240 + g*800/768 (verified against two city anchors). The atlas page has no feed from the sim and its Beacon Post, Muster Ground and Tithe POIs are random per-city conjectures, so overlays must use a baked seed-epeshu sample and name-agnostic POI lookup.",
+ "date": "2026-10-04"
+}

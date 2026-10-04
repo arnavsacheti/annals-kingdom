@@ -1,0 +1,140 @@
+{
+  "qid": "q09",
+  "claims": [
+    {
+      "id": "q09-c01",
+      "text": "EPESHU_HF decodes with the stated transform: the PNG embedded at const EPESHU_HF_URI is 768x768, 8-bit RGB, non-interlaced, and h = (R*256+G)/32 - 300 m reproduces the sim's own decode (index.html:7596). The raw decode spans -46.03 m to 328.19 m, with 11006 distinct values; 50.59% of the 589824 cells are >= 0 m (SEA_Y = 0, index.html:500).",
+      "evidence": {
+        "kind": "computed",
+        "ref": "node tools/filigree-dem.js --bbox 1060,1240,1860,2040 (land_frac, hmin, hmax); index.html :: const EPESHU_HF_URI; index.html :: H[i] = (d[i*4]*256 + d[i*4+1])/32 - 300"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q09-c02",
+      "text": "The transform is verified on Aldorus. Sim grid cell 373,276 (index.html:7639) has centre atlas 1449.06,1528.02 and h 139.31 m; --at 1449,1528 returns {\"h\":139.31}. The wiki anchor 1448.6,1527.5 (city-anchors.json) lies in the same cell (--at returns 139.31). It is 0.06,0.00 atlas px from the cell's top-left corner (1448.54,1527.50) and 0.46,0.52 px from the centre, i.e. half a cell. The 8 neighbouring cells span 138.84 to 139.84 m, so a half-cell registration choice moves h by under 0.6 m.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "node tools/filigree-dem.js --at 1449,1528 ; --at 1448.6,1527.5 ; maps-site/data/city-anchors.json#Aldorūs"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q09-c03",
+      "text": "The probe reproduces all four gate literals: --at 1649,1604 -> 328.19; --at 1449,1528 -> 139.31; F08 bbox 1600,1376,1632,1408 -> hmax -43.19 (<0; all sea, land_frac 0); F01 bbox 1632,1600,1664,1632 -> hmin 252.72, hmax 328.19. --at returns null outside [1060,1860)x[1240,2040) (--at 1860,1240 and 1000,1300 give null) and the first cell (1060,1240) gives -44.81. Output is byte-identical across runs (identical sha256 on two sheet-one runs) and the file has no Math.random, Date.now or new Date().",
+      "evidence": {
+        "kind": "computed",
+        "ref": "node tools/filigree-dem.js --at 1649,1604 ; --bbox 1600,1376,1632,1408 ; --bbox 1632,1600,1664,1632 ; grep -E 'Math[.]random|Date[.]now|new Date[(][)]' tools/filigree-dem.js (0 hits)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q09-c04",
+      "text": "The highest ground in the whole window is a single summit of 328.19 m at cell 565,349 (atlas 1649.06,1604.06), inside fixture F01. F01 is entirely land (land_frac 1, 252.72 to 328.19 m, one peak, prominence 75.47 m inside the hex).",
+      "evidence": {
+        "kind": "computed",
+        "ref": "node tools/filigree-dem.js --bbox 1632,1600,1664,1632"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q09-c05",
+      "text": "Per-fixture h range (m), land_frac, from the probe: F01 252.72..328.19 (1.00); F02 135.84..150.94 (1.00); F03 125.81..134.81 (1.00); F04 151.00..162.34 (1.00); F05 44.16..131.31 (1.00); F06 -40.97..88.09 (0.2934); F07 -21.19..24.41 (0.1376); F08 -45.91..-43.19 (0.00); F09 136.91..142.13 (1.00); F10 -15.25..98.50 (0.7258); F11 -42.00..64.69 (0.2495); F12 null (outside the window). F03, F04, F09 and F02 are flat farmland (relief 9 to 15 m per hex), F08 is open sea, F07/F06/F11/F10 are coast hexes, F01 and F05 are hill hexes.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "node tools/filigree-dem.js --bbox <F01..F11 bbox>; F12 bbox 2656,192,2688,224 lies outside [1060,1860)x[1240,2040)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q09-c06",
+      "text": "Fixture F12 (cell 83,6, bbox 2656,192,2688,224) is outside the DEM window: the probe returns land_frac/hmin/hmax null and no peaks, consistent with R22 (no relief invented outside the window).",
+      "evidence": {
+        "kind": "computed",
+        "ref": "node tools/filigree-dem.js --bbox 2656,192,2688,224 ; --at 2670,200 -> {\"h\":null}"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q09-c07",
+      "text": "Inside SHEET_ONE_BBOX [1216,1376,1760,1664) the probe counts 522x276 cells; land_frac 0.585, h -46.03..328.19 m, median h 97.7 m. Local maxima (8-connected, plateau counted once) with prominence >= 15 m number 17 (23 at >=5 m, 18 at >=10, 16 at >=20, 12 at >=30). Highest: 328.19 m at 1649.06,1604.06 (box-relative prominence 374.22); then 170.19 m at 1454.27,1663.44 (22.03, on the south edge of the box); 63.69 m at 1724.06,1606.15; and a cluster of 14 low hills of 19 to 46 m in the north-west quadrant (x 1278..1419, y 1398..1442) near the Epeshu coast. All 17 were brute-force checked: the peak's flood component at level h-prom+0.011 contains no higher cell, and at h-prom-0.011 it does (or it is the box maximum).",
+      "evidence": {
+        "kind": "computed",
+        "ref": "node tools/filigree-dem.js --bbox 1216,1376,1760,1664 (peaks[] has 17 entries)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q09-c08",
+      "text": "Prominence convention in the probe: it is computed inside the queried box only, by a descending flood (union of 8-neighbours). The box's highest peak takes h - hmin of the box; every other peak takes h minus the highest saddle that joins it to higher ground. Peaks cut by a box edge therefore have a box-clipped (understated) prominence, e.g. F02's only peak (150.94 m, prom 15.09) sits on the box corner, and so do F05, F10 and F11. Saddles below 0 m are allowed, so two hills divided by sea count as separate peaks (e.g. F06's 64.09 m peak, saddle -1.8 m).",
+      "evidence": {
+        "kind": "computed",
+        "ref": "tools/filigree-dem.js header comment; node tools/filigree-dem.js --bbox 1376,1568,1408,1600"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q09-c09",
+      "text": "Contour spacing on screen follows from the map projection: CRS.Simple with NZ=4 gives 2^(z-4) CSS px per atlas px, i.e. 4 px at z6, 8 px at z7 (so one hex of 32 atlas px = 256 px) and 16 px at z8. Spacing of a 5 m contour = 5 / gradient(m per atlas px) x scale. A 1 m per atlas px slope gives 20 px (z6), 40 px (z7), 80 px (z8).",
+      "evidence": {
+        "kind": "anchor",
+        "ref": "maps-site/index.html :: var NZ=4, IMG_W=4390 ; maps-site/index.html :: var map=L.map('map',{crs:L.CRS.Simple"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q09-c10",
+      "text": "Over the 84285 interior land cells of sheet one (central-difference gradient, h >= 0), the gradient percentiles are p5 0.15, p10 0.21, p25 0.38, p50 0.79, p75 2.20, p90 4.83, p95 7.64, p99 27.5 m per atlas px (max 94.7). The resulting 5 m contour spacing in screen px: z6 median 25.2, p10-steepest 4.1, p25 9.1, p75 53.3, p90 95.0; z7 median 50.5, steepest p10 8.3, p25 18.2, p75 106.7, p90 190.0; z8 median 101.0, steepest p10 16.6, p25 36.4, p75 213.3, p90 380.0.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "scratch script over tools/filigree-dem.js load(); percentile of 5/|grad|*2^(z-4) on land cells inside [1216,1376,1760,1664)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q09-c11",
+      "text": "Legibility consequences for a 5 m interval on sheet one: the share of land with spacing under 3 px (contours fuse into a solid) is 5.8% at z6, 3.1% at z7 and 1.1% at z8; under 6 px is 16.0%, 5.8% and 3.1%; spacing over 40 px (sparse, the ground reads empty) is 35.9% at z6, 54.4% at z7 and 71.5% at z8. So 5 m is dense at z6 only on the steep hill and cliff ground (hair weight must drop or the interval widen there) and too sparse on the lowlands at z7/z8, where a finer sub-interval or a spot-height is needed to keep the ground from reading blank. Only 2.4% of land has gradient under 0.1 m per atlas px.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "same scratch script: fractions of land cells with spacing <3, <6, >40 px at z6/z7/z8"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q09-c12",
+      "text": "Median 5 m contour spacing per fixture (px at z6/z7/z8): F01 8.7/17.4/34.9; F02 51.1/102.3/204.5; F03 71.7/143.4/286.7; F04 53.7/107.4/214.7; F05 9.5/19.0/38.1; F06 3.2/6.3/12.7; F07 2.3/4.6/9.3; F09 93.1/186.2/372.5; F10 5.3/10.7/21.3; F11 4.2/8.4/16.8; F08 none (no land). Flat farmland hexes F02/F03/F04/F09 cross a 256 px hex with only about 1 to 2.5 contours at z7; F06/F07 coast hexes are steep and fuse at z6.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "scratch script per fixture bbox, land cells only, median gradient"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q09-c13",
+      "text": "Use the raw decode, not W.H: when CUSTOM_MAP_DATA.H is set the sim copies EPESHU_HF into W.H (new Float32Array(...)), and genHydrology then lowers W.H along rivers and lake basins with Math.min(...) (and takes banks from a pristine slice H0). EPESHU_HF itself is never written, so the probe's decode is the uncarved heightfield, but a browser read of W.H after genHydrology differs along river and lake cells.",
+      "evidence": {
+        "kind": "anchor",
+        "ref": "index.html :: W.H = new Float32Array(window.CUSTOM_MAP_DATA.H) (887) ; index.html :: W.H[ni] = Math.min(W.H[ni], waterY (1147) ; index.html :: function genHydrology (1083)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q09-c14",
+      "text": "Resolution caveat: one DEM cell is 1.0417 atlas px, which is 4.2 / 8.3 / 16.7 CSS px at z6 / z7 / z8, so contour lines traced from the grid are faceted at those lengths and need smoothing (and are soft, not survey-grade) past z7. The DEM is a hand-traced heightfield (index.html comment), not a measured one.",
+      "evidence": {
+        "kind": "anchor",
+        "ref": "index.html :: // Heightfield: 768² PNG, height = (R*256+G)/32 - 300 metres ; index.html :: const N = 768"
+      },
+      "confidence": "medium"
+    }
+  ],
+  "gaps": [
+    "The size of the carve that genHydrology applies to W.H (raw vs carved heights along rivers and lakes) was not measured; that needs a browser run of the sim (ANNALS.world.H after load) and is not needed while sheet one uses the raw decode.",
+    "Peak prominence is box-clipped; the true prominence of edge peaks (the 170.19 m hill at 1454.27,1663.44, F02/F05/F10/F11 corner peaks) needs a wider query box or a window-wide run, which was not done here.",
+    "No peak has a name or a wiki marker in the sim or the atlas (the 3 atlas Mountains-and-Hills markers lie outside Leponnia); the 328.19 m summit at cell 565,349 and the 17 sheet-one peaks are unnamed here. Naming is for a later job.",
+    "The 0.5 atlas px offset between the centre rule and the Aldorus anchor (1448.6,1527.5) is half a cell; whether the DEM was traced from the corner or the centre of cells could not be settled from the repo.",
+    "Contour spacing assumes a CSS-px scale of 2^(z-4) read from NZ=4; it was not checked in a running browser, and retina tile swapping does not change CSS px."
+  ],
+  "summary": "EPESHU_HF decodes as 768x768 RGB with h=(R*256+G)/32-300, spanning -46.03..328.19 m, and the transform is verified on Aldorus (cell 373,276, 139.31 m); the committed probe tools/filigree-dem.js reproduces every gate literal and is deterministic. Sheet one holds 17 local maxima of prominence >= 15 m (summit 328.19 m at 1649.06,1604.06) and F12 lies outside the DEM window. A 5 m interval gives a median contour spacing of 25/50/101 px at z6/z7/z8, too dense on steep coast and hill ground at z6 and too sparse on lowland farmland at z7/z8.",
+  "date": "2026-10-04"
+}

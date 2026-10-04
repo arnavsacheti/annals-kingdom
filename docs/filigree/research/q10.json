@@ -1,0 +1,198 @@
+{
+  "qid": "q10",
+  "claims": [
+    {
+      "id": "q10-c01",
+      "text": "Sim hydrology for the Epeshu seed is peak-sourced, not print-sourced. In the CUSTOM_MAP_DATA branch of genHydrology (index.html:1091) the sources are the highest cells on an 8-cell lattice with h >= 35 m, at most 9, each at least 90 cells from the last (index.html:1098); each source is walked by riverWalk (index.html:986 on) by steepest descent with +-0.15 m jitter drawn from W.rng.gen, ending at sea, at another river ('merge', index.html:996), or in a 49-cell pond (stampPondAt). Nothing in the branch reads a river line from any data file.",
+      "evidence": {
+        "kind": "anchor",
+        "ref": "index.html :: if(sources.length >= 9 || c.h < 35) break;  and  index.html :: function genHydrology  and  index.html :: { pts.push({ix,iz,merge:true}); break; }"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q10-c02",
+      "text": "Running the real sim (headless Chromium, three.js r128 served from a local copy because the CDN is blocked here) on #s=epeshu gives exactly 9 rivers (polyline vertex counts 80 main, 66, 53, 52, 52, 44, 43, 38, 34), 5 ponds of 49 cells each, and riverName 'The Coldflow'. 4 of the 9 reach the sea (rivers 3, 6, 7, 8; last-vertex water level 0.35 m); 5 end inland in ponds at 135-154 m (rivers 0, 1, 2, 4, 5). Two independent page loads produced byte-identical river dumps (sha256 91623b32dc320d383a11866b9c8330b93b6ab4c9ce1bf5eda6789202f7be71f5), so the set is deterministic. All 9 lie inside the DEM window; atlas length 603 px in total (47.8 to 104.3 px each).",
+      "evidence": {
+        "kind": "computed",
+        "ref": "playwright chromium: goto http://localhost:8544/?v=<int>#s=epeshu, wait ANNALS.ready, dump ANNALS.world.rivers pts {x,z}, convert atlas = 1060+(ix+0.5)*800/768 with ix=(x/9000+0.5)*767 (same for z with 1240); sha256sum of the two dumps; ANNALS.world.lakes length 5"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q10-c03",
+      "text": "The print carries 4 solid-line river systems inside the window, which I traced as 11 reaches (1,257 atlas px in total) by live-wire (Dijkstra on darkness) between hand-placed waypoints on the z5 mosaic. (P1) the Lamor river: from the north coast just south-west of Epeshu at about 1221,1446 to a break at 1267,1503, then a second reach 1291,1531 to 1273,1560 beside Reketis towards the Marble Gulf coast at Aglaz; (P2) the Aldorus river: from the north coast west of Sokundo at 1437,1461 to 1411,1548; (P3) the Medem river: Dramuz coast about 1356,1731 east through the Rhoshkhon north reach, a short tributary at about 1380,1694, and a fork at 1505,1692 into a north branch ending at 1544,1663 and an east branch ending at 1588,1681; (P4) the Kardunash river: Kardunash coast about 1532,1825 north-east to a fork at 1672,1771 (north branch and a north-east branch with a light braided tail) plus a lower tributary joining at 1594,1825.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "window [1060,1240]..[1860,2040] stitched from maps-site/tiles/5/{8..14}/{9..15}.jpg (z5 tile = 128 atlas px at 256 px, so 2 tile px per atlas px; tile (x,y) covers atlas [128x,128x+128) x [128y,128y+128)); trace waypoints in window tile px; z5 crops 3x of atlas [1200,1440]..[1330,1570], [1390,1440]..[1500,1560], [1380,1660]..[1620,1760]"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q10-c04",
+      "text": "The tracing is faithful to the ink: 99.3% of the 2,134 trace samples lie within 3 atlas px of luminance < 110 ink and 98.6% within 1.5 px (weakest reach P4_N 86.8% / 82.1%, a light line). A completeness sweep for further thin solid-line components on land (luminance < 145 and < 165, lettering and dotted-road dots removed by erode-2/dilate-5, 4.5 atlas px around the DEM coast removed, components >= 25 px and >= 30 px diagonal) found none that the 11 traced reaches do not already cover.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python: distance_transform_edt of (L<110) on window.png vs 11 traces; thin-ink components (L<145 and L<165) minus lettering/coast band, uncovered fraction < 0.5 -> empty list at both thresholds"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q10-c05",
+      "text": "The sim rivers do not lie on the print rivers. Of the 462 sim vertices only 4.5% fall within 3 atlas px of a traced print river (river 0 16.2%, river 5 18.2%, the other seven 0%, all incidental crossings); no sim river approaches the 90% bar. The two sets agree in no reach: the print puts rivers on the Lamor neck, west of Aldorus, on the Medem line and from Kardunash, while the sim puts them at 1456,1703-1396,1668 (Dranimos), 1448,1595-1506,1584 (Peshunor interior), the Aura-Hoth coast, the Perona coast, the Kardunash hinterland, the south-east corner and the Azraken peninsula.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python metrics.py: sample sim polylines every 1 atlas px, distance to rasterised print traces (2 tile px per atlas px); per-river f_print_river_3px = 0.162,0,0,0,0,0.182,0,0,0 (rivers 0..8); overall 0.045"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q10-c06",
+      "text": "A 'within 3 px of dark ink' test, as sheet-spec s06 plans it, does not isolate rivers. A lattice of 20,236 land points (every 8 tile px, DEM h >= 0) has 23.9% within 3 atlas px of luminance < 110 ink (33.0% inside sheet one), and sim river 8 scores 97.1% only because 50% of its vertices run through the AURA-HOTH-HANATH lettering (inside the lettering/dot mask). The nine sim rivers pooled score 24.2%, equal to the random baseline. The test must run against a river-ink mask with lettering, dotted-road dots, coast band and graticule removed.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python metrics.py: baseline within3 ink 0.239, sheet-one 0.33; sim f_any_ink_3px = .2,.242,0,.154,.058,.159,.233,.5,.971; lettering mask = binary_dilation(binary_erosion(L<145,2),5), fraction of river 8 vertices 0.50"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q10-c07",
+      "text": "Graticule lines are a second solid-black trap: a thin straight meridian crosses the west edge of the window (over the sea and over the western land), and a parallel arcs across the top over the sea. They look like the river line weight, so a river-ink filter needs the land mask and a straightness check as well as the lettering mask.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "window [1060,1240]..[1860,2040] stitched from maps-site/tiles/5/{8..14}/{9..15}.jpg (z5 tile = 128 atlas px at 256 px, so 2 tile px per atlas px; tile (x,y) covers atlas [128x,128x+128) x [128y,128y+128)); window crops x 0-800, y 0-800 and y 800-1600 (tile px)"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q10-c08",
+      "text": "Forks: the print has 4 inside the window, all south of sheet one (y > 1664): the Medem tributary junction at about 1380,1700, the Medem trunk fork at 1505,1692.5, the Kardunash trunk fork at 1672.5,1771, and the Kardunash lower tributary junction at 1594,1825. The three coast bands of sheet one therefore have 0 forks each on the print (W 0, M 0, E 0). The Lamor river (W) and the Aldorus river (M) are single unbranched lines, and the E band (Rhup to Tamaron to Mago) draws no solid line apart from the coast.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "window [1060,1240]..[1860,2040] stitched from maps-site/tiles/5/{8..14}/{9..15}.jpg (z5 tile = 128 atlas px at 256 px, so 2 tile px per atlas px; tile (x,y) covers atlas [128x,128x+128) x [128y,128y+128)); z5 crops of the three bands: E band atlas [1580,1376]..[1760,1664], M band lower [1400,1540]..[1580,1664], Lamor [1200,1440]..[1330,1570], Aldorus [1390,1440]..[1500,1560]"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q10-c09",
+      "text": "River length inside sheet one per coast band (atlas px): print W 175.7 (Lamor, both reaches), M 171.3 (Aldorus 170.3 plus 1.0 where the Medem north branch grazes the south edge), E 0; sim W 8.5 (river 0), M 125.5 (river 0 38.4, river 1 87.1), E 66.1 (river 3 18.3, river 8 47.8). So the sim has rivers in the E band where the print has none, and almost none in W where the print has the longest.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python: clip print traces and sim polylines to W 1216,1376,1400,1664 / M 1400,1376,1580,1664 / E 1580,1376,1760,1664, length by 0.25-px sampling"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q10-c10",
+      "text": "The sim has zero forks: no sim river ends in or joins another. The nearest approach of any river end to a vertex of another river is 72.1 atlas px (river 6), against 4 print forks in the window, so a forks-per-band count from the sim is 0 in every band and cannot meet the 'river forks' item of the density bible.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python: for each sim river end, min distance to all other sim vertices: 88.7, 109.2, 134.1, 73.0, 166.4, 144.1, 72.1, 297.7, 114.6 atlas px"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q10-c11",
+      "text": "Of the 11 fixture hexes in the window only F09 (1440,1504,1472,1536) holds a print river: 37.6 atlas px of the Aldorus river, which runs 7.5 px north-west of the Aldorus anchor (1448.6,1527.5) and along its west side; F01-F08, F10 and F11 hold none, and F12 lies outside the window. The sim touches different hexes: river 8 starts in F01 (4.4 px, at the 328.19 m summit) and river 0 crosses F04 (18.0 px); the print has no river in either.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python: clip traces/sim polylines to fixture bboxes; nearest P2 vertex to maps-site/data/city-anchors.json#Aldorus (1448.6,1527.5) is 1443.5,1522 at 7.5 px"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q10-c12",
+      "text": "The dossier's river-town reading holds: the Aldorus river runs past the west side of the anchor (hairpin at atlas y 1516-1527 reaching x 1412-1446 west of the ring), enters the sea 66.9 px north of it, west of Sokundo (1477.7,1444.2), and is the only solid line in the M band. City-anchors puts the sea 77 px NE of Aldorus; the river mouth is at 1437,1461 so it reaches the same north shore.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "window [1060,1240]..[1860,2040] stitched from maps-site/tiles/5/{8..14}/{9..15}.jpg (z5 tile = 128 atlas px at 256 px, so 2 tile px per atlas px; tile (x,y) covers atlas [128x,128x+128) x [128y,128y+128)); crop 3x of atlas [1390,1440]..[1500,1560]; research-dossier.md#7 'The river runs past its west side'"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q10-c13",
+      "text": "EPESHU_HF is a smooth dome, not a drainage surface. Land is 50.6% of cells, median land height 140.0 m, 82.4% of cells more than 12 cells inland lie within 100-160 m, median inland slope 0.58 m per cell (p90 2.11). Height climbs from 12 m at 1 cell from the sea to 89 m at 10 cells, 116 m at 20 and 147 m at 40, then stays on a plateau. Under the 11 traced print rivers the cell is at most 2.05 m above or 1.04 m below the 25-cell local mean, against 140 m of relief, so the print rivers leave no channel in the DEM.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python on dem.f32 (raw decode of index.html :: const EPESHU_HF_URI, h = (R*256+G)/32 - 300): percentiles, distance_transform_edt(H>=0) rings, valley index = H - uniform_filter(25 cells) averaged along each trace (+2.05, +1.82, +0.47, +0.88, +0.2, -0.17, -0.94, -0.28, -0.64, -1.04, -0.15)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q10-c14",
+      "text": "D8 flow candidates from the DEM (priority-flood fill, eps 1e-4, sea cells h < 0 as outlets) mostly miss the print. Fill raises 40,061 land cells (13.4%) by more than 0.5 m (max 19.4 m). Accumulation >= 50 cells gives 36,816 candidate cells of which only 4.2% lie within 3 atlas px of a print river, and only 54.6% of print-river cells have a candidate within 3 px; the recall falls to 73.0% at >= 20, 36.0% at >= 100, 27.2% at >= 200 and 13.4% at >= 800 cells. Candidate cells are 96% rivers the print does not draw.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python d8.py + evalc.py: acc >= T, recall = share of rasterised print-river cells with a candidate within 3 atlas px; T=20: 76,579 cells prec .035 recall .730; T=50: 36,816 .042 .546; T=100: 21,067 .046 .360; T=200: 10,271 .040 .272; T=800: 3,556 .036 .134"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q10-c15",
+      "text": "DEM support differs by reach (share of print-river cells with an accumulation >= 50 candidate within 3 px): P3 tributary 0.92, Kardunash NE branch 0.89, N branch 0.75, trunk 0.70, lower tributary 0.64, Medem east branch 0.61, Aldorus 0.55, but Medem trunk 0.37, Lamor 0.35 and 0.23, Medem north branch 0.34. At accumulation >= 200 the Lamor river drops to 0.01 and 0.00. The only river wholly inside sheet one's W band is the one the DEM supports least.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python evalc.py per-reach recall at T=50: P1a .35 P1b .23 P2 .55 P3_main .37 P3_A .34 P3_B .61 P3_trib .92 P4_main .70 P4_N .75 P4_NE .89 P4_trib .64; T=200: P1a .01 P1b .00 P2 .38 P3_main .20 P3_A .09 P3_B .42 P3_trib .88 P4_main .46 P4_N 0 P4_NE .19 P4_trib .41"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q10-c16",
+      "text": "Applied literally (keep a D8 branch only if >= 90% of its cells are within 3 px of the print line) the rule keeps almost nothing: 2 of 1,510 branches at accumulation >= 50 (35 atlas px, 3.4% of the traced print length), 0 of 294 at >= 200; lowering the bar to 60% keeps 5-6 branches (73-140 px, 5-10%). The result is the same whether the oracle is the automatic thin-ink mask (57.6% recall of the traced rivers within 1.5 px) or the hand trace, so the failure is the DEM channels, not the mask.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python rule.py / rule2.py: heads = candidate cells with no upstream candidate, walk downstream until a seen cell; branch score = share of cells within 3 atlas px of mask; kept if score >= thr and >= 8 cells"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q10-c17",
+      "text": "Proposed rivers.json source rule (print-led, DEM-checked): (1) the print is the geometry: river-ink = z5 pixels with luminance < 145 on land, minus lettering and dotted-road dots (erode-2/dilate-5 mask), minus the graticule, minus 4.5 atlas px around the DEM h=0 coast; each river is a live-wire trace of that ink between waypoints, with the breaks bridged by hand and recorded (P1 under the L of LEPONIA 36.5 px, mouths inside the coast band, P3 tail to Dramuz), simplified to about 1 atlas px, prov 'trace'. (2) The DEM supplies z and direction only: every vertex gets the raw EPESHU_HF height, each reach is ordered so the mouth is the sea end, and a reach is flagged dem_supported when >= 50% of its cells have a D8 candidate (accumulation >= 50) within 3 px (7 of 11 today). (3) A DEM-only candidate is never kept: no solid line, no river (96% of candidate cells dropped). (4) Gate: every vertex within 3 atlas px of river-ink, never of 'any dark ink' (the hand trace scores 99.3% on dark ink and 100% by construction on river-ink). (5) Only inside the DEM window (R22); no relief or river is invented outside it.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "synthesis of q10-c04, q10-c06, q10-c14-c16; thresholds measured by python metrics.py, evalc.py, rule.py"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q10-c18",
+      "text": "The planned literal wording 'DEM flow candidates kept only where the print shows a solid line' therefore needs one change: the print supplies the line and the DEM filters or annotates it, not the reverse. A per-cell version of the literal rule (keep candidate cells within 3 px of ink, accumulation >= 50) keeps 1,546 cells that cover 54.6% of the print length in broken fragments, which cannot draw a continuous stroke.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python evalc.py: T=50 kept_cells 1546, print_recall3 0.546; python rule.py branch rule coverage 0.034"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q10-c19",
+      "text": "Consequence for the sim: the table map's rivers.json (print-led) and the sim's own rivers (peak-led, 4.5% overlap) would show two different river systems for the same ground. Because rivers.json would be a static file, wiring it into the CUSTOM_MAP_DATA branch of genHydrology (index.html:1091) as the source list would keep the same-seed-same-world rule intact; leaving the sim untouched keeps the divergence. This is a decision for Job 2, not something the research settles.",
+      "evidence": {
+        "kind": "anchor",
+        "ref": "index.html :: function genHydrology ; index.html :: if(window.CUSTOM_MAP_DATA && window.CUSTOM_MAP_DATA.H){ ; docs/filigree/research-dossier.md :: No atlas data file holds rivers"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q10-c20",
+      "text": "No atlas data file names or stores the Leponnia rivers: the word 'river' appears in wiki-places.json only for Khephnar, Termos, Tungril, Rodzir, Rhurnar, Lash and the Stony River at Summarch, none in Leponnia, and gazetteer.json, maps_markers.json and named-ways.json hold no river name. The four printed Leponnia river systems are unnamed, so any rivers.json names would be invented (prov 'invented').",
+      "evidence": {
+        "kind": "data",
+        "ref": "maps-site/data/wiki-places.json#river mentions; maps-site/data/gazetteer.json; maps-site/data/maps_markers.json; maps-site/data/named-ways.json (regex for River|Rill|Brook|Creek|Stream|Flow returns no name)"
+      },
+      "confidence": "high"
+    }
+  ],
+  "gaps": [
+    "Whether the two Lamor reaches are one river: the line breaks for 36.5 atlas px where the L of LEPONIA sits (1267,1503 to 1291,1531). Cartographic habit says one river running under the letter, but the print does not prove it; the Job 2 rule needs a ruling on bridging under lettering.",
+    "Where the Medem north branch goes after 1544,1663: it ends at the N glyph of LEPONIA, exactly on the sheet-one south edge (y 1664), so whether it enters the M band is not established.",
+    "Whether the Kardunash north branch (P4_N, light line, 82% of samples within 1.5 px of ink) is complete: the trace stops under the I of LEPONIA at about 1675,1724.",
+    "Mouths: the automatic ink mask excludes 4.5 atlas px around the coast, so every mouth (and the P3 tail to Dramuz, about 21 px from the Dramuz anchor) was placed by hand at roughly 5-8 px accuracy; a Job 3 unit should snap them to the shoreline polyline.",
+    "Print flow direction is not drawn: orientation of each reach (head to mouth) is inferred from the coast end and the DEM, not from the print.",
+    "Rivers outside the DEM window were not surveyed (R22: no DEM, so no rivers.json there). Whether sheets beyond the window need river geometry is a Job 2 question.",
+    "The sim cannot be run with a different seed's river set here to judge variance: only #s=epeshu was dumped; procedural seeds were not examined.",
+    "A cold reader cannot re-run the numbers from the repo: the trace, mask and D8 scripts lived in a temp directory (the brief forbids repo scripts); the refs give the method and thresholds. Promoting the trace to tools/ is a Job 2 or Job 3 decision.",
+    "Console during the sim run showed one ERR_CERT_AUTHORITY_INVALID resource load (an external resource blocked by this sandbox's proxy); no page errors were reported, but it was not traced to a URL."
+  ],
+  "summary": "The sim's 9 peak-sourced rivers (deterministic, 603 atlas px, 0 forks) overlap the 4 solid-line river systems on the print (11 reaches, 1,257 px, 4 forks, none inside sheet one: W 0, M 0, E 0 forks) at only 4.5% of vertices, and the DEM is a smooth dome whose D8 channels support the print lines in just 55% of cells, so applying 'DEM candidates kept where the print has a line' literally keeps 3.4% of the print length. I therefore propose a print-led rivers.json: geometry traced from river-ink (lettering, dots, graticule and coast band removed), DEM used for height, direction and a dem_supported flag, DEM-only candidates never kept, and the gate run against river-ink rather than 'any dark ink' (which random land passes 24% of the time).",
+  "date": "2026-10-04"
+}

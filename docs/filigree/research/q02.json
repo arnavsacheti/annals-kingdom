@@ -1,0 +1,168 @@
+{
+ "qid": "q02",
+ "claims": [
+  {
+   "id": "q02-c01",
+   "text": "Frames: plate two is one 1200x788 raster (p3), plate three one 1200x772 raster (p4); both are cropped at the edges so some labels are clipped (plate two 'rve' at top-left, KORBEL at the right; plate three 'eaview' at left, 'K' and 'Northwood C...' at right). Neither has scale bar, legend, title or graticule. They are not registered to plate one's 1199x830 frame, so every 'absent from the plate' statement below means absent from the visible frame.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "p3 plate image 1200x788 (pdfimages -f 3 -l 3 -j docs/research/filigree-for-the-table.pdf); crop 0,0,1200,788; p4 plate image 1200x772 (pdfimages -f 4 -l 4 -j docs/research/filigree-for-the-table.pdf); crop 0,0,1200,772"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q02-c02",
+   "text": "Plate two KEEPS, by class. Peak-icon pins (dark disc, white mountain glyph, name to the right, no height): Queens Peak (~1090,275), Pole Mountain (~590,640), Neeley Hill (~1040,710) = 3. Park-icon pins (green disc, tree glyph): Fort Ross State Historic Park (~140,580), Austin Creek State Recreation Area (~1027,355), Armstrong Redwoods State Natural Reserve (~1017,487) = 3. Place labels in plain sans: Cazadero (~720,505), Guerneville (bold, ~1047,648), Rio Nido (~1140,562), KORBEL (small caps, clipped, ~1170,625). Water names in blue italic along the line: South Fork Gualala River, Austin Creek (vertical), Russian River = 3. Relief survives as continuous hillshade; streams as unlabelled light-blue lines.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "p3 plate image 1200x788 (pdfimages -f 3 -l 3 -j docs/research/filigree-for-the-table.pdf); crops 0,0,650,788 and 550,0,650,788"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q02-c03",
+   "text": "The brief text and the dossier undercount plate two: they say 'two parks' and list only Queens Peak, Pole Mountain, Cazadero, Guerneville and two creek names, but the plate shows 3 park pins, a third peak pin (Neeley Hill), Rio Nido and KORBEL, and a third water name (Russian River). Correct the plate-two keep list to 3 peak pins + 3 park pins + 4 place labels + 3 water names.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "research-dossier.md#'Plate two keeps' (4 named features, 2 parks) vs crop p3 550,250,650,500 (Queens Peak..Austin Creek..Armstrong..Neeley Hill) and 0,500,650,150 (Fort Ross pin)"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q02-c04",
+   "text": "Plate two DELETES: every height numeral (0 on the plate versus 25 on plate one, q01-c02); every ▲ named-landform glyph (peaks become icon pins); the contour/fingerprint line texture (relief is smooth hillshade only); dashed and dotted footpaths and the dendritic brown track network; the rust coast road (the coast road is a thin grey line with a white casing); the gold secondary road through Cazadero; all highway shields; the labelled green reserve washes (parks are pins plus text, no green polygon); and the homestead-class names Toners Place, Truth Home, Goat Rock, Seaview, Hale Place, Camp Thayer, Venado and Monte Rosa. Fort Ross survives only as the park pin, not as a hamlet label. No plate-one ▲ name other than Queens Peak, Pole Mountain and Neeley Hill appears anywhere on plate two (Table Mountain, Devils Ribs, Big Oat, Little Oat, Black Mountain and the other ~21 are absent).",
+   "evidence": {
+    "kind": "crop",
+    "ref": "p3 plate image 1200x788 (pdfimages -f 3 -l 3 -j docs/research/filigree-for-the-table.pdf); crop 0,0,1200,788 compared with q01#c02,c05,c07,c08,c09,c10"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q02-c05",
+   "text": "Plate three KEEPS, by class. Place labels in plain sans: Goat Rock (~508,48), Seaview (clipped, ~30,258), Toners Place (~250,343), Cazadero (~670,328), Camp Thayer (~770,573), Guerneville (bold, ~1070,509), Rio Nido and Vacation Beach and Villa Grande (small caps), Monte Rio (~1000,707). Grey teardrop pins with white dot: Black Mountain Retreat Center (~342,408) and Dreamwood (~745,522, label to its left). Green venue glyph: a golf-type pin at 'Northwood C...' (~1070,628, clipped). Park glyph/labels: Jenner Headlands Preserve (italic, tree glyph ~408,733), Austin Creek State Recreation Area (roman label over a darker green polygon), Armstrong Redwoods State Natural Reserve (italic). Roads: grey-blue cased lines with the label 'Coast Hwy'. Shields: 3 (route 1 at ~352,673; route 116 at ~1016,548 and ~901,706).",
+   "evidence": {
+    "kind": "crop",
+    "ref": "p4 plate image 1200x772 (pdfimages -f 4 -l 4 -j docs/research/filigree-for-the-table.pdf); crops 0,0,650,772 and 550,0,650,772"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q02-c06",
+   "text": "The brief text and dossier undercount plate three too: they list Goat Rock, Toners Place, Dreamwood, Camp Thayer, the retreat pin and 'a highway' (dossier: shields 1/116) but the plate also keeps Cazadero, Seaview, Guerneville, Rio Nido, Monte Rio, Villa Grande, Vacation Beach, Jenner Headlands Preserve, the Austin Creek and Armstrong labels, a golf-type pin and the road name. Plate three adds three things plate one lacks: white built-up fills at Rio Nido/Guerneville/Monte Rio (q01-c15 found no built-up fill on plate one), a beige sand strip on the coast, and a darker green polygon for Austin Creek SRA.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "p4 plate image 1200x772 (pdfimages -f 4 -l 4 -j docs/research/filigree-for-the-table.pdf); crop 0,0,1200,772 vs research-dossier.md#'Plate three keeps'"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q02-c07",
+   "text": "Plate three DELETES: every height and ▲ glyph; every peak-icon pin (Queens Peak, Pole Mountain, Neeley Hill are gone); all river and creek names (only unlabelled hairline blue streams remain; the single road name is 'Coast Hwy'); contour texture and trails; the rust road; the plate-one homestead names Truth Home, Hale Place, Venado, Monte Rosa, Fort Ross town label. Hillshade is almost invisible (very pale green ground).",
+   "evidence": {
+    "kind": "crop",
+    "ref": "p4 plate image 1200x772 (pdfimages -f 4 -l 4 -j docs/research/filigree-for-the-table.pdf); crop 0,0,1200,772"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q02-c08",
+   "text": "Landform-name survival across the plates (named ▲ landforms / printed heights): plate one 27 / 25 (q01-c02, c03); plate two 3 carried as peak-icon pins / 0 heights; plate three 0 carried as a landform glyph or pin / 0 heights. The only landform-sounding name on plate three that is not a venue is Goat Rock, and it is drawn as a plain place-class label with no glyph (the same way plate one draws it: dot-label, no ▲, no height, q01-c04), so it survives as a hamlet-style name, not as a landform. Heights go 25 -> 0 -> 0.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "q01.json#q01-c02,q01-c04 vs q02-c02,q02-c05 (counts)"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q02-c09",
+   "text": "Brief's 'deleted by both' list checks out against the plates (all heights, most knoll names, contour hair, trails, rust road colour, most homesteads), with three corrections for the forbidden lists: (1) shields are NOT deleted, plate three keeps 3 against plate one's 1 legible + 1 clipped (q01-c10); (2) river names are NOT deleted by plate two, which prints 3 water names where plate one prints none (q01-c11), so plate two is richer than plate one in water labels; (3) parks are not deleted but demoted from labelled washes to icon pins (plate two) or italic labels (plate three).",
+   "evidence": {
+    "kind": "computed",
+    "ref": "research-dossier.md#'Deleted by both' vs q01.json#q01-c10,q01-c11 vs crops p3, p4"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q02-c10",
+   "text": "The Black Mountain lesson is confirmed on the plates: plate one prints 'Black Mountain 1,617' as a ▲ landform (plus Little Black Mountain twice and Black Rock, q01-c02); plate two prints no 'Black' name at all; plate three prints the words only inside the venue pin 'Black Mountain Retreat Center'. A commercial pin therefore carries the last trace of the landform name while the ridge, its height and its glyph are gone.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "p4 plate image 1200x772 (pdfimages -f 4 -l 4 -j docs/research/filigree-for-the-table.pdf); crop 180,380,200,60 (retreat pin); p2 plate one 'Black Mountain 1,617' (q01-c02); p3 plate image 1200x788 (pdfimages -f 3 -l 3 -j docs/research/filigree-for-the-table.pdf); crop 0,0,1200,788 (no 'Black' name)"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q02-c11",
+   "text": "Placement check (visual estimate): in plate one Black Mountain sits SE (below-right) of Toners Place by roughly 60x60 display px; in plate three the retreat pin sits SE of Toners Place by roughly 90x65 px. The pin lies on the ground the landform occupied, which supports reading it as a replacement rather than an unrelated venue.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "p4 plate image 1200x772 (pdfimages -f 4 -l 4 -j docs/research/filigree-for-the-table.pdf); crop 190,330,170,100; p2 plate one crop around 'Toners Place'/'Black Mountain'"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q02-c12",
+   "text": "The rule, stated so a gate can test it: (1) a landform name (peak, ridge, knoll, rock, hill) is carried only by a landform-class label (name, plus ▲ and height where the DEM supplies one), never by a pin or by a venue name that embeds a landform word; (2) a venue or POI pin never counts as the landform's name for the hand-test landform-label recall or the named-heights count; (3) a pin may sit beside a landform label but never replaces it at any zoom or sheet. Plate two's peak-icon pins are the grey case: they keep the name but lose ▲, height and ink class, so they are read as a degraded landform label, not as a POI, and the table map must not copy them.",
+   "evidence": {
+    "kind": "data",
+    "ref": "research-dossier.md#'Lesson for the forbidden lists' (a POI pin must never stand in for a landform name); todo-inputs.json#reusable_facts.research[forbidden-list lesson]"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q02-c13",
+   "text": "The rule is already half-encoded in Job 1 ruling R1: 'once arrived a name or height is never dropped, generalized or replaced by a pin at closer zoom', and R2 (one ink and one face family for landform and homestead names; rank decides when, not how). The new item for the bible is the venue-name clause (a name embedded in a venue pin does not count) and the plate-two peak-icon exception.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": ".claude/workflows/filigree-1-research.js :: R1: 'Peaks: principal peaks"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q02-c14",
+   "text": "Where the gates already measure it: the Job 3 hand test passes only with landform-label recall >= 70% and >= 6 named heights outside the mask, counted from landform labels (bare integers and '<name> <integer>' entries), so a name that survives only inside a pin or venue label would not satisfy those counts if the capture lists landform labels only. The spec should say so explicitly.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "docs/filigree/README.md :: landform-label recall ≥70%"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q02-c15",
+   "text": "Shipped example of the rule biting: the Epēshu city-chart POI list (19 numbered POIs, maps-site/data/chart-pois.json key Epēshu) carries three landforms as pins/halos: #17 Mount Mastery (chart px 246,121; 'tallest hill overlooking the harbor'), #18 Bangeph Rock (729,1082; 'tall, smooth tine of stone'), #19 The Fairy Arch (2852,2627). #16 Old Quarry Lot (1417,3835) is a site, not a landform. The sim carries the same names as extraLandmarks of kind 'label'/'spike' (not pins). None of the three falls in city quarter Q1 [256,2304)x[1280,3328). On the table map these names must be drawn as landform labels with ▲/height, with the POI halo remaining a separate hover-only layer.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "maps-site/data/chart-pois.json#Epēshu[16..18] ; index.html :: name:'Mount Mastery', gridX:169"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q02-c16",
+   "text": "No gazetteer name in a non-landform kind embeds a landform word (mount/mountain/hill/rock/ridge/peak/tor/knoll/crag/fell/cliff/bluff/height), and the only 3 'Mountains and Hills' markers are Far Mountains, Fell Mountains and Mountain Wall; so no atlas settlement or POI currently stands in for a landform name outside the Epēshu chart list above. Rule 2 must still bind the minted names (NAME.peak vs NAME.place) so a generated venue never reuses a ridge name.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "python3: json.load maps-site/data/gazetteer.json; regex over names with kind != 'Mountains and Hills' -> []; kind=='Mountains and Hills' -> 3 entries"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q02-c17",
+   "text": "Provenance of the plates is not stated in the brief beyond 'default terrain' (plate two) and 'paler still' (plate three). Visually, plate two is an Apple-style hybrid-less standard map (disc icon pins, blue italic water names) and plate three a Google-style map (teardrop pins, route shields, built-up fills), but the brief never names either provider, so the style attribution is a visual impression only.",
+   "evidence": {
+    "kind": "pdf-page",
+    "ref": "filigree-for-the-table.pdf p3 caption 'The same coast in default terrain'; p4 caption 'Paler again. A handful of labels, a pin, a shield.'"
+   },
+   "confidence": "low"
+  }
+ ],
+ "gaps": [
+  "Plates two and three are not registered to plate one's frame (different crops and scales); which plate-one landforms lie inside each frame is not established, so 'deleted' is counted as absent from the visible frame, not as proved removal at the same location.",
+  "Clipped labels cannot be read: plate two 'rve' (top-left; possibly a reserve or preserve name), KORBEL's full extent; plate three 'K' and 'Northwood C...' at the right edge, 'Seaview' left edge. Not guessed.",
+  "Whether plate two's peak-icon pins (Queens Peak, Pole Mountain, Neeley Hill) count as 'POI pins' under the owner's rule or as degraded landform labels is an interpretation; the brief only says 'a retreat pin' for plate three. The spec author or owner should confirm the grey-case reading in q02-c12.",
+  "Chart-px to atlas-px (or EPESHU_HF cell) positions of Mount Mastery, Bangeph Rock and The Fairy Arch are not computed here, so it is not established whether they fall inside the DEM window [1060,1240]..[1860,2040] and can receive a DEM height; outside it R22 forbids inventing relief.",
+  "The exact colours and font faces of plates two/three pins and labels were not sampled; only classes, positions and counts were read from the images.",
+  "The brief names no source for the quoted 'Almost every name does not' beyond the caption; nothing further about how the plates were captured (zoom level, provider) is available in the repo."
+ ],
+ "summary": "Plate two keeps 3 peak-icon pins, 3 park pins, 4 place labels and 3 water names but no heights, glyphs, trails, washes or shields; plate three keeps about 12 place labels, 3 pins, 3 shields, built-up fills and park labels but no peaks, heights or water names, so landform names go from 27 on plate one to 3 pins to 0. The Black Mountain case (landform on plate one, absent on plate two, surviving only inside the 'Black Mountain Retreat Center' pin on plate three) fixes the rule: a landform name is carried only by a landform-class label, never by a pin or a venue name containing a landform word. In the repo the rule bites on the Epēshu chart POIs Mount Mastery, Bangeph Rock and The Fairy Arch, and it extends Job 1 ruling R1.",
+ "date": "2026-10-04"
+}

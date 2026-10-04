@@ -1,0 +1,102 @@
+{
+ "qid": "q17",
+ "claims": [
+  {
+   "id": "q17-c01",
+   "text": "All seven audited POLISH items exist by title and all are unchecked ('- [ ]'): Traced road network (line 13), Region-chart zoom-through (121), Uncharted-band softening (124), Data fetch cache-busting (126), Tier-hidden markers intercept clicks (129), Sim <-> atlas continuity (132), Census second pass (135).",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "POLISH.md :: - [ ] **Traced road network (USER FLAG)**"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q17-c02",
+   "text": "Census second pass and Traced road network are the two items Filigree 3's blocker text lists as needing to be checked (POLISH.md:180); both are still unchecked.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "POLISH.md :: \"Traced road network\" and \"Census second pass\" checked (R11"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q17-c03",
+   "text": "maps-site/data/traced-roads.json exists (3054 bytes): a JSON array of 46 unnamed polylines (2-10 vertices each) in atlas px.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "node -e 'require(\"./maps-site/data/traced-roads.json\").length' -> 46; ls -la maps-site/data/traced-roads.json"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q17-c04",
+   "text": "traced-roads.json is NOT loaded by maps-site/index.html: no occurrence of 'traced-roads' (or equivalent) exists in the file; the Promise.all getJSON list (lines 3540-3554) names 15 data files and omits it. This is a finding, not a failure.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "maps-site/index.html :: getJSON('data/gazetteer.json')"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q17-c05",
+   "text": "The only 'trace'/'dotted' hits in maps-site/index.html are unrelated (provenance banner 'trace' variant for traced-census settlements, route styling); no road layer is built from the dataset.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "grep -n -i 'trace\\|dotted' maps-site/index.html"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q17-c06",
+   "text": "The ' ◌ District borders' layer still exists (WW_LABELS line 1151, built via buildDistricts at 3604), so the POLISH instruction to relabel/retire it as roads when the network ships is unfulfilled.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "maps-site/index.html :: var WW_LABELS=['≈ Ways & Waters'"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q17-c07",
+   "text": "The traced-roads item promises lab groundwork (road_dots.npy, traced-roads-v3.json with 41 chains, roads-overlay-v3.png) in the session scratchpad; none exist on this machine (find / returned nothing). The shipped data file has 46 chains, so it is a later extraction than the banked v3 (41), provenance unrecorded.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "find / -name road_dots.npy -o -name traced-roads-v3.json -o -name roads-overlay-v3.png"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q17-c08",
+   "text": "Census second pass promises scratchpad artifacts lab_orphans.json, lab_assign.json, lab_ncc_r1.npy; lab_orphans.json is not found anywhere on this machine. Its deliverables (markers for Parli, Mūmakon, etc.) are repo changes not yet verified here.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "find / -name lab_orphans.json"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q17-c09",
+   "text": "The other five items (Region-chart zoom-through, Uncharted-band softening, Data fetch cache-busting, Tier-hidden markers, Sim <-> atlas continuity) promise no new files, only code changes in the apps; getJSON in maps-site/index.html still fetches data/*.json URLs unversioned, so cache-busting is not done.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "maps-site/index.html :: function getJSON(u){return fetch(u)"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q17-c10",
+   "text": "todo-inputs.json already records the traced-roads finding (46 unnamed polylines, not loaded, loader at maps-site/index.html:3535-3554), consistent with this audit.",
+   "evidence": {
+    "kind": "data",
+    "ref": "docs/filigree/todo-inputs.json#wired road network entry"
+   },
+   "confidence": "high"
+  }
+ ],
+ "gaps": [
+  "Whether the 46 chains in traced-roads.json are accurate (dotted lines vs rivers, per canon) was not verified; only file shape was checked.",
+  "Whether the Census second pass markers (Parli, Mūmakon, Ilongazoro, Ūgdon, Kroton, Tōron, Tasta, Nhandar, Pish) exist in maps_markers.json was not checked; the item is unchecked so assumed not done.",
+  "Done-state of the five code-only items was judged from the unchecked boxes plus the getJSON reading only; not individually code-audited."
+ ],
+ "summary": "All seven POLISH items are present and unchecked. maps-site/data/traced-roads.json exists (46 unnamed polylines) but is not loaded by maps-site/index.html, which also still carries the District borders layer; the scratchpad lab files named by the items are absent from this machine.",
+ "date": "2026-10-04"
+}

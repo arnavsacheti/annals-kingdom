@@ -1,0 +1,171 @@
+{
+  "qid": "q07",
+  "claims": [
+    {
+      "id": "q07-c01",
+      "text": "Tiles: band E (atlas x1580-1760, y1376-1664 = 180x288 px, about 50.6 z7 hexes; 45 whole hex cells cx50-54 x cy43-51 plus a 20 px strip of cx49) lies in exactly six z5 tiles, x 12..13 by y 10..12 (tiles/5/<x>/<y>.jpg, 256x256 jpg, 128 atlas px per tile, 2 tile px per atlas px; the band is 360x576 tile px). All six files exist. The band sits wholly inside the DEM window 1060,1240,1860,2040, so R22 allows relief here, but the print carries none.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "ls maps-site/tiles/5/{12,13}/{10,11,12}.jpg (6 of 6 present); PIL size of each = 256x256; maps-site/index.html :: 'tiles/5/'+tx+'/'+ty+'.jpg'; x1580/128=12.3, x1760/128=13.75, y1376/128=10.75, y1664/128=13.0"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q07-c02",
+      "text": "Inventory of what the print draws in band E (nothing else): a black wavy coastline stroke with a headland, a bay and a hooked inlet; one flat grey-olive sea; three ring-dot settlements with bold slab-serif labels (Tamaron double-ring, Mago and Perona single-ring); one dotted black road network; one two-line spaced-capital region lettering (AURA-HOTH- / HANATH); three letters of a spaced italic sea name (R, E, A); and one thin dark-grey graticule line across the top. Ink (luminance <110) is 5.7% of band pixels (11,735 of 207,360). No river, no island, no peak, no height numeral, no wash, no trail.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "z5 mosaic of maps-site/tiles/5/{12,13}/{10,11,12}.jpg (512x768 px, 2 px per atlas px, origin atlas 1536,1280); crop mosaic px 88,192,360x576 = atlas 1580,1376,180x288; ink count lum<110 via scipy.ndimage.label over the same crop; visual read of 2x band image and 3x half-band crops"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q07-c03",
+      "text": "Settlement class: three ring glyphs, all with a bold slab-serif label. Tamaron is a double ring (outer ring about 10.5x11.5 atlas px with a heavy inner dot), centre 1658.8,1554.1, label above it centred on the ring (label ink x1626-1689, y1534-1544, about 10 px tall). Mago is a single ring (outer 8 atlas px), centre 1689.7,1582.8, label to its upper right (x1691-1728, y1564-1577). Perona is a single ring (8 px), centre 1647.8,1631.8, label below it (x1622-1672, y1637-1648, with a macron on the o). All three labels are fully legible. Ring-to-ring gaps: Tamaron-Mago 42 px, Tamaron-Perona 78 px, Mago-Perona 65 px, so no knot or cluster. The double ring marks the major-city class (Magosh-class glyph, CLAUDE.md key), so band E holds the one double-ring city of the Leponnia coast east of Epeshu.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "z5 mosaic of maps-site/tiles/5/{12,13}/{10,11,12}.jpg (512x768 px, 2 px per atlas px, origin atlas 1536,1280); crop mosaic px 88,192,360x576 = atlas 1580,1376,180x288; ring components: Tamaron comp x1654-1664 y1549-1560 (21x23 tile px) + inner dot 8x8; Mago comp 16x16 tile px at 1689.7,1582.8; Perona comp 16x16 at 1647.8,1631.8; label components from scipy label (lum<110, cnt>25)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q07-c04",
+      "text": "Road class: the print draws black round dots (about 2-2.5 atlas px across, pitch about 3.9 px), no colour and no casing; canon key: dotted = major roadways. Resolved dots in band: 57 (about 211 atlas px of visible chain). Runs: (a) west trunk, 16 dots from 1583,1559 to 1634,1580.5 (the chain enters from Rhup); (b) a 4-dot spur leaving the Tamaron ring south, 1657,1563 to 1654,1573; (c) a Tamaron-to-Mago chain of 8 dots, 1666,1558 to 1682,1580; (d) Mago south-east, 7 dots from 1692.5,1588 to 1705.7,1602; (e) a south-east trunk of 22 dots from 1699.5,1612 through 1709,1637 to the east edge at about 1759,1660. The trunk is not drawn between about 1634,1580 and 1699,1612: there the AURA-HOTH-/HANATH lettering sits on its line and the spur and the west trunk both stop at the lettering, so a join under the lettering (about 65-75 px) is inferred, not seen. Total major road in band is about 280 atlas px counting that hidden stretch.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "z5 mosaic of maps-site/tiles/5/{12,13}/{10,11,12}.jpg (512x768 px, 2 px per atlas px, origin atlas 1536,1280); crop mosaic px 88,192,360x576 = atlas 1580,1376,180x288; dot components (w,h<=7 tile px, 6<=cnt<=40) listed by centroid minus glyph fragments; 3x crop of atlas 1620,1560,100x80 (lettering/road join)"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q07-c05",
+      "text": "River class: none. No river line, fork, braid, estuary mark or river name is drawn anywhere in band E, and no river label. The only linear ink besides coast, road dots and lettering is the graticule. This differs from band M, which holds one thin solid river.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "z5 mosaic of maps-site/tiles/5/{12,13}/{10,11,12}.jpg (512x768 px, 2 px per atlas px, origin atlas 1536,1280); crop mosaic px 88,192,360x576 = atlas 1580,1376,180x288; visual read of 2x band image; no component other than coast, road dots, glyphs and graticule in the ink label list"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q07-c06",
+      "text": "Sea, coast and shore shape: the sea fills the north and east of the band as a flat grey-olive field (mean RGB 175,167,127; R stdev 3.3), no depth shading, no wave marks. By flood-fill with a 2 px ink halo the sea is 138,560 of 207,360 band px (66.8%), bare land 41,660 (20.1%), ink and halo 27,140 (13.1%) (an estimate). The coast stroke (about 2 atlas px wide) enters the west edge at y about 1530 and leaves near the east edge at y about 1656 (the road dots reach the edge at 1660). Shore features: a bay west of Tamaron dipping to y about 1567 at x1620; the Tamaron headland tip at about 1659,1548; a small hooked inlet east of Mago at about 1710-1728,1585-1600; then a steady south-east run (coast y about 1632 at x1720, 1647 at x1740). There is no island in the band (the only sea-coloured pockets are letter interiors). Plate one by contrast is a flat light blue sea with no coast stroke.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "z5 mosaic of maps-site/tiles/5/{12,13}/{10,11,12}.jpg (512x768 px, 2 px per atlas px, origin atlas 1536,1280); crop mosaic px 88,192,360x576 = atlas 1580,1376,180x288; flood fill of ~dilate(ink lum<130, 2 iterations) components, sea if mean R<=186; edge ink scans at x1580 and x1759.5; bandB crop"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q07-c07",
+      "text": "Land is bare: the mainland south-west of the coast is flat tan paper (mean RGB 196,176,126 at R stdev 5.7), with no hillshade, no contour hair, no relief texture, no peak glyph, no printed height numeral, no colour wash or park tint (zero pixels with R-G>45, none blue-dominant, 22 faintly green-leaning px of ~195k are noise). Plate-one relief, peaks and reserve washes have no print source in band E.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "z5 mosaic of maps-site/tiles/5/{12,13}/{10,11,12}.jpg (512x768 px, 2 px per atlas px, origin atlas 1536,1280); crop mosaic px 88,192,360x576 = atlas 1580,1376,180x288; pixel stats over non-ink px in the same crop (script in session temp dir)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q07-c08",
+      "text": "Spaced lettering, two classes plate one lacks. (1) Region name AURA-HOTH- over HANATH: two parallel lines of bold slab capitals about 9 tile px tall (about 4.5 atlas px cap height), set along a south-east bearing of about 41 degrees, from about 1631,1568 (A of AURA) to about 1700,1628 (final hyphen of HOTH-); HANATH runs about 1633,1583 to 1682,1626. It is Aura-hoth-Hanath, one of six regions the wiki Leponnia page lists (Peshunor, Lamor, Aura-hoth-Hanath, Dranimos, Rhoshkhon, Paerandas); the print breaks it over two lines with hyphens. (2) Sea name letters in light italic capitals about 29x26 atlas px: R at about 1588,1404 (clipped by the west edge, x1580-1598), E at 1670,1440 (x1656-1684, y1427-1453), A at about 1752+,1465 (clipped by the east edge, x1744-1760, y1457-1474), pitch about 90 px on a bearing of about 24 degrees. On the wide mosaic the same arc reads G R E A T C H, so these are the GREAT of the sea name (Great Chasmous Sea).",
+      "evidence": {
+        "kind": "crop",
+        "ref": "z5 mosaic of maps-site/tiles/5/{12,13}/{10,11,12}.jpg (512x768 px, 2 px per atlas px, origin atlas 1536,1280); crop mosaic px 88,192,360x576 = atlas 1580,1376,180x288; plus wide mosaic of maps-site/tiles/5/{9..16}/{8..13}.jpg (2048x1536, origin atlas 1152,1024) read left to right G-R-E-A-T-C-H along the arc; components 2,3,5 (R,E,A) and the lettering crops 3x; maps-site/data/wiki-places.json#Locations/Regions/Patrinor/Leponnia (Regions line)"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q07-c09",
+      "text": "Graticule: one thin dark-grey line (mean luminance 80 against about 25-30 for coast, road and letters, so lighter and thinner than any other ink) crosses the top of the band as a smooth arc, entering the top edge at about x1600 and leaving the east edge at about y1399 (about 155 atlas px in band; 1,023 ink px; y about 1379.5 at x1630, 1387.5 at x1680, 1394.9 at x1730). On the wide mosaic it is one of a curved parallel and near-vertical meridians that span the whole sheet, so it is a latitude parallel. Plate one has no graticule (q01-c01), so this is a print class beyond plate one; it is also the only ink in hex F08.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "z5 mosaic of maps-site/tiles/5/{12,13}/{10,11,12}.jpg (512x768 px, 2 px per atlas px, origin atlas 1536,1280); crop mosaic px 88,192,360x576 = atlas 1580,1376,180x288 component 1 (x1606-1760, y1376-1400); wide mosaic maps-site/tiles/5/{9..16}/{8..13}.jpg (curved parallel plus two near-vertical lines); docs/filigree/research/q01.json#q01-c01"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q07-c10",
+      "text": "Plate-one class check (13 classes from q01-c19: peak triangle with height, homestead dot+label, multi-name valley knot, reserve wash, highway shield, coast road, gold secondary road, trails (solid/dashed/dotted), river line, braided reach, river fork, flat ocean, relief texture): only 3 appear in band E, each in a different dress: homestead dot+label (3 ring glyphs incl. one double ring, black, not a plain dot), road (black dotted instead of the rust coast road), ocean (grey-olive instead of flat blue). Missing outright, 10: peak triangle with height, valley knot, reserve wash, highway shield, gold secondary road, the three trail types, river line, braided reach, river forks, hillshade/contour relief. Print-only classes with no plate-one counterpart here: coast stroke, graticule, double-ring major city, spaced region lettering, spaced sea lettering.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "docs/filigree/research/q01.json#q01-c19 class list vs z5 mosaic of maps-site/tiles/5/{12,13}/{10,11,12}.jpg (512x768 px, 2 px per atlas px, origin atlas 1536,1280); crop mosaic px 88,192,360x576 = atlas 1580,1376,180x288"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q07-c11",
+      "text": "Against the blank-hex six (contour hair, named ridge with height, water line or fork, path, homestead dot, cover wash): the print supplies 3 (water line = the coast only, no river; path = the major dotted road; homestead dot = 3 rings) and 0 of contour hair, named ridge with height, cover wash. Hex occupancy over the 45 whole cells: 16 hold under 20 ink px (0-5), of which 15 are open sea and 1 is bare land (cell 50,50, bbox 1600,1600,1632,1632); 19 hold under 60. Fixtures in band: F08 (cell 50,43, 194 ink px, open sea, the only ink is the graticule arc across its top edge) and F01 (cell 51,50, 285 ink px, bare tan land; the ink is the TH corner of HANATH at the top right and the top of the Perona ring on the bottom edge, ring centre 1647.8,1631.8 and anchor 1647.5,1631.7 both inside the cell, the Perona label falls in the cell below). Neither fixture has a ridge, contour, river, path or wash.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "z5 mosaic of maps-site/tiles/5/{12,13}/{10,11,12}.jpg (512x768 px, 2 px per atlas px, origin atlas 1536,1280); crop mosaic px 88,192,360x576 = atlas 1580,1376,180x288; per-cell ink count lum<110 over cells [32cx,32cx+32)x[32cy,32cy+32); crops 24x of atlas 1632,1600,32x32 and 1600,1376,32x32"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q07-c12",
+      "text": "maps_markers.json (159 markers): one marker lies in the band, Tamaron (index 152, type Settlements, x1659 y1556, flags minor:true and mag:true), 1.9 px from the printed double ring centre, so print and marker agree and maps-site/index.html:1227 draws it as the lesser-class Magosh glyph. There are 0 Mountains and Hills, 0 Bodies of Water, 0 Major Regions and 0 Minor Regions markers in band. Mago, Perona, Aura-hoth-Hanath and the GREAT sea lettering have no marker. Nearest markers outside: Leshes (1686,1322) 54 px north, Tamaron Mopher (1774,1308) 69 px north, Malagnon 88 px, Nhagi (1868,1651) 108 px east, Bibunor (Minor Regions) 114 px; the Great Chasmous Sea marker (1940.8,1505.4) is 181 px east of the east edge, far from the R-E-A letters.",
+      "evidence": {
+        "kind": "data",
+        "ref": "maps-site/data/maps_markers.json#152 (Tamaron), #111 (Leshes), #110 (Tamaron Mopher), #132 (Nhagi), filter x1580-1760,y1376-1664 returns index 152 only; maps-site/index.html :: if(m.minor){cls='t-lesser'+(m.mag?' mag':'')"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q07-c13",
+      "text": "city-anchors.json (136 anchors): three entries lie in band, one per printed ring, so print and data agree on the set: Tamaron (1657.9,1548.3, kind town, harbor true, sea E 2 px), Mago (1691.3,1581.7, village, harbor true, sea N 5), Perona (key Perōna, 1647.5,1631.7, village, harbor false, sea ENE 63). Offsets from the printed ring centre: Perona 0.3 px, Mago 1.9 px, but Tamaron 5.9 px north (the harbor anchor sits at the headland tip on the shore side). Nearest anchors outside: Rhup (1566,1539) 14 px west, Leshes (1687,1321) 55 px north, Kanae 59 px west. The print makes no town/village distinction between Mago and Perona (same single ring) but does mark Tamaron as a major city with a double ring while the anchor says only town.",
+      "evidence": {
+        "kind": "data",
+        "ref": "maps-site/data/city-anchors.json#Tamaron,Mago,Perōna,Rhup,Leshes; ring centres from z5 mosaic of maps-site/tiles/5/{12,13}/{10,11,12}.jpg (512x768 px, 2 px per atlas px, origin atlas 1536,1280); crop mosaic px 88,192,360x576 = atlas 1580,1376,180x288"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q07-c14",
+      "text": "named-ways.json: of 2 ways only The Road that Walks with the Sun (28 vertices, prov trace) enters the band: vertices 1580,1534 (on the west edge), 1658,1550, 1691,1582, 1726,1603 inside, leaving at the east edge at y about 1623; about 204 px in band; The East-West Road has 0. The trace is a chord, not the printed dotted road: it passes 2.4 px from the Tamaron ring and 1.5 px from the Mago ring (the vertices are on the cities) but it is 66 px from Perona and only 43 of its 204 in-band samples (21%) lie within 6 px of a resolved printed road dot (median distance to the nearest dot 22 px, max 40). 98 samples (48%) fall on open sea (it cuts across the bay west of Tamaron and the water east of Mago), 12 on bare land, 93 on ink or halo. It enters at y1534 where the printed road is at about y1559, and exits at y1623 where the printed road exits at about y1660.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "maps-site/data/named-ways.json#Road that Walks with the Sun (pts idx 14-17); segment-box clip of its polyline on the band; distance to the 57 resolved dots; sea/land class from flood-fill mask over z5 mosaic of maps-site/tiles/5/{12,13}/{10,11,12}.jpg (512x768 px, 2 px per atlas px, origin atlas 1536,1280); crop mosaic px 88,192,360x576 = atlas 1580,1376,180x288"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q07-c15",
+      "text": "traced-roads.json: 1 of its 46 polylines enters the band: index 33, 4 vertices (1724,1570.6), (1708.2,1571), (1683.9,1540.7), (1637.5,1542.1), about 100 px in band. It is not a road: the two outer pairs of vertices sit inside the printed Mago label (x1691-1728, y1564-1577) and the printed Tamaron label (x1626-1689, y1534-1544), the four vertices run along the two labels' text rows, none of its 100 in-band samples is within 6 px of a printed road dot (median 24 px away) and 75 of the 100 samples lie on ink/halo and 25 on sea. So the one traced polyline in band is a mis-trace of label ink, while the roughly 280 px of printed dotted road has no traced geometry. maps-site/index.html contains no reference to traced-roads (grep count 0), so the file is also unloaded.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "maps-site/data/traced-roads.json#33 (pts); box test over all 46 polylines (1 hit); label bboxes from scipy components of z5 mosaic of maps-site/tiles/5/{12,13}/{10,11,12}.jpg (512x768 px, 2 px per atlas px, origin atlas 1536,1280); crop mosaic px 88,192,360x576 = atlas 1580,1376,180x288; grep -c traced-roads maps-site/index.html = 0"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q07-c16",
+      "text": "sea-lanes.json: of 4 lanes (all prov invented) two enter the band; The Gulf Crossing and The South Lane have 0 vertices or crossings. The North Coast Packet (Epeshu to Mago): vertices 1600,1520, 1658,1532, 1691,1568 inside (it enters the west edge at y about 1506), about 132 px in band; 122 of its 132 samples are on open sea; it ends at 1691,1568, which is 13.7 px short of the Mago anchor and lies on the printed Mago label, and its middle vertex 1658,1532 touches the top of the printed Tamaron label (16.3 px north of the Tamaron anchor). The Strait Run (Tamaron to Leshes): vertices 1658,1532 and 1672,1440 inside, about 158 px in band, 138 of 158 samples on open sea; its vertex 1672,1440 lies on the printed sea letter E (centre 1670,1440), it crosses the graticule near x1665, and its start sits on the Tamaron label rather than on the harbor ring.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "maps-site/data/sea-lanes.json#The North Coast Packet (pts idx 4-6), #The Strait Run (pts idx 0-1), #The Gulf Crossing, #The South Lane; segment-box clip and sea mask over z5 mosaic of maps-site/tiles/5/{12,13}/{10,11,12}.jpg (512x768 px, 2 px per atlas px, origin atlas 1536,1280); crop mosaic px 88,192,360x576 = atlas 1580,1376,180x288; distance to maps-site/data/city-anchors.json#Mago, #Tamaron"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q07-c17",
+      "text": "wiki-places.json (51 pages, keys slug/title/content, no coordinates) cannot place anything in the band by itself. By content search: Tamaron occurs in 4 pages (Leponnia, Patrinor, Road that Walks with the Sun, Epeshu); the Patrinor page lists Tamaron among the Magosh of Leponnia (with Dramuz and Epeshu), which matches the printed double ring, and the Leponnia page lists it among the Major Cities and says Leponnia Tanrin is the lands about Tamaron up to Sardil; Epeshu says the Sun Road leaves the Forum 'before turning to Tamaron in the east'. Aura-hoth-Hanath occurs once, in the Leponnia Regions line, with no description. Mago occurs in 0 pages, Perona (with or without macron) in 0, Leshes in 0; the Great Chasmous Sea page exists (Locations/Bodies-of-Water/Great-Chasmous-Sea) but carries no position. Only the Leponnia, Patrinor and Great Chasmous Sea pages are band-relevant.",
+      "evidence": {
+        "kind": "data",
+        "ref": "maps-site/data/wiki-places.json#Locations/Regions/Patrinor/Leponnia, #Locations/Regions/Patrinor/Patrinor, #Locations/Regions/Patrinor/Road-that-Walks-with-the-Sun, #Locations/Settlements/Patrinor/Epēshu, #Locations/Bodies-of-Water/Great-Chasmous-Sea; node content search for Tamaron, Mago, Perona, Perōna, Aura, Hanath"
+      },
+      "confidence": "high"
+    }
+  ],
+  "gaps": [
+    "The hidden stretch of the dotted trunk under the AURA-HOTH-/HANATH lettering (about 65-75 px between 1634,1580 and 1699,1612) is inferred from the dots that stop at the lettering and resume after it; the road's actual course under the letters is not established.",
+    "That the R, E, A letters are the GREAT of Great Chasmous Sea is read from the visible G-R-E-A-T-C-H arc on the wide mosaic; the full lettering (S, E and A of the sea name) was not read, and no marker sits on the arc, so the mapping of this lettering to the Great Chasmous Sea marker at 1940.8,1505.4 is inferred.",
+    "The thin grey arc is called a graticule from its continuation across the wide mosaic with near-vertical companions; the print has no legend, so the class name is an interpretation.",
+    "The 57-dot count and the 280 px road length are estimates: dots touching the coast or letters merge into larger ink components and are not counted; per-dot positions were not fitted to a spline. Sea/land/halo shares use colour thresholds on JPEG tiles (halo around ink is its own bucket), so they are estimates, not polygon areas.",
+    "Plate-one class tally uses the 13-class list assembled here from q01-c19; q06 states a different split (4 appear, 9 missing), so the band-by-band class totals need reconciling in synthesis.",
+    "Whether plate-one density maps onto this band at any scale is not derivable here (q01 gap: plate-one ground extent is unstated), so no names-per-hex target is set for band E.",
+    "Relief for this band comes only from EPESHU_HF, which this question did not read; the print carries no height, so any ridge name or height here must come from the DEM bake or be invented.",
+    "Whether the Tamaron marker's drawn glyph at maps-site/index.html:1227 duplicates or replaces the printed double ring at z5-z8 was not rendered or checked; only the code path and the 1.9 px coordinate agreement were read.",
+    "Rhup's 'p' descender and a ring-like fragment at the west edge (x1580-1584, y1548-1554) were not separated from the coast stroke, so the exact west-edge coast crossing (about 1530) and the count of ink components at the edge are approximate."
+  ],
+  "summary": "Band E's print draws only a black coast with a headland, bay and inlet, a flat grey-olive sea, three ring-dot cities (Tamaron the double-ring Magosh with 3 anchors/1 marker agreeing), a 57-dot black dotted road network, the AURA-HOTH-/HANATH region lettering, three letters of the GREAT sea name and a graticule arc; of 13 plate-one classes only 3 appear (in another dress) and 10 are missing, including every river, peak, height, wash, trail and relief mark. The data agrees with the print only for the three city-anchors and the Tamaron marker, while the Sun Road trace is a chord (21% of it on printed dots), traced-roads polyline 33 is a mis-trace of the Tamaron and Mago label text, two invented sea lanes end on label text, no wiki page has coordinates, and 16 of 45 whole hexes (15 sea, 1 bare land) are blank, including fixtures F08 (sea plus graticule only) and F01 (bare land plus a Perona ring edge).",
+  "date": "2026-10-04"
+}

@@ -1,0 +1,159 @@
+{
+  "qid": "q06",
+  "claims": [
+    {
+      "id": "q06-c01",
+      "text": "Tiles: band M (atlas x1400-1580, y1376-1664 = 180x288 px, about 50.6 z7 hexes) lies in exactly nine z5 tiles, x 10..12 by y 10..12 (tiles/5/<x>/<y>.jpg, 256x256 jpg, 128 atlas px per tile, so 2 tile px per atlas px; the band is 360x576 tile px). All nine files exist. The band sits wholly inside the DEM window 1060,1240,1860,2040, so R22 allows relief here, but nothing in the print carries any.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "ls maps-site/tiles/5/{10,11,12}/{10,11,12}.jpg (9 of 9 present); file maps-site/tiles/5/10/10.jpg = 256x256; maps-site/index.html :: 'tiles/5/'+tx+'/'+ty+'.jpg'"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q06-c02",
+      "text": "Inventory of what the print draws in band M (nothing else): a black wavy coastline stroke, one flat sea, one small island, one thin solid-black river, one dotted road chain, five single-ring settlements with bold slab-serif labels, and four spaced-letter name strings (three region names plus one clipped sea letter). Ink (luminance <110) is 6.4% of band pixels (13,195 of 207,360); sea-coloured paper is 33.9% of the non-ink paper (64,908 of 191,259 px, R<=182 threshold, so an estimate).",
+      "evidence": {
+        "kind": "crop",
+        "ref": "z5 mosaic of maps-site/tiles/5/{10,11,12}/{10,11,12}.jpg (768x768 px, 2 px per atlas px, origin atlas 1280,1280); crop mosaic px 240,192,360x576 = atlas 1400,1376,180x288; ink and sea share from pixel threshold count over the same crop"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q06-c03",
+      "text": "Settlement class: five single-ring open circles (outer diameter 8 atlas px, 16 tile px) each with a bold slab-serif label, all the same size and style: Sokundo ring centre 1477.8,1449.8 (label above it, in the sea); Kanae 1522.7,1489.8 (label to the right); Aldorus 1446.8,1526.8 (label below); Rhup 1566.7,1539.8 (label below, its final p touches x about 1580); Sardil 1482.8,1636.8 (label below). No double-ring Magosh-class disc appears, so the band holds no major-city glyph. All five labels are fully legible. Nearest ring-to-ring gap is 60 px (Sokundo-Kanae), then 67 (Kanae-Rhup), 79 (Aldorus-Sokundo), 110 (Aldorus-Sardil), so there is no knot or cluster.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "z5 mosaic of maps-site/tiles/5/{10,11,12}/{10,11,12}.jpg (768x768 px, 2 px per atlas px, origin atlas 1280,1280); crop mosaic px 240,192,360x576 = atlas 1400,1376,180x288; ring components 16x16 tile px n=148-152 at the five centres"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q06-c04",
+      "text": "Road class: the print draws one connected chain of black round dots (about 2-2.5 atlas px across, pitch about 4 atlas px) with no colour and no casing. In band it has four runs: west edge to Sokundo, 18 dots from 1403.6,1452.3 to 1471.8,1450.8 passing over the river mouth at about 1438,1461; Sokundo to Kanae, 15 dots; Kanae to Rhup, 14 resolved dots plus about 2-3 absorbed into the R of the PESHUNOR lettering at 1529,1521; and a 2-dot stub leaving Rhup east, at 1573.2,1541.0 and 1575.0,1544.6. That is about 49 resolved dots, about 200 atlas px of major road. No dotted road reaches Aldorus or Sardil. Canon key: dotted = major roadways.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "z5 mosaic of maps-site/tiles/5/{10,11,12}/{10,11,12}.jpg (768x768 px, 2 px per atlas px, origin atlas 1280,1280); crop mosaic px 240,192,360x576 = atlas 1400,1376,180x288; dot components n=9-21, w,h<=6 tile px listed by centroid, minus glyph fragments"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q06-c05",
+      "text": "River class: exactly one river, a thin solid-black unnamed line of a single weight, about 150 atlas px long (hand-traced polyline, +-10 px). It starts at the coast at about 1438,1460, exactly where the dotted road crosses, runs south-east then south-west through about 1464,1486 and 1445,1509, passes within about 5 px of the Aldorus ring, then turns west and south to end loose at about 1413,1551, about 12 px above the P of LEPONNIA. It has no tributary, no fork, no braid, no name, and no river label appears in the band.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "maps-site/tiles/5/11/10.jpg + 10/10.jpg etc.; crop atlas 1400,1440,100x120 enlarged 10x; z5 mosaic of maps-site/tiles/5/{10,11,12}/{10,11,12}.jpg (768x768 px, 2 px per atlas px, origin atlas 1280,1280); crop mosaic px 240,192,360x576 = atlas 1400,1376,180x288"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q06-c06",
+      "text": "Sea, coast and island: the sea occupies the north-east of the band as a flat grey-olive field (mean RGB 175,167,128; R stdev 2.2 over 64,908 px), with no depth shading, wave marks or lettering other than one clipped letter. A black coast stroke about 2 atlas px wide enters the west edge at y about 1437-1441 and leaves by the east edge near y 1531 and again 1548 (the shore dips back). One island, outline only, 13.5x7.5 atlas px at about 1420,1435.5. Plate one by contrast is flat light BLUE sea with no coast stroke.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "z5 mosaic of maps-site/tiles/5/{10,11,12}/{10,11,12}.jpg (768x768 px, 2 px per atlas px, origin atlas 1280,1280); crop mosaic px 240,192,360x576 = atlas 1400,1376,180x288; edge scans at x=1400 and x=1579.5; island component n=159, 27x15 tile px"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q06-c07",
+      "text": "Land is bare: flat tan paper (eight 12x12 tile-px sample patches R 188-196, G 169-180, B 119-130), with no hillshade, no contour hair, no relief texture, no peak glyph, no printed height numerals, no colour wash or park tint (zero pixels with R-G>45, none blue-dominant; 50 faintly green-leaning px of about 191k are noise). Plate-one relief, peaks and reserve washes therefore have no print source in this band.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "pixel stats over z5 mosaic of maps-site/tiles/5/{10,11,12}/{10,11,12}.jpg (768x768 px, 2 px per atlas px, origin atlas 1280,1280); crop mosaic px 240,192,360x576 = atlas 1400,1376,180x288 (script in session temp dir)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q06-c08",
+      "text": "Spaced region lettering (a class plate one lacks): LEPONNIA large italic capitals, letters P (centre 1420.9,1563.1; about 32x31 atlas px), O (1485.4,1602.0; 28x29) and N (1547.0,1643.4; 41x40) at about 75 px pitch on a ~31 degree bearing, with further letters outside the band; PESHUNOR bold italic capitals about 10 px tall, letters H U N O R at about 1405,1437,1469,1499,1529 (31 px pitch, ~16 degree bearing), the P-E-S west of the band; DRANIMOS small bold capitals, only O (1401,1650, straddling the west edge) and S (1427.5,1637.7) in band; and a single sea-lettering R at x about 1570-1597 clipped by the east edge, with an E further east at about 1670,1440 outside the band. The wiki Leponnia page lists the regions Peshunor, Lamor, Aura-hoth-Hanath, Dranimos, Rhoshkhon, Paerandas.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "z5 mosaic of maps-site/tiles/5/{10,11,12}/{10,11,12}.jpg (768x768 px, 2 px per atlas px, origin atlas 1280,1280); crop mosaic px 240,192,360x576 = atlas 1400,1376,180x288; glyph components n=1030,1004,897 and others; wide mosaic x10-14; maps-site/data/wiki-places.json#Leponnia (Regions list)"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q06-c09",
+      "text": "Plate-one class check (13 classes from q01): in band M only 4 appear, all in a different dress: homestead dot+label (as the 5 ring-dot places), road (black dotted instead of rust), river (one weight instead of three, unnamed), ocean (grey-olive instead of flat blue). Missing outright, 9: the filled triangle peak with height; the multi-name valley knot; reserve washes; highway shields; gold secondary road; the three trail line types (solid, dashed, fine-dotted); braided river reach; river forks; hillshade/contour-hair relief texture.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "q01 claims q01-c19 class list vs z5 mosaic of maps-site/tiles/5/{10,11,12}/{10,11,12}.jpg (768x768 px, 2 px per atlas px, origin atlas 1280,1280); crop mosaic px 240,192,360x576 = atlas 1400,1376,180x288"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q06-c10",
+      "text": "Against the blank-hex six (contour hair, named ridge with height, water line or fork, path, homestead dot, cover wash): the print supplies 3 (water line = one river and the coast; path = the major dotted road; homestead dot = 5 rings) and 0 of contour hair, named ridge with height, cover wash. Hex occupancy over the 45 whole cells cx44-48 x cy43-51: 15 have under 20 ink px, of which 8 are open sea and 7 are bare land ((47,48),(45,49),(47,49),(48,49),(44,50),(45,50),(47,50)). Whole-cell fixtures in band: F09 (cell 45,47, 527 ink px, holds the Aldorus ring) and F06 (cell 48,47, 468 ink px, 61% sea, holds the Kanae-Rhup road and coast but no anchor; Rhup's anchor 1566,1539 is 3 px south in cell 48,48). F02 and F04 touch the band only as 8 px strips (x1400-1408).",
+      "evidence": {
+        "kind": "computed",
+        "ref": "per-cell ink count, cells [32cx,32cx+32)x[32cy,32cy+32), luminance<110 over z5 mosaic; fixtures from task constants"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q06-c11",
+      "text": "maps_markers.json: one marker of 159 lies in the band, Leponnia (type Major Regions, 1401,1618), one px inside the west edge. It sits on bare land 31.6 px from the nearest printed glyph (Dranimos O at 1401,1650) and 58 px from the LEPONNIA P, not on the LEPONNIA lettering. There are 0 Settlements, 0 Bodies of Water, 0 Mountains and Hills and 0 Minor Regions markers in band, and none within 40 px outside. All five printed places and the Peshunor and Dranimos lettering have no marker.",
+      "evidence": {
+        "kind": "data",
+        "ref": "maps-site/data/maps_markers.json#19 (name Leponnia, x 1401, y 1618); filter x1400-1580,y1376-1664 returns index 19 only"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q06-c12",
+      "text": "city-anchors.json: five entries lie in band (of 136), one per printed place, so print and data agree on the set: Sokundo (1477.7,1444.2, town, harbor true, sea WSW 2 px), Kanae (1521.5,1482.7, village, harbor true, sea E 5), Aldorus (1448.6,1527.5, village, harbor false, sea NE 77), Sardil (1484,1636.9, town, harbor false, sea null), Rhup (1566,1539, village, harbor false, sea N 16). Offsets from the printed ring centre: Aldorus 1.9 px, Sardil 1.2, Rhup 1.1, but Sokundo 5.6 px north and Kanae 7.2 px north of their rings (the two harbor anchors sit on the shore side of the ring). Medem (1396.5,1711.9) is the only anchor within 50 px outside. The print makes no town/village distinction (same ring).",
+      "evidence": {
+        "kind": "data",
+        "ref": "maps-site/data/city-anchors.json#Sokundo,Kanae,Aldorūs,Sardil,Rhup; ring centres from z5 mosaic of maps-site/tiles/5/{10,11,12}/{10,11,12}.jpg (768x768 px, 2 px per atlas px, origin atlas 1280,1280); crop mosaic px 240,192,360x576 = atlas 1400,1376,180x288"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q06-c13",
+      "text": "named-ways.json: of 2 ways, only The Road that Walks with the Sun (28 vertices, prov trace, Trace approximate) enters the band, with vertices 1434,1454 and 1521,1492 inside and 1580,1534 exactly on the east edge, about 207 px in band; The East-West Road has 0. The trace is a straight chord that does not follow the printed dotted road: it passes 21.4 px from the Sokundo ring (misses the Sokundo branch), meets Kanae within 2.8 px, passes 12.4 px north of Rhup and 61.6 px from Aldorus; about 40% of its in-band samples (166 of 414 at 2 per px) fall on sea-coloured paper,. It exits at y 1534 where the printed road is at about y 1553.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "maps-site/data/named-ways.json#Road that Walks with the Sun (pts); overlay of its polyline on z5 mosaic of maps-site/tiles/5/{10,11,12}/{10,11,12}.jpg (768x768 px, 2 px per atlas px, origin atlas 1280,1280); crop mosaic px 240,192,360x576 = atlas 1400,1376,180x288"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q06-c14",
+      "text": "traced-roads.json: 0 of its 46 polylines (172 vertices) has a vertex in, or a segment crossing, the band; the nearest is polyline index 27 (1361.3,1418.4 ... 1300.3,1361.5) at 38.7 px from the band edge, then index 40 at 47.7 px. So the roughly 200 px of printed dotted road in band has no traced geometry. maps-site/index.html contains no reference to traced-roads (grep count 0), so the file is unloaded as well as absent here.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "node over maps-site/data/traced-roads.json (segment vs box test, box 1400,1376,1580,1664); grep -c traced-roads maps-site/index.html = 0"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q06-c15",
+      "text": "sea-lanes.json: of 4 lanes (all prov invented) only The North Coast Packet (Epeshu to Mago) enters the band: vertices 1440,1418 and 1521,1465 inside, about 206 px in band, entering the west edge at y 1411 and leaving the east edge at y 1506, about 41 px north of the printed coast there. It runs 3.7 px from the Sokundo anchor and through the printed Sokundo label and headland top, and 17.7 px from the Kanae anchor. The Gulf Crossing, The Strait Run and The South Lane have 0 vertices or crossings in band.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "maps-site/data/sea-lanes.json#The North Coast Packet (pts); overlay on z5 mosaic of maps-site/tiles/5/{10,11,12}/{10,11,12}.jpg (768x768 px, 2 px per atlas px, origin atlas 1280,1280); crop mosaic px 240,192,360x576 = atlas 1400,1376,180x288"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q06-c16",
+      "text": "wiki-places.json (51 pages) carries no coordinates, so nothing in it can be placed inside the band by itself. By content search: Sokundo, Kanae, Aldorus (with or without macron) and Rhup occur in 0 pages; Sardil occurs once, in Leponnia (Leponnia Tanrin runs from the lands about Tamaron up to Sardil); Peshunor, Lamor, Aura and Hanath occur in Leponnia, with Peshunor and Lamor also in Epeshu; Dranimos is listed in the Leponnia Regions line. Only the Leponnia page is band-relevant.",
+      "evidence": {
+        "kind": "data",
+        "ref": "maps-site/data/wiki-places.json#Locations/Regions/Patrinor/Leponnia (content), #Epēshu"
+      },
+      "confidence": "high"
+    }
+  ],
+  "gaps": [
+    "The sea-lettering glyph R at x about 1570-1597 (clipped by the east edge) and the E at about 1670,1440 belong to a sea name that is not identified: the Great Chasmous Sea marker is far east at 1940.8,1505.4 and no marker sits near the letters.",
+    "Dranimos first letters and the Leponnia letters outside the band were not read in this band, so the full lettering paths (and whether the Leponnia marker anchors the lettering) are not established.",
+    "Exact river and coast lengths are hand-traced (+-10 px), and the count of road dots absorbed into the R glyph (about 2-3) is an estimate; per-dot positions of the road were not fitted to a spline.",
+    "The sea/land split (33.9%) and per-hex ink counts use colour and luminance thresholds on JPEG tiles (halos around labels count as paper), so they are estimates, not measured polygon areas.",
+    "Whether the plate-one density maps to this band at any scale is not derivable here (q01 gap: plate-one ground extent is unstated), so no names-per-hex target is set.",
+    "Relief for this band comes only from EPESHU_HF (not read in this question); the print carries no height, so any ridge name or height here must come from the DEM bake or be invented."
+  ],
+  "summary": "Band M's print draws only a black coastline, a flat grey-olive sea with one island, one thin unnamed river, one dotted road chain (about 49 dots, Sokundo-Kanae-Rhup, none reaching Aldorus or Sardil), five identical single-ring settlements, and spaced region lettering; of 13 plate-one classes 9 are missing outright (peaks and heights, relief texture, washes, shields, secondary road, trails, braid, forks, knot) and 4 appear in another dress. The data matches the print only for the five city-anchors, with 1 marker (Leponnia), 1 straight-chord Sun Road trace, 1 sea lane, 0 traced roads and no placeable wiki page, and 7 of the 45 whole hexes are bare land.",
+  "date": "2026-10-04"
+}

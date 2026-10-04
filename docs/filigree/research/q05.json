@@ -1,0 +1,198 @@
+{
+ "qid": "q05",
+ "claims": [
+  {
+   "id": "q05-c01",
+   "text": "Tile coverage and transform: band W (x1216-1400, y1376-1664) lies on six modern z5 tiles, x=9,10 by y=10,11,12 (a z5 tile is 256 px = 128 atlas px, so atlas = 128*tile + px/2); the band is the 368x576 window at (128,192) of their 512x768 mosaic. The transform is confirmed on the print itself: the four ring-dot symbols in the band sit 0.4 (Epēshu), 0.8 (Rēketis), 1.0 (Āglaz) and 1.3 (Pharzeban) atlas px from their city-anchors.json coordinates. Two of the three old-survey fixture tiles (9/11 and 10/12) lie inside the band; the third (11/11, x1408-1535) is band M. All six modern tile files exist.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "ls maps-site/tiles/5/{9,10}/{10,11,12}.jpg; python3 (PIL, scipy; temp dir) ring-centroid vs city-anchors.json on mosaic of maps-site/tiles/5/{9,10}/{10,11,12}.jpg (256 px tiles pasted 512x768, mosaic origin atlas 1152,1280, 2 px per atlas px); band crop 128,192,368,576 = atlas 1216,1376..1400,1664"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q05-c02",
+   "text": "Overall inventory of what the print draws in band W (184x288 atlas px, 52,992 px2): one black coastline stroke with about 20 separate islet outlines in the north; 4 ring-dot settlement symbols (1 double ring, 3 single); 97+ black dots of one dotted-road network; 1 solid black river in two visible reaches; spaced-capital region lettering (letters of PAERĀNDAS, PĒSHUNOR, LAMOR, LEPONNIA, DRANIMOS); 2 full settlement labels (Rēketis, Pharzeban) and 2 clipped ones (Āglaz, Epēshu); a flat olive-grey sea tone (about 25-27 percent of the band) and flat tan land (73-75 percent). Nothing else is drawn: no relief, peaks, heights, shields, washes, trails, secondary road, braided river, graticule or legend.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "band crop 128,192,368,576 of mosaic of maps-site/tiles/5/{9,10}/{10,11,12}.jpg (256 px tiles pasted 512x768, mosaic origin atlas 1152,1280, 2 px per atlas px); band crop 128,192,368,576 = atlas 1216,1376..1400,1664 viewed at 3x in three slices (y 0-200, 180-380, 360-576)"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q05-c03",
+   "text": "Plate-one class peaks/ridges (bold-italic ▲ name plus height; 27 on plate one, q01-c02/c03) and relief (hillshade plus contour filigree, q01-c18): the print draws none in band W. Land is a flat parchment fill (RGB mean 197,177,128; per-channel std about 10, i.e. paper mottle only) with no contour hair, hachure, shading, ▲ glyph or numeral. The only triangle-looking mark is the letter A of PAERĀNDAS at about atlas 1386,1389.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "python3 colour stats on land pixels of band crop 128,192,368,576 of mosaic of maps-site/tiles/5/{9,10}/{10,11,12}.jpg (256 px tiles pasted 512x768, mosaic origin atlas 1152,1280, 2 px per atlas px); band crop 128,192,368,576 = atlas 1216,1376..1400,1664; visual check of crops y 0-200 and 180-576 at 3x"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q05-c04",
+   "text": "The DEM does cover band W completely (window 1060,1240..1860,2040), so relief, contours and heights for it come from EPESHU_HF, not from the print: bbox 1216,1376,1400,1664 gives land_frac 0.8101, h -43.12..160.22 m and 14 peaks of prominence >= 15 m. Thirteen lie in the north strip y1397.8-1441.6 (x1278-1370, h 19.0-46.44 m; the highest there is 46.44 m at 1321.98,1441.56) and one on the band's SE edge (160.22 m at 1399.06,1649.9, box-clipped prominence 203.34). That strip is where the print draws the Paerāndas islets and sea: against a tint-thresholded print land mask the DEM land mask agrees on 92.7 percent of band pixels, with 6.4 percent of the band DEM-land/print-sea and 0.9 percent the reverse (DEM land share 0.808 vs print 0.753).",
+   "evidence": {
+    "kind": "computed",
+    "ref": "node tools/filigree-dem.js --bbox 1216,1376,1400,1664 --min-prom 15; node (require tools/filigree-dem.js, at() per atlas px) vs python3 tint mask (R-B<57 = sea) on mosaic of maps-site/tiles/5/{9,10}/{10,11,12}.jpg (256 px tiles pasted 512x768, mosaic origin atlas 1152,1280, 2 px per atlas px); band crop 128,192,368,576 = atlas 1216,1376..1400,1664"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q05-c05",
+   "text": "Plate-one class homestead/hamlet dots (small round dot plus roman-sans name, 10 on plate one, q01-c05): the print has no unnamed or small dot symbols at all in band W. The only point symbols are the atlas settlement rings: ◉ Epēshu (double ring, 20x21 z5 px, the band's only Māgosh-class mark) and ○ Rēketis (16 px), Āglaz (17 px), Pharzeban (16 px), each with a bold roman serif label (Rēketis, Pharzeban in full; Āglaz clipped on its first letter at x1216; of Epēshu's arc label only the final 'u' falls inside). So the print carries 4 named settlements per 52,992 atlas px2, and 0 homestead dots in plate one's sense.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "band crop 128,192,368,576 of mosaic of maps-site/tiles/5/{9,10}/{10,11,12}.jpg (256 px tiles pasted 512x768, mosaic origin atlas 1152,1280, 2 px per atlas px); band crop 128,192,368,576 = atlas 1216,1376..1400,1664; ring detection by ink components 9-22 px square (python3 scipy) giving centres 1235.8,1414.8 / 1279.8,1550.8 / 1234.5,1555.5 / 1305.8,1620.8"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q05-c06",
+   "text": "Plate-one classes coast road (thick rust line, q01-c07), secondary road (gold, q01-c08) and highway shields (q01-c10): the print has one road class only, a black dotted line (canon key: dotted = major roadways), and no shield. In band W it is a connected net of about 97 detected dots at 3.96 atlas px pitch (about 390 atlas px as a floor; dots at junctions and under type are missed): (a) from the Epēshu ring east along the north coast, leaving the band's east edge at about 1400,1451 (toward Sokundo at 1477,1444); (b) from Epēshu south then south-west, leaving the west edge at about 1216,1454 (toward Lepon); (c) a road entering the west edge at about 1216,1529 and running SE to the Āglaz ring; (d) Āglaz east to a junction at about 1259,1556 and from there south, leaving the south edge at about 1244,1664 (toward Tarap). Epēshu and Āglaz sit on the net; Rēketis is 19 atlas px and Pharzeban 47 atlas px off it. There is no second road class, no dashed or dotted-brown trail class and no road width ranking.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "python3 dot detection (ink components 4-11 px, fill>0.55, chained at <=16 z5 px) on band crop 128,192,368,576 of mosaic of maps-site/tiles/5/{9,10}/{10,11,12}.jpg (256 px tiles pasted 512x768, mosaic origin atlas 1152,1280, 2 px per atlas px); band crop 128,192,368,576 = atlas 1216,1376..1400,1664; overlay images inspected at 3x"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q05-c07",
+   "text": "Plate-one classes rivers, river forks and braided reach (q01-c11/c12/c13): the print draws exactly one river in band W, a thin solid black line, unlabelled, with no fork and no braiding. Reach R1 enters the west edge at about 1216,1471 and wanders ESE to a hooked end at about 1267,1503; reach R2 resumes at about 1291,1529, winds SW past the Rēketis ring and meets the Āglaz inlet head at about 1263,1558 beside the road junction. The gap between them (about 35 atlas px) is exactly where the large L of LEPONNIA is printed, so the river is probably one line hidden by the label; this is a reading, not measured. Plate one's three line weights are replaced here by one weight.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "band crop 128,192,368,576 of mosaic of maps-site/tiles/5/{9,10}/{10,11,12}.jpg (256 px tiles pasted 512x768, mosaic origin atlas 1152,1280, 2 px per atlas px); band crop 128,192,368,576 = atlas 1216,1376..1400,1664, slices y 180-380 and 360-576 at 3x; ink component bboxes (python3 scipy): R1 atlas 1216-1270 x 1470-1504, L glyph 1268-1296 x 1489-1524"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q05-c08",
+   "text": "Coast and water class: the shoreline is one black 2-3 z5 px stroke; every islet is a closed black outline filled with land tan. The north strip (Paerāndas, labelled by letters A and S inside the band) holds about 20 separate islet outlines by hand count at 4x (the largest is a ragged island at about atlas 1307-1342 x 1376-1411, cut by the top edge, the rest slivers and ovals); the west and south-west edges hold two sea inlets (the Āglaz inlet at 1216-1292 x 1528-1609 and a coast piece at 1216-1238 x 1622-1664). Sea is a flat olive-grey wash (RGB mean about 180,172,133), not blue, with no depth shading, wave marks, rocks or soundings; plate one's 'ocean a flat blue' (q01-c17) is matched in flatness but not in hue. Sea-tone covers about 27 percent of the band by pixel classification.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "band crop 128,192,368,576 of mosaic of maps-site/tiles/5/{9,10}/{10,11,12}.jpg (256 px tiles pasted 512x768, mosaic origin atlas 1152,1280, 2 px per atlas px); band crop 128,192,368,576 = atlas 1216,1376..1400,1664 (isl4.png-style 4x crop of band px 60,0,308,130); python3 tint classification R-B<57 = sea"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q05-c09",
+   "text": "Region and area names are printed as widely spaced capitals, so no region name is whole inside band W; only letters fall in: PAERĀNDAS: A, S (D clipped at the top edge); PĒSHUNOR: P, Ē, S (H clipped at the east edge); LAMOR: O, R (M clipped at the west edge); LEPONNIA: L, E, set very large (the L glyph is about 28x35 atlas px); DRANIMOS: D, R, A, N, I, M (O clipped at the east edge, S outside). Five region names therefore contribute 15 whole letters and 5 clipped ones. No sea name is printed inside the band.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "band crop 128,192,368,576 of mosaic of maps-site/tiles/5/{9,10}/{10,11,12}.jpg (256 px tiles pasted 512x768, mosaic origin atlas 1152,1280, 2 px per atlas px); band crop 128,192,368,576 = atlas 1216,1376..1400,1664; wide mosaic x8-12,y9-13 of maps-site/tiles/5 with the band outlined (letters located against the 1024,1152 origin)"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q05-c10",
+   "text": "No graticule, scale bar, legend, compass or title is drawn in band W. The atlas hairlines (a long diagonal arc and a near-vertical line) pass north and west of the band: in the wide mosaic the arc is at about atlas y1270-1340 over x1216-1400 (above the band top y1376) and the vertical line is at about x1090-1140 (west of x1216). There is also no realm tint or hatch in the band.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "wide mosaic of maps-site/tiles/5 x8-12, y9-13 (1280x1280, origin atlas 1024,1152) with the band outlined in red; no hairline inside the outline"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q05-c11",
+   "text": "Blank-hex view of the print inside band W: of the 45 z7 hexes (32 atlas px; cells cx38-42 x cy43-51) wholly inside the band, 5 carry zero ink (a lum<130 pixel count of 0 over their 64x64 z5 px): (41,47) = fixture F03, (40,49), (41,49), (42,49) and (42,50); one more, (39,45), has only 48 ink px. The 9 edge hexes of column cx43 are 24 atlas px wide inside the band and four of them (cy47-50, including fixture F02 at 43,49) are also zero-ink. The blank patch is the open interior plateau around x1280-1400, y1504-1632. The other 40 hexes hold only coast, islets, dots, ring, river or type.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "python3 per-cell ink counts (lum<130) on band crop 128,192,368,576 of mosaic of maps-site/tiles/5/{9,10}/{10,11,12}.jpg (256 px tiles pasted 512x768, mosaic origin atlas 1152,1280, 2 px per atlas px); band crop 128,192,368,576 = atlas 1216,1376..1400,1664; docs/filigree/README.md :: F02 | 43,49 | 136..151 | open plateau, blank on the print"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q05-c12",
+   "text": "What the print draws on the six fixture hexes that lie in band W (the part inside the band): F02 and F03 are blank paper (0 ink px); F04 (1376-1400 x 1632-1664 inside) holds only parts of two region letters (an I and the clipped O of DRANIMOS, 6.3 percent ink); F05 holds one arc of the dotted north-coast road (5.9 percent ink, no name, no symbol); F07 is mostly sea (65 percent sea tone) with about six islet outlines and a coast fragment (26.3 percent ink); F10 holds the Epēshu ◉ ring, the final 'u' of its label, two dotted-road branches and the shoreline (24.6 percent ink). F01, F06, F08, F09, F11 and F12 lie outside band W.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "fixture crops of band crop 128,192,368,576 of mosaic of maps-site/tiles/5/{9,10}/{10,11,12}.jpg (256 px tiles pasted 512x768, mosaic origin atlas 1152,1280, 2 px per atlas px); band crop 128,192,368,576 = atlas 1216,1376..1400,1664 (fix montage at 4x); fixture bboxes F02 1376,1568,1408,1600 .. F10 1216,1408,1248,1440 from the task constants"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q05-c13",
+   "text": "maps_markers.json (159 records: 131 Settlements, 13 Major Regions, 7 Minor Regions, 5 Bodies of Water, 3 Mountains and Hills) carries exactly ONE record inside band W: Epēshu (Settlements, mag:true) at 1236,1417, which is 2.2 atlas px from the printed ring centre (1235.8,1414.8). Nearby but outside: the Leponnia region marker at 1401,1618 (1 px past the east edge), the Paerāndas region marker at 1337,1335 (41 px north of the top edge) and Lepon at 1145,1427 (71 px west). The printed names Rēketis, Āglaz, Pharzeban, Pēshunor, Lamor and Dranimos have no marker at all. None of the 3 Mountains and Hills markers (Mountain Wall, Far Mountains, Fell Mountains) is near the band, and the file has no field for height, river, homestead, reserve or shield.",
+   "evidence": {
+    "kind": "data",
+    "ref": "maps-site/data/maps_markers.json#[type,x,y,name] filtered to 1216<=x<1400 and 1376<=y<1664 (python3)"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q05-c14",
+   "text": "city-anchors.json (136 entries: 115 village, 17 town, 3 ruin, 1 capital) carries FOUR anchors inside band W, one per printed ring: Epēshu 1236.1,1415 (capital, harbor, sea SSW 10 px), Rēketis 1279.8,1551.5 (village, no harbor, sea WSW 36 px), Āglaz 1234,1554.6 (village, harbor, sea S 11 px) and Pharzeban 1306.9,1621.3 (village, no harbor, sea WNW 59 px). Each matches the printed ring within 1.3 atlas px. Just outside: Tarap 1251.7,1671.3 (7.3 px below the bottom edge, village), Bēgil 1170,1635 (46 px west), Mīth Mirdānak 1164.2,1509.8 (52 px west), Lepon the Old 1146.5,1420.2 (ruin, 69.5 px west). Rēketis and Pharzeban are in the anchors and the gazetteer but not in maps_markers.json. The file holds no name list of homesteads, so the print's 'homestead' class has no data feed in this band.",
+   "evidence": {
+    "kind": "data",
+    "ref": "maps-site/data/city-anchors.json#Epēshu,Rēketis,Āglaz,Pharzeban (atlasX,atlasY,kind,harbor,sea); python3 filter to band and 70 px margin"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q05-c15",
+   "text": "named-ways.json (2 entries) puts one entry in band W: 'Road that Walks with the Sun' (prov:'trace', note 'Trace approximate'), which has 3 vertices inside the band (1229,1408; 1295,1398; 1360,1408) and 193.1 atlas px of its length inside (clipped segments 13.5 + 66.8 + 65.8 + 47.1). It does not follow the printed dotted road: against the 97 detected print dots the median distance from the trace to the nearest dot is 27.9 atlas px (p90 47.7, max 54.9), only 10 percent of trace samples are within 6 px, and only 6 of 97 print dots are within 8 px of it; 60 percent of the trace lies on sea-tone pixels, running through the Paerāndas islet field about 25-55 px north of the printed coast road (it starts about 10 px NW of the Epēshu ring). The East-West Road entry (at x527-720, y66-155) is nowhere near.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "maps-site/data/named-ways.json#Road that Walks with the Sun .pts clipped to 1216,1376,1400,1664 (Liang-Barsky) and compared with detected print dots (python3 cKDTree) on mosaic of maps-site/tiles/5/{9,10}/{10,11,12}.jpg (256 px tiles pasted 512x768, mosaic origin atlas 1152,1280, 2 px per atlas px); band crop 128,192,368,576 = atlas 1216,1376..1400,1664"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q05-c16",
+   "text": "traced-roads.json (46 unnamed polylines, no property fields, not loaded by maps-site/index.html: grep finds no 'traced-roads' there) has THREE polylines touching band W (indices 27, 32 and 37; 86.3, 72.1 and 106.5 atlas px inside), and none of them follows the printed dotted road: #27 [1361.3,1418.4 > 1320.2,1414.5 > 1298.4,1381.1 > 1300.3,1361.5] lies 95 percent on sea-tone pixels, winding through the Paerāndas islets; #32 [1327.5,1552.9 > 1279.5,1550.5 > 1259.1,1537.8] runs along the Rēketis ring and label baseline then the R of LAMOR (18 percent sea); #37 [1209.5,1673.1 > 1234.2,1672.5 > 1269.2,1643.9 > 1289.1,1611.2 > 1325.5,1612.1] runs along the Pharzeban label baseline and the R of DRANIMOS. Only 2 of 97 print road dots lie within 8 px of any of the three. They are text/islet chains of the kind POLISH.md's 'Traced road network' item warns about, so band W has effectively no usable traced road data and the real net must be re-traced from the print.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "maps-site/data/traced-roads.json#[27,32,37]; grep -c 'traced-roads' maps-site/index.html = 0; python3 clip and nearest-dot distances on mosaic of maps-site/tiles/5/{9,10}/{10,11,12}.jpg (256 px tiles pasted 512x768, mosaic origin atlas 1152,1280, 2 px per atlas px); band crop 128,192,368,576 = atlas 1216,1376..1400,1664; POLISH.md :: text i-dots/periods chain like roads"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q05-c17",
+   "text": "sea-lanes.json (4 lanes, all prov:'invented') puts two lanes in band W: 'The North Coast Packet' (Epēshu to Mago) has 179.3 atlas px inside, from vertex 1222,1404 through 1320,1398 to 1440,1418; about 67 percent of it lies on sea tone, the rest crosses the islet outlines and the Epēshu headland, and its median distance to the printed coastal road is 38.2 px (it runs north of it through the Paerāndas). 'The Gulf Crossing' touches the band only at its first vertex 1222,1404 (6.0 px inside, in water). 'The Strait Run' and 'The South Lane' are outside the band. The print draws no sea lane.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "maps-site/data/sea-lanes.json#The North Coast Packet,The Gulf Crossing (pts clipped to band); python3 sea-tone sampling on mosaic of maps-site/tiles/5/{9,10}/{10,11,12}.jpg (256 px tiles pasted 512x768, mosaic origin atlas 1152,1280, 2 px per atlas px); band crop 128,192,368,576 = atlas 1216,1376..1400,1664"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q05-c18",
+   "text": "wiki-places.json (51 pages, fields slug/title/content only) has no coordinates, so it places nothing inside band W by position. Pages that describe things in the band: Settlements/Patrinor/Epēshu (district names Wood Quay, Whitestreet, Marble Quarter, Outwall, Eelwynd, Kohabron, Old Quarry Lot, plus Mount Mastery 'the tallest hill overlooking the harbor', Bangeph Rock in the bay, Fairy Arch in the woods; 'a line of hills to its north'; no heights), Regions/Patrinor/Leponnia (lists Pēshunor, Lamor, Dranimos, Paerāndas; 'forests run along its coasts'; Sūs Gimīlīn is the greatest mountain, outside the band), Regions/Patrinor/Paerāndas ('over a thousand islands') and Regions/Patrinor/Road-that-Walks-with-the-Sun (passes the Epēshu Forum and turns east to Tamaron; coast-following). There is no page for Āglaz, Rēketis, Pharzeban, Pēshunor, Lamor or Dranimos, and no page names a river, ridge height, homestead, reserve or shield in the band.",
+   "evidence": {
+    "kind": "data",
+    "ref": "maps-site/data/wiki-places.json#slug,title,content (python3 key set = {slug,title,content}; text search for the six printed names)"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q05-c19",
+   "text": "Plate-one classes MISSING from the print in band W (plate-one class list from q01-c19): ▲ named landforms with heights (0 vs 27); homestead/hamlet dots as a separate class (0 vs 10; only 4 settlement rings); reserve washes (0 vs 3); the thick coast road in its own colour (the print has only the dotted line); secondary road (0); the three trail line types (0); highway shields (0 vs 1 legible); braided river reach (0); river forks (0 visible; the one river is a single line); hillshade and contour filigree (0); river-valley knot of four names (0; the band's four settlements are spread over 71x206 atlas px); heights numerals (0). Plate-one classes that ARE present in some form: coast and islets, settlement rings with bold roman names, one river, one road class, flat sea tone, large lettering for ranks. The print also draws things plate one does not: spaced region capitals and islet outlines.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "per-class comparison of q01-c19 counts (docs/filigree/research/q01.json) with claims q05-c02 to q05-c11"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q05-c20",
+   "text": "Data coverage by plate-one class in band W: ▲/heights: no file (DEM only, q05-c04); homestead dots: no file (4 settlement anchors only); reserves: no file; coast/secondary road and trails: named-ways has one misregistered trace, traced-roads has 3 spurious chains, so the printed dotted net is not in any data file; shields: no file; rivers: no file (the one printed river is not in any of the six files); sea: sea-lanes has 2 invented lanes; names: maps_markers 1 (Epēshu), city-anchors 4, wiki-places no coordinates. So every plate-one class except settlement names must be derived (DEM) or re-traced from the print (roads, river) or minted as prov:'invented' for this band.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "tallies from q05-c12 to q05-c17 (python3 clip of each maps-site/data/*.json to 1216,1376,1400,1664)"
+   },
+   "confidence": "high"
+  }
+ ],
+ "gaps": [
+  "Exact islet count is not established: the automated count failed (tint thresholding mixes islet fill and outlines); about 20 is a hand count at 4x of band px 60,0,308,130 and the strip below it, and the Paerāndas canon says over a thousand islands.",
+  "Region letters and label clipping (PAERĀNDAS D, PĒSHUNOR H, LAMOR M, DRANIMOS O) were read by eye from the tiles; none was OCRed.",
+  "Whether the river is a single line under the L of LEPONNIA, where it continues beyond the west edge, its flow direction and any name are not established.",
+  "Dotted-road length is a floor (97 detected dots at 3.96 atlas px pitch); dots at junctions and under type were missed, and the edge-crossing y values (1451, 1454, 1529) are good to about 3 px only.",
+  "That the printed north-coast dotted road is the Road that Walks with the Sun is inferred from the wiki text and the trace direction; the print does not label it.",
+  "The War and Imperial era tiles (maps-site/tiles-war/5, tiles-imperial/5) were not examined in band W, so whether older sheets draw different roads, names or islets here is unknown (q04-c08 reports only 69-156 differing px on the three old-survey fixture tiles).",
+  "realms.geojson and minor-regions.geojson were outside this question's read list, so whether region polygons could feed reserve washes in band W was not examined.",
+  "Sea/land areas rest on a colour threshold (R-B<57 on non-ink pixels, ink assigned to the nearest class); the 27 percent sea, the 6.4 percent DEM-land/print-sea disagreement and the 60-67 percent sea-tone shares of the Sun Road and the North Coast Packet carry a few points of error.",
+  "Whether the wiki's 'line of hills' north of Epēshu corresponds to the DEM's 19-46 m rises in the Paerāndas strip (y1398-1442) is not established; the print shows sea there."
+ ],
+ "summary": "Band W is a sparse stretch of the print: one ◉ and three ○ settlements, one dotted road net, one unlabelled river, a coast with about 20 islets and only letters of five region names, with no peaks, heights, homestead dots, washes, shields, trails, relief or graticule, and 5 of its 45 whole hexes are pure paper. The data files add little: maps_markers has 1 record (Epēshu), city-anchors 4, wiki-places none by position, and the Sun Road trace, 3 traced-roads chains and the North Coast Packet lane all sit in the sea 25-55 px off the printed road, so roads and the river must be re-traced and relief taken from the DEM (which covers the band).",
+ "date": "2026-10-04"
+}

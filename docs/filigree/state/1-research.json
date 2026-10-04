@@ -1,0 +1,452 @@
+{
+  "job": "filigree-1-research",
+  "date": "2026-10-04",
+  "questions": [
+    {
+      "qid": "q09",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q09.json",
+      "sha256": "e43a30044bb3fe4ef5d018799ffd5b4e37651a62f277b6ec63ab95cdbdb2a7dd",
+      "claim_ids": [
+        "q09-c01",
+        "q09-c02",
+        "q09-c03",
+        "q09-c04",
+        "q09-c05",
+        "q09-c06",
+        "q09-c07",
+        "q09-c08",
+        "q09-c09",
+        "q09-c10",
+        "q09-c11",
+        "q09-c12",
+        "q09-c13",
+        "q09-c14"
+      ],
+      "struck": []
+    },
+    {
+      "qid": "q01",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q01.json",
+      "sha256": "9e16beb9247dc9330f99f3b0dbce6b56fcff91e7df3fd1a291ec1463edf50476",
+      "claim_ids": [
+        "q01-c01",
+        "q01-c02",
+        "q01-c03",
+        "q01-c04",
+        "q01-c05",
+        "q01-c06",
+        "q01-c07",
+        "q01-c08",
+        "q01-c09",
+        "q01-c10",
+        "q01-c11",
+        "q01-c12",
+        "q01-c13",
+        "q01-c14",
+        "q01-c15",
+        "q01-c16",
+        "q01-c17",
+        "q01-c18",
+        "q01-c19"
+      ],
+      "struck": [
+        "q01-c01"
+      ]
+    },
+    {
+      "qid": "q02",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q02.json",
+      "sha256": "c2f39dc00b190a0fb657a72ac0ce101e1f5e73536bdefdba463896904bcabcd6",
+      "claim_ids": [
+        "q02-c01",
+        "q02-c02",
+        "q02-c03",
+        "q02-c04",
+        "q02-c05",
+        "q02-c06",
+        "q02-c07",
+        "q02-c08",
+        "q02-c09",
+        "q02-c10",
+        "q02-c11",
+        "q02-c12",
+        "q02-c13",
+        "q02-c14",
+        "q02-c15",
+        "q02-c16",
+        "q02-c17"
+      ],
+      "struck": []
+    },
+    {
+      "qid": "q03",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q03.json",
+      "sha256": "15e209054eff55691ff1d7e757d058077311b269cdda421594ea7a01c0c5c82e",
+      "claim_ids": [
+        "q03-c01",
+        "q03-c02",
+        "q03-c03",
+        "q03-c04",
+        "q03-c05",
+        "q03-c06",
+        "q03-c07",
+        "q03-c08",
+        "q03-c09",
+        "q03-c10",
+        "q03-c11",
+        "q03-c12"
+      ],
+      "struck": []
+    },
+    {
+      "qid": "q04",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q04.json",
+      "sha256": "a50e572c475e577a2a62e0516e56c43227d8c7b4f233d144409f1ffd72e05388",
+      "claim_ids": [
+        "q04-c01",
+        "q04-c02",
+        "q04-c03",
+        "q04-c04",
+        "q04-c05",
+        "q04-c06",
+        "q04-c07",
+        "q04-c08",
+        "q04-c09",
+        "q04-c10",
+        "q04-c11",
+        "q04-c12",
+        "q04-c13",
+        "q04-c14",
+        "q04-c15",
+        "q04-c16",
+        "q04-c17",
+        "q04-c18"
+      ],
+      "struck": [
+        "q04-c14",
+        "q04-c08",
+        "q04-c18",
+        "q04-c14"
+      ]
+    },
+    {
+      "qid": "q05",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q05.json",
+      "sha256": "a119cc2c2ea18c914e5bc576a53288759568a115ab505e4ec184509f561a5def",
+      "claim_ids": [
+        "q05-c01",
+        "q05-c02",
+        "q05-c03",
+        "q05-c04",
+        "q05-c05",
+        "q05-c06",
+        "q05-c07",
+        "q05-c08",
+        "q05-c09",
+        "q05-c10",
+        "q05-c11",
+        "q05-c12",
+        "q05-c13",
+        "q05-c14",
+        "q05-c15",
+        "q05-c16",
+        "q05-c17",
+        "q05-c18",
+        "q05-c19",
+        "q05-c20"
+      ],
+      "struck": []
+    },
+    {
+      "qid": "q06",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q06.json",
+      "sha256": "c53079b2328dce1aa5c4d2a0a326bcd8f5decf0e2891ca94b41dfdc9c77eb7b1",
+      "claim_ids": [
+        "q06-c01",
+        "q06-c02",
+        "q06-c03",
+        "q06-c04",
+        "q06-c05",
+        "q06-c06",
+        "q06-c07",
+        "q06-c08",
+        "q06-c09",
+        "q06-c10",
+        "q06-c11",
+        "q06-c12",
+        "q06-c13",
+        "q06-c14",
+        "q06-c15",
+        "q06-c16"
+      ],
+      "struck": [
+        "q06-c16"
+      ]
+    },
+    {
+      "qid": "q07",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q07.json",
+      "sha256": "17204155a179d748d3955b9a6654e0fc46e358804a2da5016f69da7a0627d201",
+      "claim_ids": [
+        "q07-c01",
+        "q07-c02",
+        "q07-c03",
+        "q07-c04",
+        "q07-c05",
+        "q07-c06",
+        "q07-c07",
+        "q07-c08",
+        "q07-c09",
+        "q07-c10",
+        "q07-c11",
+        "q07-c12",
+        "q07-c13",
+        "q07-c14",
+        "q07-c15",
+        "q07-c16",
+        "q07-c17"
+      ],
+      "struck": []
+    },
+    {
+      "qid": "q08",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q08.json",
+      "sha256": "90b1f93329538199950b511d71340d2efb50bd392005208989105ec26eee86ac",
+      "claim_ids": [
+        "q08-c01",
+        "q08-c02",
+        "q08-c03",
+        "q08-c04",
+        "q08-c05",
+        "q08-c06",
+        "q08-c07",
+        "q08-c08",
+        "q08-c09",
+        "q08-c10",
+        "q08-c11",
+        "q08-c12",
+        "q08-c13",
+        "q08-c14",
+        "q08-c15",
+        "q08-c16",
+        "q08-c17",
+        "q08-c18",
+        "q08-c19",
+        "q08-c20",
+        "q08-c21"
+      ],
+      "struck": [
+        "q08-c17"
+      ]
+    },
+    {
+      "qid": "q10",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q10.json",
+      "sha256": "634a87a653ed63d67dad102215a997cdada9223be8566d04a3befcd52275f96d",
+      "claim_ids": [
+        "q10-c01",
+        "q10-c02",
+        "q10-c03",
+        "q10-c04",
+        "q10-c05",
+        "q10-c06",
+        "q10-c07",
+        "q10-c08",
+        "q10-c09",
+        "q10-c10",
+        "q10-c11",
+        "q10-c12",
+        "q10-c13",
+        "q10-c14",
+        "q10-c15",
+        "q10-c16",
+        "q10-c17",
+        "q10-c18",
+        "q10-c19",
+        "q10-c20"
+      ],
+      "struck": []
+    },
+    {
+      "qid": "q11",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q11.json",
+      "sha256": "b09cdde00ddba436a256d1799af8e3cf92a9d2748c74adaec806cfe8f5079a52",
+      "claim_ids": [
+        "q11-c01",
+        "q11-c02",
+        "q11-c03",
+        "q11-c04",
+        "q11-c05",
+        "q11-c06"
+      ],
+      "struck": []
+    },
+    {
+      "qid": "q12",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q12.json",
+      "sha256": "edc5a8223659b0b4da15bcc6d6246ec25ddbf1289c63710fbc1f88c9ca288168",
+      "claim_ids": [
+        "q12-c01",
+        "q12-c02",
+        "q12-c03",
+        "q12-c04",
+        "q12-c05",
+        "q12-c06"
+      ],
+      "struck": [
+        "q12-c06"
+      ]
+    },
+    {
+      "qid": "q13",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q13.json",
+      "sha256": "297fe97fb89cb3f63dbb8f15358fdaef3f003f4c8de803930466438294fb1ea3",
+      "claim_ids": [
+        "q13-c01",
+        "q13-c02",
+        "q13-c03",
+        "q13-c04",
+        "q13-c05",
+        "q13-c06",
+        "q13-c07",
+        "q13-c08",
+        "q13-c09",
+        "q13-c10",
+        "q13-c11",
+        "q13-c12",
+        "q13-c13",
+        "q13-c14"
+      ],
+      "struck": []
+    },
+    {
+      "qid": "q14",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q14.json",
+      "sha256": "968d6ff760d3d61441b08ab13e210631050f85e91f8e6b00501a8d6413b47e38",
+      "claim_ids": [
+        "q14-c01",
+        "q14-c02",
+        "q14-c03",
+        "q14-c04",
+        "q14-c05",
+        "q14-c06",
+        "q14-c07",
+        "q14-c08",
+        "q14-c09",
+        "q14-c10"
+      ],
+      "struck": []
+    },
+    {
+      "qid": "q15",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q15.json",
+      "sha256": "c99b960d140937b8e29052e94362c7b26cf4b813c7ca66e7729b15c9216dde87",
+      "claim_ids": [
+        "q15-c01",
+        "q15-c02",
+        "q15-c03",
+        "q15-c04",
+        "q15-c05",
+        "q15-c06",
+        "q15-c07",
+        "q15-c08",
+        "q15-c09",
+        "q15-c10",
+        "q15-c11",
+        "q15-c12",
+        "q15-c13",
+        "q15-c14",
+        "q15-c15",
+        "q15-c16",
+        "q15-c17"
+      ],
+      "struck": [
+        "q15-c13",
+        "q15-c14"
+      ]
+    },
+    {
+      "qid": "q16",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q16.json",
+      "sha256": "dff5beb7cff53817b5908693a2603f58a00fec14a49b1d75d9ef4f64aa781b2b",
+      "claim_ids": [
+        "q16-c01",
+        "q16-c02",
+        "q16-c03",
+        "q16-c04",
+        "q16-c05",
+        "q16-c06",
+        "q16-c07",
+        "q16-c08",
+        "q16-c09",
+        "q16-c10",
+        "q16-c11",
+        "q16-c12",
+        "q16-c13",
+        "q16-c14",
+        "q16-c15",
+        "q16-c16",
+        "q16-c17"
+      ],
+      "struck": [
+        "q16-c02",
+        "q16-c06",
+        "q16-c09",
+        "q16-c10"
+      ]
+    },
+    {
+      "qid": "q17",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q17.json",
+      "sha256": "c347d98056c288d7f06f148f7233545411fb97ed96aea89b9621412ebb9097ea",
+      "claim_ids": [
+        "q17-c01",
+        "q17-c02",
+        "q17-c03",
+        "q17-c04",
+        "q17-c05",
+        "q17-c06",
+        "q17-c07",
+        "q17-c08",
+        "q17-c09",
+        "q17-c10"
+      ],
+      "struck": [
+        "q17-c06"
+      ]
+    },
+    {
+      "qid": "q18",
+      "path": "/home/user/annals-kingdom/docs/filigree/research/q18.json",
+      "sha256": "f15615e716fc4e169fbabe02b6cec5529b969fee68ba233e59986edc18e5cfe5",
+      "claim_ids": [
+        "q18-c01"
+      ],
+      "struck": []
+    }
+  ],
+  "seen_questions": [
+    "plate-one inventory per class peak height homestead reserve river fork coast road shields trails glyphs the braided river the four-name valley knot counts per class.",
+    "what plates two and three keep vs delete the rule that a poi pin must never stand in for a landform name.",
+    "azlen city grain - measurable proxies block grain scale park void arterial class fog wash contour hill pooled edges no chrome pins taken from the brief s text description there is no azlen image in the brief its three plates are sonoma .",
+    "swiss stack - fiction layers old survey every structure caravan halts blazed paths muster days shut ways colour base swap semantics base under over data today gap. use the readme reuse map reuse the shipped the beacon post the muster ground pois flag the tithe renames r10 .",
+    "coast walk band w x1216-1400 y1376-1664 everything the print draws per plate-one class z5 tiles what maps markers city-anchors named-ways traced-roads sea-lanes wiki-places carry inside the band which plate-one classes are missing.",
+    "coast walk band m x1400-1580 y1376-1664 everything the print draws per plate-one class z5 tiles what maps markers city-anchors named-ways traced-roads sea-lanes wiki-places carry inside the band which plate-one classes are missing.",
+    "coast walk band e x1580-1760 y1376-1664 everything the print draws per plate-one class z5 tiles what maps markers city-anchors named-ways traced-roads sea-lanes wiki-places carry inside the band which plate-one classes are missing.",
+    "city quarter q1 in azlen grain block park void arterial fog wash contour hill. what exists on the chart vs the generated plan the gencitycanvas feature list anchors gaps.",
+    "relief supply. decode epeshu hf verify the transform on aldorus per-fixture h range local maxima with prominence 15 m inside sheet one bbox contour spacing in screen px at z6 z7 z8 for a 5 m interval genhydrology carves w.h so use the raw decode. write the committed read-only probe tools filigree-dem.js see the tool task below .",
+    "water supply sim rivers inside the window vs the solid black lines on the print forks per coast band propose the rivers.json source rule dem flow candidates kept only where the print shows a solid line .",
+    "name supply landform structure roots affixes reserved canon words sayability the name repeat rule at anchor name.used.has n seam rules how many distinct names can be minted per class proposed mint key class cellid on xmur3 mulberry32.",
+    "data baseline named-thing counts per class per fixture cell and per sheet-one band.",
+    "overlay hooks re-anchored chronicle chron w.banditcamps ambush famine plague flags the pebros camp w.dragon w.weather no fog the beacon post the muster ground tithe pois.",
+    "do the imperial war eras differ from modern in roads forest or only in names borders 3 fixed land tiles z5 11 11 9 11 10 12 x 3 eras.",
+    "the v2 camps - per-sheet rules paint on the base names on a threshold the appear effect one-question views pooled-edge contrast real colours cramped min label spacing at 390 px data truth.",
+    "printed lettering per fixture which of f01-f12 the print already fills with hand lettering or glyphs collision with overlay labels .",
+    "prerequisite audit. find the polish items by title text traced road network census second pass uncharted-band softening data fetch cache-busting tier-hidden markers region-chart zoom-through sim atlas continuity all seven titles exist in polish.md today checked do their promised files exist is maps-site data traced-roads.json loaded by maps-site index.html code reading a missing or unloaded traced-roads.json is a finding never a failure.",
+    "the stamen watercolor method mask blur edge-darken as a pooled-edge precedent one web attempt if egress is blocked return a single claim with confidence low and evidence kind web ref u ."
+  ],
+  "bible_sha": {
+    "md": "d25be9ef0cdb6cfff5e1c8903452ff84c772b291a182ea7c8a3c1cf09f5f4e05",
+    "json": "26d07197c769d9bb8fe5532708a05472574fa71fc647f7dd36383e73f8f9fc66"
+  }
+}

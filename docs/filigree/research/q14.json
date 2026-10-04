@@ -1,0 +1,104 @@
+{
+ "qid": "q14",
+ "claims": [
+  {
+   "id": "q14-c01",
+   "text": "Answer: on the three sampled land tiles the Imperial and War eras differ from Modern only in colour (a land-hue recolour), not in roads, rivers, coast, forest or lettering. The linework (dotted roads, solid rivers, coastline, ring-dot settlements, hand lettering) sits at the same pixels in all three eras, so 'dead roads' and 'forest that grew back' are NOT carried by tiles-imperial/ or tiles-war/.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "tile-diff over maps-site/{tiles,tiles-imperial,tiles-war}/5/{11/11,9/11,10/12}.jpg (PIL/numpy/scipy: ink-mask match, affine/LUT colour-fit residual, gradient correlation)"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q14-c02",
+   "text": "Raw pixel difference is large but is a tint, not structure: mean abs RGB diff Modern vs Imperial is 10.7 / 14.4 / 17.4 (tiles 11/11, 9/11, 10/12) and Modern vs War 9.9 / 13.5 / 16.0, with 68-99.9% of pixels byte-different (JPEG re-encode included). Mean RGB moves from about (176,162,120) to (180,146,108) on 11/11: land turns terracotta/salmon (R-B on land about 66 to about 95) while sea stays grey-green.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "mean|A-B| per tile and per-era mean RGB, same script as q14-c01"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q14-c03",
+   "text": "Ink geometry is unchanged. A local-contrast ink mask (luminance 45 below its 25px box mean) gives 5562 / 5474 / 5465 ink px on 11/11 (Modern / Imperial / War), 6396 / 6275 / 6253 on 9/11, 3218 / 3148 / 3147 on 10/12. In every pairwise direction (Modern<->Imperial, Modern<->War, Imperial<->War) 100.0% of ink px of one era lie within 2 px of ink in the other. Connected-component counts match (74/74/74, 111/112/112, 33/34/34; the +-1 is threshold splitting). Ink IoU is 0.97-0.98 Modern vs era and 0.99 Imperial vs War.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "ink-mask IoU and 2px-dilation agreement, same script as q14-c01"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q14-c04",
+   "text": "Structure correlation is near 1 across eras: edge-map correlation Modern vs Imperial 0.9948 / 0.9944 / 0.9952 and Modern vs War 0.9944 / 0.9939 / 0.9950 (11/11, 9/11, 10/12); gradient-magnitude correlation on 11/11 is 0.998. A per-channel affine fit Modern->Imperial leaves mean residual 3.7 / 3.8 / 1.3 grey levels; a pooled 16-level RGB colour lookup leaves 3.3 / 3.4 / 2.0, concentrated at light label halos and coast edges rather than in new features.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "np.lstsq 3x3+offset fit and quantised-RGB LUT residual, same script"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q14-c05",
+   "text": "Eyeball check of 2x side-by-side crops of all three tiles: same coast, same dotted road network (e.g. Sokundo to the east on 11/11, the LAMO/ Epeshu-side roads on 9/11), same solid river lines, same settlement ring-dots, same lettering (Sokundo, Aldorus, Reketis, Pharzeban, the spaced region letters). No glyph, spelling or road difference is visible, and no forest glyphs exist in any era on these tiles. A 4x crop of the Sokundo label shows identical letterforms, only the pale halo and nearby land colour change.",
+   "evidence": {
+    "kind": "crop",
+    "ref": "maps-site/tiles/5/11/11.jpg px 60,30,180,80 and full 256x256 of 11/11, 9/11, 10/12 in the three eras (side-by-sides at 512 px)"
+   },
+   "confidence": "medium"
+  },
+  {
+   "id": "q14-c06",
+   "text": "Imperial and War are the same recolour at two strengths: they differ by a red-channel offset only. On land pixels War is about 6.5 lower in R than Imperial on all three tiles (6.52 / 6.70 / 6.51) with G and B within 0.35; Imperial vs War mean abs diff is only 1.9 / 2.6 / 2.8 and max 23-29, with 0% of pixels differing by more than 24. Their ink masks match with IoU 0.989-0.993.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "imp-war channel means on land (R-B>80) pixels, same script"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q14-c07",
+   "text": "The three era pyramids are structurally parallel: tiles/, tiles-imperial/ and tiles-war/ each hold 860 jpg tiles, and the repo history shows they were produced together as one sharpened z0-5 set (2x LANCZOS + unsharp) in the same commits, with no separate era artwork or era source maps in the repo.",
+   "evidence": {
+    "kind": "computed",
+    "ref": "find maps-site/<dir> -name '*.jpg' | wc -l == 860 each; git commits 090f971 and dfbf5f0 (v0.6.1-alpha.1: 'Sharpened z5 pyramids ... for Modern, Imperial, and War of the Patrons')"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q14-c08",
+   "text": "In the shipped atlas the era control is a pure base-layer swap with no era-dependent labels, borders or names: setEra removes one L.tileLayer and adds another and writes no hash; the radios are 'Modern (1374 A.B.)', 'War of the Patrons (1124-1133)', 'Imperial (the golden age)'. All name and border content lives in separate overlays that do not change with era.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "maps-site/index.html :: function setEra(k){"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q14-c09",
+   "text": "The open question the research dossier recorded is now resolved on land tiles: it noted tiles are 'byte-different' and that a sampled ocean tile looked the same by eye, with a land side-by-side outstanding. Byte-difference is explained by the recolour; the brief's 'dead roads, old spellings, forest that grew back' cannot be delivered by swapping to the existing era rasters.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "docs/filigree/research-dossier.md :: Do `tiles-imperial/` and `tiles-war/` differ from"
+   },
+   "confidence": "high"
+  },
+  {
+   "id": "q14-c10",
+   "text": "Consequence for R14 and 'old survey under the live sheet': the existing era rasters can only serve as a tint/atmosphere layer (a stacked or swiped base at opacity/swipe). The 'old names / dead roads / regrown forest' content has to come from a new authored layer (an old-name layer built from lexicon etymology via the Patrinaic roots tool and tools/build-gazetteer.js, plus authored dead-road and forest-regrowth vectors), per the R14 wording that an old-name layer is needed when the eras differ only in names.",
+   "evidence": {
+    "kind": "anchor",
+    "ref": "docs/filigree/README.md :: an era tile layer stacked under the live base (opacity/swipe); an old-name layer too if the eras differ only in names"
+   },
+   "confidence": "medium"
+  }
+ ],
+ "gaps": [
+  "Only 3 z5 land tiles were compared; roads/forest/names were not checked on other tiles, other zooms (z0-4) or any tile near Lepon, Epeshu or the mountain ranges where an era-specific edit would most likely sit.",
+  "Whether the eras differ in political BORDERS or names was only checked as drawn lettering and linework on these three tiles; the solid lines here are rivers per the cartographic key, and no political border line is identifiable on them, so borders in the eras are not established either way.",
+  "Ink identity was measured by a luminance mask within 2 px; a tiny stroke added or removed below that scale (or a faint non-ink hatch) would not be detected, and no forest glyph exists in the Modern tiles to compare against.",
+  "No era source maps (PatrinorImperial/War originals) exist in the repo, so how the era pyramids were produced is inferred from pixels and two commit messages, not from a script.",
+  "The 100% within-2px ink agreement is a stricter statement than the +-1 component-count differences suggest; the +-1 components were attributed to threshold splitting but their exact location was not inspected."
+ ],
+ "summary": "On the three sampled land tiles (z5 11/11, 9/11, 10/12) the Imperial and War eras are a pure land-hue recolour of Modern: dotted roads, rivers, coast, settlements and lettering match pixel-for-pixel (100% of ink within 2 px, edge correlation about 0.995), and no forest or dead-road content exists in any era. War differs from Imperial only by a roughly 6.5-level lower red channel on land. So 'old survey under' as a raster swap gives only tint; old names, dead roads and regrown forest need a new authored layer.",
+ "date": "2026-10-04"
+}

@@ -1,0 +1,1948 @@
+{
+  "job": "filigree-1-research",
+  "date": "2026-10-04",
+  "mode": "full",
+  "rounds": 1,
+  "hexes": [
+    {
+      "id": "F01",
+      "bbox": [
+        1632,
+        1600,
+        1664,
+        1632
+      ],
+      "agree": 6,
+      "valid": {
+        "A": true,
+        "B": true
+      },
+      "resolved": {
+        "A": 6,
+        "B": 6
+      },
+      "A": {
+        "ground_class": "hill",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1648,
+              "y": 1616
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1648,1616"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "",
+              "x": 1649.06,
+              "y": 1604.06
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1649.06,1604.06"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "Aura-Hōth",
+              "x": 1649.06,
+              "y": 1604.06
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1649.06,1604.06"
+            }
+          },
+          {
+            "class": "relief_shade",
+            "rule": "B-12",
+            "instance": {
+              "name": "",
+              "x": 1649.06,
+              "y": 1604.06
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1649.06,1604.06"
+            }
+          },
+          {
+            "class": "homestead",
+            "rule": "B-21",
+            "instance": {
+              "name": "",
+              "x": 1648,
+              "y": 1616
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "homestead:F01"
+            }
+          },
+          {
+            "class": "blazed_path",
+            "rule": "B-17",
+            "instance": {
+              "name": "",
+              "x": 1648,
+              "y": 1616
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "blazed_path:F01"
+            }
+          }
+        ]
+      },
+      "B": {
+        "ground_class": "hill",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1648,
+              "y": 1616
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1648,1616"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "328",
+              "x": 1649.06,
+              "y": 1604.06
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1649.06,1604.06"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "Aura-Hōth",
+              "x": 1649.06,
+              "y": 1604.06
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1649.06,1604.06"
+            }
+          },
+          {
+            "class": "relief_shade",
+            "rule": "B-12",
+            "instance": {
+              "name": "",
+              "x": 1649.06,
+              "y": 1604.06
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1649.06,1604.06"
+            }
+          },
+          {
+            "class": "homestead",
+            "rule": "B-21",
+            "instance": {
+              "name": "",
+              "x": 1648,
+              "y": 1616
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "homestead:F01"
+            }
+          },
+          {
+            "class": "blazed_path",
+            "rule": "B-17",
+            "instance": {
+              "name": "",
+              "x": 1648,
+              "y": 1616
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "blazed_path:F01"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "F02",
+      "bbox": [
+        1376,
+        1568,
+        1408,
+        1600
+      ],
+      "agree": 6,
+      "valid": {
+        "A": true,
+        "B": true
+      },
+      "resolved": {
+        "A": 6,
+        "B": 6
+      },
+      "A": {
+        "ground_class": "open_ground",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1584
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1392,1584"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "",
+              "x": 1407.4,
+              "y": 1599.9
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1407.4,1599.9"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1407.4,
+              "y": 1599.9
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F02"
+            }
+          },
+          {
+            "class": "cover_wash",
+            "rule": "B-25",
+            "instance": {
+              "name": "",
+              "x": 1384,
+              "y": 1592
+            },
+            "source": {
+              "kind": "sim",
+              "ref": "function genBiomes"
+            }
+          },
+          {
+            "class": "homestead",
+            "rule": "B-21",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1584
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "homestead:F02"
+            }
+          },
+          {
+            "class": "blazed_path",
+            "rule": "B-17",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1584
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "blazed_path:F02"
+            }
+          }
+        ]
+      },
+      "B": {
+        "ground_class": "open_ground",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1584
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1392,1584"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "151",
+              "x": 1407.4,
+              "y": 1599.9
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1407.4,1599.9"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1407.4,
+              "y": 1599.9
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F02"
+            }
+          },
+          {
+            "class": "cover_wash",
+            "rule": "B-25",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1584
+            },
+            "source": {
+              "kind": "sim",
+              "ref": "function genBiomes"
+            }
+          },
+          {
+            "class": "homestead",
+            "rule": "B-21",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1584
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "homestead:F02"
+            }
+          },
+          {
+            "class": "blazed_path",
+            "rule": "B-17",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1584
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "blazed_path:F02"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "F03",
+      "bbox": [
+        1312,
+        1504,
+        1344,
+        1536
+      ],
+      "agree": 6,
+      "valid": {
+        "A": true,
+        "B": true
+      },
+      "resolved": {
+        "A": 6,
+        "B": 6
+      },
+      "A": {
+        "ground_class": "open_ground",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1328,
+              "y": 1520
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1328,1520"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "",
+              "x": 1312.6,
+              "y": 1535.31
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1312.6,1535.31"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1312.6,
+              "y": 1535.31
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F03"
+            }
+          },
+          {
+            "class": "cover_wash",
+            "rule": "B-25",
+            "instance": {
+              "name": "",
+              "x": 1328,
+              "y": 1520
+            },
+            "source": {
+              "kind": "sim",
+              "ref": "function genBiomes"
+            }
+          },
+          {
+            "class": "homestead",
+            "rule": "B-21",
+            "instance": {
+              "name": "",
+              "x": 1328,
+              "y": 1520
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "homestead:F03"
+            }
+          },
+          {
+            "class": "blazed_path",
+            "rule": "B-17",
+            "instance": {
+              "name": "",
+              "x": 1328,
+              "y": 1520
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "blazed_path:F03"
+            }
+          }
+        ]
+      },
+      "B": {
+        "ground_class": "open_ground",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1328,
+              "y": 1520
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1328,1520"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "",
+              "x": 1312.6,
+              "y": 1535.31
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1312.6,1535.31"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1312.6,
+              "y": 1535.31
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F03"
+            }
+          },
+          {
+            "class": "cover_wash",
+            "rule": "B-25",
+            "instance": {
+              "name": "",
+              "x": 1328,
+              "y": 1520
+            },
+            "source": {
+              "kind": "sim",
+              "ref": "function genBiomes"
+            }
+          },
+          {
+            "class": "homestead",
+            "rule": "B-21",
+            "instance": {
+              "name": "",
+              "x": 1328,
+              "y": 1520
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "homestead:F03"
+            }
+          },
+          {
+            "class": "blazed_path",
+            "rule": "B-17",
+            "instance": {
+              "name": "",
+              "x": 1328,
+              "y": 1520
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "blazed_path:F03"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "F04",
+      "bbox": [
+        1376,
+        1632,
+        1408,
+        1664
+      ],
+      "agree": 6,
+      "valid": {
+        "A": true,
+        "B": true
+      },
+      "resolved": {
+        "A": 6,
+        "B": 6
+      },
+      "A": {
+        "ground_class": "open_ground",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1648
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1392,1648"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "",
+              "x": 1404.27,
+              "y": 1647.81
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1404.27,1647.81"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1404.27,
+              "y": 1647.81
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F04"
+            }
+          },
+          {
+            "class": "cover_wash",
+            "rule": "B-25",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1648
+            },
+            "source": {
+              "kind": "sim",
+              "ref": "function genBiomes"
+            }
+          },
+          {
+            "class": "homestead",
+            "rule": "B-21",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1648
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "homestead:F04"
+            }
+          },
+          {
+            "class": "blazed_path",
+            "rule": "B-17",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1648
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "blazed_path:F04"
+            }
+          }
+        ]
+      },
+      "B": {
+        "ground_class": "open_ground",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1648
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1392,1648"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "162",
+              "x": 1404.27,
+              "y": 1647.81
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1404.27,1647.81"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1404.27,
+              "y": 1647.81
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F04"
+            }
+          },
+          {
+            "class": "cover_wash",
+            "rule": "B-25",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1648
+            },
+            "source": {
+              "kind": "sim",
+              "ref": "function genBiomes"
+            }
+          },
+          {
+            "class": "homestead",
+            "rule": "B-21",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1648
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "homestead:F04"
+            }
+          },
+          {
+            "class": "blazed_path",
+            "rule": "B-17",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1648
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "blazed_path:F04"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "F05",
+      "bbox": [
+        1344,
+        1440,
+        1376,
+        1472
+      ],
+      "agree": 6,
+      "valid": {
+        "A": true,
+        "B": true
+      },
+      "resolved": {
+        "A": 6,
+        "B": 6
+      },
+      "A": {
+        "ground_class": "hill",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1360,
+              "y": 1456
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1360,1456"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "",
+              "x": 1375.1,
+              "y": 1471.77
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1375.1,1471.77"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1375.1,
+              "y": 1471.77
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F05"
+            }
+          },
+          {
+            "class": "relief_shade",
+            "rule": "B-12",
+            "instance": {
+              "name": "",
+              "x": 1375.1,
+              "y": 1471.77
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1375.1,1471.77"
+            }
+          },
+          {
+            "class": "homestead",
+            "rule": "B-21",
+            "instance": {
+              "name": "",
+              "x": 1360,
+              "y": 1456
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "homestead:F05"
+            }
+          },
+          {
+            "class": "blazed_path",
+            "rule": "B-17",
+            "instance": {
+              "name": "",
+              "x": 1360,
+              "y": 1456
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "blazed_path:F05"
+            }
+          }
+        ]
+      },
+      "B": {
+        "ground_class": "hill",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1360,
+              "y": 1456
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1360,1456"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "131",
+              "x": 1375.1,
+              "y": 1471.77
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1375.1,1471.77"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1375.1,
+              "y": 1471.77
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F05"
+            }
+          },
+          {
+            "class": "relief_shade",
+            "rule": "B-12",
+            "instance": {
+              "name": "",
+              "x": 1375.1,
+              "y": 1471.77
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1375.1,1471.77"
+            }
+          },
+          {
+            "class": "homestead",
+            "rule": "B-21",
+            "instance": {
+              "name": "",
+              "x": 1360,
+              "y": 1456
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "homestead:F05"
+            }
+          },
+          {
+            "class": "blazed_path",
+            "rule": "B-17",
+            "instance": {
+              "name": "",
+              "x": 1360,
+              "y": 1456
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "blazed_path:F05"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "F06",
+      "bbox": [
+        1536,
+        1504,
+        1568,
+        1536
+      ],
+      "agree": 6,
+      "valid": {
+        "A": true,
+        "B": true
+      },
+      "resolved": {
+        "A": 6,
+        "B": 6
+      },
+      "A": {
+        "ground_class": "coast",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "coast_edge",
+            "rule": "B-15",
+            "instance": {
+              "name": "",
+              "x": 1539.69,
+              "y": 1514.48
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1539.69,1514.48"
+            }
+          },
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1536.56,
+              "y": 1535.31
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1536.56,1535.31"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "",
+              "x": 1536.56,
+              "y": 1535.31
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1536.56,1535.31"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1536.56,
+              "y": 1535.31
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F06"
+            }
+          },
+          {
+            "class": "homestead",
+            "rule": "B-21",
+            "instance": {
+              "name": "",
+              "x": 1536.56,
+              "y": 1535.31
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "homestead:F06"
+            }
+          },
+          {
+            "class": "blazed_path",
+            "rule": "B-17",
+            "instance": {
+              "name": "",
+              "x": 1536.56,
+              "y": 1535.31
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "blazed_path:F06"
+            }
+          }
+        ]
+      },
+      "B": {
+        "ground_class": "coast",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "coast_edge",
+            "rule": "B-15",
+            "instance": {
+              "name": "",
+              "x": 1548,
+              "y": 1530
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1548,1530"
+            }
+          },
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1536.56,
+              "y": 1535.31
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1536.56,1535.31"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "88",
+              "x": 1536.56,
+              "y": 1535.31
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1536.56,1535.31"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1536.56,
+              "y": 1535.31
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F06"
+            }
+          },
+          {
+            "class": "homestead",
+            "rule": "B-21",
+            "instance": {
+              "name": "",
+              "x": 1536.56,
+              "y": 1535.31
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "homestead:F06"
+            }
+          },
+          {
+            "class": "blazed_path",
+            "rule": "B-17",
+            "instance": {
+              "name": "",
+              "x": 1536.56,
+              "y": 1535.31
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "blazed_path:F06"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "F07",
+      "bbox": [
+        1280,
+        1376,
+        1312,
+        1408
+      ],
+      "agree": 6,
+      "valid": {
+        "A": true,
+        "B": true
+      },
+      "resolved": {
+        "A": 6,
+        "B": 6
+      },
+      "A": {
+        "ground_class": "islets",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "coast_edge",
+            "rule": "B-15",
+            "instance": {
+              "name": "",
+              "x": 1283.25,
+              "y": 1392
+            },
+            "source": {
+              "kind": "print",
+              "ref": "F07@141,192"
+            }
+          },
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1295.94,
+              "y": 1397.81
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1295.94,1397.81"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "",
+              "x": 1295.94,
+              "y": 1397.81
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1295.94,1397.81"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1295.94,
+              "y": 1397.81
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F07"
+            }
+          },
+          {
+            "class": "homestead",
+            "rule": "B-21",
+            "instance": {
+              "name": "",
+              "x": 1295.94,
+              "y": 1397.81
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "homestead:F07"
+            }
+          },
+          {
+            "class": "cover_wash",
+            "rule": "B-25",
+            "instance": {
+              "name": "",
+              "x": 1295.94,
+              "y": 1397.81
+            },
+            "source": {
+              "kind": "sim",
+              "ref": "function genBiomes"
+            }
+          }
+        ]
+      },
+      "B": {
+        "ground_class": "islets",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "coast_edge",
+            "rule": "B-15",
+            "instance": {
+              "name": "",
+              "x": 1293.85,
+              "y": 1397.81
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1293.85,1397.81"
+            }
+          },
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1295.94,
+              "y": 1397.81
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1295.94,1397.81"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "24",
+              "x": 1295.94,
+              "y": 1397.81
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1295.94,1397.81"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1295.94,
+              "y": 1397.81
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F07"
+            }
+          },
+          {
+            "class": "homestead",
+            "rule": "B-21",
+            "instance": {
+              "name": "",
+              "x": 1295.94,
+              "y": 1397.81
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "homestead:F07"
+            }
+          },
+          {
+            "class": "cover_wash",
+            "rule": "B-25",
+            "instance": {
+              "name": "",
+              "x": 1295.94,
+              "y": 1397.81
+            },
+            "source": {
+              "kind": "sim",
+              "ref": "function genBiomes"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "F08",
+      "bbox": [
+        1600,
+        1376,
+        1632,
+        1408
+      ],
+      "agree": 6,
+      "valid": {
+        "A": true,
+        "B": true
+      },
+      "resolved": {
+        "A": 0,
+        "B": 0
+      },
+      "A": {
+        "ground_class": "open_sea",
+        "exempt_rule": "B-04",
+        "bible_silent": false,
+        "items": []
+      },
+      "B": {
+        "ground_class": "open_sea",
+        "exempt_rule": "B-04",
+        "bible_silent": false,
+        "items": []
+      }
+    },
+    {
+      "id": "F09",
+      "bbox": [
+        1440,
+        1504,
+        1472,
+        1536
+      ],
+      "agree": 6,
+      "valid": {
+        "A": true,
+        "B": true
+      },
+      "resolved": {
+        "A": 6,
+        "B": 6
+      },
+      "A": {
+        "ground_class": "river_town",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "town_shield",
+            "rule": "B-20",
+            "instance": {
+              "name": "Aldorūs",
+              "x": 1448.6,
+              "y": 1527.5
+            },
+            "source": {
+              "kind": "data",
+              "ref": "city-anchors.json#Aldorūs"
+            }
+          },
+          {
+            "class": "town_name",
+            "rule": "B-19",
+            "instance": {
+              "name": "Aldorūs",
+              "x": 1448.6,
+              "y": 1527.5
+            },
+            "source": {
+              "kind": "data",
+              "ref": "city-anchors.json#Aldorūs"
+            }
+          },
+          {
+            "class": "river_line",
+            "rule": "B-13",
+            "instance": {
+              "name": "",
+              "x": 1444.25,
+              "y": 1512.5
+            },
+            "source": {
+              "kind": "print",
+              "ref": "F09@145,162"
+            }
+          },
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1456,
+              "y": 1520
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1456,1520"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "142",
+              "x": 1461.56,
+              "y": 1529.06
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1461.56,1529.06"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1461.56,
+              "y": 1529.06
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F09"
+            }
+          }
+        ]
+      },
+      "B": {
+        "ground_class": "river_town",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "town_shield",
+            "rule": "B-20",
+            "instance": {
+              "name": "Aldorūs",
+              "x": 1448.6,
+              "y": 1527.5
+            },
+            "source": {
+              "kind": "data",
+              "ref": "city-anchors.json#Aldorūs"
+            }
+          },
+          {
+            "class": "town_name",
+            "rule": "B-19",
+            "instance": {
+              "name": "Aldorūs",
+              "x": 1448.6,
+              "y": 1527.5
+            },
+            "source": {
+              "kind": "data",
+              "ref": "city-anchors.json#Aldorūs"
+            }
+          },
+          {
+            "class": "river_line",
+            "rule": "B-13",
+            "instance": {
+              "name": "",
+              "x": 1444.25,
+              "y": 1512
+            },
+            "source": {
+              "kind": "print",
+              "ref": "F09@145,160"
+            }
+          },
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1456,
+              "y": 1520
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1456,1520"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "142",
+              "x": 1461.56,
+              "y": 1529.06
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1461.56,1529.06"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1461.56,
+              "y": 1529.06
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F09"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "F10",
+      "bbox": [
+        1216,
+        1408,
+        1248,
+        1440
+      ],
+      "agree": 6,
+      "valid": {
+        "A": true,
+        "B": true
+      },
+      "resolved": {
+        "A": 6,
+        "B": 6
+      },
+      "A": {
+        "ground_class": "painted_city",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "city_tone",
+            "rule": "B-57",
+            "instance": {
+              "name": "",
+              "x": 1236.1,
+              "y": 1415
+            },
+            "source": {
+              "kind": "data",
+              "ref": "city-anchors.json#Epēshu"
+            }
+          },
+          {
+            "class": "fog_wash",
+            "rule": "B-37",
+            "instance": {
+              "name": "",
+              "x": 1232,
+              "y": 1424
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "fog_wash:F10"
+            }
+          },
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1232,
+              "y": 1424
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1232,1424"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "",
+              "x": 1246.98,
+              "y": 1439.48
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1246.98,1439.48"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "Mount Mastery",
+              "x": 1236.1,
+              "y": 1415
+            },
+            "source": {
+              "kind": "data",
+              "ref": "chart-pois.json#Mount Mastery"
+            }
+          },
+          {
+            "class": "town_name",
+            "rule": "B-19",
+            "instance": {
+              "name": "Epēshu",
+              "x": 1236.1,
+              "y": 1415
+            },
+            "source": {
+              "kind": "data",
+              "ref": "city-anchors.json#Epēshu"
+            }
+          }
+        ]
+      },
+      "B": {
+        "ground_class": "painted_city",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "city_tone",
+            "rule": "B-57",
+            "instance": {
+              "name": "",
+              "x": 1236.1,
+              "y": 1415
+            },
+            "source": {
+              "kind": "data",
+              "ref": "city-anchors.json#Epēshu"
+            }
+          },
+          {
+            "class": "fog_wash",
+            "rule": "B-37",
+            "instance": {
+              "name": "",
+              "x": 1232,
+              "y": 1424
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "fog_wash:F10"
+            }
+          },
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1232,
+              "y": 1424
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1232,1424"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "",
+              "x": 1246.98,
+              "y": 1439.48
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1246.98,1439.48"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "Mount Mastery",
+              "x": 1246.98,
+              "y": 1439.48
+            },
+            "source": {
+              "kind": "data",
+              "ref": "chart-pois.json#Mount Mastery"
+            }
+          },
+          {
+            "class": "town_name",
+            "rule": "B-19",
+            "instance": {
+              "name": "Epēshu",
+              "x": 1236.1,
+              "y": 1415
+            },
+            "source": {
+              "kind": "data",
+              "ref": "city-anchors.json#Epēshu"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "F11",
+      "bbox": [
+        1120,
+        1408,
+        1152,
+        1440
+      ],
+      "agree": 6,
+      "valid": {
+        "A": true,
+        "B": true
+      },
+      "resolved": {
+        "A": 6,
+        "B": 6
+      },
+      "A": {
+        "ground_class": "ruin",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "old_survey",
+            "rule": "B-40",
+            "instance": {
+              "name": "Lepon",
+              "x": 1145,
+              "y": 1427
+            },
+            "source": {
+              "kind": "data",
+              "ref": "maps_markers.json#Lepon"
+            }
+          },
+          {
+            "class": "town_name",
+            "rule": "B-19",
+            "instance": {
+              "name": "Lepon the Old",
+              "x": 1146.5,
+              "y": 1420.2
+            },
+            "source": {
+              "kind": "data",
+              "ref": "city-anchors.json#Lepon the Old"
+            }
+          },
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1151.15,
+              "y": 1433.23
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1151.15,1433.23"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "65",
+              "x": 1151.15,
+              "y": 1433.23
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1151.15,1433.23"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1151.15,
+              "y": 1433.23
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F11"
+            }
+          },
+          {
+            "class": "cover_wash",
+            "rule": "B-25",
+            "instance": {
+              "name": "",
+              "x": 1151.15,
+              "y": 1433.23
+            },
+            "source": {
+              "kind": "sim",
+              "ref": "function genBiomes"
+            }
+          }
+        ]
+      },
+      "B": {
+        "ground_class": "ruin",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "old_survey",
+            "rule": "B-40",
+            "instance": {
+              "name": "Lepon",
+              "x": 1145,
+              "y": 1427
+            },
+            "source": {
+              "kind": "data",
+              "ref": "maps_markers.json#Lepon"
+            }
+          },
+          {
+            "class": "town_name",
+            "rule": "B-19",
+            "instance": {
+              "name": "Lepon the Old",
+              "x": 1146.5,
+              "y": 1420.2
+            },
+            "source": {
+              "kind": "data",
+              "ref": "city-anchors.json#Lepon the Old"
+            }
+          },
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1151.15,
+              "y": 1433.23
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1151.15,1433.23"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "",
+              "x": 1151.15,
+              "y": 1433.23
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1151.15,1433.23"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1151.15,
+              "y": 1433.23
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F11"
+            }
+          },
+          {
+            "class": "cover_wash",
+            "rule": "B-25",
+            "instance": {
+              "name": "",
+              "x": 1151.15,
+              "y": 1433.23
+            },
+            "source": {
+              "kind": "sim",
+              "ref": "function genBiomes"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "F12",
+      "bbox": [
+        2656,
+        192,
+        2688,
+        224
+      ],
+      "agree": 6,
+      "valid": {
+        "A": true,
+        "B": true
+      },
+      "resolved": {
+        "A": 0,
+        "B": 0
+      },
+      "A": {
+        "ground_class": "no_dem",
+        "exempt_rule": "B-03",
+        "bible_silent": false,
+        "items": []
+      },
+      "B": {
+        "ground_class": "no_dem",
+        "exempt_rule": "B-03",
+        "bible_silent": false,
+        "items": []
+      }
+    }
+  ]
+}

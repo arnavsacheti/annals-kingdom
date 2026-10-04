@@ -35,7 +35,7 @@ vibe check"). Use the returned `polish_note` as the result note, `polish_inserts
 `changelog_line` in the release. Queue rules for these items (reason codes, where inserted items go,
 releases, the on-return table): `docs/filigree/README.md` §1.
 
-- [ ] **Filigree 1 · Research → density bible (USER REQUEST)** — inventory what plate one bothers to
+- [x] **Filigree 1 · Research → density bible (USER REQUEST)** — inventory what plate one bothers to
   name (peak, height, homestead, reserve, river fork, coast road) against what plates two and three
   delete; walk the Pēshunor north coast once (three fixed bands of the sheet-one box) and one fixed
   Epēshu quarter in Azlen's grain (block, park void, arterial, fog wash, contour hill); carry the
@@ -81,6 +81,8 @@ releases, the on-return table): `docs/filigree/README.md` §1.
     is already in the checkout. Docs + a read-only probe tool; never edits `index.html` or
     `maps-site/index.html`. If the dotted "Traced road network" data file is missing or unloaded,
     that is a q17 finding, not a preflight failure.
+  - Result (2026-10-04): density bible: 59 rules, 12/12 hexes agree ≥5/6 (min 6/6), 100% instances
+    resolve, checklist 27/27, round 1; gaps for Job 2 recorded in `docs/filigree/gates/1-research.json`.
 
 - [ ] **Filigree 2 · Planning → sheet spec (USER REQUEST)** — from the bible alone: one coast, one
   river town, one painted city (default Pēshunor north coast / Aldorūs / Epēshu unless a challenger

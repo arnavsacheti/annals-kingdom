@@ -1,0 +1,207 @@
+{
+  "qid": "q08",
+  "claims": [
+    {
+      "id": "q08-c01",
+      "text": "Q1 is 64 tiles (chart z3 x1..8 by y5..12, all 64 files present): 2048x2048 chart px, 25.5% of the 3914x4200 chart. Epēshu's world footprint is cityBox(anchor 1236.1,1415; capital r=26; overlay 2863x3072) = atlas x 1211.87..1260.33, y 1389..1441 (48.46x52), so 80.77 chart px per atlas px and Q1 = atlas [1215.04,1240.40) x [1404.85,1430.20), a 25.36 px square of 643 atlas px2 = 0.63 of a hex. By area 84.3% of Q1 lies in fixture F10 (cell 38,44, bbox 1216,1408,1248,1440), 12.0% in cell 38,43, 3.3% in 37,44 and 0.5% in 37,43; F10 holds the Epēshu anchor. The whole city is only 1.51 x 1.63 hexes across.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python: hw=26*2863/3072; x=1236.1-hw+cx/3914*2*hw; y=1389+cy/4200*52; cell overlap of the Q1 corners (256,1280)-(2304,3328); ls maps-site/charts/epeshu/3/{1..8}/{5..12}.jpg | 64 files; maps-site/index.html :: function cityBox; maps-site/data/detail-charts.json#Epēshu"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q08-c02",
+      "text": "Epēshu is NOT drawn by genCityCanvas in the shipped site. meshedWorldInit registers it as a canon overlay (art/overlay-Epeshu.jpg, 2863x3072, prov 'canon', 19 POIs), ensureCityGen only generates when there is no registration or prov is 'invented', and ensureCityGenNow returns when CITYREG[key] exists. Everything the generator would draw for Epēshu is therefore a what-if; the city-traits.json entry (capital, harbor, sea SSW 10 px, wall, patron Thobrauk, Trogmunders, wooded, thriving, inn The Black Barghest) is what feeds it.",
+      "evidence": {
+        "kind": "anchor",
+        "ref": "maps-site/index.html :: registerCityOverlay('Epēshu' (3014); maps-site/index.html :: if(t&&(!reg||reg.prov==='invented')) (2978); maps-site/index.html :: if(CITYREG[key])return (2992); maps-site/data/city-traits.json#Epēshu"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q08-c03",
+      "text": "Block grain on the chart: Q1 holds about 13,669 building fills (orange-tan connected components of at least 12 px), 17.6% of the 3.34M land px, median 36 px2, mean fill rgb(216,172,124), each outlined in dark slate ink; 409 fills per 100k land px, about 26.7 per atlas px2. Streets are narrow cream channels between them; the grain is continuous across the whole quarter, with density thinning only at the east and south-east outskirts where houses give way to cream parcels.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python3 + scipy on the stitched Q1 mosaic: bld=(R>G+20)&(G>B+20)&(R>165), scipy.ndimage.label, area>=12 px; land = not water rgb(118,154,137)+-14; crops q1_1.png and forum_crop.png (mosaic 560,820,900,1160)"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q08-c04",
+      "text": "Arterials on the chart: there is no ocher or distinct arterial colour. Every street, avenue and plaza is the same cream as the ground. Width is the only hierarchy: cream-channel ridge widths in Q1 have p25/p50/p75/p90/p99 of 4/4.5/6/8/16 px, and the Forum avenue east of the Forum measures 5-10 px against 4-6 px for ordinary lanes (about 2x). The one differentiated line is a slate-grey (about rgb 95,97,90) wall with square gate-towers: a single arc entering Q1 at its north edge near chart x1570, running south-east then south-west and west along chart y about 3250 to the west edge; Outwall (POI 11, 2047,1386) lies east of it and the Black Barghest Inn (POI 14) beside it.",
+      "evidence": {
+        "kind": "crop",
+        "ref": "maps-site/charts/epeshu/3 mosaic crops 1280,380,1580,680 (wall + gate-towers) and q1_1/q1_2/q1_3 quadrants; EDT ridge widths of the cream mask (python scipy distance_transform_edt, 5x5 maximum filter)"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q08-c05",
+      "text": "Park voids on the chart are few and small. Three deliberate green spots: the Māmban (POI 8 at 969,2207), a roughly 150 px dark-green canopy mass around a light-green lawn (about rgb 196,207,156) with the badge on top of its core; the Necropolis of the Founders (POI 1), a small tree stand, lawn and a dark stone building on the shore spit; and the Temple of Thobrauk precinct (POI 5), a lawn patch with a dark building at the north edge. Mid-green tree canopy is 12.1% of land in 525 clusters of at least 40 px (largest 29,305 px, the forest wall at the east edge, which continues past Q1); cream open voids at least 25 px across number 37 and cover 9.3% of land, the biggest (142,706 px) being the empty outskirt parcels north-east of the wall, not a park. The sage gridded field with parcel lines (about 330x240 px at chart x1850-2180, y2454-2694) is the only agricultural patch.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python3 on the Q1 mosaic: tree=(G>R+6)&(G>B+12)&(R<140)&(G<150); sage within 14 of (196,207,156); cream opening 25x25 then label; crops q1_0.png, q1_3.png, forum_crop.png; maps-site/data/chart-pois.json#Epēshu n=1,5,8"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q08-c06",
+      "text": "Water is flat on the chart and in the generator: the Q1 sea (20.3% of Q1) is one constant fill rgb(119,153,136) with standard deviation 0.00 in the interior (754,795 px sampled) and a cream beach rim, with no ink rim and no wash or depth tone. genCityCanvas paints one flat WATER '#7fa3a0' plus an 8-stamp ink rim (rgba 74,70,60,.6, 3.5 px). Azlen's watercolor water exists in neither.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python3: std of Q1 pixels within 14 of (118,154,137) after 20-px erosion = (0,0,0); maps-site/index.html :: WATER='#7fa3a0' (2180); maps-site/index.html :: g.drawImage(wla,0,0) (2663)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q08-c07",
+      "text": "Contour hills: the chart draws no relief of any kind (no hachure, contour, hillshade or hill glyph in Q1), and no hill or rock POI lies inside Q1 (Mount Mastery 246,121 and Bangeph Rock 729,1082 are both outside). The only relief source is the sim DEM: over Q1 it spans -20.44 to 85.13 m (land_frac 0.5824) as one rise from the sea in the west to the east, e.g. a 5x5 sample grid runs from -20.4 m (west edge) to 85.1 m (south-east corner). There is no summit inside Q1: the only peak the probe returns is clipped at the south-east corner (1240.73,1430.10; 85.13 m), and F10's own summit of 98.5 m at (1246.98,1439.48) falls at chart px about (2836,4077), outside Q1. Wiki trait text says 'hills to the north'.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "node tools/filigree-dem.js --bbox 1215,1405,1241,1431 ; --bbox 1216,1408,1248,1440 ; --at on a 5x5 grid step 6.34 from 1215.04,1404.85; maps-site/data/chart-pois.json#Epēshu n=17,18; maps-site/data/city-traits.json#Epēshu.biome.note"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q08-c08",
+      "text": "The DEM coast does not follow the chart coast in the southern half of Q1. Where the DEM first reaches h>=0 east of the sea, it sits 1.0 and 0.8 atlas px (about 78 and 67 chart px) from the chart coast at chart y 1500 and 1800, but 3.8, 7.0, 10.3 and 10.4 atlas px (309, 562, 828, 837 chart px) east of it at y 2100, 2400, 2700 and 3000. DEM land is 58% of Q1 against about 80% on the chart. The northern agreement is within one DEM cell (1.04 atlas px), so the transform looks right and the gap is in the DEM's own sea/land line; relief laid over the chart would drown the south-west quarter unless it is clipped to the chart coast.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "node (require tools/filigree-dem.js load/at) scanning east along atlas y = 1389+cy/4200*52 for cy in 1500,1800,2100,2400,2700,3000 vs chart coast x from the water mask of the Q1 mosaic"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q08-c09",
+      "text": "Fog does not exist anywhere in the table map. maps-site/index.html contains 0 hits for fog, contour, hachure, hillshade, watercolor, arterial, ocher, ochre and park; the sim's weather state set is clear, overcast, rain, storm, snow (no fog), so fog has no sim source. The nearest thing on the city sheet is the under-plan parchment wash (washMake, pane pCityWash at z449 under pCity z450, a radial gradient about 1.7x the footprint, centre alpha .94 falling to 0, riding the overlayOpacity ramp z6.8-7.8) which exists to hide the atlas label under a plan; it is a tone mat, not weather. It is built for the canon Epēshu chart too.",
+      "evidence": {
+        "kind": "anchor",
+        "ref": "maps-site/index.html :: function washMake (1923); maps-site/index.html :: function overlayOpacity (1835); index.html :: W.weather = { state: 'clear' (3464); index.html:5008-5011 (st = ... 'snow' | 'overcast' | 'storm' | 'clear' | 'rain'); grep -ci fog maps-site/index.html = 0"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q08-c10",
+      "text": "The chart carries baked pins: 12 navy numbered discs in Q1 (badges 1-11 and 14; 4,339-5,591 px each, 61,371 px = 1.46% of Q1), each ringed in cream and sitting on top of what it names (the Māmban badge covers the garden core, the Forum badge the Forum). The full chart also bakes a boxed legend into its lower right corner (outside Q1). Under the brief's Azlen rule ('No UI chrome, no pins') these are the chart's main non-painted element; the site additionally draws 19 .poi-mk roundels from chart-pois.json at z>=8 (DOM count 19 with the canon chart on screen at z 9.38).",
+      "evidence": {
+        "kind": "computed",
+        "ref": "python3 label of navy (R<70,G<80,B 50-110, B>R+15) components >3000 px on the Q1 mosaic; Playwright: ATLAS.descend('Epēshu',7) then document.querySelectorAll('.poi-mk').length = 19 at z 9.38; maps-site/art/overlay-Epeshu.jpg (legend lower right)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q08-c11",
+      "text": "Twelve of the chart's 19 POIs fall inside Q1 (chart px in parentheses): 1 Necropolis of the Founders (788,2095), 2 Wood Quay (1009,1787), 3 Whitestreet (706,2574), 4 Marble Quarter (1451,1464), 5 Temple of Thobrauk Tegendes (1053,1341), 6 Temple of the Ēkromatkar (1528,2096), 7 Epēshīn Forum (1191,2147), 8 The Māmban (969,2207), 9 The Relkhonak (1021,2351), 10 Thūkīn Amphitheatre (704,2999), 11 Outwall (2047,1386), 14 Black Barghest Inn (1275,3133). The other seven are outside: 12 Eelwynd, 13 Kohabron, 15 Road That Walks with the Sun (3782,1738), 16 Old Quarry Lot (1417,3835), 17 Mount Mastery, 18 Bangeph Rock, 19 The Fairy Arch. Every one of the 12 is a quarter, building or garden, so they feed block grain and park voids; none is a hill, and the great road POI 15 is outside Q1 though its text says it passes through the Forum.",
+      "evidence": {
+        "kind": "data",
+        "ref": "maps-site/data/chart-pois.json#Epēshu (x,y in chart px; Q1 = [256,2304)x[1280,3328))"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q08-c12",
+      "text": "Canon text that constrains the quarter: Epēshu has 'a crumbling inner wall' dividing the older, richer inner city from its poorer outer districts; the harbor splits informally into Wood Quay (old, rotted) and Whitestreet (marble trade); the Forum is ringed by the Curia, the Relkhonak and the Māmban gardens; biome note is forests and farmlands south and east, hills to the north, the White Sea to the west. The chart's wall arc with Outwall outside it matches the inner-wall note, but nothing in the data says the arc is that wall.",
+      "evidence": {
+        "kind": "data",
+        "ref": "maps-site/data/city-traits.json#Epēshu.canonNotes and #Epēshu.biome.note; maps-site/data/chart-pois.json#Epēshu n=8,11"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q08-c13",
+      "text": "What genCityCanvas would draw for Epēshu, in paint order (maps-site/index.html:2166-2896): surround fill tinted to the sampled land hue; a cream settled blob (capital kR .34: coreR 696, landR 1079 of 2048 px); 2-4 sage gridded outlying fields; a market square (reserved rect .14-.2 coreR); 4 wall gates plus approach gates, gate-to-square primaries with a bend, approach roads to the plan edge, a ring road for walled cores; a temple precinct (patron Thobrauk); a lane graph (up to 80 lanes, streets and alleys) with buildings snapped to frontages (3 rows on primaries, 2 on streets, 1 on alleys, rects 5-11 px, 7 terracotta and tan fills, rounded corners in one Trogmunder sector); 14-36 tree clusters (wooded x1.8); pale road strokes; a double wall ring at .5 and .92 coreR with towers; the atlas-masked sea with ink rim, 3-5 quays and moored boats; market-square paving; 7 invented POIs; an irregular edge vignette; a title cartouche; the hearsay watermark; 3 street stubs. That is the whole list: no park, no hill, no fog, no arterial colour.",
+      "evidence": {
+        "kind": "anchor",
+        "ref": "maps-site/index.html :: function genCityCanvas (2166); :: var kR={capital:0.34 (2215); :: var nFields= (2339); :: var rings= (2600); :: var nTrees= (2557); :: var maxLanes= (2498); :: var nQ = t.harbor (2683); :: var vharm= (2848); :: drawn from hearsay (2880); :: stubs.push (2895)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q08-c14",
+      "text": "Measured against the chart, the forced generated plan is far sparser. Forcing the generator for Epēshu (delete CITYREG['Epēshu'], ATLAS.descend, wait for the z5 mask tiles) gives a 2048x2048 plan at 39.4 px per atlas px (the chart is 80.8): about 919 building fills = 3.2% of land (chart 17.6%), 67.5 per 100k land px against 408.7 (6.1x fewer per image px, about 25x fewer per atlas px2: 1.05 vs 26.7); tree canopy 0.9% of land in 33 clusters (chart 12.1%, 525); cream open ground 83.6% of land (chart 29.1%); fills are terracotta rgb(193,138,102) against the chart's tan-ochre (216,172,124), outlined in brown not slate. In the generated plan the empty cream is the default state; on the chart it is a deliberate plaza or lawn.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "Playwright (/opt/node-tools playwright, chromium) on maps-site served by http-server: delete ATLAS.cityReg['Epēshu']; ATLAS.descend('Epēshu'); read ATLAS.cityReg['Epēshu'].url after 6 s; python3 scipy metrics script (same colour rules as the chart, valid = alpha>=250): gen_mel 919 fills/1,362,320 land px, chart 13,669/3,344,508"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q08-c15",
+      "text": "Road classes in the generator: primaries stroked at roadHalf*1.5 = 27.6 px of pale '#f6f1e0' with a 1 px ink centreline (roadHalf = S*0.009 = 18.4 px), streets at 16.6 px with a faint ink line, alleys at about 5.6 px at .3 alpha, a ring road, and for walled cores two wall rings in brown '#6b5c48' (5 px outer, 3.2 px inner) with grey-tan towers. So it has four width tiers (primary, ring, street, alley) all in the ground cream, no ocher; the wall is brown where the chart's is slate grey.",
+      "evidence": {
+        "kind": "anchor",
+        "ref": "maps-site/index.html :: var roadHalf=S*0.009 (2430); :: var ROAD= (2184); :: var rings= (2600); :: STONE_O='#6b5c48' (2184)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q08-c16",
+      "text": "The generator has no park-void primitive. The only civic ground is two reserved rects (market square, temple) kept free of buildings; there are no lawns, gardens, burial grounds or canopy masses, and 'The Common Green' is POI text only (no geometry; the code adds it only when a plan has fewer than 4 POIs). Trees are 3-6 blob clusters scattered by radius, never a deliberate garden. A Māmban or Necropolis cannot be produced without a new primitive.",
+      "evidence": {
+        "kind": "anchor",
+        "ref": "maps-site/index.html :: var reserved=[] (2439); :: The Common Green (2837); :: var nTrees= (2557)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q08-c17",
+      "text": "The generator bakes chrome the Azlen rule forbids: a boxed title cartouche ('EPĒSHU / a Māgos'), a boxed watermark '✶ drawn from hearsay - awaiting a true survey', numbered POI roundels, and an irregular alpha vignette that dissolves the plan edge into the atlas. The chart's chrome is the badges and legend (claim 10), so both sources carry pins.",
+      "evidence": {
+        "kind": "anchor",
+        "ref": "maps-site/index.html :: var ttl=name.toUpperCase() (2869); :: drawn from hearsay (2880); :: var vharm= (2848); screenshot-free: gen_mel.webp rendered over magenta"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q08-c18",
+      "text": "The generator's POIs do not reproduce the chart's. For Epēshu the atlas-masked plan yields 7 invented POIs (The Market Square, Temple of Thobrauk, The Quays, The NE Gate, The Black Barghest, The Spring, The Horse Fair) and 3 stubs; the unmasked first-paint plan yields 7 others (Market Square, Temple of Thobrauk, Quays, NE Gate, The Black Barghest, The Old Well, The Counting-House). Only two names echo canon (Temple of Thobrauk, the Black Barghest inn) and neither is at its chart position; none of the Forum, Māmban, Relkhonak, Necropolis, Marble Quarter, Wood Quay, Whitestreet, Outwall or the Amphitheatre can appear.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "Playwright read of ATLAS.cityReg['Epēshu'].pois after forcing the generator (info.json: sync and melded lists); maps-site/data/chart-pois.json#Epēshu"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q08-c19",
+      "text": "Generated plans are byte-stable per run but not per mask state. Two fresh page loads give identical webp output (sha256 494b0e0c5d85bad6... masked, b6b004f97a697edefc5c... unmasked), yet the unmasked deep-link plan (ensureCityGenNow, no tiles yet) and the later atlas-masked plan differ in coast, temple site and POI list, because the mask changes the rng draw path. A deep link first paints one plan and then hot-swaps to another.",
+      "evidence": {
+        "kind": "computed",
+        "ref": "two Playwright runs of the force script, sha256sum gen_mel.webp run1 = run2 and gen_sync.webp run1 = run2; maps-site/index.html :: function ensureCityGenNow (2990); :: function ensureCityGen (2968)"
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "q08-c20",
+      "text": "Palette against the brief: the brief names bone paper, rust coast road, ocher arterials, rose-brown blocks, wet-blue water. The chart's Q1 colours are cream ground (about 255,247,209), tan-ochre block fill (216,172,124) with slate ink, flat green-grey water (119,153,136), mid-green canopy (96,108,84) and slate-grey wall; the generator's are cream (240,234,210), terracotta (193,138,102) with brown ink, teal (127,163,160) and brown wall. Neither has an ocher road or a rose-brown block, and neither water is wet.",
+      "evidence": {
+        "kind": "pdf-page",
+        "ref": "docs/research/filigree-for-the-table.pdf p5 (Planning: 'bone paper, rust coast road, ocher arterials, rose-brown blocks, wet-blue water'); p4 (The painted city); colours from the Q1 mosaic median-cut palette and maps-site/index.html :: var BLD= (2181)"
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "q08-c21",
+      "text": "Against the brief's five Azlen classes, Q1 stands: block grain - chart has it densely (13.7k fills) and the generator thinly; park void - chart has 3 small deliberate green spots and tree masses, generator has none; arterial - chart has width tiers only in cream plus a slate wall, generator has four cream tiers and a brown wall, neither has ocher; fog wash - absent in chart, generator, sim and site (only the parchment tone wash exists); contour hill - absent from the chart and the generator, with only a DEM slope (-20 to 85 m) that disagrees with the chart coast in the south. So for Q1 the chart is the density benchmark and nothing yet supplies the painted classes beyond block grain.",
+      "evidence": {
+        "kind": "pdf-page",
+        "ref": "docs/research/filigree-for-the-table.pdf p4 (painted city: cream sheet, rose-brown block grain, green park voids, contour hair, ocher arterials, watercolor water, fog washes, no chrome, no pins); p5 (Research: 'block, park void, arterial, fog wash, contour hill'); claims q08-c03 to q08-c20"
+      },
+      "confidence": "high"
+    }
+  ],
+  "gaps": [
+    "No vector source exists for the chart's blocks, lawns, wall or streets; every chart figure here is a pixel-colour classification of JPEG tiles. Fill counts (13,669) merge touching blocks and miss tiny ones, so treat them as an order of magnitude, and the 6x and 25x density ratios as approximate.",
+    "Which cream avenue is the Road That Walks with the Sun inside Q1 is not established: POI 15 is outside Q1 and the chart labels no street. The Forum avenue width (5-10 px) is a sample at five columns, not a surveyed arterial network.",
+    "The wall's length, tower and gate count were not measured (a colour-opening attempt fragmented the line), and nothing in the data says the chart's arc is the wiki's 'crumbling inner wall'.",
+    "The wiki's 'hills to the north' are not located inside Q1, and the south-west DEM versus chart coast gap (up to 10.4 atlas px) was measured but not explained (DEM carving versus the chart's drawn coast).",
+    "The fog source is undecided: the sim has no fog state, so a fog wash needs a seeded function of place and snapshot day or a new weather state; nothing here chooses.",
+    "The generator was forced in headless Chromium with Leaflet served from a local copy (unpkg.com is blocked by the proxy) and Google Fonts aborted, so the cartouche font and anything network-dependent were not exercised; cityApproaches (source of the 3 stubs and approach gates) was not read.",
+    "Whether the canon world-zoom overlay maps-site/art/overlay-Epeshu.jpg and the z3 tile chart are the same art was not settled: composition, numbering and the 0.7315 scale match, but a resized Q1 differs from the overlay crop by a mean absolute RGB difference of 13.6, so which one Job 3 should treat as the benchmark is open.",
+    "The target colours for rose-brown blocks and ocher arterials are not specified anywhere in the repo, so whether the chart's tan-ochre fill counts as rose-brown is a judgement left to Job 2.",
+    "Whether the baked badges and the 19 .poi-mk roundels coincide exactly at deeper zoom than 9.38 was not checked."
+  ],
+  "summary": "Q1 (chart px 2048 square, 0.63 of a hex, 84% inside fixture F10) is a dense block-grain painting with flat water, a slate wall, 12 baked pins and only three small green park spots, and it has no relief, ocher arterials or fog; the DEM supplies one eastward slope (-20 to 85 m) that disagrees with the chart coast in the south. genCityCanvas is never run for Epēshu (the canon overlay shadows it) and, when forced, draws about a sixth of the chart's fill density per image px with no park, hill or fog primitive and baked cartouche chrome. The chart is therefore the density benchmark for Q1 and only block grain has any source; park voids, arterials, fog and contour hills are all gaps.",
+  "date": "2026-10-04"
+}
