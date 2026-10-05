@@ -486,6 +486,19 @@
       },
       "reason": "unit passed",
       "ref": "after-D6"
+    },
+    {
+      "before_unit": "D3",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "reason": "font-faithful desktop reference R1: the capture tool serves the Google Fonts hosts from the fontsource packages, so references render the production faces (D3 and D4 score UG8 against it)",
+      "ref": "R1"
     }
   ]
 }
