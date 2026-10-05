@@ -5,7 +5,7 @@
   "tool_sha": "e30d616335fdf217a5fc78166b8c5e0dd740ee6e7c8a942fa1dc156a67c5fa33",
   "index_sha": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
   "atlas_sha": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc",
-  "unit": "D1",
+  "unit": "rebase-2",
   "profiles": [
    "iphone13",
    "pixel7",
@@ -33,17 +33,17 @@
    "ctxloss"
   ],
   "cdn_routed": true,
-  "server": "spawn",
+  "server": "static",
   "browser": "141.0.7390.37",
   "timing": {
-   "wall_ms": 1687485
+   "wall_ms": 1706599
   }
  },
  "repo": {
   "sha": {
    "index": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
    "atlas": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc",
-   "server": "71a4b45e673366db5756a799f7a395a9c6dedbcf3c1ba46f37a202ef84bb1fce"
+   "server": "2e87ca974784e19390568a5fdef513ee1ba2230e1537e9cb20c0aaa70a578be9"
   },
   "syntax": {
    "index": "OK 1",
@@ -708,7 +708,7 @@
    },
    "shots": {
     "1-contents": {
-     "path": "docs/mobile/shots/D1/atlas-iphone13-1-contents.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-iphone13-1-contents.png",
      "w": 390,
      "h": 664,
      "bytes": 109639,
@@ -716,7 +716,7 @@
      "sha": "fa1b589a073c9d174a720d529d5a0610c054ffd51a9237864d227027ab25a965"
     },
     "2-whole-chart": {
-     "path": "docs/mobile/shots/D1/atlas-iphone13-2-whole-chart.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-iphone13-2-whole-chart.png",
      "w": 390,
      "h": 664,
      "bytes": 283348,
@@ -724,7 +724,7 @@
      "sha": "c91ee41751743003d8e474cea28179e96dbe91e468d8c094eebc6fdaff81941a"
     },
     "3-layers": {
-     "path": "docs/mobile/shots/D1/atlas-iphone13-3-layers.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-iphone13-3-layers.png",
      "w": 390,
      "h": 664,
      "bytes": 123472,
@@ -732,7 +732,7 @@
      "sha": "386f12c17b950be9671d2afea025854bbee1486556d5b15c64a9d838bd0446f0"
     },
     "4-place-card": {
-     "path": "docs/mobile/shots/D1/atlas-iphone13-4-place-card.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-iphone13-4-place-card.png",
      "w": 390,
      "h": 664,
      "bytes": 129623,
@@ -741,25 +741,25 @@
     }
    },
    "first_load": {
-    "bytes": 425608,
+    "bytes": 729636,
     "requests": 37,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67628
+     "bytes": 211860
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 67628
+      "bytes": 211860
      },
      "data": {
       "requests": 16,
-      "bytes": 67659
+      "bytes": 228129
      },
      "tiles": {
       "requests": 20,
-      "bytes": 290321
+      "bytes": 289647
      }
     },
     "foreign_origins": [
@@ -801,7 +801,7 @@
     ]
    },
    "repeat_visit": {
-    "bytes": 425608,
+    "bytes": 729636,
     "requests": 37,
     "cache_hits": 0
    },
@@ -1879,7 +1879,7 @@
     ]
    },
    "timing": {
-    "wall_ms": 137852
+    "wall_ms": 139044
    },
    "extras": {
     "safe_area": {
@@ -1940,7 +1940,7 @@
    },
    "shots": {
     "1-contents": {
-     "path": "docs/mobile/shots/D1/atlas-pixel7-1-contents.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-pixel7-1-contents.png",
      "w": 412,
      "h": 839,
      "bytes": 135456,
@@ -1948,17 +1948,17 @@
      "sha": "30afd53f0cff200dd902a84cd2bc0e50121abf1a2c544dcea98f279f2789dd59"
     },
     "2-whole-chart": {
-     "path": "docs/mobile/shots/D1/atlas-pixel7-2-whole-chart.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-pixel7-2-whole-chart.png",
      "w": 206,
      "h": 419,
      "bytes": 114975,
      "scale": 0.5,
      "sha": "8a8e742f0514436ae3507e6a8587b888a6c006815957c1fd9d7bbaf3bb715854",
-     "full_path": "docs/mobile/shots/D1/atlas-pixel7-2-whole-chart.full.png",
+     "full_path": "docs/mobile/shots/rebase-2/atlas-pixel7-2-whole-chart.full.png",
      "full_sha": "addad0cd3398402b90a51b72256241e639c182c0408c56025025f4ccea0356d5"
     },
     "3-layers": {
-     "path": "docs/mobile/shots/D1/atlas-pixel7-3-layers.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-pixel7-3-layers.png",
      "w": 412,
      "h": 839,
      "bytes": 186097,
@@ -1966,7 +1966,7 @@
      "sha": "bfe91db8776d6bb1460aa49db44412e6b32e5d2fd8d3458824a7f43ffc45e2d0"
     },
     "4-place-card": {
-     "path": "docs/mobile/shots/D1/atlas-pixel7-4-place-card.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-pixel7-4-place-card.png",
      "w": 412,
      "h": 839,
      "bytes": 227530,
@@ -1975,25 +1975,25 @@
     }
    },
    "first_load": {
-    "bytes": 357003,
+    "bytes": 661199,
     "requests": 32,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67628
+     "bytes": 211860
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 67628
+      "bytes": 211860
      },
      "data": {
       "requests": 16,
-      "bytes": 67659
+      "bytes": 228129
      },
      "tiles": {
       "requests": 15,
-      "bytes": 221716
+      "bytes": 221210
      }
     },
     "foreign_origins": [
@@ -2035,7 +2035,7 @@
     ]
    },
    "repeat_visit": {
-    "bytes": 357003,
+    "bytes": 661199,
     "requests": 32,
     "cache_hits": 0
    },
@@ -3135,7 +3135,7 @@
     ]
    },
    "timing": {
-    "wall_ms": 144542
+    "wall_ms": 144917
    },
    "extras": {
     "safe_area": {
@@ -3196,7 +3196,7 @@
    },
    "shots": {
     "1-contents": {
-     "path": "docs/mobile/shots/D1/atlas-landscape-1-contents.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-landscape-1-contents.png",
      "w": 844,
      "h": 340,
      "bytes": 102688,
@@ -3204,7 +3204,7 @@
      "sha": "7673e9e6dbfea9a2e64fcce2330cb9829daea807ad745e391880c88b7e574fd7"
     },
     "2-whole-chart": {
-     "path": "docs/mobile/shots/D1/atlas-landscape-2-whole-chart.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-landscape-2-whole-chart.png",
      "w": 844,
      "h": 340,
      "bytes": 195846,
@@ -3212,7 +3212,7 @@
      "sha": "4b922392ee9b4b68349563230569776fd75af5942190ecab722add17a43c283a"
     },
     "3-layers": {
-     "path": "docs/mobile/shots/D1/atlas-landscape-3-layers.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-landscape-3-layers.png",
      "w": 844,
      "h": 340,
      "bytes": 153255,
@@ -3220,7 +3220,7 @@
      "sha": "1e9208fd7aca1a591ba9f5eeb2e0375cfd3e55f3bd318adfd6b6d83ef4f9543d"
     },
     "4-place-card": {
-     "path": "docs/mobile/shots/D1/atlas-landscape-4-place-card.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-landscape-4-place-card.png",
      "w": 844,
      "h": 340,
      "bytes": 187061,
@@ -3229,25 +3229,25 @@
     }
    },
    "first_load": {
-    "bytes": 292909,
+    "bytes": 597108,
     "requests": 32,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67628
+     "bytes": 211860
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 67628
+      "bytes": 211860
      },
      "data": {
       "requests": 16,
-      "bytes": 67659
+      "bytes": 228129
      },
      "tiles": {
       "requests": 15,
-      "bytes": 157622
+      "bytes": 157119
      }
     },
     "foreign_origins": [
@@ -3289,7 +3289,7 @@
     ]
    },
    "repeat_visit": {
-    "bytes": 292909,
+    "bytes": 597108,
     "requests": 32,
     "cache_hits": 0
    },
@@ -4880,7 +4880,7 @@
     ]
    },
    "timing": {
-    "wall_ms": 234140
+    "wall_ms": 234461
    },
    "extras": {
     "safe_area": {
@@ -4942,7 +4942,7 @@
    },
    "shots": {
     "1-contents": {
-     "path": "docs/mobile/shots/D1/atlas-desktop-1-contents.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-desktop-1-contents.png",
      "w": 1366,
      "h": 768,
      "bytes": 215349,
@@ -4950,56 +4950,56 @@
      "sha": "f7eec02779e48923d0992a3f3bace111d62d2af7f7d0640eabb520418d62b8bd"
     },
     "2-whole-chart": {
-     "path": "docs/mobile/shots/D1/atlas-desktop-2-whole-chart.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-desktop-2-whole-chart.png",
      "w": 455,
      "h": 256,
      "bytes": 156055,
      "scale": 0.3333333333333333,
      "sha": "75b4718d12bb1f416b4ccc24cec499776bdcbe0168bd9df4c42a425b6a27a005",
-     "full_path": "docs/mobile/shots/D1/atlas-desktop-2-whole-chart.full.png",
+     "full_path": "docs/mobile/shots/rebase-2/atlas-desktop-2-whole-chart.full.png",
      "full_sha": "c3bfe23a7b09c30ad23a1c787ea7d9721570eff477a148353a91ce50787e8e4f"
     },
     "3-layers": {
-     "path": "docs/mobile/shots/D1/atlas-desktop-3-layers.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-desktop-3-layers.png",
      "w": 683,
      "h": 384,
      "bytes": 278997,
      "scale": 0.5,
      "sha": "bfd81298d7336cf2abec1dadb98b92aa5e4f1865787986beda7ab6cae0f4b7c2",
-     "full_path": "docs/mobile/shots/D1/atlas-desktop-3-layers.full.png",
+     "full_path": "docs/mobile/shots/rebase-2/atlas-desktop-3-layers.full.png",
      "full_sha": "96edad1593a1c3cab33aab1d33ed0f754a11783b5a7a563507507088cc0e3325"
     },
     "4-place-card": {
-     "path": "docs/mobile/shots/D1/atlas-desktop-4-place-card.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-desktop-4-place-card.png",
      "w": 683,
      "h": 384,
      "bytes": 291225,
      "scale": 0.5,
      "sha": "316e2a79cc62cc2e428a9be370b8d9cd36c4d6bbe5cd965d978e3420ff2e647f",
-     "full_path": "docs/mobile/shots/D1/atlas-desktop-4-place-card.full.png",
+     "full_path": "docs/mobile/shots/rebase-2/atlas-desktop-4-place-card.full.png",
      "full_sha": "7866421703a9a50463b88ecb45b4e72702e265f6d430379d82d36b21d63799c9"
     }
    },
    "first_load": {
-    "bytes": 292909,
+    "bytes": 597108,
     "requests": 32,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67628
+     "bytes": 211860
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 67628
+      "bytes": 211860
      },
      "data": {
       "requests": 16,
-      "bytes": 67659
+      "bytes": 228129
      },
      "tiles": {
       "requests": 15,
-      "bytes": 157622
+      "bytes": 157119
      }
     },
     "foreign_origins": [
@@ -5041,7 +5041,7 @@
     ]
    },
    "repeat_visit": {
-    "bytes": 292909,
+    "bytes": 597108,
     "requests": 32,
     "cache_hits": 0
    },
@@ -7415,7 +7415,7 @@
     ]
    },
    "timing": {
-    "wall_ms": 344915
+    "wall_ms": 345813
    },
    "extras": {},
    "extra_errors": {}
@@ -7434,7 +7434,7 @@
    },
    "shots": {
     "1-contents": {
-     "path": "docs/mobile/shots/D1/atlas-desktop2x-1-contents.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-desktop2x-1-contents.png",
      "w": 1440,
      "h": 900,
      "bytes": 253569,
@@ -7442,56 +7442,56 @@
      "sha": "e31286cef6a163509183d4956cfb21df6cc43feaa0e94a38729375fbcea53f27"
     },
     "2-whole-chart": {
-     "path": "docs/mobile/shots/D1/atlas-desktop2x-2-whole-chart.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-desktop2x-2-whole-chart.png",
      "w": 480,
      "h": 300,
      "bytes": 200179,
      "scale": 0.3333333333333333,
      "sha": "48c7b17789fba2452a280f900764945d59322f705ec6b6a41edadb1708bdbf50",
-     "full_path": "docs/mobile/shots/D1/atlas-desktop2x-2-whole-chart.full.png",
+     "full_path": "docs/mobile/shots/rebase-2/atlas-desktop2x-2-whole-chart.full.png",
      "full_sha": "fb7047dc5345de260eb345dbcf4f6f832c1d4849aee6b613f05a98bd39fb86e8"
     },
     "3-layers": {
-     "path": "docs/mobile/shots/D1/atlas-desktop2x-3-layers.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-desktop2x-3-layers.png",
      "w": 480,
      "h": 300,
      "bytes": 179958,
      "scale": 0.3333333333333333,
      "sha": "b4654c60c68891c0eba5b95c1bdb232bc3bfc29b4e804cf53710baa2b10ddac7",
-     "full_path": "docs/mobile/shots/D1/atlas-desktop2x-3-layers.full.png",
+     "full_path": "docs/mobile/shots/rebase-2/atlas-desktop2x-3-layers.full.png",
      "full_sha": "9f16bd26b6fd007d4e31b3ff7ae42848ff17ab67798557b56b9b5ab4eafdaeee"
     },
     "4-place-card": {
-     "path": "docs/mobile/shots/D1/atlas-desktop2x-4-place-card.png",
+     "path": "docs/mobile/shots/rebase-2/atlas-desktop2x-4-place-card.png",
      "w": 480,
      "h": 300,
      "bytes": 180227,
      "scale": 0.3333333333333333,
      "sha": "dbcefee000322647317f85f7d10b782d8bf068dd093356765990b10feb09ea76",
-     "full_path": "docs/mobile/shots/D1/atlas-desktop2x-4-place-card.full.png",
+     "full_path": "docs/mobile/shots/rebase-2/atlas-desktop2x-4-place-card.full.png",
      "full_sha": "76b0efa90946234ea358831c1fa13bf791c575526e2341d77e5a06aa68bfca63"
     }
    },
    "first_load": {
-    "bytes": 1611222,
+    "bytes": 1911404,
     "requests": 152,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67628
+     "bytes": 211860
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 67628
+      "bytes": 211860
      },
      "data": {
       "requests": 16,
-      "bytes": 67659
+      "bytes": 228129
      },
      "tiles": {
       "requests": 135,
-      "bytes": 1475935
+      "bytes": 1471415
      }
     },
     "foreign_origins": [
@@ -7533,7 +7533,7 @@
     ]
    },
    "repeat_visit": {
-    "bytes": 1611222,
+    "bytes": 1911404,
     "requests": 152,
     "cache_hits": 0
    },
@@ -9899,7 +9899,7 @@
     ]
    },
    "timing": {
-    "wall_ms": 370218
+    "wall_ms": 372674
    },
    "extras": {},
    "extra_errors": {}
@@ -9909,7 +9909,7 @@
   "iphone13": {
    "shots": {
     "1-default": {
-     "path": "docs/mobile/shots/D1/sim-iphone13-1-default.png",
+     "path": "docs/mobile/shots/rebase-2/sim-iphone13-1-default.png",
      "w": 390,
      "h": 664,
      "bytes": 263478,
@@ -9917,7 +9917,7 @@
      "sha": "e6ebf71954912c2eea2ca58273901bc282701b2094e0c76e482f1cd0c5db6e3b"
     },
     "2-ledger": {
-     "path": "docs/mobile/shots/D1/sim-iphone13-2-ledger.png",
+     "path": "docs/mobile/shots/rebase-2/sim-iphone13-2-ledger.png",
      "w": 390,
      "h": 664,
      "bytes": 170840,
@@ -10046,17 +10046,17 @@
     ]
    },
    "first_load": {
-    "bytes": 746188,
+    "bytes": 1203845,
     "requests": 1,
     "cache_hits": 0,
     "max_asset": {
      "path": "/",
-     "bytes": 746188
+     "bytes": 1203845
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 746188
+      "bytes": 1203845
      }
     },
     "foreign_origins": [
@@ -10696,17 +10696,17 @@
     "pauses_when_hidden": false
    },
    "net_total": {
-    "bytes": 746188,
+    "bytes": 1203845,
     "requests": 1,
     "cache_hits": 0,
     "max_asset": {
      "path": "/",
-     "bytes": 746188
+     "bytes": 1203845
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 746188
+      "bytes": 1203845
      }
     },
     "foreign_origins": [
@@ -10725,7 +10725,7 @@
     ]
    },
    "timing": {
-    "wall_ms": 79549
+    "wall_ms": 79140
    },
    "extra_errors": {
     "safe_area": {
@@ -10752,17 +10752,17 @@
   "pixel7": {
    "shots": {
     "1-default": {
-     "path": "docs/mobile/shots/D1/sim-pixel7-1-default.png",
+     "path": "docs/mobile/shots/rebase-2/sim-pixel7-1-default.png",
      "w": 206,
      "h": 419,
      "bytes": 89809,
      "scale": 0.5,
      "sha": "cc4b78d466cd1d80b36dbf57783bbc1c3f18f575ef01c031e91f58ceb7f41e73",
-     "full_path": "docs/mobile/shots/D1/sim-pixel7-1-default.full.png",
+     "full_path": "docs/mobile/shots/rebase-2/sim-pixel7-1-default.full.png",
      "full_sha": "0f406f3395ac49e31936e90e111477ec9be7eefa7bdb07007230b42797841139"
     },
     "2-ledger": {
-     "path": "docs/mobile/shots/D1/sim-pixel7-2-ledger.png",
+     "path": "docs/mobile/shots/rebase-2/sim-pixel7-2-ledger.png",
      "w": 412,
      "h": 839,
      "bytes": 217297,
@@ -10891,17 +10891,17 @@
     ]
    },
    "first_load": {
-    "bytes": 746188,
+    "bytes": 1203845,
     "requests": 1,
     "cache_hits": 0,
     "max_asset": {
      "path": "/",
-     "bytes": 746188
+     "bytes": 1203845
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 746188
+      "bytes": 1203845
      }
     },
     "foreign_origins": [
@@ -11592,17 +11592,17 @@
     "pauses_when_hidden": false
    },
    "net_total": {
-    "bytes": 746188,
+    "bytes": 1203845,
     "requests": 1,
     "cache_hits": 0,
     "max_asset": {
      "path": "/",
-     "bytes": 746188
+     "bytes": 1203845
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 746188
+      "bytes": 1203845
      }
     },
     "foreign_origins": [
@@ -11621,7 +11621,7 @@
     ]
    },
    "timing": {
-    "wall_ms": 78713
+    "wall_ms": 80365
    },
    "extra_errors": {
     "safe_area": {
@@ -11648,7 +11648,7 @@
   "landscape": {
    "shots": {
     "1-default": {
-     "path": "docs/mobile/shots/D1/sim-landscape-1-default.png",
+     "path": "docs/mobile/shots/rebase-2/sim-landscape-1-default.png",
      "w": 844,
      "h": 340,
      "bytes": 281368,
@@ -11656,7 +11656,7 @@
      "sha": "6d7e783cc37ac849f5239bcb9d323083d112a55bf0f49963eda32851c2727cb9"
     },
     "2-ledger": {
-     "path": "docs/mobile/shots/D1/sim-landscape-2-ledger.png",
+     "path": "docs/mobile/shots/rebase-2/sim-landscape-2-ledger.png",
      "w": 844,
      "h": 340,
      "bytes": 265146,
@@ -11785,17 +11785,17 @@
     ]
    },
    "first_load": {
-    "bytes": 746188,
+    "bytes": 1203845,
     "requests": 1,
     "cache_hits": 0,
     "max_asset": {
      "path": "/",
-     "bytes": 746188
+     "bytes": 1203845
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 746188
+      "bytes": 1203845
      }
     },
     "foreign_origins": [
@@ -12174,17 +12174,17 @@
     "pauses_when_hidden": false
    },
    "net_total": {
-    "bytes": 746188,
+    "bytes": 1203845,
     "requests": 1,
     "cache_hits": 0,
     "max_asset": {
      "path": "/",
-     "bytes": 746188
+     "bytes": 1203845
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 746188
+      "bytes": 1203845
      }
     },
     "foreign_origins": [
@@ -12203,7 +12203,7 @@
     ]
    },
    "timing": {
-    "wall_ms": 98848
+    "wall_ms": 97274
    },
    "extra_errors": {
     "safe_area": {
@@ -12230,23 +12230,23 @@
   "desktop": {
    "shots": {
     "1-default": {
-     "path": "docs/mobile/shots/D1/sim-desktop-1-default.png",
+     "path": "docs/mobile/shots/rebase-2/sim-desktop-1-default.png",
      "w": 683,
      "h": 384,
      "bytes": 247792,
      "scale": 0.5,
      "sha": "fc63047a0fbb3a7f9e5458e351c047fcceaffc1df679a00e37eb7f9f3b79af84",
-     "full_path": "docs/mobile/shots/D1/sim-desktop-1-default.full.png",
+     "full_path": "docs/mobile/shots/rebase-2/sim-desktop-1-default.full.png",
      "full_sha": "614f126662e98a7cd8e47d5eafb0cd22cf55c4361e2cc0e07d10f8e534b5808f"
     },
     "2-ledger": {
-     "path": "docs/mobile/shots/D1/sim-desktop-2-ledger.png",
+     "path": "docs/mobile/shots/rebase-2/sim-desktop-2-ledger.png",
      "w": 683,
      "h": 384,
      "bytes": 240250,
      "scale": 0.5,
      "sha": "65eae307140100c98258c2bb4ac899fbff0cefa61f59d065eaace4b68274d2e3",
-     "full_path": "docs/mobile/shots/D1/sim-desktop-2-ledger.full.png",
+     "full_path": "docs/mobile/shots/rebase-2/sim-desktop-2-ledger.full.png",
      "full_sha": "5eab146810d48be9501fc83fd6806f839069696d482f96fdc425154373b12025"
     }
    },
@@ -12371,17 +12371,17 @@
     ]
    },
    "first_load": {
-    "bytes": 746188,
+    "bytes": 1203845,
     "requests": 1,
     "cache_hits": 0,
     "max_asset": {
      "path": "/",
-     "bytes": 746188
+     "bytes": 1203845
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 746188
+      "bytes": 1203845
      }
     },
     "foreign_origins": [
@@ -13135,17 +13135,17 @@
     "pauses_when_hidden": false
    },
    "net_total": {
-    "bytes": 746188,
+    "bytes": 1203845,
     "requests": 1,
     "cache_hits": 0,
     "max_asset": {
      "path": "/",
-     "bytes": 746188
+     "bytes": 1203845
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 746188
+      "bytes": 1203845
      }
     },
     "foreign_origins": [
@@ -13164,30 +13164,30 @@
     ]
    },
    "timing": {
-    "wall_ms": 87480
+    "wall_ms": 92156
    },
    "extra_errors": {}
   },
   "desktop2x": {
    "shots": {
     "1-default": {
-     "path": "docs/mobile/shots/D1/sim-desktop2x-1-default.png",
+     "path": "docs/mobile/shots/rebase-2/sim-desktop2x-1-default.png",
      "w": 720,
      "h": 450,
      "bytes": 295585,
      "scale": 0.5,
      "sha": "a4044aec278154cb2b7efda817766c12648f91b10be789515eee2437b40e6f06",
-     "full_path": "docs/mobile/shots/D1/sim-desktop2x-1-default.full.png",
+     "full_path": "docs/mobile/shots/rebase-2/sim-desktop2x-1-default.full.png",
      "full_sha": "7d166a8e4947038a46fe05f3ac4e39a1e3b7cf9600b29924355e2a12a440c9af"
     },
     "2-ledger": {
-     "path": "docs/mobile/shots/D1/sim-desktop2x-2-ledger.png",
+     "path": "docs/mobile/shots/rebase-2/sim-desktop2x-2-ledger.png",
      "w": 720,
      "h": 450,
      "bytes": 288910,
      "scale": 0.5,
      "sha": "48c863e858316fc56c4fc54ee1b2841d5bdbb5e1e5fee2c445fc361439d4359a",
-     "full_path": "docs/mobile/shots/D1/sim-desktop2x-2-ledger.full.png",
+     "full_path": "docs/mobile/shots/rebase-2/sim-desktop2x-2-ledger.full.png",
      "full_sha": "805c3f56d877ac32fb0656c041b2a7bffef7bf43ce44e5398f9cc058f1977efa"
     }
    },
@@ -13312,17 +13312,17 @@
     ]
    },
    "first_load": {
-    "bytes": 746188,
+    "bytes": 1203845,
     "requests": 1,
     "cache_hits": 0,
     "max_asset": {
      "path": "/",
-     "bytes": 746188
+     "bytes": 1203845
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 746188
+      "bytes": 1203845
      }
     },
     "foreign_origins": [
@@ -14112,17 +14112,17 @@
     "pauses_when_hidden": false
    },
    "net_total": {
-    "bytes": 746188,
+    "bytes": 1203845,
     "requests": 1,
     "cache_hits": 0,
     "max_asset": {
      "path": "/",
-     "bytes": 746188
+     "bytes": 1203845
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 746188
+      "bytes": 1203845
      }
     },
     "foreign_origins": [
@@ -14141,7 +14141,7 @@
     ]
    },
    "timing": {
-    "wall_ms": 109954
+    "wall_ms": 119574
    },
    "extra_errors": {}
   }

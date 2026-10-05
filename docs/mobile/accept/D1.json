@@ -25,7 +25,7 @@
     "UG10",
     "UG11"
   ],
-  "baseline": "rebase-1",
+  "baseline": "rebase-2",
   "declared_change_keys": [
     "atlas.iphone13.first_load",
     "atlas.iphone13.repeat_visit",
@@ -107,7 +107,7 @@
     {
       "key": "atlas.iphone13.repeat_visit.cache_hits",
       "op": ">=",
-      "value": 30,
+      "value": 34,
       "was": 0
     }
   ],

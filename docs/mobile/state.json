@@ -14,22 +14,28 @@
   "units": {
     "D1": {
       "status": "failed",
-      "attempts": 2,
+      "attempts": 3,
       "capture": "docs/mobile/captures/D1.json",
       "files_sha": {},
-      "ref_before": "rebase-1",
+      "ref_before": "rebase-2",
       "failing": [
         {
-          "key": "measure.server",
-          "op": "loop",
-          "expected": "the D1 measurement served by the edited server.js (--server spawn)",
-          "got": "measured on the in-process static server (no gzip); bytes unchanged from rebase-1"
+          "key": "atlas.iphone13.repeat_visit.bytes",
+          "op": "<=",
+          "expected": 45000,
+          "got": 425608
         },
         {
-          "key": "loop.relay",
+          "key": "atlas.iphone13.repeat_visit.cache_hits",
+          "op": ">=",
+          "expected": 34,
+          "got": 0
+        },
+        {
+          "key": "measure.tool",
           "op": "loop",
-          "expected": "tree snapshot/check/restore relayed intact",
-          "got": "a post-check agent reported 241 unchanged files as changed; restored and re-verified by the central session (git tree clean)"
+          "expected": "a repeat visit measured with the HTTP cache on",
+          "got": "page.route disables the browser cache, so every repeat visit refetches; every other D1 check passed. The run stopped at a container restart; the unit was restored from its snapshot by tools/mobile-tree.js"
         }
       ]
     }
@@ -47,6 +53,19 @@
       },
       "reason": "pipeline scripts changed since the reference (UG11 compares against it): .claude/workflows/filigree-2-plan.js, .claude/workflows/mobile-build.js, .claude/workflows/mobile-review.js",
       "ref": "rebase-1"
+    },
+    {
+      "before_unit": "D1",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "reason": "pipeline scripts changed since the reference (UG11 compares against it): .claude/workflows/mobile-build.js, .claude/workflows/mobile-review.js",
+      "ref": "rebase-2"
     }
   ]
 }
