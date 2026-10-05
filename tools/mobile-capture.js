@@ -16,7 +16,8 @@
 //   node tools/mobile-capture.js --self-test
 // --cdn-dir D holds leaflet@1.9.4 and three@0.128.0 (unpacked, or their `npm pack` tarballs) and may also hold
 // @fontsource/{eb-garamond,lora,ibm-plex-mono,im-fell-english}@5.3.0 the same way: when present the Google Fonts hosts are
-// served from them (meta.fonts 'routed'), so references render the production fonts; otherwise those hosts are aborted.
+// served from them (meta.fonts 'routed'), so references render the production fonts, each font file once its document's startup is laid out (fontGate);
+// otherwise those hosts are aborted.
 // One capture at a time: a run that launches a browser (capture, or --accept without --capture) first takes
 // <os.tmpdir()>/annals-mobile-capture.lock {pid, boot, started, argv}; while a live pid holds it the run waits (15 s polls,
 // up to 3 h, then exit 2); a dead pid's lock, or one from another boot (a pid reused after a container restart), is
@@ -447,6 +448,22 @@ function fontsCss(fonts, u) {   // css2?family=Name[:axes@tuples]&...&display=D 
   }
   return css
 }
+// A routed font file is answered only once the asking document's startup has laid out on the fallback fonts: the chart's document (an atlas page
+// with #map) when ATLAS.ready is up, any other at DOMContentLoaded; the startup layout is forced first, so the segments it needs are all asked for
+// while none is in. Served from disk at once, the files raced the startup twice: the atlas sizes Leaflet from the header height when its inline
+// script runs (fillZoom, getSize) and never re-measures, so on iphone13 one tree loaded at 390x518 z1.95 (fallback: 20 first-load tiles), 390x516
+// (some fonts in) or 390x509 z1.9 (all in: 25); and the Contents sheet shown at ready fetched EB Garamond latin-ext italic for 'Nīmlad' only when the
+// latin italic face was still loading. settle(load) then waits out the swap. Never the css2 sheet: it blocks the page's scripts, so DOMContentLoaded.
+const FONT_FILE_RE = /^https:\/\/fonts\.gstatic\.com\//
+async function fontGate(frameOf, atlas) {   // resolves once the asking document's startup is laid out, or the document is gone (the answer no longer matters)
+  try {
+    await frameOf().evaluate(app => new Promise(done => {
+      const go = () => { document.documentElement.getBoundingClientRect(); done(true) }
+      const parsed = () => { if (!app || !document.getElementById('map')) return go(); const poll = () => window.ATLAS && window.ATLAS.ready ? go() : setTimeout(poll, 10); poll() }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', parsed, {once: true}); else parsed()
+    }), !!atlas)
+  } catch (e) { /* navigated away, closed, or no frame */ }
+}
 function fulfilHeaders(r, req) {   // the headers route.fulfill sends (Playwright 1.56): without the CORS trio a crossorigin <script>/<link> rejects the body
   const h = [{name: 'Content-Type', value: r.contentType}, {name: 'Content-Length', value: String(Buffer.byteLength(r.body))}]
   const o = Object.entries(req.headers || {}).find(([k]) => k.toLowerCase() === 'origin')
@@ -472,24 +489,35 @@ async function openPage(env, key, kind, opts) {   // a fresh context + page with
     try { r = cdnRoute(env.cdn, kind, url); if (r) routed.push({url, length: Buffer.byteLength(r.body)}); else aborted.push({url: url.slice(0, 120)}); return r } finally { if (env.fontHosts && FONT_HOSTS.test(new URL(url).host)) env.fontHosts[r ? 'routed' : 'aborted']++ }   // meta.fonts
   }
   if (opts.cdpRoute) {   // never Network.setCacheDisabled here: the cache staying on is the point
-    cdp.on('Fetch.requestPaused', e => {
+    cdp.on('Fetch.requestPaused', async e => {
       let r = null; try { r = decide(e.request.url) } catch (x) { /* unreadable cdn file: abort */ }
+      if (r && FONT_FILE_RE.test(e.request.url)) await fontGate(() => page.mainFrame(), kind === 'atlas')
       const send = r ? cdp.send('Fetch.fulfillRequest', {requestId: e.requestId, responseCode: 200, responseHeaders: fulfilHeaders(r, e.request), body: Buffer.from(r.body).toString('base64')}) : cdp.send('Fetch.failRequest', {requestId: e.requestId, errorReason: 'Aborted'})
       send.catch(() => {})
     })
     await cdp.send('Fetch.enable', {patterns: CDP_FETCH_PATTERNS})
-  } else await page.route(url => new URL(url).origin !== env.server.origin, async route => { let r = null; try { r = decide(route.request().url()) } catch (x) { /* unreadable cdn file or a family mismatch: abort */ } return r ? route.fulfill(r) : route.abort() })
+  } else await page.route(url => new URL(url).origin !== env.server.origin, async route => {
+    let r = null; try { r = decide(route.request().url()) } catch (x) { /* unreadable cdn file or a family mismatch: abort */ }
+    if (r && FONT_FILE_RE.test(route.request().url())) { await fontGate(() => route.request().frame(), kind === 'atlas'); return route.fulfill(r).catch(() => {}) }   // the page may have navigated away meanwhile
+    return r ? route.fulfill(r) : route.abort()
+  })
   await page.addInitScript(`(${pinInstall.toString()})(${JSON.stringify({hw: opts.hw, mem: opts.mem, saveData: !!opts.saveData})})`)
   await page.addInitScript(`(${pageLib.toString()})()`)
   if (opts.vclock) await page.addInitScript(`(${vclockInstall.toString()})(${JSON.stringify({auto: opts.vclock === 'auto'})})`)
   return {ctx, page, cdp, net, rec, routed, aborted, close: () => ctx.close()}
 }
 
-async function settle(P, ms = 400, max = 60000) {   // tiles loaded and the app origin quiet
-  const t0 = Date.now(); let quiet = 0
+function settleTick(st, s, ms, load) {   // one 100 ms poll: quiet grows while no tile loads and the app origin is idle; after a page load also only
+  // while document.fonts has nothing loading and the #map box is the one the previous poll read (the font swap reflows the header and the map)
+  const still = !load || (s.fonts === 'loaded' && s.box === st.box)
+  const quiet = s.tiles === 0 && s.pending <= 0 && still ? st.quiet + 100 : 0
+  return {quiet, box: s.box, done: quiet >= ms}
+}
+async function settle(P, ms = 400, max = 60000, load = false) {   // tiles loaded and the app origin quiet (load: the page was just loaded, see settleTick)
+  const t0 = Date.now(); let st = {quiet: 0, box: undefined}
   while (Date.now() - t0 < max) {
-    const n = await P.page.evaluate(() => document.querySelectorAll('#map .leaflet-tile-loading').length).catch(() => 0)
-    if (n === 0 && P.net.pending <= 0) { quiet += 100; if (quiet >= ms) return true } else quiet = 0
+    const s = await P.page.evaluate(ld => { const m = document.getElementById('map'); return {tiles: document.querySelectorAll('#map .leaflet-tile-loading').length, fonts: ld ? document.fonts.status : null, box: ld ? (m ? m.clientWidth + 'x' + m.clientHeight : 'none') : null} }, load).catch(() => ({tiles: 0, fonts: 'loaded', box: 'unread'}))
+    st = settleTick(st, {...s, pending: P.net.pending}, ms, load); if (st.done) return true
     await sleep(100)
   }
   return false
@@ -676,7 +704,7 @@ async function captureAtlas(env, key, o) {
     const m0 = P.net.mark()
     await page.goto(url, {waitUntil: 'load'})
     await page.waitForFunction(() => window.ATLAS && window.ATLAS.ready, null, {timeout: 120000})
-    await settle(P, 400)
+    await settle(P, 400, 60000, true)
     R.env = await page.evaluate(() => ({w: innerWidth, h: innerHeight, dpr: devicePixelRatio, coarse: matchMedia('(pointer:coarse)').matches, hover: matchMedia('(hover:hover)').matches,
       hardwareConcurrency: navigator.hardwareConcurrency, deviceMemory: navigator.deviceMemory, vv_scale: window.visualViewport ? +window.visualViewport.scale.toFixed(3) : null, viewport_meta: (document.querySelector('meta[name=viewport]') || {}).content || null}))
     R.first_load = netRecord(P, m0)
@@ -689,7 +717,7 @@ async function captureAtlas(env, key, o) {
     R.repeat_visit = null
     await page.goto(url, {waitUntil: 'load'})
     await page.waitForFunction(() => window.ATLAS && window.ATLAS.ready, null, {timeout: 120000})
-    await settle(P, 400)
+    await settle(P, 400, 60000, true)
     // The Whole Chart
     await (prof.touch ? page.locator('.tcard[data-theme=whole]').tap() : page.locator('.tcard[data-theme=whole]').click())
     await sleep(500); await settle(P, 800)
@@ -852,7 +880,7 @@ async function captureAtlas(env, key, o) {
 async function repeatVisitProbe(env, key, o, url, sink = {}) {   // metrics.md section 1: a second goto of the same url in a fresh cache-on context, opened and waited for as the main page is
   const P = await openPage(env, key, 'atlas', {...o, vclock: o.clock === 'virtual' ? 'auto' : null, cdpRoute: true})
   try {
-    const visit = async () => { await P.page.goto(url, {waitUntil: 'load'}); await P.page.waitForFunction(() => window.ATLAS && window.ATLAS.ready, null, {timeout: 120000}); await settle(P, 400) }
+    const visit = async () => { await P.page.goto(url, {waitUntil: 'load'}); await P.page.waitForFunction(() => window.ATLAS && window.ATLAS.ready, null, {timeout: 120000}); await settle(P, 400, 60000, true) }
     await visit()
     const m1 = P.net.mark()
     await visit()
@@ -866,7 +894,7 @@ async function extraSafeArea(env, key, o, surface, url, sink = {}) {
     let cmd = 'applied'
     try { await P.cdp.send('Emulation.setSafeAreaInsetsOverride', {insets: INSETS}) } catch (e) { cmd = 'unavailable' }
     await P.page.goto(url, {waitUntil: 'load'})
-    if (surface === 'atlas') { await P.page.waitForFunction(() => window.ATLAS && window.ATLAS.ready); await settle(P, 400); await P.page.locator('.tcard[data-theme=whole]').tap(); await sleep(600); await settle(P, 600) }
+    if (surface === 'atlas') { await P.page.waitForFunction(() => window.ATLAS && window.ATLAS.ready); await settle(P, 400, 60000, true); await P.page.locator('.tcard[data-theme=whole]').tap(); await sleep(600); await settle(P, 600) }
     else { await simReady(P); await pump(P, 3) }
     const prof = o.profile
     const r = await P.page.evaluate(([ins, vw, vh]) => {
@@ -881,7 +909,7 @@ async function extraSafeArea(env, key, o, surface, url, sink = {}) {
 async function extraKeyboard(env, key, o, url, sink = {}) {   // layout path only: the real iOS keyboard is proposal until Mobile 15
   const P = await openPage(env, key, 'atlas', o), prof = o.profile
   try {
-    await P.page.goto(url, {waitUntil: 'load'}); await P.page.waitForFunction(() => window.ATLAS && window.ATLAS.ready); await settle(P, 400)
+    await P.page.goto(url, {waitUntil: 'load'}); await P.page.waitForFunction(() => window.ATLAS && window.ATLAS.ready); await settle(P, 400, 60000, true)
     await P.page.locator('.tcard[data-theme=whole]').tap(); await sleep(500)
     await P.cdp.send('Emulation.setDeviceMetricsOverride', {width: prof.w, height: 300, deviceScaleFactor: prof.dpr, mobile: true})
     await sleep(500)
@@ -894,7 +922,7 @@ async function extraLoaf(env, key, o, url, sink = {}) {   // A-U12: LoAF during 
     const P = await openPage(env, key, 'atlas', o), prof = o.profile
     try {
       await P.page.addInitScript(() => { window.__loaf = []; try { new PerformanceObserver(l => { for (const e of l.getEntries()) window.__loaf.push(e.duration) }).observe({type: 'long-animation-frame', buffered: true}) } catch (e) { /* not supported */ } })
-      await P.page.goto(url, {waitUntil: 'load'}); await P.page.waitForFunction(() => window.ATLAS && window.ATLAS.ready); await settle(P, 400)
+      await P.page.goto(url, {waitUntil: 'load'}); await P.page.waitForFunction(() => window.ATLAS && window.ATLAS.ready); await settle(P, 400, 60000, true)
       await P.page.locator('.tcard[data-theme=whole]').tap(); await sleep(600)
       await P.page.evaluate(t => document.body.setAttribute('data-theme', t), theme)
       const cx = prof.w / 2, cy = prof.h / 2
@@ -921,10 +949,10 @@ async function extraMutate(env, key, o, urlPath, file, sink = {}) {   // D7/D8: 
 }
 
 // ---------------------------------------------------------------- sim capture
-async function simReady(P) {   // zero frames before ANNALS.ready: nothing ticks until the capture says so
+async function simReady(P) {   // zero frames before ANNALS.ready: nothing ticks until the capture says so; and the fonts done, as settle(load) asks of the atlas
   const t0 = Date.now()
   while (Date.now() - t0 < 180000) {
-    const ok = await P.page.evaluate(() => !!(window.ANNALS && window.ANNALS.ready && window.__annalsReady)).catch(() => false)
+    const ok = await P.page.evaluate(() => !!(window.ANNALS && window.ANNALS.ready && window.__annalsReady) && document.fonts.status === 'loaded').catch(() => false)
     if (ok) return true
     await sleep(120)
   }
@@ -1477,7 +1505,7 @@ async function runCapture(o) {
   env.browser = await launch(pw)
   const cap = {meta: {tool: 'mobile-capture', tool_version: TOOL_VERSION, tool_sha: sha(fs.readFileSync(__filename)), index_sha: sha(rd('index.html')), atlas_sha: sha(rd('maps-site/index.html')),
     unit: o.unit, profiles: o.want, clock: o.clock, pinned: {hardwareConcurrency: o.hw, deviceMemory: o.mem}, cpu: o.cpu, throttle: o.throttle, service_workers: o.sw === 'allow' ? 'allow (?sw=1)' : 'block',
-    save_data: o.saveData, query: o.query || null, seeds: o.seeds, extras: o.extras, cdn_routed: !!env.cdn, fonts: 'aborted', server: o.url ? 'external' : o.server, browser: env.browser.version()}, repo: null}
+    save_data: o.saveData, query: o.query || null, seeds: o.seeds, extras: o.extras, cdn_routed: !!env.cdn, fonts: 'aborted', font_files: 'after the startup layout (fontGate)', server: o.url ? 'external' : o.server, browser: env.browser.version()}, repo: null}
   const oo = {...o, profiles: o.profiles, shotsDir: path.resolve(REPO, o.shotsDir || path.join('docs/mobile/shots', shotsDirName(o, cap.meta)))}
   try {
     cap.repo = repoChecks()
@@ -1832,6 +1860,28 @@ async function selfTest() {
     cp.execFileSync('tar', ['czf', path.join(tz, 'fontsource-lora-5.3.0.tgz'), '-C', path.join(tz, 'p'), 'package'])
     const tc = resolveCdn(tz)
     ok('fonts: a fontsource tarball is extracted once under _x/@fontsource/<slug>', tc.fonts.lora === path.join(tz, '_x/@fontsource/lora') && Object.keys(tc.fonts).length === 1 && blocks(cdnRoute(tc, 'atlas', G + 'family=Lora').body).length === 1, JSON.stringify(tc.fonts))
+  }
+  // the font gate: only a font file waits, and only until its document has parsed; settle's plain rule is unchanged, settle(load) also waits out the font swap
+  {
+    ok('font gate: only fonts.gstatic.com files are held (never the css2 sheet, a CDN script or the app origin)', FONT_FILE_RE.test('https://fonts.gstatic.com/fs/lora/lora-latin-400-normal.woff2') && !FONT_FILE_RE.test('https://fonts.googleapis.com/css2?family=Lora') && !FONT_FILE_RE.test('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js') && !FONT_FILE_RE.test('http://localhost:1/maps-site/'))
+    const hadDoc = global.document, hadWin = global.window, log2 = []
+    const doc = (state, map) => { const ls = []; return {readyState: state, getElementById: id => id === 'map' && map ? {} : null, documentElement: {getBoundingClientRect: () => { log2.push('layout') }}, addEventListener: (k, f) => { if (k === 'DOMContentLoaded') ls.push(f) }, fire() { log2.push('parsed'); ls.forEach(f => f()) }} }
+    const inDoc = d => ({evaluate: (fn, arg) => { global.document = d; return Promise.resolve(fn(arg)) }})
+    const gate = async (d, atlas, steps, win) => { log2.length = 0; global.window = win || {}; const g = fontGate(() => inDoc(d), atlas).then(() => log2.push('answered')); for (const s of steps) { await sleep(30); s() } await Promise.race([g, sleep(200)]); return log2.join() }
+    try {
+      const a = await gate(doc('loading', false), true, [() => global.document.fire()]), b = await gate(doc('loading', true), false, [() => global.document.fire()])
+      ok('font gate: a document without #map, or any sim page, is answered at DOMContentLoaded, its startup laid out first', a === 'parsed,layout,answered' && b === a, a + ' / ' + b)
+      const c = await gate(doc('loading', true), true, [() => global.document.fire(), () => log2.push('still held'), () => { log2.push('ready'); global.window.ATLAS = {ready: true} }])
+      ok('font gate: the chart\'s document (atlas, #map) is answered only once ATLAS.ready is up, after a forced layout', c === 'parsed,still held,ready,layout,answered', c)
+      const e = await gate(doc('complete', true), true, [], {ATLAS: {ready: true}})
+      ok('font gate: a file asked for after the startup (a card opened later) is answered without waiting for anything more', e === 'layout,answered', e)
+    } finally { if (hadDoc === undefined) delete global.document; else global.document = hadDoc; if (hadWin === undefined) delete global.window; else global.window = hadWin }
+    let gone = 0; await fontGate(() => ({evaluate: async () => { throw new Error('Execution context was destroyed') }}), true).then(() => gone++); await fontGate(() => { throw new Error('no frame') }, true).then(() => gone++)
+    ok('font gate: a document gone or a request without a frame is answered at once', gone === 2)
+    const run = (samples, load) => { let st = {quiet: 0, box: undefined}, n = 0; for (const s of samples) { n++; st = settleTick(st, {pending: 0, tiles: 0, fonts: 'loaded', box: '390x518', ...s}, 400, load); if (st.done) return n } return null }
+    const q = Array(10).fill({})
+    ok('settle: the plain rule is unchanged (4 quiet polls; a loading tile or a pending request restarts them; fonts and the map box are not read)', run(q, false) === 4 && run([{tiles: 1}, {}, {}, {pending: 1}, {}, {}, {}, {}], false) === 8 && run([{fonts: 'loading', box: 'a'}, {box: 'b'}, {box: 'c'}, {box: 'd'}], false) === 4)
+    ok('settle(load): quiet only while the fonts are done and the #map box held since the last poll', run(q, true) === 5 && run([{fonts: 'loading'}, {fonts: 'loading'}, {}, {}, {}, {}, {}], true) === 6 && run([{}, {}, {}, {box: '390x509'}, {box: '390x509'}, {box: '390x509'}, {box: '390x509'}, {box: '390x509'}], true) === 8 && run([{fonts: 'loading'}, {fonts: 'loading'}, {fonts: 'loading'}, {fonts: 'loading'}, {fonts: 'loading'}], true) === null)
   }
   // Net: on a cache-on page each cached or revalidated local response counts once, in the event orders Chromium 141 emits; the main page keeps B0's rule
   {
