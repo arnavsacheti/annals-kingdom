@@ -50,18 +50,18 @@
       "attempts": 3,
       "capture": "docs/mobile/captures/D3.json",
       "files_sha": {
-        "docs/mobile/accept/D3.json": "360ac81d469bcd566f6403d71cc6c757ba105b5c166e42d4d4ca58b187174138",
+        "docs/mobile/accept/D3.json": "b330aa0d390c4802191d6e6d500488615839ae358eeca72c05ddec3a286b62a3",
         "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
       },
       "failing": [
         {
-          "key": "accept",
-          "op": "loop",
-          "expected": "a valid accept file",
-          "got": "checks missing"
+          "key": "atlas.iphone13.metrics",
+          "op": "deep-equals",
+          "expected": "equal to R1 except declared",
+          "got": "first_load.by_cat.tiles.requests: 25 vs 20; first_load.by_cat.tiles.bytes: 347716 vs 291281"
         }
       ],
-      "ref_before": "R1"
+      "ref_before": "rebase-7"
     },
     "D5": {
       "status": "skipped",
@@ -175,6 +175,19 @@
       },
       "reason": "font-faithful desktop reference R1: the capture tool serves the Google Fonts hosts from the fontsource packages, so references render the production faces (D3 and D4 score UG8 against it)",
       "ref": "R1"
+    },
+    {
+      "before_unit": "D3",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "reason": "pipeline scripts changed since the reference (UG11 compares against it): .claude/workflows/mobile-build.js",
+      "ref": "rebase-7"
     }
   ]
 }

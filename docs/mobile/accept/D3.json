@@ -27,7 +27,7 @@
     "UG10",
     "UG11"
   ],
-  "baseline": "R1",
+  "baseline": "rebase-7",
   "declared_change_keys": [
     "atlas.iphone13.first_load.bytes",
     "atlas.iphone13.first_load.requests",
@@ -256,14 +256,14 @@
     {
       "key": "atlas.iphone13.first_load.bytes",
       "op": "<=",
-      "value": 807384,
-      "was": 427384
+      "value": 863819,
+      "was": 483819
     },
     {
       "key": "atlas.iphone13.first_load.requests",
       "op": "<=",
-      "value": 53,
-      "was": 37
+      "value": 58,
+      "was": 42
     },
     {
       "key": "atlas.iphone13.first_load.by_cat.html_other.bytes",
@@ -286,14 +286,14 @@
     {
       "key": "atlas.iphone13.repeat_visit.requests",
       "op": "<=",
-      "value": 53,
-      "was": 37
+      "value": 58,
+      "was": 42
     },
     {
       "key": "atlas.iphone13.repeat_visit.cache_hits",
       "op": ">=",
-      "value": 37,
-      "was": 37
+      "value": 42,
+      "was": 42
     },
     {
       "key": "atlas.pixel7.first_load.aborted",

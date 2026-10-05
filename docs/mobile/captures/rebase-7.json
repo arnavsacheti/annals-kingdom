@@ -4,8 +4,8 @@
   "tool_version": 1,
   "tool_sha": "95384be789697b8989580cd8fa345680fdd22603cdd8e37c4209a7e981141152",
   "index_sha": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-  "atlas_sha": "d7d4cc0145d1ef4a95fd7949580034db19dd35b98de3154a15a094fe4cfdc1ca",
-  "unit": "D3",
+  "atlas_sha": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc",
+  "unit": "rebase-7",
   "profiles": [
    "iphone13",
    "pixel7",
@@ -33,17 +33,17 @@
    "ctxloss"
   ],
   "cdn_routed": true,
-  "fonts": "aborted",
+  "fonts": "routed",
   "server": "spawn",
   "browser": "141.0.7390.37",
   "timing": {
-   "wall_ms": 1217694
+   "wall_ms": 1812116
   }
  },
  "repo": {
   "sha": {
    "index": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-   "atlas": "d7d4cc0145d1ef4a95fd7949580034db19dd35b98de3154a15a094fe4cfdc1ca",
+   "atlas": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc",
    "server": "f093d3423e3d78c47a2405a79cfb3212c5273577bab9fe598e610a741c1eb233"
   },
   "syntax": {
@@ -709,7 +709,7 @@
    },
    "shots": {
     "1-contents": {
-     "path": "docs/mobile/shots/D3/atlas-iphone13-1-contents.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-iphone13-1-contents.png",
      "w": 390,
      "h": 664,
      "bytes": 103999,
@@ -717,42 +717,42 @@
      "sha": "d9a17d5a99250bb51fdc18588a1ceffe900dace66aabbd9dbcdd31154c9aaa2b"
     },
     "2-whole-chart": {
-     "path": "docs/mobile/shots/D3/atlas-iphone13-2-whole-chart.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-iphone13-2-whole-chart.png",
      "w": 390,
      "h": 664,
-     "bytes": 273739,
+     "bytes": 273748,
      "scale": 1,
-     "sha": "c06eddff1065f4bd783d78be5370ab7b049fc0870417915fcf2ac2b6a95599f1"
+     "sha": "3ebdf0de3be6fb4ed90dff661530d937691cac38a8c57e8951b1a41b9bab1cd0"
     },
     "3-layers": {
-     "path": "docs/mobile/shots/D3/atlas-iphone13-3-layers.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-iphone13-3-layers.png",
      "w": 390,
      "h": 664,
-     "bytes": 111241,
+     "bytes": 111250,
      "scale": 1,
-     "sha": "41ebc2d816b939ddf04171e99375ac727937f822588bfa275c48537fc6c3e6e1"
+     "sha": "0171881ace711bff946a000ea178f2df222bcefe13ef876b900718c486f8ef40"
     },
     "4-place-card": {
-     "path": "docs/mobile/shots/D3/atlas-iphone13-4-place-card.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-iphone13-4-place-card.png",
      "w": 390,
      "h": 664,
-     "bytes": 116411,
+     "bytes": 116469,
      "scale": 1,
-     "sha": "638219fc062ae4f0b26a0b65a9fe8e3cf0df280b006d3d15de5e95f515e5e2db"
+     "sha": "9b21feb92e5cd0ba847f729c200ddae482eb00ca8f3f0e2bcd04035e71010fd0"
     }
    },
    "first_load": {
-    "bytes": 806802,
-    "requests": 55,
+    "bytes": 483819,
+    "requests": 42,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67902
+     "bytes": 67676
     },
     "by_cat": {
      "html_other": {
-      "requests": 14,
-      "bytes": 390659
+      "requests": 1,
+      "bytes": 67676
      },
      "data": {
       "requests": 16,
@@ -763,8 +763,78 @@
       "bytes": 347716
      }
     },
-    "foreign_origins": [],
-    "routed": [],
+    "foreign_origins": [
+     "https://fonts.googleapis.com",
+     "https://fonts.gstatic.com",
+     "https://unpkg.com"
+    ],
+    "routed": [
+     {
+      "host": "fonts.googleapis.com",
+      "path": "/css2",
+      "length": 6522
+     },
+     {
+      "host": "unpkg.com",
+      "path": "dist/leaflet.css",
+      "length": 14806
+     },
+     {
+      "host": "unpkg.com",
+      "path": "dist/leaflet.js",
+      "length": 147552
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-400-italic.woff2",
+      "length": 25388
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-400-normal.woff2",
+      "length": 23820
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-600-normal.woff2",
+      "length": 25348
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-ext-600-normal.woff2",
+      "length": 64132
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "ibm-plex-mono/ibm-plex-mono-latin-400-normal.woff2",
+      "length": 14708
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "ibm-plex-mono/ibm-plex-mono-latin-600-normal.woff2",
+      "length": 15620
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "ibm-plex-mono/ibm-plex-mono-latin-ext-400-normal.woff2",
+      "length": 13348
+     },
+     {
+      "host": "unpkg.com",
+      "path": "images/layers-2x.png",
+      "length": 1259
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "lora/lora-latin-400-italic.woff2",
+      "length": 22756
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "lora/lora-latin-400-normal.woff2",
+      "length": 21148
+     }
+    ],
     "aborted": []
    },
    "contents": {
@@ -781,9 +851,9 @@
     ]
    },
    "repeat_visit": {
-    "bytes": 61278,
-    "requests": 55,
-    "cache_hits": 50
+    "bytes": 4843,
+    "requests": 42,
+    "cache_hits": 42
    },
    "doc_scroll": 964,
    "inner_height": 664,
@@ -1846,7 +1916,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 136743
+    "wall_ms": 137590
    },
    "extras": {
     "safe_area": {
@@ -1909,52 +1979,52 @@
    },
    "shots": {
     "1-contents": {
-     "path": "docs/mobile/shots/D3/atlas-pixel7-1-contents.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-pixel7-1-contents.png",
      "w": 412,
      "h": 839,
-     "bytes": 131402,
+     "bytes": 131404,
      "scale": 1,
-     "sha": "4deb1ba3bddbb7e28a03cf24d6ab3f30aad28983e8c7f08bc80b7c2ed550373b"
+     "sha": "89545c61ca8748f78acda2fcae9a3e214faedea3568b5ee57383f5dc1027c6c1"
     },
     "2-whole-chart": {
-     "path": "docs/mobile/shots/D3/atlas-pixel7-2-whole-chart.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-pixel7-2-whole-chart.png",
      "w": 206,
      "h": 419,
-     "bytes": 115237,
+     "bytes": 115238,
      "scale": 0.5,
-     "sha": "f72905f1ee4eb8ec5e02f1c52943970fc828d05cc796e8707718f129065544b3",
-     "full_path": "docs/mobile/shots/D3/atlas-pixel7-2-whole-chart.full.png",
-     "full_sha": "ce31ccbcc199eae8c7361c7ccafa13422acef48a511682beaf39232d080c0d98"
+     "sha": "40e4a7c9c53fe849218ea7e961726483d8c16573b55bbfc4504ec61490b402f3",
+     "full_path": "docs/mobile/shots/rebase-7/atlas-pixel7-2-whole-chart.full.png",
+     "full_sha": "bafaeb5510abce878a8f0f7ff12f006cfff8a93e3047d36d4f67a37e3fab6272"
     },
     "3-layers": {
-     "path": "docs/mobile/shots/D3/atlas-pixel7-3-layers.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-pixel7-3-layers.png",
      "w": 412,
      "h": 839,
-     "bytes": 178168,
+     "bytes": 178173,
      "scale": 1,
-     "sha": "13c152cf338bd8789e81d39176a777f6eb94fcd5ac96cd0ddaa6b438b85206ec"
+     "sha": "f38532e691c96c3264237cca120f4485ab3836340076a4b5efd00815007c798a"
     },
     "4-place-card": {
-     "path": "docs/mobile/shots/D3/atlas-pixel7-4-place-card.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-pixel7-4-place-card.png",
      "w": 412,
      "h": 839,
-     "bytes": 223943,
+     "bytes": 223946,
      "scale": 1,
-     "sha": "20113d2eeb17c576cf46ff278b5bd0355dcc35584c7846e54303c1e2008201b4"
+     "sha": "30bec152127f4f65ddd4619aa23cda7d59f812d748b757fa3ab2569842380d00"
     }
    },
    "first_load": {
-    "bytes": 681522,
-    "requests": 45,
+    "bytes": 358539,
+    "requests": 32,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67902
+     "bytes": 67676
     },
     "by_cat": {
      "html_other": {
-      "requests": 14,
-      "bytes": 390659
+      "requests": 1,
+      "bytes": 67676
      },
      "data": {
       "requests": 16,
@@ -1965,8 +2035,78 @@
       "bytes": 222436
      }
     },
-    "foreign_origins": [],
-    "routed": [],
+    "foreign_origins": [
+     "https://fonts.googleapis.com",
+     "https://fonts.gstatic.com",
+     "https://unpkg.com"
+    ],
+    "routed": [
+     {
+      "host": "fonts.googleapis.com",
+      "path": "/css2",
+      "length": 6522
+     },
+     {
+      "host": "unpkg.com",
+      "path": "dist/leaflet.css",
+      "length": 14806
+     },
+     {
+      "host": "unpkg.com",
+      "path": "dist/leaflet.js",
+      "length": 147552
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-400-italic.woff2",
+      "length": 25388
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-400-normal.woff2",
+      "length": 23820
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-600-normal.woff2",
+      "length": 25348
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-ext-600-normal.woff2",
+      "length": 64132
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "ibm-plex-mono/ibm-plex-mono-latin-400-normal.woff2",
+      "length": 14708
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "ibm-plex-mono/ibm-plex-mono-latin-600-normal.woff2",
+      "length": 15620
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "ibm-plex-mono/ibm-plex-mono-latin-ext-400-normal.woff2",
+      "length": 13348
+     },
+     {
+      "host": "unpkg.com",
+      "path": "images/layers-2x.png",
+      "length": 1259
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "lora/lora-latin-400-italic.woff2",
+      "length": 22756
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "lora/lora-latin-400-normal.woff2",
+      "length": 21148
+     }
+    ],
     "aborted": []
    },
    "contents": {
@@ -1984,8 +2124,8 @@
    },
    "repeat_visit": {
     "bytes": 4843,
-    "requests": 45,
-    "cache_hits": 45
+    "requests": 32,
+    "cache_hits": 32
    },
    "doc_scroll": 1279,
    "inner_height": 839,
@@ -3090,7 +3230,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 147659
+    "wall_ms": 148465
    },
    "extras": {
     "safe_area": {
@@ -3154,7 +3294,7 @@
    },
    "shots": {
     "1-contents": {
-     "path": "docs/mobile/shots/D3/atlas-landscape-1-contents.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-landscape-1-contents.png",
      "w": 844,
      "h": 340,
      "bytes": 98827,
@@ -3162,42 +3302,42 @@
      "sha": "826801ab0434b54721f2bef62b08da78f4da586f3721e26e653f95e7b41ea061"
     },
     "2-whole-chart": {
-     "path": "docs/mobile/shots/D3/atlas-landscape-2-whole-chart.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-landscape-2-whole-chart.png",
      "w": 844,
      "h": 340,
-     "bytes": 192454,
+     "bytes": 192494,
      "scale": 1,
-     "sha": "dc6320f10169825a53a5849da31bcc86529e9de9246d7acced6499313b0c480d"
+     "sha": "3d0dc9cce9d4130bbc26de65d4846bea965413382ee7d679af73751c6d9b370d"
     },
     "3-layers": {
-     "path": "docs/mobile/shots/D3/atlas-landscape-3-layers.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-landscape-3-layers.png",
      "w": 844,
      "h": 340,
-     "bytes": 149034,
+     "bytes": 149078,
      "scale": 1,
-     "sha": "613c347b024ec4825fbd373ae61f9ee36916b95ea90cdcbe8955e30969d4334b"
+     "sha": "05f30adb2bc6caa3b1985b9b285d03bcb0c963bfe699d1161b8ebf13fc24b9f8"
     },
     "4-place-card": {
-     "path": "docs/mobile/shots/D3/atlas-landscape-4-place-card.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-landscape-4-place-card.png",
      "w": 844,
      "h": 340,
-     "bytes": 181823,
+     "bytes": 181869,
      "scale": 1,
-     "sha": "d5c367a86224e6fa4ce13071227553883c573a8e5e93acc68030c0593ce3fb5a"
+     "sha": "f5618e47805e23dc161fe6dd5519a58e680d53eaa8d671422f1712ab3e96b12b"
     }
    },
    "first_load": {
-    "bytes": 617428,
-    "requests": 45,
+    "bytes": 294445,
+    "requests": 32,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67902
+     "bytes": 67676
     },
     "by_cat": {
      "html_other": {
-      "requests": 14,
-      "bytes": 390659
+      "requests": 1,
+      "bytes": 67676
      },
      "data": {
       "requests": 16,
@@ -3208,8 +3348,78 @@
       "bytes": 158342
      }
     },
-    "foreign_origins": [],
-    "routed": [],
+    "foreign_origins": [
+     "https://fonts.googleapis.com",
+     "https://fonts.gstatic.com",
+     "https://unpkg.com"
+    ],
+    "routed": [
+     {
+      "host": "fonts.googleapis.com",
+      "path": "/css2",
+      "length": 6522
+     },
+     {
+      "host": "unpkg.com",
+      "path": "dist/leaflet.css",
+      "length": 14806
+     },
+     {
+      "host": "unpkg.com",
+      "path": "dist/leaflet.js",
+      "length": 147552
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-400-italic.woff2",
+      "length": 25388
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-400-normal.woff2",
+      "length": 23820
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-600-normal.woff2",
+      "length": 25348
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-ext-600-normal.woff2",
+      "length": 64132
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "ibm-plex-mono/ibm-plex-mono-latin-400-normal.woff2",
+      "length": 14708
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "ibm-plex-mono/ibm-plex-mono-latin-600-normal.woff2",
+      "length": 15620
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "ibm-plex-mono/ibm-plex-mono-latin-ext-400-normal.woff2",
+      "length": 13348
+     },
+     {
+      "host": "unpkg.com",
+      "path": "images/layers-2x.png",
+      "length": 1259
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "lora/lora-latin-400-italic.woff2",
+      "length": 22756
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "lora/lora-latin-400-normal.woff2",
+      "length": 21148
+     }
+    ],
     "aborted": []
    },
    "contents": {
@@ -3227,8 +3437,8 @@
    },
    "repeat_visit": {
     "bytes": 4843,
-    "requests": 45,
-    "cache_hits": 45
+    "requests": 32,
+    "cache_hits": 32
    },
    "doc_scroll": 340,
    "inner_height": 340,
@@ -4664,7 +4874,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 215809
+    "wall_ms": 216696
    },
    "extras": {
     "safe_area": {
@@ -4728,56 +4938,56 @@
    },
    "shots": {
     "1-contents": {
-     "path": "docs/mobile/shots/D3/atlas-desktop-1-contents.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-desktop-1-contents.png",
      "w": 1366,
      "h": 768,
-     "bytes": 217389,
+     "bytes": 217391,
      "scale": 1,
-     "sha": "c96498890d14f17df0516096fd7031db69e21a0d90b9fc6f69dd9623716d310c"
+     "sha": "3c501d804f6fbf716f2045007c68dceb658f34cb8e744cd41d13c632c84e71ed"
     },
     "2-whole-chart": {
-     "path": "docs/mobile/shots/D3/atlas-desktop-2-whole-chart.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-desktop-2-whole-chart.png",
      "w": 455,
      "h": 256,
-     "bytes": 155483,
+     "bytes": 155487,
      "scale": 0.3333333333333333,
-     "sha": "515bc73560f302733f431f9a3dc590d2f5541eea3380462ab5558b314ad6f080",
-     "full_path": "docs/mobile/shots/D3/atlas-desktop-2-whole-chart.full.png",
-     "full_sha": "9c567e32394abe6874574b113496483052a65720f67aaf3cbb557dd613948bbb"
+     "sha": "64b26b6224d57cdec5796a0bf6ace1eb5c9db610a927c74b943e6a290cf6bd62",
+     "full_path": "docs/mobile/shots/rebase-7/atlas-desktop-2-whole-chart.full.png",
+     "full_sha": "7d7073d64ac7e212065a1d1a0bfc6a75e8e06f9d52f63c47bfe2d55b5b173655"
     },
     "3-layers": {
-     "path": "docs/mobile/shots/D3/atlas-desktop-3-layers.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-desktop-3-layers.png",
      "w": 683,
      "h": 384,
-     "bytes": 276680,
+     "bytes": 276677,
      "scale": 0.5,
-     "sha": "aca106523d5a462098626a9947782d45db1b2ab0b028ab3a5c98ce0d92d29cef",
-     "full_path": "docs/mobile/shots/D3/atlas-desktop-3-layers.full.png",
-     "full_sha": "c9c7eb831808fb03413e4e3db39616885cc17ca9c6cb1a9ba04219e54c8f5e5b"
+     "sha": "3ffe98a46e6cd8210cec1cd997dd0b95b929f51108de886bab31c2d763b0336d",
+     "full_path": "docs/mobile/shots/rebase-7/atlas-desktop-3-layers.full.png",
+     "full_sha": "f1350d506fbc3c28e9c709304a9f16c2c66e7c6684be1e8617950d2af19dcf21"
     },
     "4-place-card": {
-     "path": "docs/mobile/shots/D3/atlas-desktop-4-place-card.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-desktop-4-place-card.png",
      "w": 683,
      "h": 384,
-     "bytes": 290550,
+     "bytes": 290559,
      "scale": 0.5,
-     "sha": "2f314c53203139fdc339d4b65405f1535ae049c3ee550d7cad888f3ee32a0b0f",
-     "full_path": "docs/mobile/shots/D3/atlas-desktop-4-place-card.full.png",
-     "full_sha": "24d9c8260c498db25f0894701d3dbb11b5dded7fbaba611f3222d3003878dabd"
+     "sha": "848dc79fef4b0dc40b9cb841c0ef3f10753f77df3f7c61409a9e4cba5b99e610",
+     "full_path": "docs/mobile/shots/rebase-7/atlas-desktop-4-place-card.full.png",
+     "full_sha": "ba5da1dc47454a4760b6e02d3fc1e759954744f4a9ca3b56571519f26051284a"
     }
    },
    "first_load": {
-    "bytes": 616864,
-    "requests": 45,
+    "bytes": 294445,
+    "requests": 32,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67902
+     "bytes": 67676
     },
     "by_cat": {
      "html_other": {
-      "requests": 14,
-      "bytes": 390095
+      "requests": 1,
+      "bytes": 67676
      },
      "data": {
       "requests": 16,
@@ -4788,8 +4998,78 @@
       "bytes": 158342
      }
     },
-    "foreign_origins": [],
-    "routed": [],
+    "foreign_origins": [
+     "https://fonts.googleapis.com",
+     "https://fonts.gstatic.com",
+     "https://unpkg.com"
+    ],
+    "routed": [
+     {
+      "host": "fonts.googleapis.com",
+      "path": "/css2",
+      "length": 6522
+     },
+     {
+      "host": "unpkg.com",
+      "path": "dist/leaflet.css",
+      "length": 14806
+     },
+     {
+      "host": "unpkg.com",
+      "path": "dist/leaflet.js",
+      "length": 147552
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-400-italic.woff2",
+      "length": 25388
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-400-normal.woff2",
+      "length": 23820
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-600-normal.woff2",
+      "length": 25348
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-ext-600-normal.woff2",
+      "length": 64132
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "ibm-plex-mono/ibm-plex-mono-latin-400-normal.woff2",
+      "length": 14708
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "ibm-plex-mono/ibm-plex-mono-latin-600-normal.woff2",
+      "length": 15620
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "ibm-plex-mono/ibm-plex-mono-latin-ext-400-normal.woff2",
+      "length": 13348
+     },
+     {
+      "host": "unpkg.com",
+      "path": "images/layers.png",
+      "length": 696
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "lora/lora-latin-400-italic.woff2",
+      "length": 22756
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "lora/lora-latin-400-normal.woff2",
+      "length": 21148
+     }
+    ],
     "aborted": []
    },
    "contents": {
@@ -4807,8 +5087,8 @@
    },
    "repeat_visit": {
     "bytes": 4843,
-    "requests": 45,
-    "cache_hits": 45
+    "requests": 32,
+    "cache_hits": 32
    },
    "doc_scroll": 768,
    "inner_height": 768,
@@ -7147,7 +7427,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 343653
+    "wall_ms": 344832
    },
    "extras": {},
    "extra_errors": {
@@ -7173,56 +7453,56 @@
    },
    "shots": {
     "1-contents": {
-     "path": "docs/mobile/shots/D3/atlas-desktop2x-1-contents.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-desktop2x-1-contents.png",
      "w": 1440,
      "h": 900,
-     "bytes": 247111,
+     "bytes": 247116,
      "scale": 1,
-     "sha": "b890affd09d759a39ef35b0c567a80a25b03d2008d902c03bf7558130791fdc6"
+     "sha": "d4ac8c526541319dbf6c478f8a5d9d63f6b96cf5b9a3c9c81e47cb935bf03b75"
     },
     "2-whole-chart": {
-     "path": "docs/mobile/shots/D3/atlas-desktop2x-2-whole-chart.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-desktop2x-2-whole-chart.png",
      "w": 480,
      "h": 300,
      "bytes": 199415,
      "scale": 0.3333333333333333,
-     "sha": "51b66150acde7fcc7dc0081b53cdc2631630df5105eebbbf8f6cc347bc6ab050",
-     "full_path": "docs/mobile/shots/D3/atlas-desktop2x-2-whole-chart.full.png",
-     "full_sha": "ce4fe62ba52bb845173f53db1b013fc36d66f2de2a7a5924ca472eaa9aff75c7"
+     "sha": "8946b7226ccecbd05554a1c44c82cdf9acb4ee95ac8ae895a149ad1b486b03fa",
+     "full_path": "docs/mobile/shots/rebase-7/atlas-desktop2x-2-whole-chart.full.png",
+     "full_sha": "5d90085c1e93b55cbacdf60fd81b934d336fb362bb9f7244f61a39af82b0b682"
     },
     "3-layers": {
-     "path": "docs/mobile/shots/D3/atlas-desktop2x-3-layers.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-desktop2x-3-layers.png",
      "w": 480,
      "h": 300,
-     "bytes": 178586,
+     "bytes": 178587,
      "scale": 0.3333333333333333,
-     "sha": "1abd9dc3adda5be87e01b16fbe56118541e90f4b063529a7a841c4d365d20faa",
-     "full_path": "docs/mobile/shots/D3/atlas-desktop2x-3-layers.full.png",
-     "full_sha": "d2af27b2f3090c362f4c0b62b1ca607de92ba35e164bebb23940b0d32afe7108"
+     "sha": "dc9cb8500de692a49c8cde1949d0d85c99b737de5369a3c6d97b0c9239e35cb5",
+     "full_path": "docs/mobile/shots/rebase-7/atlas-desktop2x-3-layers.full.png",
+     "full_sha": "6e700575e81d7649607f00f3f0e3f8f4c3f8a7df32416694763d68dfcb34aa66"
     },
     "4-place-card": {
-     "path": "docs/mobile/shots/D3/atlas-desktop2x-4-place-card.png",
+     "path": "docs/mobile/shots/rebase-7/atlas-desktop2x-4-place-card.png",
      "w": 480,
      "h": 300,
-     "bytes": 180857,
+     "bytes": 180845,
      "scale": 0.3333333333333333,
-     "sha": "a33c68f3e66104ea29e810358c8d6de48f3a9ffd968e1d7c244837efc298c537",
-     "full_path": "docs/mobile/shots/D3/atlas-desktop2x-4-place-card.full.png",
-     "full_sha": "a7de0dd5fc6d19e3c29f7da18ffd203ab3c8c277bc33cdbc8995b5da9c4170de"
+     "sha": "96370d0d566f36500b7dba1880b6cb26ab59da30cde71cc5700b124105fb3e9d",
+     "full_path": "docs/mobile/shots/rebase-7/atlas-desktop2x-4-place-card.full.png",
+     "full_sha": "930f78446770380b7c9b169e1cd83cf6715d0cdb16d9fe2e74060602d46244b1"
     }
    },
    "first_load": {
-    "bytes": 1941501,
-    "requests": 165,
+    "bytes": 1618518,
+    "requests": 152,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67902
+     "bytes": 67676
     },
     "by_cat": {
      "html_other": {
-      "requests": 14,
-      "bytes": 390659
+      "requests": 1,
+      "bytes": 67676
      },
      "data": {
       "requests": 16,
@@ -7233,8 +7513,78 @@
       "bytes": 1482415
      }
     },
-    "foreign_origins": [],
-    "routed": [],
+    "foreign_origins": [
+     "https://fonts.googleapis.com",
+     "https://fonts.gstatic.com",
+     "https://unpkg.com"
+    ],
+    "routed": [
+     {
+      "host": "fonts.googleapis.com",
+      "path": "/css2",
+      "length": 6522
+     },
+     {
+      "host": "unpkg.com",
+      "path": "dist/leaflet.css",
+      "length": 14806
+     },
+     {
+      "host": "unpkg.com",
+      "path": "dist/leaflet.js",
+      "length": 147552
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-400-italic.woff2",
+      "length": 25388
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-400-normal.woff2",
+      "length": 23820
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-600-normal.woff2",
+      "length": 25348
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-ext-600-normal.woff2",
+      "length": 64132
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "ibm-plex-mono/ibm-plex-mono-latin-400-normal.woff2",
+      "length": 14708
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "ibm-plex-mono/ibm-plex-mono-latin-600-normal.woff2",
+      "length": 15620
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "ibm-plex-mono/ibm-plex-mono-latin-ext-400-normal.woff2",
+      "length": 13348
+     },
+     {
+      "host": "unpkg.com",
+      "path": "images/layers-2x.png",
+      "length": 1259
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "lora/lora-latin-400-italic.woff2",
+      "length": 22756
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "lora/lora-latin-400-normal.woff2",
+      "length": 21148
+     }
+    ],
     "aborted": []
    },
    "contents": {
@@ -7252,8 +7602,8 @@
    },
    "repeat_visit": {
     "bytes": 4843,
-    "requests": 165,
-    "cache_hits": 165
+    "requests": 152,
+    "cache_hits": 152
    },
    "doc_scroll": 900,
    "inner_height": 900,
@@ -9604,7 +9954,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 372232
+    "wall_ms": 372774
    },
    "extras": {},
    "extra_errors": {
@@ -9615,6 +9965,4348 @@
      "messages": []
     }
    }
+  }
+ },
+ "sim": {
+  "iphone13": {
+   "shots": {
+    "1-default": {
+     "path": "docs/mobile/shots/rebase-7/sim-iphone13-1-default.png",
+     "w": 390,
+     "h": 664,
+     "bytes": 263444,
+     "scale": 1,
+     "sha": "5875a7e9d7f822b9e0f227f1529de909ca0bc2c152d9787f8857606acc1a05de"
+    },
+    "2-ledger": {
+     "path": "docs/mobile/shots/rebase-7/sim-iphone13-2-ledger.png",
+     "w": 390,
+     "h": 664,
+     "bytes": 170767,
+     "scale": 1,
+     "sha": "160b4a539648a5349b4db541464b5f85fcb67e12cd308124ceab9e40f1e966b7"
+    }
+   },
+   "seeds": {
+    "epeshu": {
+     "fingerprint": "250ed457bfe3fe17ca33208aba1a60902e82ba0c7932a42ed72c4f910cf571c7",
+     "dayTicked": 474,
+     "stats_after": {
+      "buildings": 2068,
+      "trees": 48568,
+      "seed": "epeshu",
+      "realm": "Epēshu",
+      "treasury": 20431,
+      "pop": 10405,
+      "agents": 40,
+      "chron": 215
+     },
+     "rng_next": {
+      "gen": 0.27308097016066313,
+      "hist": 0.5039291209541261,
+      "amb": 0.7454263977706432,
+      "det": 0.8091916621197015
+     },
+     "views": {
+      "overview": {
+       "at": "Epēshu",
+       "alt": 2200,
+       "calls": 24,
+       "tris": 968648
+      },
+      "mid": {
+       "at": "Drāmūz",
+       "alt": 700,
+       "calls": 26,
+       "tris": 1032445
+      },
+      "close": {
+       "at": "Tamaron",
+       "alt": 160,
+       "calls": 25,
+       "tris": 1025432
+      }
+     },
+     "errors": {
+      "console": 0,
+      "page": 0,
+      "unexplained": 0,
+      "messages": []
+     },
+     "ctxloss": {
+      "available": true,
+      "lost": true,
+      "restored": true,
+      "stats_ok": true
+     }
+    },
+    "tamar1374": {
+     "fingerprint": "432a933bbd84d2d86de39d7c9806a3ee054e382e3c36e1e4573f24583a9eec3a",
+     "dayTicked": 474,
+     "stats_after": {
+      "buildings": 2111,
+      "trees": 68409,
+      "seed": "tamar1374",
+      "realm": "Githeros",
+      "treasury": 3176,
+      "pop": 9108,
+      "agents": 7,
+      "chron": 79
+     },
+     "rng_next": {
+      "gen": 0.6800814729649574,
+      "hist": 0.20143027999438345,
+      "amb": 0.5617090091109276,
+      "det": 0.3006706910673529
+     },
+     "views": {
+      "overview": {
+       "at": "Githeros",
+       "alt": 2200,
+       "calls": 33,
+       "tris": 1418970
+      },
+      "mid": {
+       "at": "Empherila",
+       "alt": 700,
+       "calls": 20,
+       "tris": 717433
+      },
+      "close": {
+       "at": "Iophban",
+       "alt": 160,
+       "calls": 29,
+       "tris": 1563607
+      }
+     },
+     "errors": {
+      "console": 0,
+      "page": 0,
+      "unexplained": 0,
+      "messages": []
+     }
+    }
+   },
+   "env": {
+    "w": 390,
+    "h": 664,
+    "dpr": 3,
+    "coarse": true,
+    "hover": false,
+    "hardwareConcurrency": 8,
+    "deviceMemory": 8,
+    "viewport_meta": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+    "canvas": [
+     624,
+     1062
+    ]
+   },
+   "first_load": {
+    "bytes": 746236,
+    "requests": 1,
+    "cache_hits": 0,
+    "max_asset": {
+     "path": "/",
+     "bytes": 746236
+    },
+    "by_cat": {
+     "html_other": {
+      "requests": 1,
+      "bytes": 746236
+     }
+    },
+    "foreign_origins": [
+     "https://cdnjs.cloudflare.com",
+     "https://fonts.googleapis.com",
+     "https://fonts.gstatic.com"
+    ],
+    "routed": [
+     {
+      "host": "fonts.googleapis.com",
+      "path": "/css2",
+      "length": 818
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-italic.woff2",
+      "length": 57808
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-normal.woff2",
+      "length": 59880
+     },
+     {
+      "host": "cdnjs.cloudflare.com",
+      "path": "r128/three.min.js",
+      "length": 603706
+     }
+    ],
+    "aborted": []
+   },
+   "renderer": {
+    "pixelRatio": 1.6,
+    "size": [
+     390,
+     664
+    ],
+    "antialias": true,
+    "powerPreference": "high-performance",
+    "alpha": false,
+    "preserveDrawingBuffer": false,
+    "shadowMap": {
+     "enabled": true,
+     "type": 2,
+     "autoUpdate": true
+    },
+    "lights": [
+     {
+      "type": "HemisphereLight",
+      "castShadow": false,
+      "map": null
+     },
+     {
+      "type": "DirectionalLight",
+      "castShadow": false,
+      "map": [
+       2048,
+       2048
+      ]
+     },
+     {
+      "type": "DirectionalLight",
+      "castShadow": false,
+      "map": [
+       512,
+       512
+      ]
+     }
+    ]
+   },
+   "stats": {
+    "fps": 60,
+    "calls": 30,
+    "tris": 1086138,
+    "buildings": 1245,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 800,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 3
+   },
+   "stats_keys": [
+    "fps",
+    "calls",
+    "tris",
+    "buildings",
+    "trees",
+    "seed",
+    "realm",
+    "treasury",
+    "pop",
+    "agents",
+    "chron"
+   ],
+   "device": null,
+   "doc_scroll": 664,
+   "doc_scroll_w": 390,
+   "hover_ungated": 12,
+   "min_font_px": {
+    "px": 11.5,
+    "who": "SPAN#dateTxt.date"
+   },
+   "top_occupancy": {
+    "px": 146,
+    "frac": 0.22,
+    "who": "drawerHandle"
+   },
+   "targets_under_44": {
+    "count": 14,
+    "total": 14,
+    "ratio": 1
+   },
+   "controls": [
+    {
+     "id": "link:Open the atlas of the Wi",
+     "w": 57,
+     "h": 23,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:The campaign wiki",
+     "w": 56,
+     "h": 23,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Pause (Space)",
+     "w": 24,
+     "h": 31,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Watching pace — a day in",
+     "w": 27,
+     "h": 31,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:1 day/sec",
+     "w": 36,
+     "h": 31,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:5 days/sec",
+     "w": 45,
+     "h": 31,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:30 days/sec — a year in ",
+     "w": 54,
+     "h": 31,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:120 days/sec — a reign i",
+     "w": 63,
+     "h": 31,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Open the ledger",
+     "w": 94,
+     "h": 38,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Export the annals as tex",
+     "w": 60,
+     "h": 29,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Fold the chronicle",
+     "w": 29,
+     "h": 29,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Overlays — territories, ",
+     "w": 42,
+     "h": 42,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Watch mode — the realm n",
+     "w": 42,
+     "h": 42,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Director — takes the cam",
+     "w": 42,
+     "h": 42,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Rates",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Acts",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Houses",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:World",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Fold the ledger away",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#2",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#3",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#4",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#5",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#6",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Unleash plague ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Start a great fire ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Flood the river",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Declare a drought",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Earthquake ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Wake the dragon",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Raise a bandit camp ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Assassinate the monarch",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Contest the succession",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Arrange a royal marriage",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Bless the harvest",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Send a comet",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Found a village ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Grant 5,000 gold",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Raze building ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "textbox:seedIn",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Regenerate the realm fro",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Forge the canon Marble C",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "textbox:dndHeightmap",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "textbox:[{\"name\":\"Epēshu\",\"kind\"",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Forge a realm from the l",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Return to procedural rea",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Copy a link to this real",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Toggle place names (L)",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Watch mode (C) — the rea",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:The director takes the c",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Hide the court (H) — tap",
+     "w": null,
+     "h": null,
+     "primary": true,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Show frame statistics (F",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    }
+   ],
+   "reach": {
+    "link:Open the atlas of the Wi": 0,
+    "link:The campaign wiki": 0,
+    "button:Pause (Space)": 0,
+    "button:Watching pace — a day in": 0,
+    "button:1 day/sec": 0,
+    "button:5 days/sec": 0,
+    "button:30 days/sec — a year in ": 0,
+    "button:120 days/sec — a reign i": 0,
+    "button:Open the ledger": 0,
+    "button:Export the annals as tex": 0,
+    "button:Fold the chronicle": 0,
+    "button:Overlays — territories, ": 0,
+    "button:Watch mode — the realm n": 0,
+    "button:Director — takes the cam": 0,
+    "button:Rates": 1,
+    "button:Acts": 1,
+    "button:Houses": 1,
+    "button:World": 1,
+    "button:Fold the ledger away": 1,
+    "slider:": 1,
+    "slider:#2": 1,
+    "slider:#3": 1,
+    "slider:#4": 1,
+    "slider:#5": 1,
+    "slider:#6": 1,
+    "button:Unleash plague ⌖": 2,
+    "button:Start a great fire ⌖": 2,
+    "button:Flood the river": 2,
+    "button:Declare a drought": 2,
+    "button:Earthquake ⌖": 2,
+    "button:Wake the dragon": 2,
+    "button:Raise a bandit camp ⌖": 2,
+    "button:Assassinate the monarch": 2,
+    "button:Contest the succession": 2,
+    "button:Arrange a royal marriage": 2,
+    "button:Bless the harvest": 2,
+    "button:Send a comet": 2,
+    "button:Found a village ⌖": 2,
+    "button:Grant 5,000 gold": 2,
+    "button:Raze building ⌖": 2,
+    "textbox:seedIn": 2,
+    "button:Regenerate the realm fro": 2,
+    "button:Forge the canon Marble C": 2,
+    "textbox:dndHeightmap": 2,
+    "textbox:[{\"name\":\"Epēshu\",\"kind\"": 2,
+    "button:Forge a realm from the l": 2,
+    "button:Return to procedural rea": 2,
+    "button:Copy a link to this real": 2,
+    "button:Toggle place names (L)": 2,
+    "button:Watch mode (C) — the rea": 2,
+    "button:The director takes the c": 2,
+    "button:Hide the court (H) — tap": 2,
+    "button:Show frame statistics (F": 2
+   },
+   "reach_max": 2,
+   "primary": {
+    "button:Pause (Space)": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 24,
+     "h": 31
+    },
+    "button:Watching pace — a day in": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 27,
+     "h": 31
+    },
+    "button:1 day/sec": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 36,
+     "h": 31
+    },
+    "button:5 days/sec": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 45,
+     "h": 31
+    },
+    "button:30 days/sec — a year in ": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 54,
+     "h": 31
+    },
+    "button:120 days/sec — a reign i": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 63,
+     "h": 31
+    },
+    "button:Open the ledger": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 94,
+     "h": 38
+    },
+    "button:Hide the court (H) — tap": {
+     "reach": 2,
+     "bottom25": null,
+     "w": null,
+     "h": null
+    }
+   },
+   "ledger": {
+    "open": true,
+    "rect": [
+     8,
+     108,
+     374,
+     398
+    ],
+    "cover": 0.575,
+    "controls": 18,
+    "under44": 17
+   },
+   "chrome_cover": {
+    "ledger": 1,
+    "peek": "no-sheet",
+    "half": "no-sheet"
+   },
+   "hidden": {
+    "days_advanced_while_hidden": 0.05,
+    "pauses_when_hidden": false
+   },
+   "net_total": {
+    "bytes": 746236,
+    "requests": 1,
+    "cache_hits": 0,
+    "max_asset": {
+     "path": "/",
+     "bytes": 746236
+    },
+    "by_cat": {
+     "html_other": {
+      "requests": 1,
+      "bytes": 746236
+     }
+    },
+    "foreign_origins": [
+     "https://cdnjs.cloudflare.com",
+     "https://fonts.googleapis.com",
+     "https://fonts.gstatic.com"
+    ],
+    "routed": [
+     {
+      "host": "fonts.googleapis.com",
+      "path": "/css2",
+      "length": 818
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-italic.woff2",
+      "length": 57808
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-normal.woff2",
+      "length": 59880
+     },
+     {
+      "host": "cdnjs.cloudflare.com",
+      "path": "r128/three.min.js",
+      "length": 603706
+     }
+    ],
+    "aborted": []
+   },
+   "timing": {
+    "wall_ms": 103463
+   },
+   "extra_errors": {
+    "safe_area": {
+     "console": 0,
+     "page": 0,
+     "unexplained": 0,
+     "messages": []
+    }
+   },
+   "extras": {
+    "safe_area": {
+     "command": "applied",
+     "env_top_px": 47,
+     "viewport_fit_cover": true,
+     "env_rules": 0,
+     "intersecting": [],
+     "intersecting_n": 0,
+     "safe_area": "applied"
+    }
+   }
+  },
+  "pixel7": {
+   "shots": {
+    "1-default": {
+     "path": "docs/mobile/shots/rebase-7/sim-pixel7-1-default.png",
+     "w": 206,
+     "h": 419,
+     "bytes": 90030,
+     "scale": 0.5,
+     "sha": "f16c980656604006cef7f9b12af6bca008357b8812a8142d510ed63e9f5348b5",
+     "full_path": "docs/mobile/shots/rebase-7/sim-pixel7-1-default.full.png",
+     "full_sha": "f35b3a1bbc2011908e6235715242e7bba14bb470c3c45f8cc925054f89470c63"
+    },
+    "2-ledger": {
+     "path": "docs/mobile/shots/rebase-7/sim-pixel7-2-ledger.png",
+     "w": 412,
+     "h": 839,
+     "bytes": 217502,
+     "scale": 1,
+     "sha": "72963f0c4e9546705a042f37aacf40cca446ee8bd9ad43ecca2dace2f22ea78e"
+    }
+   },
+   "seeds": {
+    "epeshu": {
+     "fingerprint": "250ed457bfe3fe17ca33208aba1a60902e82ba0c7932a42ed72c4f910cf571c7",
+     "dayTicked": 474,
+     "stats_after": {
+      "buildings": 2068,
+      "trees": 48568,
+      "seed": "epeshu",
+      "realm": "Epēshu",
+      "treasury": 20431,
+      "pop": 10405,
+      "agents": 40,
+      "chron": 215
+     },
+     "rng_next": {
+      "gen": 0.27308097016066313,
+      "hist": 0.5039291209541261,
+      "amb": 0.7454263977706432,
+      "det": 0.8091916621197015
+     },
+     "views": {
+      "overview": {
+       "at": "Epēshu",
+       "alt": 2200,
+       "calls": 24,
+       "tris": 968648
+      },
+      "mid": {
+       "at": "Drāmūz",
+       "alt": 700,
+       "calls": 26,
+       "tris": 1032445
+      },
+      "close": {
+       "at": "Tamaron",
+       "alt": 160,
+       "calls": 25,
+       "tris": 1025432
+      }
+     },
+     "errors": {
+      "console": 0,
+      "page": 0,
+      "unexplained": 0,
+      "messages": []
+     },
+     "ctxloss": {
+      "available": true,
+      "lost": true,
+      "restored": true,
+      "stats_ok": true
+     }
+    },
+    "tamar1374": {
+     "fingerprint": "432a933bbd84d2d86de39d7c9806a3ee054e382e3c36e1e4573f24583a9eec3a",
+     "dayTicked": 474,
+     "stats_after": {
+      "buildings": 2111,
+      "trees": 68409,
+      "seed": "tamar1374",
+      "realm": "Githeros",
+      "treasury": 3176,
+      "pop": 9108,
+      "agents": 7,
+      "chron": 79
+     },
+     "rng_next": {
+      "gen": 0.6800814729649574,
+      "hist": 0.20143027999438345,
+      "amb": 0.5617090091109276,
+      "det": 0.3006706910673529
+     },
+     "views": {
+      "overview": {
+       "at": "Githeros",
+       "alt": 2200,
+       "calls": 32,
+       "tris": 1405627
+      },
+      "mid": {
+       "at": "Empherila",
+       "alt": 700,
+       "calls": 20,
+       "tris": 717433
+      },
+      "close": {
+       "at": "Iophban",
+       "alt": 160,
+       "calls": 28,
+       "tris": 1563557
+      }
+     },
+     "errors": {
+      "console": 0,
+      "page": 0,
+      "unexplained": 0,
+      "messages": []
+     }
+    }
+   },
+   "env": {
+    "w": 412,
+    "h": 839,
+    "dpr": 2.625,
+    "coarse": true,
+    "hover": false,
+    "hardwareConcurrency": 8,
+    "deviceMemory": 8,
+    "viewport_meta": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+    "canvas": [
+     659,
+     1342
+    ]
+   },
+   "first_load": {
+    "bytes": 746236,
+    "requests": 1,
+    "cache_hits": 0,
+    "max_asset": {
+     "path": "/",
+     "bytes": 746236
+    },
+    "by_cat": {
+     "html_other": {
+      "requests": 1,
+      "bytes": 746236
+     }
+    },
+    "foreign_origins": [
+     "https://cdnjs.cloudflare.com",
+     "https://fonts.googleapis.com",
+     "https://fonts.gstatic.com"
+    ],
+    "routed": [
+     {
+      "host": "fonts.googleapis.com",
+      "path": "/css2",
+      "length": 818
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-italic.woff2",
+      "length": 57808
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-normal.woff2",
+      "length": 59880
+     },
+     {
+      "host": "cdnjs.cloudflare.com",
+      "path": "r128/three.min.js",
+      "length": 603706
+     }
+    ],
+    "aborted": []
+   },
+   "renderer": {
+    "pixelRatio": 1.6,
+    "size": [
+     412,
+     839
+    ],
+    "antialias": true,
+    "powerPreference": "high-performance",
+    "alpha": false,
+    "preserveDrawingBuffer": false,
+    "shadowMap": {
+     "enabled": true,
+     "type": 2,
+     "autoUpdate": true
+    },
+    "lights": [
+     {
+      "type": "HemisphereLight",
+      "castShadow": false,
+      "map": null
+     },
+     {
+      "type": "DirectionalLight",
+      "castShadow": false,
+      "map": [
+       2048,
+       2048
+      ]
+     },
+     {
+      "type": "DirectionalLight",
+      "castShadow": false,
+      "map": [
+       512,
+       512
+      ]
+     }
+    ]
+   },
+   "stats": {
+    "fps": 60,
+    "calls": 29,
+    "tris": 1085748,
+    "buildings": 1245,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 800,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 3
+   },
+   "stats_keys": [
+    "fps",
+    "calls",
+    "tris",
+    "buildings",
+    "trees",
+    "seed",
+    "realm",
+    "treasury",
+    "pop",
+    "agents",
+    "chron"
+   ],
+   "device": null,
+   "doc_scroll": 839,
+   "doc_scroll_w": 412,
+   "hover_ungated": 12,
+   "min_font_px": {
+    "px": 11.5,
+    "who": "SPAN#dateTxt.date"
+   },
+   "top_occupancy": {
+    "px": 146,
+    "frac": 0.174,
+    "who": "drawerHandle"
+   },
+   "targets_under_44": {
+    "count": 14,
+    "total": 14,
+    "ratio": 1
+   },
+   "controls": [
+    {
+     "id": "link:Open the atlas of the Wi",
+     "w": 57,
+     "h": 23,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:The campaign wiki",
+     "w": 56,
+     "h": 23,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Pause (Space)",
+     "w": 24,
+     "h": 31,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Watching pace — a day in",
+     "w": 27,
+     "h": 31,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:1 day/sec",
+     "w": 36,
+     "h": 31,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:5 days/sec",
+     "w": 45,
+     "h": 31,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:30 days/sec — a year in ",
+     "w": 54,
+     "h": 31,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:120 days/sec — a reign i",
+     "w": 63,
+     "h": 31,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Open the ledger",
+     "w": 94,
+     "h": 38,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Export the annals as tex",
+     "w": 60,
+     "h": 29,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Fold the chronicle",
+     "w": 29,
+     "h": 29,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Overlays — territories, ",
+     "w": 42,
+     "h": 42,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Watch mode — the realm n",
+     "w": 42,
+     "h": 42,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Director — takes the cam",
+     "w": 42,
+     "h": 42,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Rates",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Acts",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Houses",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:World",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Fold the ledger away",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#2",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#3",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#4",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#5",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#6",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#7",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#8",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Unleash plague ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Start a great fire ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Flood the river",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Declare a drought",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Earthquake ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Wake the dragon",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Raise a bandit camp ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Assassinate the monarch",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Contest the succession",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Arrange a royal marriage",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Bless the harvest",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Send a comet",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Found a village ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Grant 5,000 gold",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Raze building ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Show territories (T)",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "textbox:seedIn",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Regenerate the realm fro",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Forge the canon Marble C",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "textbox:dndHeightmap",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "textbox:[{\"name\":\"Epēshu\",\"kind\"",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Forge a realm from the l",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Return to procedural rea",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Copy a link to this real",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Toggle place names (L)",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Watch mode (C) — the rea",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:The director takes the c",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Hide the court (H) — tap",
+     "w": null,
+     "h": null,
+     "primary": true,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Show frame statistics (F",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    }
+   ],
+   "reach": {
+    "link:Open the atlas of the Wi": 0,
+    "link:The campaign wiki": 0,
+    "button:Pause (Space)": 0,
+    "button:Watching pace — a day in": 0,
+    "button:1 day/sec": 0,
+    "button:5 days/sec": 0,
+    "button:30 days/sec — a year in ": 0,
+    "button:120 days/sec — a reign i": 0,
+    "button:Open the ledger": 0,
+    "button:Export the annals as tex": 0,
+    "button:Fold the chronicle": 0,
+    "button:Overlays — territories, ": 0,
+    "button:Watch mode — the realm n": 0,
+    "button:Director — takes the cam": 0,
+    "button:Rates": 1,
+    "button:Acts": 1,
+    "button:Houses": 1,
+    "button:World": 1,
+    "button:Fold the ledger away": 1,
+    "slider:": 1,
+    "slider:#2": 1,
+    "slider:#3": 1,
+    "slider:#4": 1,
+    "slider:#5": 1,
+    "slider:#6": 1,
+    "slider:#7": 1,
+    "slider:#8": 1,
+    "button:Unleash plague ⌖": 2,
+    "button:Start a great fire ⌖": 2,
+    "button:Flood the river": 2,
+    "button:Declare a drought": 2,
+    "button:Earthquake ⌖": 2,
+    "button:Wake the dragon": 2,
+    "button:Raise a bandit camp ⌖": 2,
+    "button:Assassinate the monarch": 2,
+    "button:Contest the succession": 2,
+    "button:Arrange a royal marriage": 2,
+    "button:Bless the harvest": 2,
+    "button:Send a comet": 2,
+    "button:Found a village ⌖": 2,
+    "button:Grant 5,000 gold": 2,
+    "button:Raze building ⌖": 2,
+    "button:Show territories (T)": 2,
+    "textbox:seedIn": 2,
+    "button:Regenerate the realm fro": 2,
+    "button:Forge the canon Marble C": 2,
+    "textbox:dndHeightmap": 2,
+    "textbox:[{\"name\":\"Epēshu\",\"kind\"": 2,
+    "button:Forge a realm from the l": 2,
+    "button:Return to procedural rea": 2,
+    "button:Copy a link to this real": 2,
+    "button:Toggle place names (L)": 2,
+    "button:Watch mode (C) — the rea": 2,
+    "button:The director takes the c": 2,
+    "button:Hide the court (H) — tap": 2,
+    "button:Show frame statistics (F": 2
+   },
+   "reach_max": 2,
+   "primary": {
+    "button:Pause (Space)": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 24,
+     "h": 31
+    },
+    "button:Watching pace — a day in": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 27,
+     "h": 31
+    },
+    "button:1 day/sec": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 36,
+     "h": 31
+    },
+    "button:5 days/sec": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 45,
+     "h": 31
+    },
+    "button:30 days/sec — a year in ": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 54,
+     "h": 31
+    },
+    "button:120 days/sec — a reign i": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 63,
+     "h": 31
+    },
+    "button:Open the ledger": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 94,
+     "h": 38
+    },
+    "button:Hide the court (H) — tap": {
+     "reach": 2,
+     "bottom25": null,
+     "w": null,
+     "h": null
+    }
+   },
+   "ledger": {
+    "open": true,
+    "rect": [
+     8,
+     108,
+     396,
+     503
+    ],
+    "cover": 0.577,
+    "controls": 18,
+    "under44": 17
+   },
+   "chrome_cover": {
+    "ledger": 1,
+    "peek": "no-sheet",
+    "half": "no-sheet"
+   },
+   "hidden": {
+    "days_advanced_while_hidden": 0.05,
+    "pauses_when_hidden": false
+   },
+   "net_total": {
+    "bytes": 746236,
+    "requests": 1,
+    "cache_hits": 0,
+    "max_asset": {
+     "path": "/",
+     "bytes": 746236
+    },
+    "by_cat": {
+     "html_other": {
+      "requests": 1,
+      "bytes": 746236
+     }
+    },
+    "foreign_origins": [
+     "https://cdnjs.cloudflare.com",
+     "https://fonts.googleapis.com",
+     "https://fonts.gstatic.com"
+    ],
+    "routed": [
+     {
+      "host": "fonts.googleapis.com",
+      "path": "/css2",
+      "length": 818
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-italic.woff2",
+      "length": 57808
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-normal.woff2",
+      "length": 59880
+     },
+     {
+      "host": "cdnjs.cloudflare.com",
+      "path": "r128/three.min.js",
+      "length": 603706
+     }
+    ],
+    "aborted": []
+   },
+   "timing": {
+    "wall_ms": 102159
+   },
+   "extra_errors": {
+    "safe_area": {
+     "console": 0,
+     "page": 0,
+     "unexplained": 0,
+     "messages": []
+    }
+   },
+   "extras": {
+    "safe_area": {
+     "command": "applied",
+     "env_top_px": 47,
+     "viewport_fit_cover": true,
+     "env_rules": 0,
+     "intersecting": [],
+     "intersecting_n": 0,
+     "safe_area": "applied"
+    }
+   }
+  },
+  "landscape": {
+   "shots": {
+    "1-default": {
+     "path": "docs/mobile/shots/rebase-7/sim-landscape-1-default.png",
+     "w": 844,
+     "h": 340,
+     "bytes": 279504,
+     "scale": 1,
+     "sha": "d5df1bd35eb8a5de2be1582335b9d0b9f228796416f5fa802110c30863b5d606"
+    },
+    "2-ledger": {
+     "path": "docs/mobile/shots/rebase-7/sim-landscape-2-ledger.png",
+     "w": 844,
+     "h": 340,
+     "bytes": 263828,
+     "scale": 1,
+     "sha": "1f09e29dae7d7b136d149e76371685b3ddc619603d2065bc6b7cdf03899c9e73"
+    }
+   },
+   "seeds": {
+    "epeshu": {
+     "fingerprint": "250ed457bfe3fe17ca33208aba1a60902e82ba0c7932a42ed72c4f910cf571c7",
+     "dayTicked": 474,
+     "stats_after": {
+      "buildings": 2068,
+      "trees": 48568,
+      "seed": "epeshu",
+      "realm": "Epēshu",
+      "treasury": 20431,
+      "pop": 10405,
+      "agents": 40,
+      "chron": 215
+     },
+     "rng_next": {
+      "gen": 0.27308097016066313,
+      "hist": 0.5039291209541261,
+      "amb": 0.7454263977706432,
+      "det": 0.8091916621197015
+     },
+     "views": {
+      "overview": {
+       "at": "Epēshu",
+       "alt": 2200,
+       "calls": 28,
+       "tris": 1056322
+      },
+      "mid": {
+       "at": "Drāmūz",
+       "alt": 700,
+       "calls": 32,
+       "tris": 1310269
+      },
+      "close": {
+       "at": "Tamaron",
+       "alt": 160,
+       "calls": 29,
+       "tris": 1184248
+      }
+     },
+     "errors": {
+      "console": 0,
+      "page": 0,
+      "unexplained": 0,
+      "messages": []
+     },
+     "ctxloss": {
+      "available": true,
+      "lost": true,
+      "restored": true,
+      "stats_ok": true
+     }
+    },
+    "tamar1374": {
+     "fingerprint": "432a933bbd84d2d86de39d7c9806a3ee054e382e3c36e1e4573f24583a9eec3a",
+     "dayTicked": 474,
+     "stats_after": {
+      "buildings": 2111,
+      "trees": 68409,
+      "seed": "tamar1374",
+      "realm": "Githeros",
+      "treasury": 3176,
+      "pop": 9108,
+      "agents": 7,
+      "chron": 79
+     },
+     "rng_next": {
+      "gen": 0.6800814729649574,
+      "hist": 0.20143027999438345,
+      "amb": 0.5617090091109276,
+      "det": 0.3006706910673529
+     },
+     "views": {
+      "overview": {
+       "at": "Githeros",
+       "alt": 2200,
+       "calls": 40,
+       "tris": 1728100
+      },
+      "mid": {
+       "at": "Empherila",
+       "alt": 700,
+       "calls": 22,
+       "tris": 717596
+      },
+      "close": {
+       "at": "Iophban",
+       "alt": 160,
+       "calls": 36,
+       "tris": 1549854
+      }
+     },
+     "errors": {
+      "console": 0,
+      "page": 0,
+      "unexplained": 0,
+      "messages": []
+     }
+    }
+   },
+   "env": {
+    "w": 844,
+    "h": 340,
+    "dpr": 3,
+    "coarse": true,
+    "hover": false,
+    "hardwareConcurrency": 8,
+    "deviceMemory": 8,
+    "viewport_meta": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+    "canvas": [
+     1688,
+     680
+    ]
+   },
+   "first_load": {
+    "bytes": 746236,
+    "requests": 1,
+    "cache_hits": 0,
+    "max_asset": {
+     "path": "/",
+     "bytes": 746236
+    },
+    "by_cat": {
+     "html_other": {
+      "requests": 1,
+      "bytes": 746236
+     }
+    },
+    "foreign_origins": [
+     "https://cdnjs.cloudflare.com",
+     "https://fonts.googleapis.com",
+     "https://fonts.gstatic.com"
+    ],
+    "routed": [
+     {
+      "host": "fonts.googleapis.com",
+      "path": "/css2",
+      "length": 818
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-italic.woff2",
+      "length": 57808
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-normal.woff2",
+      "length": 59880
+     },
+     {
+      "host": "cdnjs.cloudflare.com",
+      "path": "r128/three.min.js",
+      "length": 603706
+     }
+    ],
+    "aborted": []
+   },
+   "renderer": {
+    "pixelRatio": 2,
+    "size": [
+     844,
+     340
+    ],
+    "antialias": true,
+    "powerPreference": "high-performance",
+    "alpha": false,
+    "preserveDrawingBuffer": false,
+    "shadowMap": {
+     "enabled": true,
+     "type": 2,
+     "autoUpdate": true
+    },
+    "lights": [
+     {
+      "type": "HemisphereLight",
+      "castShadow": false,
+      "map": null
+     },
+     {
+      "type": "DirectionalLight",
+      "castShadow": false,
+      "map": [
+       2048,
+       2048
+      ]
+     },
+     {
+      "type": "DirectionalLight",
+      "castShadow": false,
+      "map": [
+       512,
+       512
+      ]
+     }
+    ]
+   },
+   "stats": {
+    "fps": 60,
+    "calls": 43,
+    "tris": 1392830,
+    "buildings": 1245,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 800,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 3
+   },
+   "stats_keys": [
+    "fps",
+    "calls",
+    "tris",
+    "buildings",
+    "trees",
+    "seed",
+    "realm",
+    "treasury",
+    "pop",
+    "agents",
+    "chron"
+   ],
+   "device": null,
+   "doc_scroll": 340,
+   "doc_scroll_w": 844,
+   "hover_ungated": 12,
+   "min_font_px": {
+    "px": 10.5,
+    "who": "SPAN.mmHint"
+   },
+   "top_occupancy": {
+    "px": 122,
+    "frac": 0.359,
+    "who": "hud"
+   },
+   "targets_under_44": {
+    "count": 18,
+    "total": 18,
+    "ratio": 1
+   },
+   "controls": [
+    {
+     "id": "link:Open the atlas of the Wi",
+     "w": 57,
+     "h": 23,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:The campaign wiki",
+     "w": 56,
+     "h": 23,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Pause (Space)",
+     "w": 22,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Watching pace — a day in",
+     "w": 25,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:1 day/sec",
+     "w": 34,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:5 days/sec",
+     "w": 43,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:30 days/sec — a year in ",
+     "w": 52,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:120 days/sec — a reign i",
+     "w": 61,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Open the ledger",
+     "w": 90,
+     "h": 32,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Export the annals as tex",
+     "w": 56,
+     "h": 21,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Fold the chronicle",
+     "w": 25,
+     "h": 21,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:War",
+     "w": 42,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Trade",
+     "w": 51,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Fates",
+     "w": 47,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:The realm, drawn in line",
+     "w": 57,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Overlays — territories, ",
+     "w": 34,
+     "h": 34,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Watch mode — the realm n",
+     "w": 34,
+     "h": 34,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Director — takes the cam",
+     "w": 34,
+     "h": 34,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Rates",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Acts",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Houses",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Unleash plague ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Start a great fire ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Bless the harvest",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Send a comet",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    }
+   ],
+   "reach": {
+    "link:Open the atlas of the Wi": 0,
+    "link:The campaign wiki": 0,
+    "button:Pause (Space)": 0,
+    "button:Watching pace — a day in": 0,
+    "button:1 day/sec": 0,
+    "button:5 days/sec": 0,
+    "button:30 days/sec — a year in ": 0,
+    "button:120 days/sec — a reign i": 0,
+    "button:Open the ledger": 0,
+    "button:Export the annals as tex": 0,
+    "button:Fold the chronicle": 0,
+    "button:War": 0,
+    "button:Trade": 0,
+    "button:Fates": 0,
+    "button:The realm, drawn in line": 0,
+    "button:Overlays — territories, ": 0,
+    "button:Watch mode — the realm n": 0,
+    "button:Director — takes the cam": 0,
+    "button:Rates": 1,
+    "button:Acts": 1,
+    "button:Houses": 1,
+    "button:Unleash plague ⌖": 2,
+    "button:Start a great fire ⌖": 2,
+    "button:Bless the harvest": 2,
+    "button:Send a comet": 2
+   },
+   "reach_max": 2,
+   "primary": {
+    "button:Pause (Space)": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 22,
+     "h": 25
+    },
+    "button:Watching pace — a day in": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 25,
+     "h": 25
+    },
+    "button:1 day/sec": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 34,
+     "h": 25
+    },
+    "button:5 days/sec": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 43,
+     "h": 25
+    },
+    "button:30 days/sec — a year in ": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 52,
+     "h": 25
+    },
+    "button:120 days/sec — a reign i": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 61,
+     "h": 25
+    },
+    "button:Open the ledger": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 90,
+     "h": 32
+    }
+   },
+   "ledger": {
+    "open": true,
+    "rect": [
+     12,
+     66,
+     262,
+     452
+    ],
+    "cover": 0.25,
+    "controls": 3,
+    "under44": 3
+   },
+   "chrome_cover": {
+    "ledger": 1,
+    "peek": "no-sheet",
+    "half": "no-sheet"
+   },
+   "hidden": {
+    "days_advanced_while_hidden": 0.05,
+    "pauses_when_hidden": false
+   },
+   "net_total": {
+    "bytes": 746236,
+    "requests": 1,
+    "cache_hits": 0,
+    "max_asset": {
+     "path": "/",
+     "bytes": 746236
+    },
+    "by_cat": {
+     "html_other": {
+      "requests": 1,
+      "bytes": 746236
+     }
+    },
+    "foreign_origins": [
+     "https://cdnjs.cloudflare.com",
+     "https://fonts.googleapis.com",
+     "https://fonts.gstatic.com"
+    ],
+    "routed": [
+     {
+      "host": "fonts.googleapis.com",
+      "path": "/css2",
+      "length": 818
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-italic.woff2",
+      "length": 57808
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-normal.woff2",
+      "length": 59880
+     },
+     {
+      "host": "cdnjs.cloudflare.com",
+      "path": "r128/three.min.js",
+      "length": 603706
+     }
+    ],
+    "aborted": []
+   },
+   "timing": {
+    "wall_ms": 123041
+   },
+   "extra_errors": {
+    "safe_area": {
+     "console": 0,
+     "page": 0,
+     "unexplained": 0,
+     "messages": []
+    }
+   },
+   "extras": {
+    "safe_area": {
+     "command": "applied",
+     "env_top_px": 47,
+     "viewport_fit_cover": true,
+     "env_rules": 0,
+     "intersecting": [],
+     "intersecting_n": 0,
+     "safe_area": "applied"
+    }
+   }
+  },
+  "desktop": {
+   "shots": {
+    "1-default": {
+     "path": "docs/mobile/shots/rebase-7/sim-desktop-1-default.png",
+     "w": 683,
+     "h": 384,
+     "bytes": 248289,
+     "scale": 0.5,
+     "sha": "0012980445d19787ed6680f3a3113affad35837ce5235f4416de547b6a3d741f",
+     "full_path": "docs/mobile/shots/rebase-7/sim-desktop-1-default.full.png",
+     "full_sha": "76557826cbd6e76285782dd915790b0105b94b435e9458bbc42ab787ede9a8bc"
+    },
+    "2-ledger": {
+     "path": "docs/mobile/shots/rebase-7/sim-desktop-2-ledger.png",
+     "w": 683,
+     "h": 384,
+     "bytes": 239898,
+     "scale": 0.5,
+     "sha": "204d930d1ce2e952f69da9acd507e7fd232361258f76a2865f1802db9028e19e",
+     "full_path": "docs/mobile/shots/rebase-7/sim-desktop-2-ledger.full.png",
+     "full_sha": "aa1e34d67c24c79f80024361b5cbd2a59956d40b9a4beda4f883aa3d8164e4aa"
+    }
+   },
+   "seeds": {
+    "epeshu": {
+     "fingerprint": "250ed457bfe3fe17ca33208aba1a60902e82ba0c7932a42ed72c4f910cf571c7",
+     "dayTicked": 474,
+     "stats_after": {
+      "buildings": 2068,
+      "trees": 48568,
+      "seed": "epeshu",
+      "realm": "Epēshu",
+      "treasury": 20431,
+      "pop": 10405,
+      "agents": 40,
+      "chron": 215
+     },
+     "rng_next": {
+      "gen": 0.27308097016066313,
+      "hist": 0.5039291209541261,
+      "amb": 0.7454263977706432,
+      "det": 0.8091916621197015
+     },
+     "views": {
+      "overview": {
+       "at": "Epēshu",
+       "alt": 2200,
+       "calls": 28,
+       "tris": 1056322
+      },
+      "mid": {
+       "at": "Drāmūz",
+       "alt": 700,
+       "calls": 29,
+       "tris": 1196999
+      },
+      "close": {
+       "at": "Tamaron",
+       "alt": 160,
+       "calls": 28,
+       "tris": 1184240
+      }
+     },
+     "errors": {
+      "console": 0,
+      "page": 0,
+      "unexplained": 0,
+      "messages": []
+     },
+     "ctxloss": {
+      "available": true,
+      "lost": true,
+      "restored": true,
+      "stats_ok": true
+     }
+    },
+    "tamar1374": {
+     "fingerprint": "432a933bbd84d2d86de39d7c9806a3ee054e382e3c36e1e4573f24583a9eec3a",
+     "dayTicked": 474,
+     "stats_after": {
+      "buildings": 2111,
+      "trees": 68409,
+      "seed": "tamar1374",
+      "realm": "Githeros",
+      "treasury": 3176,
+      "pop": 9108,
+      "agents": 7,
+      "chron": 79
+     },
+     "rng_next": {
+      "gen": 0.6800814729649574,
+      "hist": 0.20143027999438345,
+      "amb": 0.5617090091109276,
+      "det": 0.3006706910673529
+     },
+     "views": {
+      "overview": {
+       "at": "Githeros",
+       "alt": 2200,
+       "calls": 37,
+       "tris": 1596206
+      },
+      "mid": {
+       "at": "Empherila",
+       "alt": 700,
+       "calls": 20,
+       "tris": 717433
+      },
+      "close": {
+       "at": "Iophban",
+       "alt": 160,
+       "calls": 30,
+       "tris": 1481559
+      }
+     },
+     "errors": {
+      "console": 0,
+      "page": 0,
+      "unexplained": 0,
+      "messages": []
+     }
+    }
+   },
+   "env": {
+    "w": 1366,
+    "h": 768,
+    "dpr": 1,
+    "coarse": false,
+    "hover": true,
+    "hardwareConcurrency": 8,
+    "deviceMemory": 8,
+    "viewport_meta": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+    "canvas": [
+     1366,
+     768
+    ]
+   },
+   "first_load": {
+    "bytes": 746236,
+    "requests": 1,
+    "cache_hits": 0,
+    "max_asset": {
+     "path": "/",
+     "bytes": 746236
+    },
+    "by_cat": {
+     "html_other": {
+      "requests": 1,
+      "bytes": 746236
+     }
+    },
+    "foreign_origins": [
+     "https://cdnjs.cloudflare.com",
+     "https://fonts.googleapis.com",
+     "https://fonts.gstatic.com"
+    ],
+    "routed": [
+     {
+      "host": "fonts.googleapis.com",
+      "path": "/css2",
+      "length": 818
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-italic.woff2",
+      "length": 57808
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-normal.woff2",
+      "length": 59880
+     },
+     {
+      "host": "cdnjs.cloudflare.com",
+      "path": "r128/three.min.js",
+      "length": 603706
+     }
+    ],
+    "aborted": []
+   },
+   "renderer": {
+    "pixelRatio": 1,
+    "size": [
+     1366,
+     768
+    ],
+    "antialias": true,
+    "powerPreference": "high-performance",
+    "alpha": false,
+    "preserveDrawingBuffer": false,
+    "shadowMap": {
+     "enabled": true,
+     "type": 2,
+     "autoUpdate": true
+    },
+    "lights": [
+     {
+      "type": "HemisphereLight",
+      "castShadow": false,
+      "map": null
+     },
+     {
+      "type": "DirectionalLight",
+      "castShadow": false,
+      "map": [
+       2048,
+       2048
+      ]
+     },
+     {
+      "type": "DirectionalLight",
+      "castShadow": false,
+      "map": [
+       512,
+       512
+      ]
+     }
+    ]
+   },
+   "stats": {
+    "fps": 60,
+    "calls": 35,
+    "tris": 1304582,
+    "buildings": 1245,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 800,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 3
+   },
+   "stats_keys": [
+    "fps",
+    "calls",
+    "tris",
+    "buildings",
+    "trees",
+    "seed",
+    "realm",
+    "treasury",
+    "pop",
+    "agents",
+    "chron"
+   ],
+   "device": null,
+   "doc_scroll": 768,
+   "doc_scroll_w": 1366,
+   "hover_ungated": 12,
+   "min_font_px": {
+    "px": 10.5,
+    "who": "SPAN.mmHint"
+   },
+   "top_occupancy": {
+    "px": 98,
+    "frac": 0.128,
+    "who": "drawerHandle"
+   },
+   "targets_under_44": {
+    "count": 20,
+    "total": 20,
+    "ratio": 1
+   },
+   "controls": [
+    {
+     "id": "link:Open the atlas of the Wi",
+     "w": 57,
+     "h": 23,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:The campaign wiki",
+     "w": 56,
+     "h": 23,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Pause (Space)",
+     "w": 22,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Watching pace — a day in",
+     "w": 25,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:1 day/sec",
+     "w": 34,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:5 days/sec",
+     "w": 43,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:30 days/sec — a year in ",
+     "w": 52,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:120 days/sec — a reign i",
+     "w": 61,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Open the ledger",
+     "w": 90,
+     "h": 32,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Export the annals as tex",
+     "w": 56,
+     "h": 21,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Fold the chronicle",
+     "w": 25,
+     "h": 21,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:All",
+     "w": 40,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Crown",
+     "w": 57,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:War",
+     "w": 42,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Trade",
+     "w": 51,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Fates",
+     "w": 47,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:The realm, drawn in line",
+     "w": 57,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Overlays — territories, ",
+     "w": 34,
+     "h": 34,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Watch mode — the realm n",
+     "w": 34,
+     "h": 34,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Director — takes the cam",
+     "w": 34,
+     "h": 34,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Rates",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Acts",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Houses",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:World",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Fold the ledger away",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#2",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#3",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#4",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#5",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#6",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#7",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#8",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:High",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Unleash plague ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Start a great fire ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Flood the river",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Declare a drought",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Earthquake ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Wake the dragon",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Raise a bandit camp ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Assassinate the monarch",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Contest the succession",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Arrange a royal marriage",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Bless the harvest",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Send a comet",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Found a village ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Grant 5,000 gold",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Raze building ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Show territories (T)",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "textbox:seedIn",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Regenerate the realm fro",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Forge the canon Marble C",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "textbox:dndHeightmap",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "textbox:[{\"name\":\"Epēshu\",\"kind\"",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Forge a realm from the l",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Return to procedural rea",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Copy a link to this real",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Toggle place names (L)",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Watch mode (C) — the rea",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:The director takes the c",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Hide the court (H) — tap",
+     "w": null,
+     "h": null,
+     "primary": true,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Show frame statistics (F",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    }
+   ],
+   "reach": {
+    "link:Open the atlas of the Wi": 0,
+    "link:The campaign wiki": 0,
+    "button:Pause (Space)": 0,
+    "button:Watching pace — a day in": 0,
+    "button:1 day/sec": 0,
+    "button:5 days/sec": 0,
+    "button:30 days/sec — a year in ": 0,
+    "button:120 days/sec — a reign i": 0,
+    "button:Open the ledger": 0,
+    "button:Export the annals as tex": 0,
+    "button:Fold the chronicle": 0,
+    "button:All": 0,
+    "button:Crown": 0,
+    "button:War": 0,
+    "button:Trade": 0,
+    "button:Fates": 0,
+    "button:The realm, drawn in line": 0,
+    "button:Overlays — territories, ": 0,
+    "button:Watch mode — the realm n": 0,
+    "button:Director — takes the cam": 0,
+    "button:Rates": 1,
+    "button:Acts": 1,
+    "button:Houses": 1,
+    "button:World": 1,
+    "button:Fold the ledger away": 1,
+    "slider:": 1,
+    "slider:#2": 1,
+    "slider:#3": 1,
+    "slider:#4": 1,
+    "slider:#5": 1,
+    "slider:#6": 1,
+    "slider:#7": 1,
+    "slider:#8": 1,
+    "button:High": 1,
+    "button:Unleash plague ⌖": 2,
+    "button:Start a great fire ⌖": 2,
+    "button:Flood the river": 2,
+    "button:Declare a drought": 2,
+    "button:Earthquake ⌖": 2,
+    "button:Wake the dragon": 2,
+    "button:Raise a bandit camp ⌖": 2,
+    "button:Assassinate the monarch": 2,
+    "button:Contest the succession": 2,
+    "button:Arrange a royal marriage": 2,
+    "button:Bless the harvest": 2,
+    "button:Send a comet": 2,
+    "button:Found a village ⌖": 2,
+    "button:Grant 5,000 gold": 2,
+    "button:Raze building ⌖": 2,
+    "button:Show territories (T)": 2,
+    "textbox:seedIn": 2,
+    "button:Regenerate the realm fro": 2,
+    "button:Forge the canon Marble C": 2,
+    "textbox:dndHeightmap": 2,
+    "textbox:[{\"name\":\"Epēshu\",\"kind\"": 2,
+    "button:Forge a realm from the l": 2,
+    "button:Return to procedural rea": 2,
+    "button:Copy a link to this real": 2,
+    "button:Toggle place names (L)": 2,
+    "button:Watch mode (C) — the rea": 2,
+    "button:The director takes the c": 2,
+    "button:Hide the court (H) — tap": 2,
+    "button:Show frame statistics (F": 2
+   },
+   "reach_max": 2,
+   "primary": {
+    "button:Pause (Space)": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 22,
+     "h": 25
+    },
+    "button:Watching pace — a day in": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 25,
+     "h": 25
+    },
+    "button:1 day/sec": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 34,
+     "h": 25
+    },
+    "button:5 days/sec": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 43,
+     "h": 25
+    },
+    "button:30 days/sec — a year in ": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 52,
+     "h": 25
+    },
+    "button:120 days/sec — a reign i": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 61,
+     "h": 25
+    },
+    "button:Open the ledger": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 90,
+     "h": 32
+    },
+    "button:Hide the court (H) — tap": {
+     "reach": 2,
+     "bottom25": null,
+     "w": null,
+     "h": null
+    }
+   },
+   "ledger": {
+    "open": true,
+    "rect": [
+     12,
+     66,
+     262,
+     547
+    ],
+    "cover": 0.137,
+    "controls": 18,
+    "under44": 16
+   },
+   "chrome_cover": {
+    "ledger": 1,
+    "peek": "no-sheet",
+    "half": "no-sheet"
+   },
+   "hidden": {
+    "days_advanced_while_hidden": 0.05,
+    "pauses_when_hidden": false
+   },
+   "net_total": {
+    "bytes": 746236,
+    "requests": 1,
+    "cache_hits": 0,
+    "max_asset": {
+     "path": "/",
+     "bytes": 746236
+    },
+    "by_cat": {
+     "html_other": {
+      "requests": 1,
+      "bytes": 746236
+     }
+    },
+    "foreign_origins": [
+     "https://cdnjs.cloudflare.com",
+     "https://fonts.googleapis.com",
+     "https://fonts.gstatic.com"
+    ],
+    "routed": [
+     {
+      "host": "fonts.googleapis.com",
+      "path": "/css2",
+      "length": 818
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-italic.woff2",
+      "length": 57808
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-normal.woff2",
+      "length": 59880
+     },
+     {
+      "host": "cdnjs.cloudflare.com",
+      "path": "r128/three.min.js",
+      "length": 603706
+     }
+    ],
+    "aborted": []
+   },
+   "timing": {
+    "wall_ms": 115270
+   },
+   "extra_errors": {}
+  },
+  "desktop2x": {
+   "shots": {
+    "1-default": {
+     "path": "docs/mobile/shots/rebase-7/sim-desktop2x-1-default.png",
+     "w": 720,
+     "h": 450,
+     "bytes": 294992,
+     "scale": 0.5,
+     "sha": "f14b25b45636f0cc884c5d9482b30d0deb8a0443a45289233c9eb2efc9978eb0",
+     "full_path": "docs/mobile/shots/rebase-7/sim-desktop2x-1-default.full.png",
+     "full_sha": "da34302f4572e3c53ccfdd093adbcbdcbece78a6a06d73b5bd702eb6cadce0aa"
+    },
+    "2-ledger": {
+     "path": "docs/mobile/shots/rebase-7/sim-desktop2x-2-ledger.png",
+     "w": 720,
+     "h": 450,
+     "bytes": 288723,
+     "scale": 0.5,
+     "sha": "734d1203bc167363841304e1637aa9f724d2a0019da4b95ed97984a69739054b",
+     "full_path": "docs/mobile/shots/rebase-7/sim-desktop2x-2-ledger.full.png",
+     "full_sha": "afc7f1729296a914e322c3efe0cfe3244852f2e0f238b9dca70988239929d2ea"
+    }
+   },
+   "seeds": {
+    "epeshu": {
+     "fingerprint": "250ed457bfe3fe17ca33208aba1a60902e82ba0c7932a42ed72c4f910cf571c7",
+     "dayTicked": 474,
+     "stats_after": {
+      "buildings": 2068,
+      "trees": 48568,
+      "seed": "epeshu",
+      "realm": "Epēshu",
+      "treasury": 20431,
+      "pop": 10405,
+      "agents": 40,
+      "chron": 215
+     },
+     "rng_next": {
+      "gen": 0.27308097016066313,
+      "hist": 0.5039291209541261,
+      "amb": 0.7454263977706432,
+      "det": 0.8091916621197015
+     },
+     "views": {
+      "overview": {
+       "at": "Epēshu",
+       "alt": 2200,
+       "calls": 27,
+       "tris": 1001722
+      },
+      "mid": {
+       "at": "Drāmūz",
+       "alt": 700,
+       "calls": 29,
+       "tris": 1196999
+      },
+      "close": {
+       "at": "Tamaron",
+       "alt": 160,
+       "calls": 27,
+       "tris": 1106968
+      }
+     },
+     "errors": {
+      "console": 0,
+      "page": 0,
+      "unexplained": 0,
+      "messages": []
+     },
+     "ctxloss": {
+      "available": true,
+      "lost": true,
+      "restored": true,
+      "stats_ok": true
+     }
+    },
+    "tamar1374": {
+     "fingerprint": "432a933bbd84d2d86de39d7c9806a3ee054e382e3c36e1e4573f24583a9eec3a",
+     "dayTicked": 474,
+     "stats_after": {
+      "buildings": 2111,
+      "trees": 68409,
+      "seed": "tamar1374",
+      "realm": "Githeros",
+      "treasury": 3176,
+      "pop": 9108,
+      "agents": 7,
+      "chron": 79
+     },
+     "rng_next": {
+      "gen": 0.6800814729649574,
+      "hist": 0.20143027999438345,
+      "amb": 0.5617090091109276,
+      "det": 0.3006706910673529
+     },
+     "views": {
+      "overview": {
+       "at": "Githeros",
+       "alt": 2200,
+       "calls": 36,
+       "tris": 1557466
+      },
+      "mid": {
+       "at": "Empherila",
+       "alt": 700,
+       "calls": 20,
+       "tris": 717433
+      },
+      "close": {
+       "at": "Iophban",
+       "alt": 160,
+       "calls": 30,
+       "tris": 1481559
+      }
+     },
+     "errors": {
+      "console": 0,
+      "page": 0,
+      "unexplained": 0,
+      "messages": []
+     }
+    }
+   },
+   "env": {
+    "w": 1440,
+    "h": 900,
+    "dpr": 2,
+    "coarse": false,
+    "hover": true,
+    "hardwareConcurrency": 8,
+    "deviceMemory": 8,
+    "viewport_meta": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+    "canvas": [
+     2880,
+     1800
+    ]
+   },
+   "first_load": {
+    "bytes": 746236,
+    "requests": 1,
+    "cache_hits": 0,
+    "max_asset": {
+     "path": "/",
+     "bytes": 746236
+    },
+    "by_cat": {
+     "html_other": {
+      "requests": 1,
+      "bytes": 746236
+     }
+    },
+    "foreign_origins": [
+     "https://cdnjs.cloudflare.com",
+     "https://fonts.googleapis.com",
+     "https://fonts.gstatic.com"
+    ],
+    "routed": [
+     {
+      "host": "fonts.googleapis.com",
+      "path": "/css2",
+      "length": 818
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-italic.woff2",
+      "length": 57808
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-normal.woff2",
+      "length": 59880
+     },
+     {
+      "host": "cdnjs.cloudflare.com",
+      "path": "r128/three.min.js",
+      "length": 603706
+     }
+    ],
+    "aborted": []
+   },
+   "renderer": {
+    "pixelRatio": 2,
+    "size": [
+     1440,
+     900
+    ],
+    "antialias": true,
+    "powerPreference": "high-performance",
+    "alpha": false,
+    "preserveDrawingBuffer": false,
+    "shadowMap": {
+     "enabled": true,
+     "type": 2,
+     "autoUpdate": true
+    },
+    "lights": [
+     {
+      "type": "HemisphereLight",
+      "castShadow": false,
+      "map": null
+     },
+     {
+      "type": "DirectionalLight",
+      "castShadow": false,
+      "map": [
+       2048,
+       2048
+      ]
+     },
+     {
+      "type": "DirectionalLight",
+      "castShadow": false,
+      "map": [
+       512,
+       512
+      ]
+     }
+    ]
+   },
+   "stats": {
+    "fps": 60,
+    "calls": 35,
+    "tris": 1304582,
+    "buildings": 1245,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 800,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 3
+   },
+   "stats_keys": [
+    "fps",
+    "calls",
+    "tris",
+    "buildings",
+    "trees",
+    "seed",
+    "realm",
+    "treasury",
+    "pop",
+    "agents",
+    "chron"
+   ],
+   "device": null,
+   "doc_scroll": 900,
+   "doc_scroll_w": 1440,
+   "hover_ungated": 12,
+   "min_font_px": {
+    "px": 10.5,
+    "who": "SPAN.mmHint"
+   },
+   "top_occupancy": {
+    "px": 98,
+    "frac": 0.109,
+    "who": "drawerHandle"
+   },
+   "targets_under_44": {
+    "count": 20,
+    "total": 20,
+    "ratio": 1
+   },
+   "controls": [
+    {
+     "id": "link:Open the atlas of the Wi",
+     "w": 57,
+     "h": 23,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:The campaign wiki",
+     "w": 56,
+     "h": 23,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Pause (Space)",
+     "w": 22,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Watching pace — a day in",
+     "w": 25,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:1 day/sec",
+     "w": 34,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:5 days/sec",
+     "w": 43,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:30 days/sec — a year in ",
+     "w": 52,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:120 days/sec — a reign i",
+     "w": 61,
+     "h": 25,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Open the ledger",
+     "w": 90,
+     "h": 32,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Export the annals as tex",
+     "w": 56,
+     "h": 21,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Fold the chronicle",
+     "w": 25,
+     "h": 21,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:All",
+     "w": 40,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Crown",
+     "w": 57,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:War",
+     "w": 42,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Trade",
+     "w": 51,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Fates",
+     "w": 47,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:The realm, drawn in line",
+     "w": 57,
+     "h": 18,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Overlays — territories, ",
+     "w": 34,
+     "h": 34,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Watch mode — the realm n",
+     "w": 34,
+     "h": 34,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Director — takes the cam",
+     "w": 34,
+     "h": 34,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Rates",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Acts",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Houses",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:World",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Fold the ledger away",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#2",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#3",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#4",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#5",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#6",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#7",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#8",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#9",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#10",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "slider:#11",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:High",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "button:Unleash plague ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Start a great fire ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Flood the river",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Declare a drought",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Earthquake ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Wake the dragon",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Raise a bandit camp ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Assassinate the monarch",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Contest the succession",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Arrange a royal marriage",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Bless the harvest",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Send a comet",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Found a village ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Grant 5,000 gold",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Raze building ⌖",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Show territories (T)",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "textbox:seedIn",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Regenerate the realm fro",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Forge the canon Marble C",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "textbox:dndHeightmap",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "textbox:[{\"name\":\"Epēshu\",\"kind\"",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Forge a realm from the l",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Return to procedural rea",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Copy a link to this real",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Toggle place names (L)",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Watch mode (C) — the rea",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:The director takes the c",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Hide the court (H) — tap",
+     "w": null,
+     "h": null,
+     "primary": true,
+     "reach": 2,
+     "bottom25": null
+    },
+    {
+     "id": "button:Show frame statistics (F",
+     "w": null,
+     "h": null,
+     "primary": false,
+     "reach": 2,
+     "bottom25": null
+    }
+   ],
+   "reach": {
+    "link:Open the atlas of the Wi": 0,
+    "link:The campaign wiki": 0,
+    "button:Pause (Space)": 0,
+    "button:Watching pace — a day in": 0,
+    "button:1 day/sec": 0,
+    "button:5 days/sec": 0,
+    "button:30 days/sec — a year in ": 0,
+    "button:120 days/sec — a reign i": 0,
+    "button:Open the ledger": 0,
+    "button:Export the annals as tex": 0,
+    "button:Fold the chronicle": 0,
+    "button:All": 0,
+    "button:Crown": 0,
+    "button:War": 0,
+    "button:Trade": 0,
+    "button:Fates": 0,
+    "button:The realm, drawn in line": 0,
+    "button:Overlays — territories, ": 0,
+    "button:Watch mode — the realm n": 0,
+    "button:Director — takes the cam": 0,
+    "button:Rates": 1,
+    "button:Acts": 1,
+    "button:Houses": 1,
+    "button:World": 1,
+    "button:Fold the ledger away": 1,
+    "slider:": 1,
+    "slider:#2": 1,
+    "slider:#3": 1,
+    "slider:#4": 1,
+    "slider:#5": 1,
+    "slider:#6": 1,
+    "slider:#7": 1,
+    "slider:#8": 1,
+    "slider:#9": 1,
+    "slider:#10": 1,
+    "slider:#11": 1,
+    "button:High": 1,
+    "button:Unleash plague ⌖": 2,
+    "button:Start a great fire ⌖": 2,
+    "button:Flood the river": 2,
+    "button:Declare a drought": 2,
+    "button:Earthquake ⌖": 2,
+    "button:Wake the dragon": 2,
+    "button:Raise a bandit camp ⌖": 2,
+    "button:Assassinate the monarch": 2,
+    "button:Contest the succession": 2,
+    "button:Arrange a royal marriage": 2,
+    "button:Bless the harvest": 2,
+    "button:Send a comet": 2,
+    "button:Found a village ⌖": 2,
+    "button:Grant 5,000 gold": 2,
+    "button:Raze building ⌖": 2,
+    "button:Show territories (T)": 2,
+    "textbox:seedIn": 2,
+    "button:Regenerate the realm fro": 2,
+    "button:Forge the canon Marble C": 2,
+    "textbox:dndHeightmap": 2,
+    "textbox:[{\"name\":\"Epēshu\",\"kind\"": 2,
+    "button:Forge a realm from the l": 2,
+    "button:Return to procedural rea": 2,
+    "button:Copy a link to this real": 2,
+    "button:Toggle place names (L)": 2,
+    "button:Watch mode (C) — the rea": 2,
+    "button:The director takes the c": 2,
+    "button:Hide the court (H) — tap": 2,
+    "button:Show frame statistics (F": 2
+   },
+   "reach_max": 2,
+   "primary": {
+    "button:Pause (Space)": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 22,
+     "h": 25
+    },
+    "button:Watching pace — a day in": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 25,
+     "h": 25
+    },
+    "button:1 day/sec": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 34,
+     "h": 25
+    },
+    "button:5 days/sec": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 43,
+     "h": 25
+    },
+    "button:30 days/sec — a year in ": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 52,
+     "h": 25
+    },
+    "button:120 days/sec — a reign i": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 61,
+     "h": 25
+    },
+    "button:Open the ledger": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 90,
+     "h": 32
+    },
+    "button:Hide the court (H) — tap": {
+     "reach": 2,
+     "bottom25": null,
+     "w": null,
+     "h": null
+    }
+   },
+   "ledger": {
+    "open": true,
+    "rect": [
+     12,
+     66,
+     262,
+     547
+    ],
+    "cover": 0.111,
+    "controls": 18,
+    "under44": 16
+   },
+   "chrome_cover": {
+    "ledger": 1,
+    "peek": "no-sheet",
+    "half": "no-sheet"
+   },
+   "hidden": {
+    "days_advanced_while_hidden": 0.05,
+    "pauses_when_hidden": false
+   },
+   "net_total": {
+    "bytes": 746236,
+    "requests": 1,
+    "cache_hits": 0,
+    "max_asset": {
+     "path": "/",
+     "bytes": 746236
+    },
+    "by_cat": {
+     "html_other": {
+      "requests": 1,
+      "bytes": 746236
+     }
+    },
+    "foreign_origins": [
+     "https://cdnjs.cloudflare.com",
+     "https://fonts.googleapis.com",
+     "https://fonts.gstatic.com"
+    ],
+    "routed": [
+     {
+      "host": "fonts.googleapis.com",
+      "path": "/css2",
+      "length": 818
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-italic.woff2",
+      "length": 57808
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "im-fell-english/im-fell-english-latin-400-normal.woff2",
+      "length": 59880
+     },
+     {
+      "host": "cdnjs.cloudflare.com",
+      "path": "r128/three.min.js",
+      "length": 603706
+     }
+    ],
+    "aborted": []
+   },
+   "timing": {
+    "wall_ms": 146075
+   },
+   "extra_errors": {}
   }
  }
 }
