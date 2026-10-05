@@ -1,12 +1,12 @@
 export const meta = {
   name: 'mobile-review',
-  description: 'Mobile track review of one POLISH item or one whole lane (Mobile 9 = atlas lane MR-A, Mobile 14 = sim lane MR-S): five blind finder lenses (determinism, desktop identity, phone parity, voice, delay-not-drop and quality) over the item diff and a fresh five-profile capture; each finding reproduced, refuted (opus/high) and rated (sonnet/low), surviving on 2 of 3 votes; an opus/high judge rules; writes docs/mobile/reviews/<item>.json and returns the blocker/major list',
+  description: 'Mobile track review of one POLISH item or one whole lane (Mobile 9 = atlas lane MR-A, Mobile 14 = sim lane MR-S): the mechanical gates (combined acceptance with UG1-UG11 coverage, UG2 page errors, street-drift, manifest checks) fail it in code whatever the votes; five blind finder lenses (determinism, desktop identity, phone parity, voice, delay-not-drop and quality) over the item diff and a fresh five-profile capture; each finding reproduced, refuted (opus/high) and rated (sonnet/low), surviving on 2 of 3 votes; an opus/high judge rules; writes docs/mobile/reviews/<item>.json and returns the blocker/major list',
   whenToUse: 'After mobile-build.js finished a POLISH item (every unit passed), or as Mobile 9 / Mobile 14: Workflow({name:"mobile-review", args:{item:"Mobile 9", date:"YYYY-MM-DD", diff:"<scratchpad>/mobile-9.diff"}}) or args {lane:"atlas"|"sim", date, diff}. The central session makes the diff (agents never run git); mode:"plan" returns the schedule and the paths with no agent. Read-only on the tree: it writes only under docs/mobile/reviews/ and its capture docs/mobile/captures/review-<item>.json.',
   phases: [
     {title: 'Preflight', detail: 'state.json statuses and app shas (rebase rule), the diff and its paths (lane discipline), accept files, references, tools'},
     {title: 'Capture', detail: 'one fresh five-profile capture of the tree, then the mechanical scoring: compare vs B0/R1, the combined acceptance of every unit in scope, drift, manifests, the sim_after_mobile_pass grep'},
-    {title: 'Find', detail: 'five blind single-lens finders (<=3 findings each in round 0, <=1 in extra rounds) plus code-sourced candidates'},
-    {title: 'Verify', detail: 'dedup, then reproduce (sonnet/medium), refute (opus/high) and severity (sonnet/low) in parallel per finding; survive on >=2 of 3 votes'},
+    {title: 'Find', detail: 'five blind single-lens finders (<=3 findings each in round 0, <=1 in extra rounds); code-sourced findings survive without a vote (votes only add findings)'},
+    {title: 'Verify', detail: 'dedup, then reproduce (sonnet/medium), refute (opus/high) and severity (sonnet/low) in parallel per finder finding; survive on >=2 of 3 votes'},
     {title: 'Judge', detail: 'opus/high rules final severity and merges duplicates among survivors (never more than one step lighter than the severity vote)'},
     {title: 'Record', detail: 'docs/mobile/reviews/<item>.json, read back and length-checked; POLISH fix-item text and fix-unit stubs returned for the central session'}
   ]
@@ -104,6 +104,7 @@ const EVID_REL = 'docs/mobile/reviews/' + SLUG + '.evidence.json'
 const ACC_REL = 'docs/mobile/reviews/' + SLUG + '.accept.json'
 const CAP_REL = 'docs/mobile/captures/review-' + SLUG + '.json'
 const PROFILES = ['iphone13', 'pixel7', 'landscape', 'desktop', 'desktop2x']
+const GATES = ['UG1', 'UG2', 'UG3', 'UG4', 'UG5', 'UG6', 'UG7', 'UG8', 'UG9', 'UG10', 'UG11'], NEVER_WAIVED = ['UG1', 'UG4', 'UG9', 'UG11']   // mobile-build's rule: these are always listed
 let START_REF = null   // the reference in force before the first unit of the scope ran (docs/mobile/state.json units[].ref_before); null -> R1 else B0
 const refFile = n => n === 'B0' ? 'docs/mobile/baseline.json' : 'docs/mobile/captures/' + n + '.json'
 const ALWAYS_OFF = ['.claude/', 'tools/street-drift.js', 'tools/filigree-', 'tools/street-', 'docs/filigree/', 'docs/street/']   // never in a mobile diff (UG11, coexistence)
@@ -142,7 +143,7 @@ const PRE = OBJ({state_exists: B, statuses: MAPS, start_ref: S, start_ref_exists
 const CAPT = OBJ({path: S, sha256: S, exit: I, profiles: MAPS, errors: I, infra_error: S})
 const FAIL = OBJ({key: S, op: S, expected: S, got: S})
 const SCORE = OBJ({path: S, sha256: S, accept_path: S, compare_b0_exit: I, compare_b0_n: I, compare_r1_exit: NI,
-  accept_none: B, accept_lint_ok: B, accept_pass: B, failing_n: I, accept_failing: {type: 'array', items: FAIL},
+  accept_none: B, accept_lint_ok: B, accept_pass: B, failing_n: I, accept_failing: {type: 'array', items: FAIL}, accept_gates: SA, accept_waived: SA,
   drift_exit: I, drift_self_test_exit: I, manifest_atlas_exit: NI, manifest_sim_exit: NI, grep_missing: SA, infra_error: S})
 const FIND = OBJ({lens: S, findings: {type: 'array', items: OBJ({id: S, title: S, where: S,
   evidence: OBJ({kind: {type: 'string', enum: ['metric', 'cmd', 'diff', 'shot']}, ref: S}), repro_cmd: S, fix: S, unit_hint: S,
@@ -179,7 +180,7 @@ const LENSES = [
 const LENS_IX = id => LENSES.findIndex(L => L.id === id)
 
 // ---- plan mode: the schedule, no agent ----
-const expectAgents = 3 + LENSES.length + 1 + 3 * (LENSES.length * FIND_CAP0 + CODE_CAP + 2) + 2 + ROUNDS * (1 + LENSES.length * (1 + 3 * FIND_CAP))
+const expectAgents = 3 + LENSES.length + 1 + 3 * (LENSES.length * FIND_CAP0) + 2 + ROUNDS * (1 + LENSES.length * (1 + 3 * FIND_CAP))
 if (MODE === 'plan') {
   const diffPaths = LANE === 'atlas' ? ['maps-site/', 'tools/art-previews.js', 'docs/mobile/'] : LANE === 'sim' ? ['index.html', 'vendor/', 'sw.js', 'sw-kill.js', 'offline-manifest.json', 'docs/mobile/'] : ['server.js', 'DEPLOY.md', '.github/workflows/pages.yml', 'tools/lint-deploy.js', 'tools/build-offline-manifest.js', 'docs/mobile/']
   return result({reason: 'plan', pass: false, schedule: {
@@ -192,7 +193,7 @@ if (MODE === 'plan') {
     lenses: LENSES.map(L => ({id: L.id, lens: L.key, check: L.check, ...M(FINDER_ROLE), cap_round0: FIND_CAP0, cap_extra: FIND_CAP})),
     verify: {reproduce: M('audit'), refute: M('judge'), severity: M('triage'), survive: '>= 2 of 3 votes', concurrency: VERIFY_CONC},
     judge: M('judge'), extra_rounds: ROUNDS, agent_bound: VERIFY_BOUND, expected_agents_max: expectAgents,
-    outputs: [REV_REL, EVID_REL, ACC_REL, CAP_REL], pass_rule: 'all five lenses ran; capture and scoring ran; no out-of-lane path in the diff; no surviving blocker or major; no unverified finding guessed blocker or major'
+    outputs: [REV_REL, EVID_REL, ACC_REL, CAP_REL], pass_rule: 'scored in code first, whatever the votes: the capture has all five profiles per lane surface and no page error (UG2); every passed unit has an accept file; the combined acceptance lints, lists UG1 UG4 UG9 UG11 and lists or waives every other gate, passes, and its failing list is intact; street-drift and its self-test exit 0; each offline manifest --check present exits 0. Then: all five lenses ran; no out-of-lane path in the diff; no surviving blocker or major; no unverified finding guessed blocker or major. Votes only add findings: a mechanical failure is never dropped or lightened by one'
   }})
 }
 
@@ -230,7 +231,7 @@ phase('Capture')
 const cap = await crit(P(`Capture the current tree for the review of ${ITEM} (writes ${REPO}/${CAP_REL} only; the tool also writes its git-ignored shots under docs/mobile/shots/).
 ${SANDBOX}
 Run from ${REPO}: NODE_PATH=/opt/node22/lib/node_modules node tools/mobile-capture.js ${SURF} --profiles ${PROFILES.join(',')} --unit review-${SLUG} --out ${CAP_REL} --cdn-dir <dir> [--server spawn]
-Keep the exit code. Then sha256sum ${CAP_REL} and read it: profiles = {"<surface>": comma-separated profile names present under that top-level key (atlas, sim)}; errors = the total number of entries in every <surface>.<profile>.errors list (0 when none).
+Keep the exit code. Then sha256sum ${CAP_REL} and read it: profiles = {"<surface>": comma-separated profile names present under that top-level key (atlas, sim)}; errors = computed by node (UG2, as tools/mobile-capture.js gateResults reads it): the sum of the "unexplained" field of every errors object (atlas.<profile>.errors, sim.<profile>.seeds.<seed>.errors, and each <surface>.<profile>.extra_errors.<name>), plus 1 for every <surface>.<profile> that carries an "error" string (0 when none).
 Return {path: "${CAP_REL}", sha256, exit, profiles, errors, infra_error: "" or the setup failure in one line}.`), {label: 'capture', phase: 'Capture', schema: CAPT, ...M('mech')})
 const capOk = !!cap && !infraOf(cap) && cap.exit === 0 && isHex(cap.sha256)
 if (!capOk) { log('capture failed: ' + (cap ? infraOf(cap) || 'exit ' + cap.exit : 'agent died')); return result({reason: 'capture failed: ' + (cap ? infraOf(cap) || 'exit ' + cap.exit : 'agent died twice'), gaps}) }
@@ -238,27 +239,48 @@ const accFiles = UNITS_IN.filter(u => !pre.accept_missing.includes(u)).map(u => 
 const score = await crit(P(`Mechanical scoring for the review of ${ITEM}. Write ${REPO}/${EVID_REL} and ${REPO}/${ACC_REL} only; scratch files in a mktemp -d directory. Run every command from ${REPO} with NODE_PATH=/opt/node22/lib/node_modules; keep each exit code and its stdout (parsed JSON when it parses, else the last 2000 characters).
 a. compare_b0: node tools/mobile-capture.js --compare docs/mobile/baseline.json ${CAP_REL} (exit 1 only means keys differ; n = its "n").
 b. compare_r1: when docs/mobile/captures/R1.json exists, the same against it; else null.
-c. Combined acceptance. ${accFiles.length ? `Read ${J(accFiles)}. Build one object: unit "review-${SLUG}"; ${START_REF ? '"baseline": "' + START_REF + '" (the item\'s starting reference, so only this scope\'s own changes are measured); ' : ''}profiles, gates and declared_change_keys = the union in first-seen order; declared_clock_lines, mask, strings and checks = the concatenation in file order; waive = the waive entries (from any file) of gates no file lists; clock "virtual". Write it to ${ACC_REL} (2-space JSON). Run node tools/mobile-capture.js --lint-accept ${ACC_REL}, then node tools/mobile-capture.js --accept ${ACC_REL} --capture ${CAP_REL}. accept_lint_ok = lint exit 0; accept_pass = accept exit 0; accept_failing = its failing list (the first 60), each field converted to a string with JSON.stringify unless already a string; failing_n = the length of its FULL failing list, counted by node on the parsed result (-1 when the output does not parse). accept_none false.` : `No accept file exists: write {"unit": "review-${SLUG}", "none": true} to ${ACC_REL}; accept_none true, accept_lint_ok false, accept_pass false, failing_n 0, accept_failing [].`}
+c. Combined acceptance. ${accFiles.length ? `Read ${J(accFiles)}. Build one object: unit "review-${SLUG}"; ${START_REF ? '"baseline": "' + START_REF + '" (the item\'s starting reference, so only this scope\'s own changes are measured); ' : ''}profiles, gates and declared_change_keys = the union in first-seen order; declared_clock_lines, mask, strings and checks = the concatenation in file order; waive = the waive entries (from any file) of gates no file lists; clock "virtual". Write it to ${ACC_REL} (2-space JSON). Run node tools/mobile-capture.js --lint-accept ${ACC_REL}, then node tools/mobile-capture.js --accept ${ACC_REL} --capture ${CAP_REL}. accept_lint_ok = lint exit 0; accept_pass = accept exit 0; accept_failing = its failing list (the first 60), each field converted to a string with JSON.stringify unless already a string; failing_n = the length of its FULL failing list, counted by node on the parsed result (-1 when the output does not parse). accept_gates = the combined file's gates list as written; accept_waived = the keys of its waive object ([] when none). accept_none false.` : `No accept file exists: write {"unit": "review-${SLUG}", "none": true} to ${ACC_REL}; accept_none true, accept_lint_ok false, accept_pass false, failing_n 0, accept_failing [], accept_gates [], accept_waived [].`}
 d. node tools/street-drift.js and node tools/street-drift.js --self-test: drift_exit and drift_self_test_exit (-1 when the tool is missing).
 e. manifest_atlas_exit: ${HAS('atlas') ? 'when tools/build-offline-manifest.js and maps-site/data/offline-manifest.json both exist, the exit of node tools/build-offline-manifest.js --atlas --check; else null' : 'null'}. manifest_sim_exit: ${HAS('sim') ? 'when tools/build-offline-manifest.js and offline-manifest.json (repo root) both exist, the exit of node tools/build-offline-manifest.js --sim --check; else null' : 'null'}.
 f. grep_missing: ${LANE === 'sim' && LANE_REV ? `for each [name, pattern] in ${J(SIM_PASS)}, grep -cE pattern index.html; list the names with 0 hits` : '[] (not run for this review)'}.
 Write {date: "${DATE}", item: "${ITEM}", capture: "${CAP_REL}", compare_b0, compare_r1, accept, drift, manifest, grep_missing} with the full outputs to ${EVID_REL} (2-space JSON), re-read it and JSON.parse it.
-Return {path: "${EVID_REL}", sha256, accept_path: "${ACC_REL}", compare_b0_exit, compare_b0_n, compare_r1_exit, accept_none, accept_lint_ok, accept_pass, failing_n, accept_failing, drift_exit, drift_self_test_exit, manifest_atlas_exit, manifest_sim_exit, grep_missing, infra_error: "" or the setup failure}.`), {label: 'scoring', phase: 'Capture', schema: SCORE, ...M('mech')})
+Return {path: "${EVID_REL}", sha256, accept_path: "${ACC_REL}", compare_b0_exit, compare_b0_n, compare_r1_exit, accept_none, accept_lint_ok, accept_pass, failing_n, accept_failing, accept_gates, accept_waived, drift_exit, drift_self_test_exit, manifest_atlas_exit, manifest_sim_exit, grep_missing, infra_error: "" or the setup failure}.`), {label: 'scoring', phase: 'Capture', schema: SCORE, ...M('mech')})
 if (!score || infraOf(score)) { log('scoring failed: ' + (score ? infraOf(score) : 'agent died')); return result({reason: 'scoring failed: ' + (score ? infraOf(score) : 'agent died twice'), capture_path: CAP_REL, gaps}) }
 
-// code-sourced candidates: verified like any finding (2 of 3 votes)
+// ---- mechanical gates: scored here, in code; no vote can waive one (plan.md 4.2: the universal gates are scored in code) ----
+const mech = []   // reasons the review fails whatever the votes
 const codeCands = []
-const failGroups = {}
-for (const f of arr(score.accept_failing)) { const g = String(f.key).split('.').slice(0, 2).join('.'); (failGroups[g] = failGroups[g] || []).push(f) }
+const cand = (title, where, evidence, repro_cmd, fix, unit_hint, severity_guess) => codeCands.push({id: 'C' + (codeCands.length + 1), title, where, evidence, repro_cmd, fix, unit_hint, severity_guess})
 const ACCEPT_CMD = `node tools/mobile-capture.js --accept ${ACC_REL} --capture ${CAP_REL}`
-for (const [g, fs] of Object.entries(failGroups).slice(0, CODE_CAP)) codeCands.push({id: 'C' + (codeCands.length + 1), title: `Combined acceptance of ${ITEM} fails at ${g}: ${fs.length} key(s)`, where: g,
-  evidence: {kind: 'metric', ref: `${EVID_REL} accept.failing: ${J(fs.slice(0, 6))}`}, repro_cmd: ACCEPT_CMD, fix: 'restore the failing keys to their accepted values, or declare them in the unit\'s accept file if the change is intended and allowed', unit_hint: 'new', severity_guess: 'major'})
-if (Object.keys(failGroups).length > CODE_CAP) gaps.push(`${Object.keys(failGroups).length - CODE_CAP} failing acceptance group(s) past the code cap were not verified separately`)
-if (!score.accept_none && !score.accept_lint_ok) gaps.push('the combined accept file did not lint; its scoring is evidence only')
-if (score.drift_exit !== 0 || score.drift_self_test_exit !== 0) codeCands.push({id: 'C' + (codeCands.length + 1), title: `tools/street-drift.js exits ${score.drift_exit} (self-test ${score.drift_self_test_exit})`, where: 'tools/street-drift.js',
-  evidence: {kind: 'cmd', ref: `${EVID_REL} drift`}, repro_cmd: 'node tools/street-drift.js; echo $?; node tools/street-drift.js --self-test; echo $?', fix: 'restore the anchors or scripts the drift check names', unit_hint: 'new', severity_guess: 'blocker'})
-for (const [k, v] of [['atlas', score.manifest_atlas_exit], ['sim', score.manifest_sim_exit]]) if (v != null && v !== 0) codeCands.push({id: 'C' + (codeCands.length + 1), title: `offline manifest --${k} --check exits ${v}`, where: k === 'atlas' ? 'maps-site/data/offline-manifest.json' : 'offline-manifest.json',
-  evidence: {kind: 'cmd', ref: `${EVID_REL} manifest`}, repro_cmd: `node tools/build-offline-manifest.js --${k} --check; echo $?`, fix: 'regenerate the manifest after the last app-file edit of the lane', unit_hint: k === 'atlas' ? 'A-U7' : 'S-U10', severity_guess: 'major'})
+{
+  const surfs = ['atlas', 'sim'].filter(HAS)
+  const missingProf = surfs.flatMap(sf => PROFILES.filter(p => !String((cap.profiles || {})[sf] || '').split(',').map(x => x.trim()).includes(p)).map(p => sf + '.' + p))
+  if (missingProf.length) { mech.push('the fresh capture lacks ' + missingProf.join(', ') + ' (every gate is scored on all five profiles)'); cand(`Fresh capture lacks ${missingProf.length} profile(s)`, missingProf.join(', '), {kind: 'metric', ref: `${CAP_REL} profiles: ${J(cap.profiles)}`}, `node -p "const c = JSON.parse(fs.readFileSync('${CAP_REL}', 'utf8')); [Object.keys(c.atlas || {}), Object.keys(c.sim || {})]"`, 'make the capture complete on every profile', 'new', 'blocker') }
+  if (!Number.isInteger(cap.errors) || cap.errors !== 0) { mech.push(`UG2: the fresh capture recorded ${cap.errors} console/page error(s)`); cand(`UG2: ${cap.errors} console/page error(s) in the fresh capture`, CAP_REL, {kind: 'metric', ref: `${CAP_REL} <surface>.<profile>.errors`}, `node tools/mobile-capture.js --accept ${ACC_REL} --capture ${CAP_REL} (the UG2.* keys of its failing list)`, 'remove the cause of every console or page error', 'new', 'major') }
+  const passedNoAcc = arr(pre.accept_missing).filter(u => (pre.statuses || {})[u] === 'passed')
+  if (passedNoAcc.length) mech.push('no accept file for passed unit(s) ' + passedNoAcc.join(', ') + ': their gates were not scored')
+  if (!score.accept_none) {
+    const accFail = arr(score.accept_failing), accN = score.failing_n, gl = arr(score.accept_gates), wv = arr(score.accept_waived)
+    if (score.accept_lint_ok !== true) mech.push('the combined accept file does not lint')
+    const notListed = NEVER_WAIVED.filter(g => !gl.includes(g)), uncovered = GATES.filter(g => !gl.includes(g) && !wv.includes(g))
+    if (notListed.length || uncovered.length) mech.push('the combined acceptance does not score every universal gate (' + [notListed.length ? 'never-waived ' + notListed.join(' ') + ' not listed' : '', uncovered.length ? uncovered.join(' ') + ' neither listed nor waived' : ''].filter(Boolean).join('; ') + ')')
+    if (!Number.isInteger(accN) || accN < 0 || accFail.length !== Math.min(60, accN)) mech.push(`the combined acceptance failing list is not intact (failing_n ${accN}, listed ${accFail.length})`)
+    else if (score.accept_pass !== true && !accFail.length) mech.push('the combined acceptance did not pass and lists no failing key (scoring truncated or crashed)')
+    else if (score.accept_pass === true && accN > 0) mech.push('the combined acceptance reports pass with ' + accN + ' failing key(s)')
+    else if (score.accept_pass !== true) mech.push('the combined acceptance fails (' + accN + ' failing key(s))')
+    const failGroups = {}
+    for (const f of accFail) { const g = String(f.key).split('.').slice(0, 2).join('.'); (failGroups[g] = failGroups[g] || []).push(f) }
+    const groups = Object.entries(failGroups)
+    for (const [g, fs] of groups.slice(0, CODE_CAP)) cand(`Combined acceptance of ${ITEM} fails at ${g}: ${fs.length} key(s)`, g, {kind: 'metric', ref: `${EVID_REL} accept.failing: ${J(fs.slice(0, 6))}`}, ACCEPT_CMD,
+      'restore the failing keys to their accepted values, or declare them in the unit\'s accept file if the change is intended and allowed', 'new', /^UG(3|4|11)\b/.test(g) ? 'blocker' : 'major')
+    if (groups.length > CODE_CAP) { const rest = groups.slice(CODE_CAP); cand(`Combined acceptance of ${ITEM} fails in ${rest.length} further group(s): ${rest.map(x => x[0]).join(', ').slice(0, 200)}`, rest.map(x => x[0]).join(', ').slice(0, 300), {kind: 'metric', ref: `${EVID_REL} accept.failing: ${J(rest.flatMap(x => x[1]).slice(0, 6))}`}, ACCEPT_CMD, 'restore the failing keys to their accepted values', 'new', 'major') }
+  } else if (UNITS_IN.some(u => (pre.statuses || {})[u] === 'passed')) mech.push('no accept file exists for passed units: the combined acceptance was not scored')
+  if (score.drift_exit !== 0 || score.drift_self_test_exit !== 0) { mech.push(`tools/street-drift.js exits ${score.drift_exit} (self-test ${score.drift_self_test_exit})`); cand(`tools/street-drift.js exits ${score.drift_exit} (self-test ${score.drift_self_test_exit})`, 'tools/street-drift.js',
+    {kind: 'cmd', ref: `${EVID_REL} drift`}, 'node tools/street-drift.js; echo $?; node tools/street-drift.js --self-test; echo $?', 'restore the anchors or scripts the drift check names', 'new', 'blocker') }
+  for (const [k, v] of [['atlas', score.manifest_atlas_exit], ['sim', score.manifest_sim_exit]]) if (v != null && v !== 0) { mech.push(`offline manifest --${k} --check exits ${v}`); cand(`offline manifest --${k} --check exits ${v}`, k === 'atlas' ? 'maps-site/data/offline-manifest.json' : 'offline-manifest.json',
+    {kind: 'cmd', ref: `${EVID_REL} manifest`}, `node tools/build-offline-manifest.js --${k} --check; echo $?`, 'regenerate the manifest after the last app-file edit of the lane', k === 'atlas' ? 'A-U7' : 'S-U10', 'major') }
+  if (mech.length) log('mechanical gates fail (scored in code): ' + mech.join('; '))
+}
 
 // ---- Find / Verify ----
 const FINDER_READS = `Scope: ${ITEM} (${LANE} lane${LANE_REV ? ', the whole-lane review' : ''}), units ${unitList}. Their accept files are docs/mobile/accept/<id>.json and their per-unit captures docs/mobile/captures/<id>.json.
@@ -301,7 +323,10 @@ for (let round = 0; ; round++) {
   const raw = await parallel(lensesNow.map(L => () => crit(finderPrompt(L, round, survivors.concat(dropped).filter(f => f.lens === L.id).map(f => oneLine(f.title))), {label: `${L.id} · ${L.key}${tag}`, phase: 'Find', schema: FIND, ...M(FINDER_ROLE)})))
   spent += raw.length
   const candidates = []
-  if (round === 0) for (const c of codeCands) { const g = {...c, lens: 'code', round: 0, uid: 'code.' + c.id}; g.key = norm(g.title + ' ' + g.where); seen.add(g.key); candidates.push(g) }
+  if (round === 0) for (const c of codeCands) {   // a mechanical failure survives without a vote: votes only add findings, never drop or lighten one
+    const g = {...c, lens: 'code', round: 0, uid: 'code.' + c.id}; seen.add(norm(g.title + ' ' + g.where))
+    survivors.push({uid: g.uid, lens: 'code', title: oneLine(g.title), where: oneLine(g.where), severity_guess: g.severity_guess, votes: null, evidence: g.evidence, repro_cmd: oneLine(g.repro_cmd), fix: oneLine(g.fix), unit_hint: oneLine(g.unit_hint), severity: g.severity_guess, severity_source: 'code', reproduce_out: '', refute_why: '', severity_why: ''})
+  }
   raw.forEach((res, i) => {
     const L = lensesNow[i], lc = lensCounts[L.id] || (lensCounts[L.id] = {found: 0, capped: 0, no_evidence: 0, dupe: 0, survived: 0, refuted: 0, not_real: 0, unverified: 0, died: 0})
     if (!res) { lc.died++; if (round === 0) deadLens.add(L.id); log(`agent died (with its retry): ${L.id} finder${tag}` + (round === 0 ? ' (a missing lens, never "no findings")' : '')); return }
@@ -378,7 +403,7 @@ phase('Judge')
 let rulings = null
 if (survivors.length) {
   const brief = survivors.map(s => ({uid: s.uid, lens: s.lens, title: s.title, where: s.where, evidence: s.evidence, repro_cmd: s.repro_cmd, fix: s.fix, unit_hint: s.unit_hint, severity_vote: s.severity, votes: s.votes, reproduce_out: s.reproduce_out, refute_why: s.refute_why}))
-  const jr = await crit(P(`You are the judge of the ${ITEM} mobile review (${LANE} lane). These findings survived verification (at least 2 of 3 independent votes: reproduced, not refuted, real). You may not drop one; you rule each.
+  const jr = await crit(P(`You are the judge of the ${ITEM} mobile review (${LANE} lane). These findings survived verification (at least 2 of 3 independent votes: reproduced, not refuted, real) or are mechanical checks scored in code (lens "code": never lighter than their severity_vote). You may not drop one; you rule each.
 ${J(brief)}
 Rubric: ${SEV_RUBRIC}
 ${NOT_DEFECTS}
@@ -406,24 +431,13 @@ if (rulings && survivors.some(s => !rulings.has(s.uid))) gaps.push('the judge le
 phase('Record')
 const heavy = s => s.final === 'blocker' || s.final === 'major'
 const BM = survivors.filter(s => heavy(s) && !s.same_as).sort((a, b) => SEV.indexOf(a.final) - SEV.indexOf(b.final) || order.get(a.uid) - order.get(b.uid))
-const unverHeavy = unverified.filter(u => u.lens === 'code' || u.severity_guess === 'blocker' || u.severity_guess === 'major')
+const unverHeavy = unverified.filter(u => u.severity_guess === 'blocker' || u.severity_guess === 'major')
 const why = []
 if (offFiles.length) why.push('the diff touches paths outside the ' + LANE + ' lane: ' + offFiles.join(', '))
 if (deadLens.size) why.push('lens(es) missing: ' + [...deadLens].join(', '))
 if (BM.length) why.push(BM.length + ' surviving blocker/major finding(s)')
 if (unverHeavy.length) why.push(unverHeavy.length + ' blocker/major-guessed finding(s) unverified')
-{
-  const accFail = arr(score.accept_failing), accN = score.failing_n
-  if (!score.accept_none) {
-    if (!Number.isInteger(accN) || accN < 0 || accFail.length !== Math.min(60, accN)) why.push(`the combined acceptance failing list is not intact (failing_n ${accN}, listed ${accFail.length})`)
-    else if (score.accept_pass !== true && !accFail.length) why.push('the combined acceptance did not pass and lists no failing key (scoring truncated or crashed)')
-    else if (score.accept_pass === true && accN > 0) why.push('the combined acceptance reports pass with ' + accN + ' failing key(s)')
-    else if (score.accept_pass !== true) why.push('the combined acceptance fails (' + accN + ' failing key(s)); scored in code, not by votes')
-  } else if (UNITS_IN.some(u => (pre.statuses || {})[u] === 'passed')) why.push('no accept file exists for passed units: the combined acceptance was not scored')
-}
-if (score.drift_exit !== 0 || score.drift_self_test_exit !== 0) why.push(`tools/street-drift.js exits ${score.drift_exit} (self-test ${score.drift_self_test_exit}); scored in code, not by votes`)
-for (const [k, v] of [['atlas', score.manifest_atlas_exit], ['sim', score.manifest_sim_exit]]) if (v != null && v !== 0) why.push(`offline manifest --${k} --check exits ${v}; scored in code, not by votes`)
-if (cap.errors > 0) gaps.push(`the fresh capture recorded ${cap.errors} console/page error(s) (UG2; the lenses and the combined acceptance judge them)`)
+for (const m of mech) why.push(m + '; scored in code, not by votes')
 const PASS = !why.length
 const FIXMODEL = u => (UNIT[u] || [])[1] === 'opus' ? {model: 'opus', effort: 'high'} : {model: 'sonnet', effort: 'high'}
 const HINT_FILES = {D1: ['server.js'], D2: ['DEPLOY.md', '.github/workflows/pages.yml', 'tools/lint-deploy.js'], D6: ['tools/build-offline-manifest.js']}   // the shared lane has no app file: a fix unit writes what its finding names

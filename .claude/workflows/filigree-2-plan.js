@@ -204,6 +204,7 @@ const DOSSIER = DOCS + '/research-dossier.md'
 const REUSE = DOCS + '/README.md § "7. Reuse map"'
 const BIBLE = `${OUTABS}/density-bible.md and ${OUTABS}/density-bible.json`
 const SPEC_MD = OUTABS + '/sheet-spec.md', SPEC_JSON = OUTABS + '/sheet-spec.json'
+const JOB3_REQ_CHECKS = {A: ['A.rivers_overlap', 'A.imhof_F01', 'A.coast_edge_V4'], B: ['B.one_shield', 'B.names_for_owner', 'B.gazetteer_prov']}   // mirrors REQ_CHECKS in filigree-3-build.js; Job 3 refuses a slice whose /checks lacks one
 const SECTIONS = [
   {sid: 's01', role: 'deep', title: 'Sheets and zoom bands → Leaflet mapping', owns: ['/sheets/*/band', '/sheet_one'], rulings: ['R1', 'R6', 'R7', 'R8', 'R18', 'R22'],
     brief: `Map the four sheets (country, region, valley, city) to zoom bands against the atlas constants TIER_CEIL, Z_TIER_D, Z_STREET (anchors var TIER_CEIL=, var Z_STREET=), the reveal tiers A–D, the baseOpacity/overlayOpacity ramps (function worldOpacityUpdate), overzoom honesty, sheet one = the region band over C1 (R8, bbox ${SHEET_ONE_BBOX}), and the DM sheet lock sheet=<band>&at=<place>. /sheet_one = {sheet:'region', bbox, layers:[paint-order ids painted on sheet one, in paint order], must_label:[names that must be lettered on sheet one]}.`},
@@ -228,7 +229,7 @@ const SECTIONS = [
   {sid: 's11', role: 'deep', title: 'Paint on the base', owns: ['/paint'], rulings: ['R3'],
     brief: 'A pooled-edge contrast pass on the land/water mask (reuse function washMake / function sampleCityMask) for coast, parks and reserves (method, band px, luminance delta); washes print-sampled, each wash fill (water, reserves, fog, city tone, relief shading) given as explicit sampled hex at /paint/wash_hex/<name> (a #rrggbb string; drafters may use these for fills); the real-colour check (ΔE <= 10 vs the print hue / biome).'},
   {sid: 's12', role: 'audit', title: 'Fixtures and test contracts', owns: ['/fixtures', '/hook', '/capture', '/checks', '/generators'], rulings: ['R8', 'R17', 'R18', 'R19'],
-    brief: `Fixtures + test contracts. /fixtures/views from these seeds (zoom = midpoint of the named sheet's band): ${JSON.stringify(VIEWS_SEED)}; masks: ${MASK_RULE} /hook = this contract VERBATIM plus pre_filigree_panes (the pane names present today, read from the pane-creation code in maps-site/index.html):\n${HOOK_CONTRACT}\n/capture = this contract VERBATIM:\n${CAPTURE_CONTRACT}\nPer-slice /checks as {id, cmd, expect} (a command printing JSON plus a condition on it, such as overlap >= 0.9); every slice's /checks also holds a check with id "phone" that runs the capture with --phone 390x664@3 and --cells <hexes.json> on that slice's gate views and expects phone.overlaps = 0, phone.hscroll false, phone.min_name_px null or >= 12, phone.min_italic_px null or >= 11 (upright names 12 px, italic names 11 px: R2, FM3) and phone.wrong_taps = 0 as a number (FM3, FM4); /generators = every tools/filigree-*.js, mint-names and build-gazetteer command.`}
+    brief: `Fixtures + test contracts. /fixtures/views from these seeds (zoom = midpoint of the named sheet's band): ${JSON.stringify(VIEWS_SEED)}; masks: ${MASK_RULE} /hook = this contract VERBATIM plus pre_filigree_panes (the pane names present today, read from the pane-creation code in maps-site/index.html):\n${HOOK_CONTRACT}\n/capture = this contract VERBATIM:\n${CAPTURE_CONTRACT}\nPer-slice /checks as {id, cmd, expect} (a command printing JSON plus a condition on it, such as overlap >= 0.9); every slice's /checks also holds a check with id "phone" that runs the capture with --phone 390x664@3 and --cells <hexes.json> on that slice's gate views and expects phone.overlaps = 0, phone.hscroll false, phone.min_name_px null or >= 12, phone.min_italic_px null or >= 11 (upright names 12 px, italic names 11 px: R2, FM3) and phone.wrong_taps = 0 as a number (FM3, FM4); Job 3 also requires these exact check ids (case-sensitive, no extra spaces), each a real {id, cmd, expect} check for what its id names: ${Object.entries(JOB3_REQ_CHECKS).map(([k, ids]) => '/checks/' + k + ' must hold ids ' + ids.join(', ')).join('; ')}; /generators = every tools/filigree-*.js, mint-names and build-gazetteer command.`}
 ]
 const RUBRIC = ['canon_fit', 'dem_window', 'data_ready', 'shield_even', 'table_play']
 const DEFAULT_GROUND = {coast: 'C1 (Pēshunor north coast, Epēshu-Sokundo-Kanae-Rhup-Tamaron)', river_town: 'Aldorūs', city: 'Epēshu'}
@@ -412,7 +413,26 @@ function checksFailures(rd) {   // Job 3's spec('<S>') criterion can never pass 
     const ph = xs.filter(x => String((x || {}).id).trim().toLowerCase() === 'phone' && /(^|\s)--phone\s+\S/.test(String((x || {}).cmd)) && /(^|\s)--cells\s+\S/.test(String((x || {}).cmd)))
     const phone = ph.some(x => ['overlaps', 'hscroll', 'min_name_px', 'min_italic_px', 'wrong_taps'].every(k => String(x.expect).includes(k)))
     return (blank.length ? [`slice ${s}: /checks/${s} has ${blank.length} check(s) without a non-empty id, cmd and expect`] : []).concat(phone ? [] : [`slice ${s}: /checks/${s} has no check with id "phone" whose cmd passes --phone and --cells and whose expect names overlaps, hscroll, min_name_px, min_italic_px and wrong_taps (FM3; s12 owns /checks)`])
+      .concat((JOB3_REQ_CHECKS[s] || []).filter(id => !xs.some(x => (x || {}).id === id)).map(id => `slice ${s}: /checks/${s} lacks required check id "${id}" (Job 3 REQ_CHECKS, exact match; s12 owns /checks)`))   // exact: Job 3 compares c.id === id
   })
+}
+
+const chkMap = checks => Object.fromEntries(SLICES.map(s => [s, new Map((Array.isArray((checks || {})[s]) ? checks[s] : []).filter(x => String((x || {}).id ?? '').trim()).map(x => [x.id, x])) ]))
+const isPhoneId = id => String(id).trim().toLowerCase() === 'phone'
+function checkRegressions(base, checks, cited) {   // the fixer's "append, keep byte-for-byte" rule, enforced: every baseline check survives under its exact id, and a non-phone one keeps cmd/expect unless a cited entry names its id
+  const now = chkMap(checks), msgs = [], own = t => String(t).includes('during a fix round')   // a regression message never licenses the change it reports
+  const named = id => cited.some(t => !own(t) && (String(t).includes(J(id)) || String(t).split(/[^\w.-]+/).includes(id)))
+  for (const s of SLICES) {
+    for (const [id, x] of base[s]) {
+      const y = now[s].get(id), keep = J({id, cmd: x.cmd, expect: x.expect})
+      if (!y) msgs.push(`slice ${s}: /checks/${s} dropped check id ${J(id)} during a fix round; restore it verbatim as ${keep} (s12 owns /checks)`)
+      else if (!isPhoneId(id) && !named(id) && (y.cmd !== x.cmd || y.expect !== x.expect)) msgs.push(`slice ${s}: /checks/${s} check id ${J(id)} had its cmd or expect changed during a fix round without a cited failure; restore it verbatim as ${keep} (s12 owns /checks)`)
+      else continue
+      now[s].delete(id)
+    }
+    for (const [id, y] of now[s]) base[s].set(id, y)   // accepted changes and new checks join the baseline; a regressed id keeps its old value until restored
+  }
+  return msgs
 }
 
 function viewFailures(rd) {   // gates/views.json is frozen from /fixtures/views: the seeds verbatim, zoom = midpoint of /sheets/<sheet>/band
@@ -876,7 +896,7 @@ function criteriaOf(st) {
   const g21 = st.unitFails.concat(st.checkFails, secFails, pre.ground_six.length || !pre.class_ids.length ? [] : ['ground_six unavailable: preflight returned no ground-six classes although the bible has classes; slice coverage unchecked'])
   return [
     G20,
-    C('G2.1', 'traceability + DAG + acceptance + slices + mandatory U00/U01 + non-empty /checks per slice + a phone check per slice', g21.length ? g21 : 'ok', 'all code checks', !g21.length),
+    C('G2.1', 'traceability + DAG + acceptance + slices + mandatory U00/U01 + non-empty /checks per slice + a phone check per slice + Job 3 required check ids + no /checks regression in a fix round', g21.length ? g21 : 'ok', 'all code checks', !g21.length),
     C('G2.2', 'anchors resolve (by pattern)', ck[0] ? ck[0].bad : 'agent died: anchor check', '0 bad', !!ck[0] && !ck[0].bad.length),
     C('G2.3', 'leak check', ck[1] ? ck[1].hits : 'agent died: leak check', '0 hits', !!ck[1] && !ck[1].hits.length),
     C('G2.4', 'spec answers every spec probe pointer', nullPtr, '0 null', !nullPtr.length),
@@ -910,6 +930,7 @@ const FIXABLE = ['G2.1', 'G2.2', 'G2.3', 'G2.4', 'G2.5', 'G2.6', 'G2.7', 'G2.8',
 const fixableFailing = s => s.criteria.filter(c => FIXABLE.includes(c.id) && !c.pass && (c.id !== 'G2.1' || s.unitFails.length || s.checkFails.length)).map(c => c.id)   // G2.1 failing on section failures alone is not fixable here
 
 // ---- Fix ----
+let chkBase = chkMap(st.rd.checks)   // carried across rounds so a check dropped in round n still fails in round n+1 until restored
 while (rounds < ROUNDS && fixableFailing(st).length) {
   if (budgetLeft() < ROUND_TOKENS) { log(`budget: ${budgetLeft()} tokens left < ${ROUND_TOKENS}; fix round skipped; the gate fails on its own criteria`); break }
   rounds++
@@ -924,7 +945,7 @@ while (rounds < ROUNDS && fixableFailing(st).length) {
     leak_hits: ck[1] ? ck[1].hits : [], canon_violations: ck[2] ? ck[2].violations : [], broken_anchors: ck[0] ? ck[0].bad : [],
     unit_failures: st.unitFails, checks_missing: st.checkFails, view_mismatches: st.viewFails.length ? {mismatches: st.viewFails, seeds: VIEWS_SEED} : [], roots_missing: SPEC_ROOTS.filter(r => !UNIT_ROOTS.includes(r) && !spec.roots_present.map(x => '/' + String(x).replace(/^\/+/, '')).includes(r))
   }
-  const fx = await crit(P(`You are the spec fixer, round ${rounds}. Patch ${SPEC_MD} and ${SPEC_JSON} ONLY where cited below; keep every rule id, keep /hook and /capture verbatim, keep units/slices/slice_classes unless a unit failure is cited. Each "both wrong" probe means the spec is ambiguous there: make the answer explicit (never mention probes or drafters in the spec). For a source "spec" probe, make the value at its pointer explicit. For a bible/brief/ruling probe, the correct answer is its "expected" value, fixed by its cite (B-xx = that density-bible rule in ${BIBLE}; brief pN = page N of ${BRIEF}; Rnn = that ruling below): align the spec with that rule, page or ruling so it states that answer unambiguously. Each null pointer: put the answer at exactly that JSON pointer. Each schema gap: state the missing decision at its pointer. View mismatches: rewrite /fixtures/views as one {id, sheet, x, y, zoom, mask} per seed (id, sheet, x, y and mask exactly as seeded, mask "" when none) with zoom = the midpoint of /sheets/<sheet>/band. Each checks_missing entry: write /checks/<slice> for that slice as [{id, cmd, expect}] (a command printing JSON plus a condition on it, as section s12 specifies) so every slice A-D has at least one. For a checks_missing entry about a missing "phone" check, APPEND to that slice's existing /checks/<slice> and keep every existing check unchanged (never rewrite or drop one; Job 3 requires ids such as rivers_overlap and one_shield to survive): add {id: "phone", cmd: the capture run with --phone 390x664@3 and --cells <hexes.json> on that slice's gate views, expect: phone.overlaps = 0, phone.hscroll false, phone.min_name_px null or >= 12, phone.min_italic_px null or >= 11 and phone.wrong_taps = 0 as a number}; only an entry saying the slice is missing or empty is written whole.
+  const fx = await crit(P(`You are the spec fixer, round ${rounds}. Patch ${SPEC_MD} and ${SPEC_JSON} ONLY where cited below; keep every rule id, keep /hook and /capture verbatim, keep units/slices/slice_classes unless a unit failure is cited. Each "both wrong" probe means the spec is ambiguous there: make the answer explicit (never mention probes or drafters in the spec). For a source "spec" probe, make the value at its pointer explicit. For a bible/brief/ruling probe, the correct answer is its "expected" value, fixed by its cite (B-xx = that density-bible rule in ${BIBLE}; brief pN = page N of ${BRIEF}; Rnn = that ruling below): align the spec with that rule, page or ruling so it states that answer unambiguously. Each null pointer: put the answer at exactly that JSON pointer. Each schema gap: state the missing decision at its pointer. View mismatches: rewrite /fixtures/views as one {id, sheet, x, y, zoom, mask} per seed (id, sheet, x, y and mask exactly as seeded, mask "" when none) with zoom = the midpoint of /sheets/<sheet>/band. Each checks_missing entry: write /checks/<slice> for that slice as [{id, cmd, expect}] (a command printing JSON plus a condition on it, as section s12 specifies) so every slice A-D has at least one. For a checks_missing entry about a missing "phone" check, APPEND to that slice's existing /checks/<slice> and keep every existing check byte-for-byte (never rewrite, rename or drop one; Job 3 refuses a slice whose /checks lacks any of these required ids: ${J(JOB3_REQ_CHECKS)}); if that slice already holds a check with id "phone", correct that one check in place instead of adding a second. The phone check is exactly {id: "phone", cmd: the capture run with --phone 390x664@3 and --cells <hexes.json> on that slice's gate views, expect: phone.overlaps = 0 (FM3), phone.hscroll false (FM3), phone.min_name_px null or >= 12 and phone.min_italic_px null or >= 11 (upright names 12 px, italic names 11 px: R2, FM3), and phone.wrong_taps = 0 as a number (FM3, FM4)}; state these thresholds verbatim in expect, never looser. For a checks_missing entry saying a slice lacks a required check id, APPEND one {id, cmd, expect} check under exactly that id (case-sensitive, no extra spaces) that measures what the id names, keeping every existing check byte-for-byte. For an entry saying a check was dropped or changed during a fix round, restore that check exactly as the entry quotes it. Only an entry saying the slice is missing or empty is written whole, and then it also holds the phone check and, for slices A and B, every required id above.
 ${J(cite)}
 Rulings:
 ${rulingText(RUL, Object.keys(RULINGS))}
@@ -940,6 +961,12 @@ Return {md, json, sha_md, sha_json, rules:[{id, from, buildable}], roots_present
   st = await evaluate(tag, false)
   if (st.deadReader) return died(st.deadReader)
   if (st.infra) { log('infra: ' + st.infra); return done({reason: 'infra', rounds, owner_rulings_used: RUSED}) }
+  const reg = checkRegressions(chkBase, st.rd.checks, cite.unit_failures.concat(cite.checks_missing))   // mutates chkBase
+  if (reg.length) {
+    log('fix round ' + rounds + ' regressed /checks: ' + reg.join(' | '))
+    st.checkFails = st.checkFails.concat(reg.filter(r => !st.checkFails.includes(r)))
+    st.criteria = criteriaOf(st)
+  }
 }
 
 // ---- Record ----

@@ -438,25 +438,47 @@ async function takeShot(P, env, o, surface, key, view, regionless) {
   try { buf = await page.screenshot({animations: 'disabled', caret: 'hide', scale: 'css'}) } finally { await page.emulateMedia({reducedMotion: null}); if (P.vc) await page.evaluate(() => { window.__vc.auto = true }) }
   const f = fitShot(buf), dir = o.shotsDir, name = surface + '-' + key + '-' + view + '.png'
   fs.mkdirSync(dir, {recursive: true}); fs.writeFileSync(path.join(dir, name), f.buf)
-  const im = pngDecode(f.buf), rel = p => path.relative(REPO, p).split(path.sep).join('/'), out = {path: rel(path.join(dir, name)), w: im.w, h: im.h, bytes: f.buf.length, scale: f.scale}
-  if (f.scale !== 1) { const fn = name.replace(/\.png$/, '.full.png'); fs.writeFileSync(path.join(dir, fn), buf); out.full_path = rel(path.join(dir, fn)) }   // the image diff reads the css-px original; the reduced copy is for viewing
+  const im = pngDecode(f.buf), rel = p => path.relative(REPO, p).split(path.sep).join('/'), out = {path: rel(path.join(dir, name)), w: im.w, h: im.h, bytes: f.buf.length, scale: f.scale, sha: sha(f.buf)}
+  if (f.scale !== 1) { const fn = name.replace(/\.png$/, '.full.png'); fs.writeFileSync(path.join(dir, fn), buf); out.full_path = rel(path.join(dir, fn)); out.full_sha = sha(buf) }   // the image diff reads the css-px original; the reduced copy is for viewing
   return out
 }
 
 // ---------------------------------------------------------------- sheet stops (metrics.md section 4: chrome_cover.peek and .half)
-// The surface's sheet is driven through window[ns].sheet.stop('peek'|'half'); 'no-sheet' while the surface has none (so a later null, a broken probe, differs from B0), null when the hook exists but a stop could not be measured.
-async function sheetStops(P, ns, extraPump) {
-  const out = {}, page = P.page
-  const has = await page.evaluate(n => !!(window[n] && window[n].sheet && typeof window[n].sheet.stop === 'function'), ns).catch(() => false)
+// A sheet exists when the surface exposes the hook window[ns].sheet.stop or a shown handle ([data-sheet-handle], .sheet-handle, #sheetHandle) inside
+// its root (#panel on the atlas, #drawer on the sim). A stop is driven by the hook, else by tapping the handle until the sheet reports it through
+// data-sheet-stop / data-stop on the [data-sheet] element (or the root), or a class peek|half|full, sheet-<stop>, is-<stop>.
+// Values: a number; 'no-sheet' while none exists (B0); 'unmeasured: ...' when a sheet exists but the stop was not reached. Never null.
+const SHEET_HANDLE = '[data-sheet-handle], .sheet-handle, #sheetHandle'
+function sheetProbe(arg) {   // page side
+  const [ns, rootSel, handleSel] = arg, root = document.querySelector(rootSel), mc = window.__mc
+  const hook = !!(window[ns] && window[ns].sheet && typeof window[ns].sheet.stop === 'function')
+  const h = root && [...root.querySelectorAll(handleSel)].find(e => mc.shown(e) && e.getBoundingClientRect().width > 0)
+  const el = (h && h.closest('[data-sheet]')) || (root && root.querySelector('[data-sheet]')) || root
+  let stop = null
+  if (el) {
+    stop = el.getAttribute('data-sheet-stop') || el.getAttribute('data-stop') || null
+    if (!stop) for (const k of ['peek', 'half', 'full']) if (el.classList.contains(k) || el.classList.contains('sheet-' + k) || el.classList.contains('is-' + k)) stop = k
+  }
+  const r = h && h.getBoundingClientRect()
+  return {hook, handle: r ? {x: r.left + r.width / 2, y: r.top + r.height / 2} : null, stop}
+}
+async function sheetStops(P, ns, rootSel, prof, extraPump) {
+  const out = {}, page = P.page, probe = () => page.evaluate(sheetProbe, [ns, rootSel, SHEET_HANDLE]).catch(() => ({hook: false, handle: null, stop: null}))
+  const s0 = await probe()
+  if (!s0.hook && !s0.handle) return {peek: 'no-sheet', half: 'no-sheet'}
   for (const st of ['peek', 'half']) {
-    if (!has) { out[st] = 'no-sheet'; continue }
     try {
-      await page.evaluate(([n, k]) => window[n].sheet.stop(k), [ns, st]); if (extraPump) await pump(P, 2); await sleep(400)
-      out[st] = rnd(await page.evaluate(() => window.__mc.chromeCover()), 4)
-    } catch (e) { out[st] = null }
+      let s = await probe()
+      if (s.hook) { await page.evaluate(([n, k]) => window[n].sheet.stop(k), [ns, st]); if (extraPump) await pump(P, 2); await sleep(400); s = await probe(); if (s.stop && s.stop !== st) { out[st] = 'unmeasured: hook left the sheet at ' + s.stop; continue } }
+      else for (let i = 0; i < 4 && s.stop !== st && s.handle; i++) { await tapAt(P, prof, s.handle.x, s.handle.y); if (extraPump) await pump(P, 2); await sleep(400); s = await probe() }
+      if (!s.hook && s.stop !== st) { out[st] = 'unmeasured: the sheet never reported ' + st + (s.stop ? ' (at ' + s.stop + ')' : ''); continue }
+      const v = rnd(await page.evaluate(() => window.__mc.chromeCover()), 4)
+      out[st] = v == null ? 'unmeasured: chromeCover failed' : v
+    } catch (e) { out[st] = 'unmeasured: ' + String(e.message || e).slice(0, 60) }
   }
   return out
 }
+const SHEET_KEY_RE = /\.chrome_cover\.(peek|half)$/
 
 // ---------------------------------------------------------------- control inventory, reach, primary (metrics.md section 5)
 const PRIMARY = {
@@ -506,13 +528,15 @@ function wantedNames(glyphName) {
   if (m) w.add(m[1])
   return w
 }
-const nameSegs = t => { const f = foldName(t); return [f, ...f.split(/\s+(?:[—–·|•]|-)\s+/)] }   // a row or title may carry a kind after a dash; the name is a whole segment
+const SEG_RE = /\s+(?:[—–·|•]|-)\s+/
+const nameSegs = t => { const f = foldName(t); return [f, ...f.split(SEG_RE)] }   // a chooser row may carry a kind on either side of a dash; the name is a whole segment
+const titleSegs = t => { const f = foldName(t); return [f, f.split(SEG_RE)[0]] }   // a card title is the name, or the name before a dash
 function tapOutcome(glyphName, res, before) {
   const want = wantedNames(glyphName), has = names => names.some(n => want.has(n))
   const opened = !!(res.open || res.hash !== before)
   const hm = CARD_HASH_RE.exec(res.hash || ''), hashNames = hm ? [foldName(hm[1]), foldName(hm[1].split('&')[0])] : []
   const listed = !!res.chooser && res.chooser.rows.some(t => has(nameSegs(t)))
-  const own = opened && (has(nameSegs(res.title)) || has(hashNames))
+  const own = opened && (hashNames.length ? has(hashNames) : has(titleSegs(res.title)))   // the card hash, when there is one, decides
   return res.chooser ? (listed ? 'chooser' : 'chooser_without_glyph') : opened ? (own ? 'own' : 'other') : 'none'
 }
 async function captureAtlas(env, key, o) {
@@ -609,7 +633,7 @@ async function captureAtlas(env, key, o) {
     })
     R.chrome_cover.card = rnd(R.card.chrome_cover, 4); delete R.card.chrome_cover
     R.shots['4-place-card'] = await takeShot(P, env, o, 'atlas', key, '4-place-card')
-    Object.assign(R.chrome_cover, await sheetStops(P, 'ATLAS', false))   // the card sheet at peek and half (A-U9); 'no-sheet' until it exists
+    Object.assign(R.chrome_cover, await sheetStops(P, 'ATLAS', '#panel', prof, false))   // the card sheet at peek and half (A-U9); 'no-sheet' until it exists
     await closeCard()
     // tap fixture (R7, A-U3): the .glyph centre of every interactive glyph at each view A-U3 names; right = its own card, or a visible chooser whose rows list the glyph
     const setTapView = (at, z) => page.evaluate(([n, zz]) => { const M = window.ATLAS.map, mk = n && window.ATLAS.find(n), c = mk ? mk._mk.getLatLng() : (M.options.maxBounds ? M.options.maxBounds.getCenter() : M.getCenter()); M.setView(c, zz == null ? M.getMinZoom() : Math.max(M.getMinZoom(), Math.min(M.getMaxZoom(), zz)), {animate: false}) }, [at, z])
@@ -841,7 +865,7 @@ async function captureSim(env, key, o) {
           R.ledger = await page.evaluate(() => { const d = document.getElementById('drawer'), r = d.getBoundingClientRect(); const ov = Math.max(0, Math.min(r.right, innerWidth) - Math.max(r.left, 0)) * Math.max(0, Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)) / (innerWidth * innerHeight)
             const inv = window.__mc.inventory().filter(c => d.contains(document.elementFromPoint(c.cx, c.cy))); return {open: !d.classList.contains('hidden'), rect: [Math.round(r.left), Math.round(r.top), Math.round(r.width), Math.round(r.height)], cover: +ov.toFixed(3), controls: inv.length, under44: inv.filter(c => c.under44).length} })
           R.shots['2-ledger'] = await takeShot(P, env, o, 'sim', key, '2-ledger')
-          R.chrome_cover = {ledger: rnd(await page.evaluate(() => window.__mc.chromeCover()), 4), ...await sheetStops(P, 'ANNALS', true)}   // the ledger sheet open, at peek and at half (S-U8)
+          R.chrome_cover = {ledger: rnd(await page.evaluate(() => window.__mc.chromeCover()), 4), ...await sheetStops(P, 'ANNALS', '#drawer', prof, true)}   // the ledger sheet open, at peek and at half (S-U8)
           await restore()
         } else { R.ledger = null; R.chrome_cover = null }
         // hidden tab: does the loop keep ticking when the page is hidden? (virtual frames, speed 1)
@@ -905,7 +929,7 @@ function clockTokens(text) {
   const out = {}
   for (const [k, re] of [['P', P_RE], ['W', W_RE]]) {
     const lines = text.split('\n'); let occ = 0, ln = 0; const multi = []
-    for (const l of lines) { const m = l.match(re); if (m) { occ += m.length; ln++; const t = {}; for (const x of m) t[x] = (t[x] || 0) + 1; multi.push({line: l.trim().slice(0, 160), sha: sha(l).slice(0, 12), tokens: t}) } }
+    for (const l of lines) { const m = l.match(re); if (m) { occ += m.length; ln++; const t = {}; for (const x of m) t[x] = (t[x] || 0) + 1; const tl = l.trim(); multi.push({line: tl.slice(0, 160), sha: sha(l).slice(0, 12), tokens: t, ...(tl.length >= 160 ? {tsha: sha(tl).slice(0, 12)} : {})}) } }   // tsha only where the text is cut, so a B0 without long lines stays comparable
     multi.sort((a, b) => a.sha < b.sha ? -1 : 1)
     out[k] = {occurrences: occ, lines: ln, multiset: multi}
   }
@@ -1063,6 +1087,11 @@ function shotDiffFor(cap, ref, surface, profile, masks, view) {
       const full = s => s.scale === undefined || s.scale === 1 ? s.path : s.full_path   // never diff a reduced copy: averaging blocks hides hairline changes
       const fa = full(a[v]), fb = full(b[v])
       if (!fa || !fb) { per[v] = 'reduced shot without a full-resolution file (' + (fa ? 'reference' : 'capture') + '): recapture'; worst = Math.max(worst, 1); continue }
+      const stale = [[a[v], 'capture'], [b[v], 'reference']].map(([r, who]) => {   // the files sit at fixed names in a shared dir: the diff reads only bytes the record vouches for
+        const files = [[r.path, r.sha]].concat(r.scale === undefined || r.scale === 1 ? [] : [[r.full_path, r.full_sha]])
+        return files.some(([p, h]) => !h || !ex(path.resolve(REPO, p)) || sha(fs.readFileSync(path.resolve(REPO, p))) !== h) ? who : null
+      }).filter(Boolean)
+      if (stale.length) { per[v] = stale.join(' and ') + ' shot changed since capture (or no recorded sha): recapture'; worst = Math.max(worst, 1); continue }
       const d = imageDiff(fs.readFileSync(path.resolve(REPO, fa)), fs.readFileSync(path.resolve(REPO, fb)), masks.filter(m => m.profile === profile && (!m.view || m.view === v)).map(m => m.rect), 1)
       per[v] = d.size_mismatch ? 'size ' + JSON.stringify(d.size_mismatch) : +d.diff.toFixed(5); worst = Math.max(worst, d.diff)
     } catch (e) { per[v] = 'error ' + e.message.slice(0, 50); worst = 1 }
@@ -1089,6 +1118,7 @@ function evalCheck(c, cap, refOf, accept, notes) {
   let ok = false
   if (c.op !== 'absent' && got === undefined) return {ok: false, got: 'key absent from the capture', expected: want}
   if (c.op !== 'absent' && want === undefined) return {ok: false, got, expected: 'key absent from the reference'}
+  if (SHEET_KEY_RE.test(c.key) && !num(got)) return {ok: false, got: got === undefined ? 'key absent from the capture' : got, expected: 'a measured sheet cover (a check on a peek/half key never passes on null, no-sheet or unmeasured)'}
   switch (c.op) {
     case '==': ok = deepEq(got, want); break
     case '!=': ok = !deepEq(got, want); break
@@ -1135,16 +1165,33 @@ function gateResults(accept, cap, refOf, notes) {
           if (!deepEq(a.rng_next, b.rng_next)) add('UG3.sim.' + p + '.' + seed + '.rng_next', b.rng_next, a.rng_next)
         }
         const R0 = B.repo || {}
-        const dec = new Set((accept.declared_clock_lines || []).map(l => l.trim().slice(0, 160)))   // exact trimmed lines, as clockTokens stores them
-        const seenLines = new Set(['index', 'atlas'].flatMap(k => [rep, R0].flatMap(r => ['P', 'W'].flatMap(pw => ((((r.clock_tokens || {})[k] || {})[pw] || {}).multiset || []).map(x => x.line)))))
-        for (const d of dec) if (!seenLines.has(d)) add('UG3.declared_clock_lines', 'a whole line present in B0 or the capture', d)
-        for (const k of ['index', 'atlas']) {
-          const ct = (rep.clock_tokens || {})[k], c0 = (R0.clock_tokens || {})[k]
-          if (!ct || !c0) { add('UG3.clock_tokens.' + k, 'present', 'missing'); continue }
-          const fl = ms => ms.filter(x => !dec.has(x.line)), occ = ms => ms.reduce((n, x) => n + Object.values(x.tokens).reduce((a, b) => a + b, 0), 0)
-          for (const pw of ['P', 'W']) {   // the count outside the declared lines equals B0 whether or not anything is declared; with no declaration this is the plain 37
-            if (occ(fl(ct[pw].multiset)) !== occ(fl(c0[pw].multiset))) add('UG3.clock_tokens.' + k + '.' + pw, occ(fl(c0[pw].multiset)) + (dec.size ? ' outside the declared lines' : ''), occ(fl(ct[pw].multiset)))
-            if (!deepEq(fl(ct[pw].multiset), fl(c0[pw].multiset))) add('UG3.clock_tokens.' + k + '.' + pw + '.multiset', 'equal to B0', 'differs')
+        const lineKey = x => x.tsha || (x.line.length < 160 ? sha(x.line).slice(0, 12) : null)   // sha of the whole trimmed line; a cut line without tsha matches nothing
+        const budget = {}; for (const l of accept.declared_clock_lines || []) { const k = sha(l.trim()).slice(0, 12); budget[k] = budget[k] || {n: 0, line: l.trim()}; budget[k].n++ }   // each listing covers one changed copy
+        const seenKeys = new Set(['index', 'atlas'].flatMap(k => [rep, R0].flatMap(r => ['P', 'W'].flatMap(pw => ((((r.clock_tokens || {})[k] || {})[pw] || {}).multiset || []).map(lineKey)))))
+        for (const k of Object.keys(budget)) if (!seenKeys.has(k)) add('UG3.declared_clock_lines', 'a whole line present in B0 or the capture', budget[k].line.slice(0, 160))
+        const files = ['index', 'atlas'].filter(k => { const ok = (rep.clock_tokens || {})[k] && (R0.clock_tokens || {})[k]; if (!ok) add('UG3.clock_tokens.' + k, 'present', 'missing'); return ok })
+        const occ = ms => ms.reduce((n, x) => n + Object.values(x.tokens).reduce((a, b) => a + b, 0), 0), proj = ms => ms.map(x => ({line: x.line, sha: x.sha, tokens: x.tokens}))
+        for (const pw of ['P', 'W']) {
+          const drop = {}   // file -> {capture: Set(index), b0: Set(index)}: the changed copies of a declared line, removed only within its listing count
+          for (const k of files) drop[k] = {c: new Set(), b: new Set()}
+          for (const [key, {n, line}] of Object.entries(budget)) {
+            let cost = 0; const take = []
+            for (const k of files) {
+              const c1 = rep.clock_tokens[k][pw].multiset, c0 = R0.clock_tokens[k][pw].multiset
+              const i1 = c1.map((x, i) => i).filter(i => lineKey(c1[i]) === key), i0 = c0.map((x, i) => i).filter(i => lineKey(c0[i]) === key)
+              const pool = {}; for (const i of i0) (pool[c0[i].sha] = pool[c0[i].sha] || []).push(i)
+              const s1 = [], m0 = new Set(); for (const i of i1) { const q = pool[c1[i].sha]; if (q && q.length) m0.add(q.shift()); else s1.push(i) }   // copies paired by raw-line sha are unchanged
+              const s0 = i0.filter(i => !m0.has(i))
+              cost += Math.max(s1.length, s0.length); take.push([k, s1, s0])
+            }
+            if (cost > n) { add('UG3.declared_clock_lines.' + pw, '<= ' + n + ' changed cop' + (n === 1 ? 'y' : 'ies') + ' of ' + JSON.stringify(line.slice(0, 80)), cost); continue }
+            for (const [k, s1, s0] of take) { for (const i of s1) drop[k].c.add(i); for (const i of s0) drop[k].b.add(i) }
+          }
+          for (const k of files) {
+            const a = rep.clock_tokens[k][pw].multiset.filter((x, i) => !drop[k].c.has(i)), b = R0.clock_tokens[k][pw].multiset.filter((x, i) => !drop[k].b.has(i))
+            const dn = drop[k].c.size + drop[k].b.size   // the count after removing only the declared changed copies equals B0's; with nothing declared this is the plain 37
+            if (occ(a) !== occ(b)) add('UG3.clock_tokens.' + k + '.' + pw, occ(b) + (dn ? ' after the declared copies' : ''), occ(a))
+            if (!deepEq(proj(a), proj(b))) add('UG3.clock_tokens.' + k + '.' + pw + '.multiset', 'equal to B0', 'differs')
           }
         }
         for (const n of Object.keys(R0.atlas_fn_sha || {})) if (!rep.atlas_fn_sha || rep.atlas_fn_sha[n] !== R0.atlas_fn_sha[n]) add('UG3.atlas_fn_sha.' + n, 'unchanged', 'changed')
@@ -1271,8 +1318,12 @@ function planOptions(a) {
     sw: a.sw || 'block', saveData: a.flags.has('save-data'), query: a.query || '', seeds: (a.seeds || 'epeshu,tamar1374').split(','), tapN: a['tap-n'] ? +a['tap-n'] : 0,   // 0 = every interactive glyph at every view; N samples N per view and marks the fixture incomplete
     extras: (a.extras !== undefined ? a.extras : 'safe_area,keyboard,ctxloss').split(',').filter(Boolean), noShots: a.flags.has('no-shots'), nightLoaf: a.flags.has('night-loaf'),
     realClock: a.flags.has('real-clock'), mutateOnly: a.flags.has('mutate-only'), realSeconds: a['real-seconds'] ? +a['real-seconds'] : 8, mutate: a['mutate-html'] || null, jobs: a.jobs ? +a.jobs : 1,
-    unit: a.unit || null, shotsDir: a['shots-dir'] || null, port: a.port ? +a.port : 0, url: a.url || null, server: a.server || 'static', cdnDir: a['cdn-dir'] || null, root: a.root ? path.resolve(a.root) : REPO
+    unit: a.unit || null, out: a.out || null, shotsDir: a['shots-dir'] || null, port: a.port ? +a.port : 0, url: a.url || null, server: a.server || 'static', cdnDir: a['cdn-dir'] || null, root: a.root ? path.resolve(a.root) : REPO
   }
+}
+function shotsDirName(o, meta) {   // a unit owns its dir; any other run (B0, R1, final, ad hoc) gets one per output and tree, never a shared one a later run overwrites
+  if (o.unit) return o.unit
+  return (o.out ? path.basename(o.out).replace(/\.json$/, '') : 'adhoc') + '-' + sha(meta.index_sha + meta.atlas_sha).slice(0, 12)
 }
 async function runCapture(o) {
   const t0 = Date.now()
@@ -1283,7 +1334,7 @@ async function runCapture(o) {
   const cap = {meta: {tool: 'mobile-capture', tool_version: TOOL_VERSION, tool_sha: sha(fs.readFileSync(__filename)), index_sha: sha(rd('index.html')), atlas_sha: sha(rd('maps-site/index.html')),
     unit: o.unit, profiles: o.want, clock: o.clock, pinned: {hardwareConcurrency: o.hw, deviceMemory: o.mem}, cpu: o.cpu, throttle: o.throttle, service_workers: o.sw === 'allow' ? 'allow (?sw=1)' : 'block',
     save_data: o.saveData, query: o.query || null, seeds: o.seeds, extras: o.extras, cdn_routed: !!env.cdn, server: o.url ? 'external' : o.server, browser: env.browser.version()}, repo: null}
-  const oo = {...o, profiles: o.profiles, shotsDir: path.resolve(REPO, o.shotsDir || path.join('docs/mobile/shots', o.unit || 'adhoc'))}
+  const oo = {...o, profiles: o.profiles, shotsDir: path.resolve(REPO, o.shotsDir || path.join('docs/mobile/shots', shotsDirName(o, cap.meta)))}
   try {
     cap.repo = repoChecks()
     if (o.atlas) cap.atlas = {}
@@ -1403,6 +1454,10 @@ async function selfTest() {
     ok('tap: a chooser row that merely contains the name is not listed', t('Lepon', '', '', '', {rows: ['Leponnia', 'Lepon the Old']}) === 'chooser_without_glyph')
     ok('tap: a chooser row naming the glyph is listed', t('Lepon', '', '', '', {rows: ['Lepon — ruin', 'Lepon the Old']}) === 'chooser')
     ok('tap: nothing opened is none', t('Lepon', '', '', '') === 'none')
+    ok('tap: Tamaron opening Tamaron Mopher is other', t('Tamaron', '#place=Tamaron Mopher', 'Tamaron Mopher') === 'other')
+    ok('tap: the card hash decides over a title that names the glyph', t('Lepon', '#place=Leponnia', 'Lepon') === 'other')
+    ok('tap: a glyph named by the part after a title dash is not own', t('The Marble City', '', 'Epēshu — The Marble City') === 'other')
+    ok('tap: Epēshu chooser row "The Senate of Epēshu" alone does not list it', t('Epēshu', '', '', '', {rows: ['The Senate of Epēshu']}) === 'chooser_without_glyph')
   }
   // the image diff runs at full resolution: hairlines that a 3x box average hides still count
   {
@@ -1413,10 +1468,22 @@ async function selfTest() {
     const dir = path.join(tmp, 'shots'); fs.mkdirSync(dir, {recursive: true})
     const w1 = (n, img) => { fs.writeFileSync(path.join(dir, n), pngEncode(img)); return path.join(dir, n) }
     const pf = w1('a.full.png', hair), pb = w1('b.full.png', base), pr = w1('a.png', boxDown(hair, 3)), pq = w1('b.png', boxDown(base, 3))
-    const mk = (p, fp) => ({atlas: {desktop: {shots: {v: {path: p, w: 100, h: 66, scale: 1 / 3, ...(fp ? {full_path: fp} : {})}}}}})
+    const fh = p => sha(fs.readFileSync(p))
+    const mk = (p, fp) => ({atlas: {desktop: {shots: {v: {path: p, w: 100, h: 66, scale: 1 / 3, sha: fh(p), ...(fp ? {full_path: fp, full_sha: fh(fp)} : {})}}}}})
     ok('shot diff: reduced copies without full files fail', shotDiffFor(mk(pr), mk(pq), 'atlas', 'desktop', [], null).diff === 1)
     const sd = shotDiffFor(mk(pr, pf), mk(pq, pb), 'atlas', 'desktop', [], null).diff
     ok('shot diff: with full files the hairlines show', sd > 0.1, String(sd))
+    // the reference record vouches for its bytes: a later run that overwrites the reference files cannot make a changed tree diff 0
+    const ref = mk(pq, pb), capd = mk(pr, pf)
+    ok('shot diff: matching shas still diff', shotDiffFor(capd, ref, 'atlas', 'desktop', [], null).diff > 0.1)
+    fs.copyFileSync(pf, pb); fs.copyFileSync(pr, pq)   // an ad hoc capture of the broken tree lands on the reference's file names
+    const ow = shotDiffFor(capd, ref, 'atlas', 'desktop', [], null)
+    ok('shot diff: an overwritten reference file fails as changed since capture', ow.diff === 1 && /reference shot changed since capture/.test(ow.per.v), JSON.stringify(ow))
+    const nosha = {atlas: {desktop: {shots: {v: {...capd.atlas.desktop.shots.v, sha: undefined, full_sha: undefined}}}}}
+    ok('shot diff: a record without shas fails', shotDiffFor(nosha, mk(pr, pf), 'atlas', 'desktop', [], null).diff === 1)
+    const m1 = {index_sha: 'a', atlas_sha: 'b'}, m2 = {index_sha: 'c', atlas_sha: 'b'}
+    const names = [shotsDirName({out: 'docs/mobile/baseline.json'}, m1), shotsDirName({out: 'docs/mobile/captures/R1.json'}, m1), shotsDirName({}, m1), shotsDirName({}, m2), shotsDirName({out: 'docs/mobile/baseline.json'}, m2)]
+    ok('shots dir: baseline, R1 and ad hoc runs on any tree never share a dir, and none is the bare adhoc', new Set(names).size === names.length && !names.includes('adhoc') && /^baseline-/.test(names[0]) && shotsDirName({unit: 'M3.1'}, m1) === 'M3.1', JSON.stringify(names))
   }
   // UG3: a declared line is an exact line and cannot hide extra occurrences; UG2/UG3 need their profiles
   {
@@ -1435,6 +1502,55 @@ async function selfTest() {
     ok('lint: UG3 on one profile is rejected', g3.some(x => /UG3 is scored on/.test(x) && /landscape/.test(x)), g3.join('; '))
     const gm = gateResults({gates: ['UG3'], profiles: ['desktop']}, {repo: cap.repo, sim: {desktop: {seeds}}}, () => B, {})
     ok('UG3 fails when a profile is missing from the capture', gm.some(x => x.key === 'UG3.sim.landscape'), JSON.stringify(gm.map(x => x.key)))
+    const g2 = lintAccept({unit: 'FX', profiles: ['iphone13', 'desktop', 'desktop2x'], gates: ['UG2'], waive: Object.fromEntries(ALL_GATES.filter(g => g !== 'UG2').map(g => [g, 'fixture without a tree'])), checks: []})
+    ok('lint: UG2 without pixel7 is rejected', g2.some(x => /UG2 is scored on/.test(x) && /pixel7/.test(x)), g2.join('; '))
+    const g2b = gateResults({gates: ['UG2'], profiles: ['desktop']}, {atlas: {desktop: {errors: {unexplained: 0, messages: []}}}}, () => null, {})
+    ok('UG2 fails when a gate profile is missing from the capture', g2b.some(x => x.key === 'UG2.atlas.iphone13'), JSON.stringify(g2b.map(x => x.key)))
+    // a declaration covers one changed copy per listing, keyed on the whole line
+    const one = 'function ladderTick(){ return performance.now() }', cp3 = b0t + (one + '\n').repeat(3)
+    ok('UG3: a declared line pasted three times fails', run([one], {repo: mkRepo(cp3), sim: {desktop: {seeds}}}).length > 0, JSON.stringify(run([one], {repo: mkRepo(cp3), sim: {desktop: {seeds}}})))
+    ok('UG3: listed three times it covers three copies', run([one, one, one], {repo: mkRepo(cp3), sim: {desktop: {seeds}}}).length === 0, JSON.stringify(run([one, one, one], {repo: mkRepo(cp3), sim: {desktop: {seeds}}})))
+    const b0dup = 'a = Math.random()\nb = 1\n', cpdup = b0dup + 'a = Math.random()\na = Math.random()\n'
+    ok('UG3: copies of a B0 line beyond the declared count fail', run(['a = Math.random()'], {repo: mkRepo(cpdup), sim: {desktop: {seeds}}}).some(x => /declared_clock_lines\.P|clock_tokens\.index\.P$/.test(x.key)))
+    ok('UG3: copies of a B0 line within the declared count pass', run(['a = Math.random()', 'a = Math.random()'], {repo: mkRepo(cpdup), sim: {desktop: {seeds}}}).length === 0)
+    const long = 'const ' + 'x'.repeat(170), la = long + ' = Math.random()', lb = long + ' = Date.now()'
+    ok('UG3: two lines sharing 160 chars are distinct (one declaration covers only its own)', run([la], {repo: mkRepo(b0t + la + '\n' + lb + '\n'), sim: {desktop: {seeds}}}).length > 0 && run([la, lb], {repo: mkRepo(b0t + la + '\n' + lb + '\n'), sim: {desktop: {seeds}}}).length === 0)
+    {   // the finding's fixture on the real tree: three more copies of an existing index.html line, P 37 -> 40
+      const t0 = rd('index.html'), real = t => ({clock_tokens: {index: cl(t), atlas: cl(rd('maps-site/index.html'))}, atlas_fn_sha: {}})
+      const RB = {repo: real(t0), sim: {desktop: {seeds}}}, line = 'const now = performance.now();', rc = real(t0 + ('\n  ' + line).repeat(3))
+      const rr = dec => gateResults({gates: ['UG3'], profiles: ['desktop'], declared_clock_lines: dec}, {repo: rc, sim: {desktop: {seeds}}}, () => RB, {}).filter(x => /clock_tokens|declared_clock/.test(x.key))
+      ok('UG3: three pasted copies of a declared B0 line (P 40) fail', rc.clock_tokens.index.P.occurrences === 40 && rr([line]).some(x => /clock_tokens\.index\.P$/.test(x.key) || /declared_clock_lines\.P/.test(x.key)), JSON.stringify(rr([line])))
+      ok('UG3: the same with nothing declared fails', rr([]).some(x => x.key === 'UG3.clock_tokens.index.P'))
+    }
+    ok('UG3: an undeclared new token beside declared lines fails the occurrence count', run(['function ladderTick(){ return performance.now() }', 'const seedJitter = Math.random()*Date.now()'], {repo: mkRepo(cpt + 'x = performance.now()\n'), sim: {desktop: {seeds}}}).some(x => /clock_tokens\.index\.P$/.test(x.key)))
+  }
+  // UG8 through the gate: a full-resolution hairline change behind reduced copies fails desktop identity
+  {
+    const W = 300, H = 200, base = {w: W, h: H, data: Buffer.alloc(W * H * 4, 200)}, hair = {w: W, h: H, data: Buffer.from(base.data)}
+    for (let y = 0; y < H; y += 6) for (let x = 0; x < W; x++) { const i = (y * W + x) * 4; hair.data[i] -= 24; hair.data[i + 1] -= 24; hair.data[i + 2] -= 24 }
+    const dir = path.join(tmp, 'ug8'); fs.mkdirSync(dir, {recursive: true})
+    const w1 = (n, img) => { fs.writeFileSync(path.join(dir, n), pngEncode(img)); return path.join(dir, n) }
+    const shot = (img, tag) => { const p = w1(tag + '.png', boxDown(img, 3)), fp = w1(tag + '.full.png', img); return {v: {path: p, w: 100, h: 66, scale: 1 / 3, sha: sha(fs.readFileSync(p)), full_path: fp, full_sha: sha(fs.readFileSync(fp))}} }
+    const prof = shots => ({doc_scroll: 768, shots})
+    const B = {atlas: {desktop: prof(shot(base, 'b1')), desktop2x: prof(shot(base, 'b2'))}}
+    const same = {atlas: {desktop: prof(shot(base, 'c1')), desktop2x: prof(shot(base, 'c2'))}}, changed = {atlas: {desktop: prof(shot(hair, 'h1')), desktop2x: prof(shot(base, 'h2'))}}
+    const u8 = c => gateResults({gates: ['UG8'], profiles: ['desktop', 'desktop2x']}, c, () => B, {}).filter(x => /shot_diff/.test(x.key))
+    ok('UG8: identical full-resolution shots pass', u8(same).length === 0, JSON.stringify(u8(same)))
+    ok('UG8: a hairline change that the 1/3 copies hide fails at full resolution', u8(changed).some(x => x.key === 'UG8.atlas.desktop.shot_diff'), JSON.stringify(u8(changed)))
+    ok('UG8: the reduced copies alone diff 0 (the reason for full_path)', imageDiff(fs.readFileSync(path.join(dir, 'h1.png')), fs.readFileSync(path.join(dir, 'b1.png'))).diff === 0)
+  }
+  // chrome_cover.peek / .half: a check never passes on null, 'no-sheet' or 'unmeasured'
+  {
+    const WV2 = Object.fromEntries(ALL_GATES.map(g => [g, 'fixture without a tree']))
+    const acc = (op, value) => ({unit: 'FX', profiles: ['iphone13'], gates: [], waive: WV2, declared_change_keys: ['atlas.iphone13.chrome_cover.peek'], checks: [{key: 'atlas.iphone13.chrome_cover.peek', op, value}]})
+    const capOf = v => ({atlas: {iphone13: {chrome_cover: {peek: v}}}}), sc = (a, v) => acceptScore(a, capOf(v), () => capOf('no-sheet'), {allowStale: true}).pass
+    ok('peek: a measured 0.30 passes <= 0.35', sc(acc('<=', 0.35), 0.30))
+    ok('peek: null fails <= 0.35', !sc(acc('<=', 0.35), null))
+    ok('peek: null fails even an absent check', !sc(acc('absent'), null))
+    ok('peek: null fails even == null', !sc(acc('==', null), null))
+    ok('peek: no-sheet fails != 0', !sc(acc('!=', 0), 'no-sheet'))
+    ok('peek: unmeasured fails', !sc(acc('<=', 0.35), 'unmeasured: x'))
+    ok('peek: an undeclared null against B0 no-sheet fails the unchanged rule', !acceptScore({...acc('<=', 1), declared_change_keys: [], checks: []}, capOf(null), () => capOf('no-sheet'), {allowStale: true}).pass)
   }
   // clock tokens by occurrence, brace range
   const ct = clockTokens('a = Math.random() + Math.random()\nb = Date.now()\nc = 1\n'); ok('clock tokens count occurrences', ct.P.occurrences === 3 && ct.P.lines === 2)
@@ -1490,4 +1606,4 @@ async function main() {
   if (!outp) process.stdout.write(text)
 }
 if (require.main === module) main().catch(e => { console.error(e.stack || e); process.exit(2) })
-module.exports = {tapOutcome, shotDiffFor, gateResults, controlsFile, openPage, simStart, simViews, loadPlaywright, launch, resolveCdn, pump, PROFILES, startServer, repoChecks, clockTokens, braceRange, pngDecode, pngEncode, imageDiff, lintAccept, acceptScore, compareCaptures, runCapture, planOptions}
+module.exports = {tapOutcome, shotDiffFor, shotsDirName, gateResults, controlsFile, openPage, simStart, simViews, loadPlaywright, launch, resolveCdn, pump, PROFILES, startServer, repoChecks, clockTokens, braceRange, pngDecode, pngEncode, imageDiff, lintAccept, acceptScore, compareCaptures, runCapture, planOptions}
