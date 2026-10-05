@@ -188,6 +188,19 @@
       },
       "reason": "pipeline scripts changed since the reference (UG11 compares against it): .claude/workflows/mobile-build.js",
       "ref": "rebase-7"
+    },
+    {
+      "before_unit": "D3",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "reason": "R1 re-taken with the deterministic capture tool (routed font files answered after the startup layout); supersedes rebase-7, whose iPhone 13 first load caught the font race",
+      "ref": "R1"
     }
   ]
 }

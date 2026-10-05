@@ -2,7 +2,7 @@
  "meta": {
   "tool": "mobile-capture",
   "tool_version": 1,
-  "tool_sha": "95384be789697b8989580cd8fa345680fdd22603cdd8e37c4209a7e981141152",
+  "tool_sha": "128863844e650e2c47d35bdc73e4d7a0409034ab49d1ad433a25eb0b6dd8c4d9",
   "index_sha": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
   "atlas_sha": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc",
   "unit": "R1",
@@ -34,10 +34,11 @@
   ],
   "cdn_routed": true,
   "fonts": "routed",
+  "font_files": "after the startup layout (fontGate)",
   "server": "spawn",
   "browser": "141.0.7390.37",
   "timing": {
-   "wall_ms": 1818286
+   "wall_ms": 1766732
   }
  },
  "repo": {
@@ -684,7 +685,7 @@
    ".claude/workflows/filigree-2-plan.js": "fb0a530448dd8b34773de841da25c7e86c47d79a17225a2f13f3519dc5b2b64c",
    ".claude/workflows/filigree-3-build.js": "0164d2a71818c6026747809d3b271d1784696c670194f3f5b8f0627813644b38",
    ".claude/workflows/filigree-4-review.js": "afdf9eefd6806e814e1171da00c2718cc6e6696bb6c7b0ce867f956e68e1e210",
-   ".claude/workflows/mobile-build.js": "240f6e0bbfad83033b8f5d2af177b1bebd4cdf68d7ae7d56914067f47ed901bd",
+   ".claude/workflows/mobile-build.js": "b47fc19720b54d01055dbff0a550cc585b8e82c8aca9f05b7b5060c25b17400b",
    ".claude/workflows/mobile-review.js": "15f526b77b075ff09891c7f272666d4ce3026467c5d82035b488e8c9156ff6ab",
    ".claude/workflows/street-1-research.js": "0afadd970a560ce94be05baf90b345696e00577394375170250e9e6feee4b5b2",
    ".claude/workflows/street-2-plan.js": "d6ed1a1d1af3d92a5312b3d8b65e80c0e498a5498f9659e3cdac883b0518ab31",
@@ -798,6 +799,11 @@
       "host": "fonts.gstatic.com",
       "path": "eb-garamond/eb-garamond-latin-600-normal.woff2",
       "length": 25348
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-ext-400-italic.woff2",
+      "length": 45468
      },
      {
       "host": "fonts.gstatic.com",
@@ -1916,7 +1922,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 137878
+    "wall_ms": 137233
    },
    "extras": {
     "safe_area": {
@@ -2070,6 +2076,11 @@
       "host": "fonts.gstatic.com",
       "path": "eb-garamond/eb-garamond-latin-600-normal.woff2",
       "length": 25348
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-ext-400-italic.woff2",
+      "length": 45468
      },
      {
       "host": "fonts.gstatic.com",
@@ -3230,7 +3241,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 148838
+    "wall_ms": 148002
    },
    "extras": {
     "safe_area": {
@@ -3383,6 +3394,11 @@
       "host": "fonts.gstatic.com",
       "path": "eb-garamond/eb-garamond-latin-600-normal.woff2",
       "length": 25348
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-ext-400-italic.woff2",
+      "length": 45468
      },
      {
       "host": "fonts.gstatic.com",
@@ -4874,7 +4890,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 217075
+    "wall_ms": 216141
    },
    "extras": {
     "safe_area": {
@@ -4953,7 +4969,7 @@
      "scale": 0.3333333333333333,
      "sha": "64b26b6224d57cdec5796a0bf6ace1eb5c9db610a927c74b943e6a290cf6bd62",
      "full_path": "docs/mobile/shots/R1/atlas-desktop-2-whole-chart.full.png",
-     "full_sha": "7d7073d64ac7e212065a1d1a0bfc6a75e8e06f9d52f63c47bfe2d55b5b173655"
+     "full_sha": "7f75b319336761861265dacedf01c07fc8ad5f2d016f7cf0293d49580cdeddb5"
     },
     "3-layers": {
      "path": "docs/mobile/shots/R1/atlas-desktop-3-layers.png",
@@ -5033,6 +5049,11 @@
       "host": "fonts.gstatic.com",
       "path": "eb-garamond/eb-garamond-latin-600-normal.woff2",
       "length": 25348
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-ext-400-italic.woff2",
+      "length": 45468
      },
      {
       "host": "fonts.gstatic.com",
@@ -7427,7 +7448,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 345079
+    "wall_ms": 343020
    },
    "extras": {},
    "extra_errors": {
@@ -7548,6 +7569,11 @@
       "host": "fonts.gstatic.com",
       "path": "eb-garamond/eb-garamond-latin-600-normal.woff2",
       "length": 25348
+     },
+     {
+      "host": "fonts.gstatic.com",
+      "path": "eb-garamond/eb-garamond-latin-ext-400-italic.woff2",
+      "length": 45468
      },
      {
       "host": "fonts.gstatic.com",
@@ -9954,7 +9980,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 373923
+    "wall_ms": 371778
    },
    "extras": {},
    "extra_errors": {
@@ -10824,7 +10850,7 @@
     "aborted": []
    },
    "timing": {
-    "wall_ms": 103040
+    "wall_ms": 96271
    },
    "extra_errors": {
     "safe_area": {
@@ -11731,7 +11757,7 @@
     "aborted": []
    },
    "timing": {
-    "wall_ms": 105267
+    "wall_ms": 94313
    },
    "extra_errors": {
     "safe_area": {
@@ -12351,7 +12377,7 @@
     "aborted": []
    },
    "timing": {
-    "wall_ms": 122044
+    "wall_ms": 114346
    },
    "extra_errors": {
     "safe_area": {
@@ -13323,7 +13349,7 @@
     "aborted": []
    },
    "timing": {
-    "wall_ms": 116805
+    "wall_ms": 109527
    },
    "extra_errors": {}
   },
@@ -14304,7 +14330,7 @@
     "aborted": []
    },
    "timing": {
-    "wall_ms": 146656
+    "wall_ms": 134695
    },
    "extra_errors": {}
   }
