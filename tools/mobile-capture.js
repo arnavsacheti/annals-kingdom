@@ -2,6 +2,7 @@
 // The mobile measuring stick (Mobile 1 / M1.1). Every number is defined in docs/mobile/metrics.md;
 // the harness it grew from is kept in docs/mobile/inputs/. Read-only on the repo: it writes only
 // --out, --controls and the git-ignored shots dir. Playwright comes from NODE_PATH.
+// The atlas repeat visit (metrics.md section 1) is measured in its own cache-on probe context: CDP Fetch for foreign https, since page.route disables the HTTP cache.
 //
 //   node tools/mobile-capture.js [--atlas] [--sim] [--profiles a,b] [--unit ID] [--out F] [--controls F]
 //        [--clock virtual|real] [--cpu K] [--throttle slow4g] [--hw-cores N] [--device-memory M]
@@ -359,12 +360,14 @@ function ctxOptions(pw, key, prof, o) {
 }
 
 class Net {   // metrics.md section 1: only responses of the app's own origin count
-  constructor(origin) { this.origin = origin; this.reqs = {}; this.fin = []; this.routed = []; this.aborted = []; this.foreign = new Set(); this.cacheHits = 0; this.pending = 0 }
+  constructor(origin, o) { this.origin = origin; this.reqs = {}; this.fin = []; this.routed = []; this.aborted = []; this.foreign = new Set(); this.cacheHits = 0; this.pending = 0; this.revalidated = !!(o && o.revalidated); this.early304 = new Set() }
   async attach(cdp) {
     await cdp.send('Network.enable')
-    cdp.on('Network.requestWillBeSent', e => { const u = e.request.url; if (!/^https?:/.test(u)) return; this.reqs[e.requestId] = {url: u, local: u.startsWith(this.origin + '/'), done: false}; const o = new URL(u).origin; if (o !== this.origin) this.foreign.add(o); else this.pending++ })
-    cdp.on('Network.responseReceived', e => { const r = this.reqs[e.requestId]; if (!r) return; r.status = e.response.status; if (e.response.fromDiskCache || e.response.fromServiceWorker || e.response.fromPrefetchCache || e.response.status === 304) { r.hit = true; this.cacheHits++ } })
-    cdp.on('Network.requestServedFromCache', e => { const r = this.reqs[e.requestId]; if (r && !r.hit) { r.hit = true; this.cacheHits++ } })
+    const hit = (r, again) => { if (r.hit && !again) return; r.hit = true; this.cacheHits++ }
+    cdp.on('Network.requestWillBeSent', e => { const u = e.request.url; if (!/^https?:/.test(u)) return; this.reqs[e.requestId] = {url: u, local: u.startsWith(this.origin + '/'), done: false}; const o = new URL(u).origin; if (o !== this.origin) this.foreign.add(o); else this.pending++; if (this.early304.delete(e.requestId)) hit(this.reqs[e.requestId]) })
+    cdp.on('Network.responseReceived', e => { const r = this.reqs[e.requestId]; if (!r) return; r.status = e.response.status; if (e.response.fromDiskCache || e.response.fromServiceWorker || e.response.fromPrefetchCache || e.response.status === 304) hit(r, !this.revalidated) })   // the main page keeps B0's rule
+    cdp.on('Network.requestServedFromCache', e => { const r = this.reqs[e.requestId]; if (r) hit(r) })
+    if (this.revalidated) cdp.on('Network.responseReceivedExtraInfo', e => { if (e.statusCode !== 304) return; const r = this.reqs[e.requestId]; if (r) hit(r); else this.early304.add(e.requestId) })   // a network-service revalidation (the document, fetch()) reports 200 in responseReceived; only the raw status says 304, and it may come first
     cdp.on('Network.loadingFinished', e => { const r = this.reqs[e.requestId]; if (!r || r.done) return; r.done = true; r.bytes = e.encodedDataLength; if (r.local) { this.pending--; this.fin.push(r) } })
     cdp.on('Network.loadingFailed', e => { const r = this.reqs[e.requestId]; if (!r || r.done) return; r.done = true; if (r.local) this.pending-- })
   }
@@ -377,12 +380,31 @@ class Net {   // metrics.md section 1: only responses of the app's own origin co
   }
 }
 
-async function openPage(env, key, kind, opts) {   // a fresh context + page with routes, pins, optional clock
+const SIM_RENDERER_HOOK = '\n;(function(){try{var T=THREE,O=T.WebGLRenderer;function R(a){var r=new O(a);window.__mcR=r;var rr=r.render;r.render=function(s,c){window.__mcS=s;window.__mcC=c;return rr.apply(this,arguments)};return r}R.prototype=O.prototype;T.WebGLRenderer=R}catch(e){}})();\n'
+const CDP_FETCH_PATTERNS = [{urlPattern: 'https://*', requestStage: 'Request'}]   // the app is served from http://localhost, so only foreign https pauses
+const fetchPaused = url => CDP_FETCH_PATTERNS.some(p => new RegExp('^' + p.urlPattern.replace(/[.+^${}()|[\]\\/]/g, '\\$&').replace(/\*/g, '.*').replace(/\?/g, '.') + '$').test(url))   // CDP urlPattern: * any run, ? one character
+function cdnRoute(cdn, kind, url) {   // the one decision for a foreign request, under page.route or CDP Fetch: {body, contentType} fulfils from --cdn-dir, null aborts
+  const u = new URL(url)
+  if (cdn && /leaflet@1\.9\.4\/dist\//.test(url)) {
+    const f = path.join(cdn.leaflet, u.pathname.split('/dist/')[1])
+    if (fs.existsSync(f)) return {body: fs.readFileSync(f), contentType: f.endsWith('.css') ? 'text/css' : f.endsWith('.js') ? 'text/javascript' : f.endsWith('.png') ? 'image/png' : 'application/octet-stream'}
+  }
+  if (cdn && /three\.js\/r128\/three\.min\.js/.test(url)) return {body: fs.readFileSync(cdn.three, 'utf8') + (kind === 'sim' ? SIM_RENDERER_HOOK : ''), contentType: 'text/javascript'}
+  return null
+}
+function fulfilHeaders(r, req) {   // the headers route.fulfill sends (Playwright 1.56): without the CORS trio a crossorigin <script>/<link> rejects the body
+  const h = [{name: 'Content-Type', value: r.contentType}, {name: 'Content-Length', value: String(Buffer.byteLength(r.body))}]
+  const o = Object.entries(req.headers || {}).find(([k]) => k.toLowerCase() === 'origin')
+  if (o && new URL(req.url).origin !== String(o[1]).trim()) h.push({name: 'Access-Control-Allow-Origin', value: o[1]}, {name: 'Access-Control-Allow-Credentials', value: 'true'}, {name: 'Vary', value: 'Origin'})
+  return h
+}
+
+async function openPage(env, key, kind, opts) {   // a fresh context + page with routes, pins, optional clock; opts.cdpRoute routes through CDP Fetch and keeps the HTTP cache on
   const prof = opts.profile
   const ctx = await env.browser.newContext(ctxOptions(env.pw, key, prof, opts))
   const page = await ctx.newPage()
   const cdp = await ctx.newCDPSession(page)
-  const net = new Net(env.server.origin); await net.attach(cdp)
+  const net = new Net(env.server.origin, {revalidated: !!opts.cdpRoute}); await net.attach(cdp)
   const rec = {console: [], consoleUrl: [], page: [], failed: []}
   page.on('console', m => { if (m.type() === 'error') { rec.console.push(m.text().slice(0, 200)); let u = ''; try { u = m.location().url || '' } catch (e) { /* none */ } rec.consoleUrl.push(u) } })
   page.on('pageerror', e => rec.page.push(String(e.message).slice(0, 200)))
@@ -390,19 +412,15 @@ async function openPage(env, key, kind, opts) {   // a fresh context + page with
   if (opts.cpu > 1) await cdp.send('Emulation.setCPUThrottlingRate', {rate: opts.cpu})
   if (opts.throttle === 'slow4g') await cdp.send('Network.emulateNetworkConditions', SLOW4G)
   const routed = [], aborted = []
-  await page.route(url => new URL(url).origin !== env.server.origin, async route => {
-    const url = route.request().url(), u = new URL(url)
-    if (env.cdn && /leaflet@1\.9\.4\/dist\//.test(url)) {
-      const f = path.join(env.cdn.leaflet, u.pathname.split('/dist/')[1])
-      if (fs.existsSync(f)) { const ct = f.endsWith('.css') ? 'text/css' : f.endsWith('.js') ? 'text/javascript' : f.endsWith('.png') ? 'image/png' : 'application/octet-stream'; const body = fs.readFileSync(f); routed.push({url, length: body.length}); return route.fulfill({body, contentType: ct}) }
-    }
-    if (env.cdn && /three\.js\/r128\/three\.min\.js/.test(url)) {
-      let body = fs.readFileSync(env.cdn.three, 'utf8')
-      if (kind === 'sim') body += '\n;(function(){try{var T=THREE,O=T.WebGLRenderer;function R(a){var r=new O(a);window.__mcR=r;var rr=r.render;r.render=function(s,c){window.__mcS=s;window.__mcC=c;return rr.apply(this,arguments)};return r}R.prototype=O.prototype;T.WebGLRenderer=R}catch(e){}})();\n'
-      routed.push({url, length: Buffer.byteLength(body)}); return route.fulfill({body, contentType: 'text/javascript'})
-    }
-    aborted.push({url: url.slice(0, 120)}); return route.abort()
-  })
+  const decide = url => { const r = cdnRoute(env.cdn, kind, url); if (r) routed.push({url, length: Buffer.byteLength(r.body)}); else aborted.push({url: url.slice(0, 120)}); return r }
+  if (opts.cdpRoute) {   // never Network.setCacheDisabled here: the cache staying on is the point
+    cdp.on('Fetch.requestPaused', e => {
+      let r = null; try { r = decide(e.request.url) } catch (x) { /* unreadable cdn file: abort */ }
+      const send = r ? cdp.send('Fetch.fulfillRequest', {requestId: e.requestId, responseCode: 200, responseHeaders: fulfilHeaders(r, e.request), body: Buffer.from(r.body).toString('base64')}) : cdp.send('Fetch.failRequest', {requestId: e.requestId, errorReason: 'Aborted'})
+      send.catch(() => {})
+    })
+    await cdp.send('Fetch.enable', {patterns: CDP_FETCH_PATTERNS})
+  } else await page.route(url => new URL(url).origin !== env.server.origin, async route => { const r = decide(route.request().url()); return r ? route.fulfill(r) : route.abort() })
   await page.addInitScript(`(${pinInstall.toString()})(${JSON.stringify({hw: opts.hw, mem: opts.mem, saveData: !!opts.saveData})})`)
   await page.addInitScript(`(${pageLib.toString()})()`)
   if (opts.vclock) await page.addInitScript(`(${vclockInstall.toString()})(${JSON.stringify({auto: opts.vclock === 'auto'})})`)
@@ -609,12 +627,11 @@ async function captureAtlas(env, key, o) {
       return {open: !!c && !c.hidden, kickerTop: top(q('.contents-kicker')), titleTop: top(q('.contents-title')), footBottom: q('.contents-foot') ? Math.round(q('.contents-foot').getBoundingClientRect().bottom) : null, cardTops: [...(c ? c.querySelectorAll('.tcard') : [])].map(x => Math.round(x.getBoundingClientRect().top))}
     })
     R.shots['1-contents'] = await takeShot(P, env, o, 'atlas', key, '1-contents')
-    // repeat visit: a second goto in the same context (metrics.md section 1)
-    const m1 = P.net.mark()
+    // the second goto stays so every later metric is taken on the page B0 measured; its numbers are not the repeat visit (page.route turns the HTTP cache off), repeatVisitProbe fills this once the page is closed
+    R.repeat_visit = null
     await page.goto(url, {waitUntil: 'load'})
     await page.waitForFunction(() => window.ATLAS && window.ATLAS.ready, null, {timeout: 120000})
     await settle(P, 400)
-    const rv = P.net.since(m1); R.repeat_visit = {bytes: rv.bytes, requests: rv.requests, cache_hits: rv.cache_hits}
     // The Whole Chart
     await (prof.touch ? page.locator('.tcard[data-theme=whole]').tap() : page.locator('.tcard[data-theme=whole]').click())
     await sleep(500); await settle(P, 800)
@@ -765,6 +782,7 @@ async function captureAtlas(env, key, o) {
     // extras on the same profile, each in its own page so the main measurement stays as B0 took it
     R.extras = {}; R.extra_errors = {}   // each extra's own page errors, read by UG2 (kept out of timing and out of the identity compare)
     await P.close()
+    R.repeat_visit = await repeatVisitProbe(env, key, o, url, R.extra_errors)   // its page's errors are scored by UG2 like an extra's, outside R.errors
     if (o.extras.includes('safe_area') && prof.touch) R.extras.safe_area = await extraSafeArea(env, key, o, 'atlas', url, R.extra_errors)
     if (o.extras.includes('keyboard') && prof.touch) R.extras.keyboard = await extraKeyboard(env, key, o, url, R.extra_errors)
     if (o.nightLoaf && prof.touch) R.timing.night_loaf = await extraLoaf(env, key, o, url, R.extra_errors)
@@ -773,6 +791,17 @@ async function captureAtlas(env, key, o) {
   return R
 }
 
+async function repeatVisitProbe(env, key, o, url, sink = {}) {   // metrics.md section 1: a second goto of the same url in a fresh cache-on context, opened and waited for as the main page is
+  const P = await openPage(env, key, 'atlas', {...o, vclock: o.clock === 'virtual' ? 'auto' : null, cdpRoute: true})
+  try {
+    const visit = async () => { await P.page.goto(url, {waitUntil: 'load'}); await P.page.waitForFunction(() => window.ATLAS && window.ATLAS.ready, null, {timeout: 120000}); await settle(P, 400) }
+    await visit()
+    const m1 = P.net.mark()
+    await visit()
+    const rv = P.net.since(m1)
+    return {bytes: rv.bytes, requests: rv.requests, cache_hits: rv.cache_hits}
+  } catch (e) { return {error: String(e.message || e).slice(0, 120)} } finally { sink.repeat_visit = errorsOf(P); await P.close() }
+}
 async function extraSafeArea(env, key, o, surface, url, sink = {}) {
   const P = await openPage(env, key, surface, {...o, vclock: surface === 'sim' ? 'manual' : null})
   try {
@@ -1700,6 +1729,35 @@ async function selfTest() {
     const capN = v => ({atlas: {iphone13: {chrome_cover: v}}})
     ok('sheet: a no-op hook capture fails the peek/half checks', !acceptScore(accN, capN(noop), () => capN({peek: 'no-sheet', half: 'no-sheet'}), {allowStale: true}).pass)
     ok('sheet: a working hook capture passes the peek/half checks', acceptScore(accN, capN(good), () => capN({peek: 'no-sheet', half: 'no-sheet'}), {allowStale: true}).pass)
+  }
+  // the one CDN decision behind page.route and the CDP Fetch path; the 'https://*' pattern never pauses the http app origin
+  {
+    const cd = path.join(tmp, 'cdn'), w = (p, b) => { fs.mkdirSync(path.dirname(path.join(cd, p)), {recursive: true}); fs.writeFileSync(path.join(cd, p), b) }
+    w('leaflet/dist/leaflet.js', 'L=1'); w('leaflet/dist/leaflet.css', '.l{}'); w('leaflet/dist/images/layers-2x.png', Buffer.from([137, 80])); w('three/build/three.min.js', 'var THREE={}')
+    const cdn = resolveCdn(cd), U = 'https://unpkg.com/leaflet@1.9.4/dist/', T3 = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'
+    const lj = cdnRoute(cdn, 'atlas', U + 'leaflet.js'), lc = cdnRoute(cdn, 'atlas', U + 'leaflet.css'), lp = cdnRoute(cdn, 'atlas', U + 'images/layers-2x.png')
+    ok('cdn route: the leaflet glob fulfils from disk with its type', lj && String(lj.body) === 'L=1' && lj.contentType === 'text/javascript' && lc && lc.contentType === 'text/css' && lp && lp.contentType === 'image/png' && lp.body.equals(Buffer.from([137, 80])), JSON.stringify([lj, lc, lp].map(x => x && x.contentType)))
+    const ta = cdnRoute(cdn, 'atlas', T3), ts = cdnRoute(cdn, 'sim', T3)
+    ok('cdn route: the three glob fulfils, with the renderer hook only for sim', ta && ta.body === 'var THREE={}' && ta.contentType === 'text/javascript' && ts && ts.body === 'var THREE={}' + SIM_RENDERER_HOOK)
+    ok('cdn route: a font host, a missing leaflet file and a CDN without --cdn-dir abort', cdnRoute(cdn, 'atlas', 'https://fonts.googleapis.com/css2?family=EB+Garamond') === null && cdnRoute(cdn, 'atlas', U + 'nope.js') === null && cdnRoute(null, 'atlas', U + 'leaflet.js') === null && cdnRoute(null, 'sim', T3) === null)
+    ok('cdp fetch: https://* pauses foreign https, never the http app origin', fetchPaused(U + 'leaflet.js') && fetchPaused('https://fonts.googleapis.com/css2?family=X') && !fetchPaused('http://localhost:8544/maps-site/?v=mc') && !fetchPaused('http://127.0.0.1:20001/'))
+    const hc = fulfilHeaders(lj, {url: U + 'leaflet.js', headers: {Origin: 'http://localhost:1'}}), hn = fulfilHeaders(lj, {url: U + 'leaflet.js', headers: {}}), hv = (h, n) => (h.find(x => x.name === n) || {}).value
+    ok('cdp fetch: the fulfil headers are route.fulfill\'s (type, length, CORS only for an Origin)', hv(hc, 'Content-Type') === 'text/javascript' && hv(hc, 'Content-Length') === '3' && hv(hc, 'Access-Control-Allow-Origin') === 'http://localhost:1' && hv(hc, 'Access-Control-Allow-Credentials') === 'true' && hn.length === 2, JSON.stringify([hc, hn]))
+  }
+  // Net: on a cache-on page each cached or revalidated local response counts once, in the event orders Chromium 141 emits; the main page keeps B0's rule
+  {
+    const O = 'http://localhost:1', rq = (id, p) => ['Network.requestWillBeSent', {requestId: id, request: {url: O + p}}], rs = (id, status, disk) => ['Network.responseReceived', {requestId: id, response: {status, fromDiskCache: !!disk}}]
+    const xi = (id, statusCode) => ['Network.responseReceivedExtraInfo', {requestId: id, statusCode}], sc = id => ['Network.requestServedFromCache', {requestId: id}], fn = (id, n) => ['Network.loadingFinished', {requestId: id, encodedDataLength: n}]
+    const evs = [rq('doc', '/maps-site/'), xi('doc', 304), rs('doc', 200), fn('doc', 231),   // the document revalidated by the network service: 304 only in the raw status
+      rq('js', '/a.js'), xi('js', 304), rs('js', 304), fn('js', 235),   // a renderer revalidation: 304 in both events
+      rq('img', '/tiles/t.png'), sc('img'), rs('img', 200), fn('img', 0),   // fresh, memory cache
+      rq('ft', '/tiles/v.png'), rs('ft', 200, true), fn('ft', 0),   // fresh, disk cache
+      xi('early', 304), rq('early', '/data/x.json'), rs('early', 200), fn('early', 236),   // the raw status ahead of requestWillBeSent
+      rq('new', '/data/y.json'), xi('new', 200), rs('new', 200), fn('new', 900)]
+    const feed = async rv => { const hs = {}, n = new Net(O, {revalidated: rv}); await n.attach({send: async () => {}, on: (k, f) => { hs[k] = f }}); for (const [k, e] of evs) if (hs[k]) hs[k](e); return n }
+    const pr = await feed(true), mn = await feed(false), ps = pr.since({n: 0, hits: 0})
+    ok('net: a cache-on page counts 304s, memory and disk hits once each (5 of 6)', pr.cacheHits === 5 && ps.cache_hits === 5 && ps.requests === 6 && ps.bytes === 1602 && pr.pending === 0, JSON.stringify({hits: pr.cacheHits, req: ps.requests, bytes: ps.bytes, pending: pr.pending}))
+    ok('net: the main page keeps its rule (renderer 304, memory, disk: 3)', mn.cacheHits === 3, String(mn.cacheHits))
   }
   // clock tokens by occurrence, brace range
   const ct = clockTokens('a = Math.random() + Math.random()\nb = Date.now()\nc = 1\n'); ok('clock tokens count occurrences', ct.P.occurrences === 3 && ct.P.lines === 2)
