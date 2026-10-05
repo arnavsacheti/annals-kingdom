@@ -35,7 +35,7 @@ vibe check"). Use the returned `polish_note` as the result note, `polish_inserts
 `changelog_line` in the release. Queue rules for these items (reason codes, where inserted items go,
 releases, the on-return table): `docs/filigree/README.md` §1.
 
-- [ ] **Filigree 1 · Research → density bible (USER REQUEST)** — inventory what plate one bothers to
+- [x] **Filigree 1 · Research → density bible (USER REQUEST)** — inventory what plate one bothers to
   name (peak, height, homestead, reserve, river fork, coast road) against what plates two and three
   delete; walk the Pēshunor north coast once (three fixed bands of the sheet-one box) and one fixed
   Epēshu quarter in Azlen's grain (block, park void, arterial, fog wash, contour hill); carry the
@@ -92,6 +92,9 @@ releases, the on-return table): `docs/filigree/README.md` §1.
     owner's go. Check this box again only on the re-integrated pass, when all of these hold:
     rulings_used names the overrides; density-bible.md has "## Phone (mobile block)" with FM1-FM12;
     the bible's class ids are a superset of 72175a5's. Then add the new Result line here.
+  - Result (2026-10-05, mobile re-integration): density bible: 59 rules, 12/12 hexes agree ≥5/6
+    (min 6/6), 100% instances resolve, checklist 27/27, round 0; rulings_used R2 R7 R12 R14 R18 from
+    rulings.json; "## Phone (mobile block)" carries FM1-FM12; 27/27 classes kept (none dropped).
 
 ### Mobile at the table (USER REQUEST): keep the quality, fit the phone
 

@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-04",
+  "date": "2026-10-05",
   "ground": {
     "window": [
       1060,
@@ -457,7 +457,7 @@
     },
     {
       "id": "B-27",
-      "text": "Names on a threshold (R2): rank decides when a name appears (its minzoom), never how it is inked; landform and homestead names share one ink colour and one face family, with at most one size step between ranks. Below its threshold a rank is absent. Arrival order: rank 1-2 country, 3-4 region, 5-6 valley, 7 city, 9 never.",
+      "text": "Names on a threshold (R2): rank decides WHEN a name appears (its threshold), never HOW it is inked: landform and homestead names share one ink colour and one face family, with at most one size step between ranks. A threshold is an absolute zoom that no viewport or device pixel ratio moves: it is never read from fitZoom, TIER_CEIL or the reveal-tier class, whose zoom shifts with the viewport height. The desktop placement is the reference. Below its threshold a rank is absent. Arrival order: rank 1-2 country, 3-4 region, 5-6 valley, 7 city, 9 never. How a name that does not fit is held back is B-29; once arrived, a name is never dropped, shrunk or replaced by a pin at closer zoom (R1).",
       "kind": "threshold",
       "sheets": [
         "country",
@@ -469,7 +469,8 @@
         "q15-c07",
         "q15-c03",
         "q01-c16",
-        "q02-c13"
+        "q02-c13",
+        "q15-c11"
       ]
     },
     {
@@ -490,7 +491,7 @@
     },
     {
       "id": "B-29",
-      "text": "Cramped: the rank pass measures label boxes in screen px on the live map container (a phone switches labels on at about 0.6x the desktop scale, so the gap is never inferred from the tier class); when two boxes come closer than the minimum gap, the lower-ranked name's threshold moves to the zoom where both fit. A name is never shrunk to fit (one size step at most) and, once arrived, never dropped.",
+      "text": "Cramped (R2): placement is one ranked, greedy pass in CSS px over the live map container, highest rank first, with a minimum gap per viewport (a Job 2 setting in CSS px for each viewport profile); a name tries each of its anchors in its placement order (B-56) before it is held back. A smaller viewport, or a coarse pointer whose type is larger, may hold a lower-ranked name back to a closer zoom, but it never drops a class the desktop shows on that sheet, and every held-back name appears by its desktop threshold + 0.5 zoom or by the end of its sheet's band (B-46), whichever comes first. Type never shrinks to fit: no name is drawn smaller than on the desktop, and on a coarse-pointer viewport none is drawn below 12 CSS px (11 px italic). A phone budget never removes, delays or shrinks anything on the desktop. Today nothing enforces label spacing and the label switch fires at a viewport-dependent zoom (a phone turns labels on at about 0.6x the desktop scale), so neither the gap nor a threshold is ever inferred from the tier class. The spacing test pair is the closest one on sheet one, Rēketis and Āglaz (45.9 atlas px apart): with estimated boxes and an 8 px clearance it still collides at z4.2-4.5 and fits from z5.0; the real boxes are a browser measure.",
       "kind": "threshold",
       "sheets": [
         "region",
@@ -499,7 +500,8 @@
       ],
       "cites": [
         "q15-c11",
-        "q15-c12"
+        "q15-c12",
+        "q15-c08"
       ]
     },
     {
@@ -639,7 +641,7 @@
     },
     {
       "id": "B-39",
-      "text": "No UI chrome and no pin drawn at rest over the painted city: POI halos stay hover-only; the chart's printed numbered badges are the print's own legend badges (R5: accepted, not removed, not counted as added pins); seeded plans add no roundel or cartouche over the city sheet.",
+      "text": "No UI chrome and no pin drawn at rest over the painted city: POI halos stay hover-only; the chart's printed numbered badges are the print's own legend badges (R5: accepted, not removed, not counted as added pins); seeded plans add no roundel or cartouche over the city sheet. On a coarse pointer nothing depends on hover or cursor growth: a halo is reached by tap or long-press (## Phone, FM4 and FM5).",
       "kind": "forbidden",
       "sheets": [
         "city"
@@ -651,7 +653,7 @@
     },
     {
       "id": "B-40",
-      "text": "The old survey lies under the live sheet at any scale. The Imperial and War era rasters are a land-hue recolour of the modern print (the same roads, rivers, coast and lettering), so under the live base they give tint only; old names, dead roads and wood that grew back come from a new authored layer (canon old names first, else older forms minted from the lexicon etymology through the roots tool and build-gazetteer, prov invented). Era and layer state round-trip in the hash, and pulling the old survey needs no redraw.",
+      "text": "The old survey lies under the live sheet at any scale. The Imperial and War era rasters are a land-hue recolour of the modern print (the same roads, rivers, coast and lettering), so under the live base they give tint only; old names, dead roads and wood that grew back come from a new authored layer (canon old names first, else older forms minted from the lexicon etymology through the roots tool and build-gazetteer, prov invented). Era and layer state round-trip in the hash, and pulling the old survey needs no redraw. Its player-facing label is the Elder Chart (the chart of the elder days); \"old survey\" is the brief's word and the layer id, never a label at the table.",
       "kind": "must",
       "sheets": [
         "country",
@@ -708,7 +710,7 @@
     },
     {
       "id": "B-43",
-      "text": "Notices load outside the release cycle (a hash or URL param, a local file import, or a separately cached notices URL), never drawn into the base; the atlas has no live feed from the sim, so sim notices are a committed fixed-seed snapshot.",
+      "text": "Notices load outside the release cycle (a hash or URL param, a local file import, or a separately cached notices URL), never drawn into the base; the atlas has no live feed from the sim, so sim notices are a committed fixed-seed snapshot. Their player-facing label is the herald's tidings; \"notices\" stays the file, param and schema name. A snapshot that is no longer current reads \"last cried, <n> A.B.\" with its own A.B. date, never one read from the device clock.",
       "kind": "source",
       "sheets": [
         "country",
@@ -739,7 +741,7 @@
     },
     {
       "id": "B-45",
-      "text": "Vocabulary (R10): caravan halts / waystations; muster days; the old survey (the Imperial and War era sheets); shut ways. The shipped tribute POIs are renamed by a Job 3 unit to The Tribute-Yard and The Tribute-Barn, with their description reworded to \"harvest-tribute\" (see ## Renames). Every name is sayable at the table in the chronicle voice: bronze-age Nīmlad, the nine Kembar, years A.B.",
+      "text": "Vocabulary (R10): caravan halts / waystations; muster days; the old survey (the Imperial and War era sheets); shut ways. The shipped tribute POIs are renamed by a Job 3 unit to The Tribute-Yard and The Tribute-Barn, with their description reworded to \"harvest-tribute\" (see ## Renames). Every name is sayable at the table in the chronicle voice: bronze-age Nīmlad, the nine Kembar, years A.B. Player-facing labels: the Elder Chart for the old survey, the herald's tidings for the notices of muster days and shut ways.",
       "kind": "source",
       "sheets": [
         "country",
@@ -752,12 +754,13 @@
         "q04-c05",
         "q04-c17",
         "q13-c12",
-        "q11-c15"
+        "q11-c15",
+        "q04-c03"
       ]
     },
     {
       "id": "B-46",
-      "text": "Sheets are zoom bands over the same ground: country = reveal tiers A and B; region = tier C up to z6; valley = z6 to z8 in open country; city = z >= 7.5 inside a painted city's footprint. Sheet one is the region sheet over the Pēshunor north coast (R8). The DM may hold a sheet when the party commits to a valley (brief p8).",
+      "text": "Sheets are zoom bands over the same ground, and every band edge is an absolute zoom that no viewport or device pixel ratio moves (R2): country = from the whole chart up to the region entry; region = from the region entry up to z6; valley = z6 to z8 (Z_OPEN_MAX) in open country; city = z >= 7.5 (Z_TIER_D) inside a painted city's footprint, down to its chart's deepest zoom. The region entry is the desktop reference's tier-C reveal zoom fixed once as a constant (today a 900 px-tall non-retina desktop reaches tier C at about z4.92; a phone reaches it at z4.05-4.22, which is why the constant is never re-derived per viewport); it is read from the atlas's reveal constants (ATLAS.tiers() once the mobile pass lands), never from fitZoom or TIER_CEIL. Sheet one is the region sheet over the Pēshunor north coast (R8). The DM may hold a sheet when the party commits to a valley (brief p8).",
       "kind": "source",
       "sheets": [
         "country",
@@ -799,7 +802,7 @@
     },
     {
       "id": "B-49",
-      "text": "Targets: a region view is one sheet-one coast band (about 180 x 288 atlas px, about 50 hexes); a valley view is a 4 x 4 hex window (128 x 128 atlas px). Region targets were calibrated on band W, the band with the most DEM ridges; another region view scales them by its land hexes and never falls below its own DEM ridge count. Valley targets are the six per land hex, counted on the 4 x 4 view around the river town in band M.",
+      "text": "Targets: a region view is one sheet-one coast band (about 180 x 288 atlas px, about 50 hexes); a valley view is a 4 x 4 hex window (128 x 128 atlas px). Region targets were calibrated on band W, the band with the most DEM ridges; another region view scales them by its land hexes and never falls below its own DEM ridge count. Valley targets are the six per land hex, counted on the 4 x 4 view around the river town in band M (cells cx 44-47, cy 46-49). Targets are counted at the desktop placement (R2); a phone view reaches the same counts by each class's desktop threshold + 0.5 zoom or the end of the band (B-29).",
       "kind": "threshold",
       "sheets": [
         "region",
@@ -1612,7 +1615,7 @@
     {
       "id": "old_survey",
       "label": "Old survey",
-      "fiction_name": "the old survey: names before the sack of Lepon (745 A.B.), dead roads, wood that grew back",
+      "fiction_name": "the Elder Chart (the chart of the elder days): names before the sack of Lepon (745 A.B.), dead roads, wood that grew back",
       "rank": 2,
       "rule": "B-40",
       "sheets": [
@@ -1645,7 +1648,7 @@
     {
       "id": "muster_day",
       "label": "Muster day notice",
-      "fiction_name": "muster days",
+      "fiction_name": "muster days (cried among the herald's tidings)",
       "rank": 2,
       "rule": "B-41",
       "sheets": [
@@ -1677,7 +1680,7 @@
     {
       "id": "shut_way",
       "label": "Shut way notice",
-      "fiction_name": "shut ways",
+      "fiction_name": "shut ways (cried among the herald's tidings)",
       "rank": 2,
       "rule": "B-42",
       "sheets": [
@@ -2039,10 +2042,10 @@
     {
       "id": "old_survey",
       "swiss_id": "ch.swisstopo.zeitreihen",
-      "fiction_name": "the old survey (the Imperial sheet, the War sheet)",
+      "fiction_name": "the Elder Chart (the Imperial sheet, the War sheet)",
       "swap": "under",
       "data_today": "tiles-imperial/ and tiles-war/ (860 tiles each, z0-5); setEra swaps one base, writes no hash; the eras are a land-hue recolour with identical linework",
-      "gap": "an under-stack (second tile layer, opacity or swipe), era in the hash, and an authored old-name / dead-road / regrown-wood layer"
+      "gap": "an under-stack (second tile layer, opacity or swipe), era in the hash, and an authored old-name / dead-road / regrown-wood layer; its tiles are fetched only while the Elder Chart is on (FM7)"
     },
     {
       "id": "every_structure",
@@ -2071,7 +2074,7 @@
     {
       "id": "muster_days",
       "swiss_id": "ch.vbs.schiessanzeigen",
-      "fiction_name": "muster days",
+      "fiction_name": "muster days (the herald's tidings)",
       "swap": "over",
       "data_today": "sim chron, W.banditCamps (max 3, transient), W.dragon (lair at the window summit), the Pebros camp constant; \"The Muster Ground\" POI in about 1 of 5 town plans",
       "gap": "no notice schema (place, start, end, voice); a fixed-seed snapshot and a per-session file loaded outside the release"
@@ -2079,7 +2082,7 @@
     {
       "id": "shut_ways",
       "swiss_id": "ch.astra.wanderland-sperrungen_umleitungen",
-      "fiction_name": "shut ways",
+      "fiction_name": "shut ways (the herald's tidings)",
       "swap": "over",
       "data_today": "sim plague and hunger flags per settlement, ambush chronicle lines, the Pebros camp",
       "gap": "roads carry no status and there is no detour model; a notice names the way, the stretch and the detour"
@@ -2284,5 +2287,122 @@
     "real_colour": "B-26",
     "cramped": "B-29",
     "data_truth": "B-32"
+  },
+  "phone": {
+    "carry": "Acceptance criteria for the sheet spec and the build, restated from the todo-inputs mobile block. They never change a hex answer, a class, or a sheet's must and forbidden lists; R2 itself lives in B-27, B-29 and B-46.",
+    "rule": "Delay, never drop. A phone shows every class the desktop shows on the same sheet; a lower-ranked name may arrive later (by its desktop threshold + 0.5 zoom or the end of its band, R2), never not at all. A phone budget never thins, delays or shrinks the desktop.",
+    "profiles": {
+      "phone_portrait": {
+        "w": 390,
+        "h": 664,
+        "dpr": 3,
+        "touch": true,
+        "note": "iPhone 13 with browser toolbars, as captured; the gate viewport"
+      },
+      "phone_tall": {
+        "w": 412,
+        "h": 839,
+        "dpr": 2.625,
+        "touch": true,
+        "note": "Pixel 7"
+      },
+      "phone_landscape": {
+        "w": 844,
+        "h": 340,
+        "dpr": 3,
+        "touch": true,
+        "note": "proposed, not captured; toolbar heights vary by browser"
+      },
+      "desktop_control": {
+        "w": 1366,
+        "h": 768,
+        "dpr": 1,
+        "touch": false,
+        "note": "must not regress"
+      },
+      "desktop_retina": {
+        "w": 1440,
+        "h": 900,
+        "dpr": 2,
+        "touch": false,
+        "note": "must not regress"
+      }
+    },
+    "targets": {
+      "note": "proposals, not measurements; no real phone has been measured yet",
+      "chrome_cover_whole_chart_max": 0.12,
+      "chrome_cover_sheet_at_peek_max": 0.35,
+      "sheet_entry_bytes_phone_max": 153600,
+      "single_asset_bytes_without_lowres_max": 512000,
+      "first_view_bytes_gzip_max": 409600,
+      "pan_or_zoom_step_bytes_max": 102400,
+      "min_name_px_coarse": 12,
+      "min_italic_name_px_coarse": 11,
+      "tap_radius_px": 22,
+      "hit_pad_px": 44,
+      "delay_max_zoom": 0.5
+    },
+    "criteria": [
+      {
+        "id": "FM1",
+        "carrier": "R2, R18 + this block",
+        "text": "Every sheet unit states its phone behaviour at phone_portrait (390x664, DPR 3) and at phone_landscape (about 844x340, DPR 3), both with browser toolbars: its label budget, its minimum label gap in CSS px, and the zoom at which each held-back name arrives. The bound is its desktop threshold + 0.5 zoom or the end of its band, whichever comes first (R2)."
+      },
+      {
+        "id": "FM2",
+        "carrier": "R2",
+        "text": "Class parity, checked by capture on both phone profiles: at each class's desktop threshold + 0.5 zoom (or the band end, if sooner) the phone draws every class the desktop draws on that sheet. Names are held back, never dropped."
+      },
+      {
+        "id": "FM3",
+        "carrier": "R2 + this block",
+        "text": "Type never shrinks to fit. No name is smaller than its desktop size, and on a coarse pointer none is below 12 px (11 px italic). At phone_portrait the capture reads phone.overlaps = 0 and phone.hscroll false."
+      },
+      {
+        "id": "FM4",
+        "carrier": "R7",
+        "text": "Touch: every interactive filigree feature has a hit area of at least 44 CSS px on a coarse pointer, or meets the WCAG 2.5.8 24 px spacing rule. It registers with the atlas's one tap resolver: one glyph centre within 22 CSS px opens it, two or more open the chooser, none opens no card. Zero wrong-card taps on the fixture cells."
+      },
+      {
+        "id": "FM5",
+        "carrier": "R7 + this block",
+        "text": "No information is hover-only. Each hover reveal names its tap or long-press path (R7), and every :hover style sits inside @media (hover:hover)."
+      },
+      {
+        "id": "FM6",
+        "carrier": "this block (R6 keeps its default text)",
+        "text": "Appear effects on the atlas animate CSS opacity or transform only. They are instant under prefers-reduced-motion, with the presence thresholds unchanged. Presence is decided on the settled zoom after a pinch, wheel burst or fling (Leaflet zoomend), so no ease starts or restarts mid-gesture. R6's thresholds and ease limits are unchanged, and these clauses do not bind the street view."
+      },
+      {
+        "id": "FM7",
+        "carrier": "R14, R18 + this block",
+        "text": "Bytes, from the capture's net block: with the toggle off the filigree adds 0 requests (R18). Each sheet entry at phone_portrait adds at most 150 KB transferred (a proposal). No asset over 500 KB ships without a low-resolution step first. Elder Chart tiles fetch only while the Elder Chart is on (R14). The capture records bytes_first_view, requests_first_view and max_asset_bytes per view."
+      },
+      {
+        "id": "FM8",
+        "carrier": "R18 + this block",
+        "text": "Chrome: the filigree adds no floating control. Its rows live in the layers list, which is the table drawer on a coarse pointer. On a phone, the chrome cover of the map at the whole chart stays at or below the value in docs/mobile/final.json (target 12%)."
+      },
+      {
+        "id": "FM9",
+        "carrier": "this block",
+        "text": "DOM: panes and features outside their band are removed from the DOM, not left at opacity 0. The spec states a cap on the phone_portrait DOM node count at the whole chart, and the capture checks it."
+      },
+      {
+        "id": "FM10",
+        "carrier": "this block",
+        "text": "Bands: every sheet band is an absolute zoom that no viewport or device pixel ratio moves. It is read from the atlas's reveal constants (ATLAS.tiers() once the mobile pass lands), never derived from fitZoom or TIER_CEIL. The capture shows the same band zooms on the iPhone, the Pixel and both desktop profiles."
+      },
+      {
+        "id": "FM11",
+        "carrier": "this block",
+        "text": "Night and day both pass FM1-FM5 at phone_portrait; night is checked under a pinch capture. WCAG 1.4.3 contrast (4.5:1) holds in both themes for every filigree name and for the 10-11 px muted mono chrome text (for example .card-type and .rev .when), so the sheet reads in glare and in a dark room."
+      },
+      {
+        "id": "FM12",
+        "carrier": "this block",
+        "text": "Offline: every filigree raster (baked relief, any tile) is fetched as <path>?t=<TILES_V>, never from a renamed tile directory: Filigree 1's inputs and the hex crops name tiles/, tiles-war/ and tiles-imperial/. The atlas worker can then keep it cache-first. Filigree JSON follows the atlas data rule (no-cache with ETag revalidation) and joins the chart kept for the table."
+      }
+    ]
   }
 }

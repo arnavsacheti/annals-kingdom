@@ -1,6 +1,6 @@
 {
   "job": "filigree-1-research",
-  "date": "2026-10-04",
+  "date": "2026-10-05",
   "questions": [
     {
       "qid": "q09",
@@ -446,7 +446,7 @@
     "the stamen watercolor method mask blur edge-darken as a pooled-edge precedent one web attempt if egress is blocked return a single claim with confidence low and evidence kind web ref u ."
   ],
   "bible_sha": {
-    "md": "d25be9ef0cdb6cfff5e1c8903452ff84c772b291a182ea7c8a3c1cf09f5f4e05",
-    "json": "26d07197c769d9bb8fe5532708a05472574fa71fc647f7dd36383e73f8f9fc66"
+    "md": "434ae30659f20a4538a986ca289ecba2563787cf138fe66e0a986f9e9c150a85",
+    "json": "44aba6b7714ff6b9577d1362c0768a08b2d185abc2265d9283c6cf18f6fb06ba"
   }
 }

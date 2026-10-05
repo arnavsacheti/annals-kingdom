@@ -1,8 +1,8 @@
 {
   "job": "filigree-1-research",
-  "date": "2026-10-04",
+  "date": "2026-10-05",
   "mode": "full",
-  "rounds": 1,
+  "rounds": 0,
   "hexes": [
     {
       "id": "F01",
@@ -27,19 +27,6 @@
         "bible_silent": false,
         "items": [
           {
-            "class": "contour_hair",
-            "rule": "B-11",
-            "instance": {
-              "name": "",
-              "x": 1648,
-              "y": 1616
-            },
-            "source": {
-              "kind": "dem",
-              "ref": "1648,1616"
-            }
-          },
-          {
             "class": "spot_height",
             "rule": "B-08",
             "instance": {
@@ -63,6 +50,19 @@
             "source": {
               "kind": "dem",
               "ref": "1649.06,1604.06"
+            }
+          },
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1648,
+              "y": 1616
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1648,1616"
             }
           },
           {
@@ -128,7 +128,7 @@
             "class": "spot_height",
             "rule": "B-08",
             "instance": {
-              "name": "328",
+              "name": "",
               "x": 1649.06,
               "y": 1604.06
             },
@@ -258,8 +258,8 @@
             "rule": "B-25",
             "instance": {
               "name": "",
-              "x": 1384,
-              "y": 1592
+              "x": 1392,
+              "y": 1584
             },
             "source": {
               "kind": "sim",
@@ -591,19 +591,6 @@
         "bible_silent": false,
         "items": [
           {
-            "class": "contour_hair",
-            "rule": "B-11",
-            "instance": {
-              "name": "",
-              "x": 1392,
-              "y": 1648
-            },
-            "source": {
-              "kind": "dem",
-              "ref": "1392,1648"
-            }
-          },
-          {
             "class": "spot_height",
             "rule": "B-08",
             "instance": {
@@ -627,6 +614,19 @@
             "source": {
               "kind": "mint",
               "ref": "landform_name:F04"
+            }
+          },
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
+              "x": 1392,
+              "y": 1648
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1392,1648"
             }
           },
           {
@@ -971,12 +971,12 @@
             "rule": "B-15",
             "instance": {
               "name": "",
-              "x": 1539.69,
-              "y": 1514.48
+              "x": 1548.5,
+              "y": 1519
             },
             "source": {
-              "kind": "dem",
-              "ref": "1539.69,1514.48"
+              "kind": "print",
+              "ref": "F06@178,188"
             }
           },
           {
@@ -1056,12 +1056,12 @@
             "rule": "B-15",
             "instance": {
               "name": "",
-              "x": 1548,
-              "y": 1530
+              "x": 1549.5,
+              "y": 1520
             },
             "source": {
               "kind": "dem",
-              "ref": "1548,1530"
+              "ref": "1549.5,1520"
             }
           },
           {
@@ -1159,97 +1159,12 @@
             "rule": "B-15",
             "instance": {
               "name": "",
-              "x": 1283.25,
-              "y": 1392
-            },
-            "source": {
-              "kind": "print",
-              "ref": "F07@141,192"
-            }
-          },
-          {
-            "class": "contour_hair",
-            "rule": "B-11",
-            "instance": {
-              "name": "",
               "x": 1295.94,
-              "y": 1397.81
+              "y": 1394.69
             },
             "source": {
               "kind": "dem",
-              "ref": "1295.94,1397.81"
-            }
-          },
-          {
-            "class": "spot_height",
-            "rule": "B-08",
-            "instance": {
-              "name": "",
-              "x": 1295.94,
-              "y": 1397.81
-            },
-            "source": {
-              "kind": "dem",
-              "ref": "1295.94,1397.81"
-            }
-          },
-          {
-            "class": "landform_name",
-            "rule": "B-07",
-            "instance": {
-              "name": "",
-              "x": 1295.94,
-              "y": 1397.81
-            },
-            "source": {
-              "kind": "mint",
-              "ref": "landform_name:F07"
-            }
-          },
-          {
-            "class": "homestead",
-            "rule": "B-21",
-            "instance": {
-              "name": "",
-              "x": 1295.94,
-              "y": 1397.81
-            },
-            "source": {
-              "kind": "mint",
-              "ref": "homestead:F07"
-            }
-          },
-          {
-            "class": "cover_wash",
-            "rule": "B-25",
-            "instance": {
-              "name": "",
-              "x": 1295.94,
-              "y": 1397.81
-            },
-            "source": {
-              "kind": "sim",
-              "ref": "function genBiomes"
-            }
-          }
-        ]
-      },
-      "B": {
-        "ground_class": "islets",
-        "exempt_rule": "",
-        "bible_silent": false,
-        "items": [
-          {
-            "class": "coast_edge",
-            "rule": "B-15",
-            "instance": {
-              "name": "",
-              "x": 1293.85,
-              "y": 1397.81
-            },
-            "source": {
-              "kind": "dem",
-              "ref": "1293.85,1397.81"
+              "ref": "1295.94,1394.69"
             }
           },
           {
@@ -1309,8 +1224,93 @@
             "rule": "B-25",
             "instance": {
               "name": "",
+              "x": 1296.98,
+              "y": 1397.81
+            },
+            "source": {
+              "kind": "sim",
+              "ref": "function genBiomes"
+            }
+          }
+        ]
+      },
+      "B": {
+        "ground_class": "islets",
+        "exempt_rule": "",
+        "bible_silent": false,
+        "items": [
+          {
+            "class": "coast_edge",
+            "rule": "B-15",
+            "instance": {
+              "name": "",
+              "x": 1281.35,
+              "y": 1399.9
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1281.35,1399.9"
+            }
+          },
+          {
+            "class": "contour_hair",
+            "rule": "B-11",
+            "instance": {
+              "name": "",
               "x": 1295.94,
               "y": 1397.81
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1295.94,1397.81"
+            }
+          },
+          {
+            "class": "spot_height",
+            "rule": "B-08",
+            "instance": {
+              "name": "24",
+              "x": 1295.94,
+              "y": 1397.81
+            },
+            "source": {
+              "kind": "dem",
+              "ref": "1295.94,1397.81"
+            }
+          },
+          {
+            "class": "landform_name",
+            "rule": "B-07",
+            "instance": {
+              "name": "",
+              "x": 1295.94,
+              "y": 1397.81
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "landform_name:F07"
+            }
+          },
+          {
+            "class": "homestead",
+            "rule": "B-21",
+            "instance": {
+              "name": "",
+              "x": 1295.94,
+              "y": 1397.81
+            },
+            "source": {
+              "kind": "mint",
+              "ref": "homestead:F07"
+            }
+          },
+          {
+            "class": "cover_wash",
+            "rule": "B-25",
+            "instance": {
+              "name": "",
+              "x": 1308.44,
+              "y": 1407.19
             },
             "source": {
               "kind": "sim",
@@ -1404,11 +1404,11 @@
             "instance": {
               "name": "",
               "x": 1444.25,
-              "y": 1512.5
+              "y": 1511.5
             },
             "source": {
               "kind": "print",
-              "ref": "F09@145,162"
+              "ref": "F09@145,158"
             }
           },
           {
@@ -1489,11 +1489,11 @@
             "instance": {
               "name": "",
               "x": 1444.25,
-              "y": 1512
+              "y": 1513
             },
             "source": {
               "kind": "print",
-              "ref": "F09@145,160"
+              "ref": "F09@145,164"
             }
           },
           {
@@ -1617,8 +1617,8 @@
             "rule": "B-07",
             "instance": {
               "name": "Mount Mastery",
-              "x": 1236.1,
-              "y": 1415
+              "x": 1246.98,
+              "y": 1439.48
             },
             "source": {
               "kind": "data",
@@ -1649,7 +1649,7 @@
             "class": "city_tone",
             "rule": "B-57",
             "instance": {
-              "name": "",
+              "name": "Epēshu",
               "x": 1236.1,
               "y": 1415
             },
@@ -1688,7 +1688,7 @@
             "class": "spot_height",
             "rule": "B-08",
             "instance": {
-              "name": "",
+              "name": "98",
               "x": 1246.98,
               "y": 1439.48
             },
@@ -1702,8 +1702,8 @@
             "rule": "B-07",
             "instance": {
               "name": "Mount Mastery",
-              "x": 1246.98,
-              "y": 1439.48
+              "x": 1236.1,
+              "y": 1415
             },
             "source": {
               "kind": "data",
@@ -1752,19 +1752,6 @@
             "class": "old_survey",
             "rule": "B-40",
             "instance": {
-              "name": "Lepon",
-              "x": 1145,
-              "y": 1427
-            },
-            "source": {
-              "kind": "data",
-              "ref": "maps_markers.json#Lepon"
-            }
-          },
-          {
-            "class": "town_name",
-            "rule": "B-19",
-            "instance": {
               "name": "Lepon the Old",
               "x": 1146.5,
               "y": 1420.2
@@ -1772,6 +1759,19 @@
             "source": {
               "kind": "data",
               "ref": "city-anchors.json#Lepon the Old"
+            }
+          },
+          {
+            "class": "town_name",
+            "rule": "B-19",
+            "instance": {
+              "name": "Lepon",
+              "x": 1145,
+              "y": 1427
+            },
+            "source": {
+              "kind": "data",
+              "ref": "maps_markers.json#Lepon"
             }
           },
           {
@@ -1791,7 +1791,7 @@
             "class": "spot_height",
             "rule": "B-08",
             "instance": {
-              "name": "65",
+              "name": "",
               "x": 1151.15,
               "y": 1433.23
             },
@@ -1818,8 +1818,8 @@
             "rule": "B-25",
             "instance": {
               "name": "",
-              "x": 1151.15,
-              "y": 1433.23
+              "x": 1148,
+              "y": 1430
             },
             "source": {
               "kind": "sim",
@@ -1876,7 +1876,7 @@
             "class": "spot_height",
             "rule": "B-08",
             "instance": {
-              "name": "",
+              "name": "65",
               "x": 1151.15,
               "y": 1433.23
             },
