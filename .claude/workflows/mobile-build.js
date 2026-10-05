@@ -100,7 +100,8 @@ const FIL1 = OBJ({exists: B, pass: B, rulings_used: SHAS})
 const IDX = OBJ({id: S, run: S, kind: S, files: SA, depends_on: SA, owner_key: S}, ['id', 'run', 'kind', 'files', 'depends_on', 'owner_key'])
 const PRE = OBJ({units_exists: B, index: {type: 'array', items: IDX}, index_len: I, state_exists: B, state: {type: ['object', 'null']}, owner: {type: ['object', 'null']},
   fil1: FIL1, app_sha: SHAS, pipeline_sha: SHAS, baselines: NSHAS, b0_meta: {type: ['object', 'null'], properties: {index_sha: S, atlas_sha: S}}})
-const FULL = OBJ({units: {type: 'array', items: LOOSE}, canon_len: I, ref: OBJ({name: S, path: S, exists: B, pipeline_sha: SHAS, index_sha: S, atlas_sha: S}, ['name', 'path', 'exists', 'pipeline_sha'])})
+const UNIT = {type: 'object', properties: {id: S, run: S, kind: S, files: SA, acceptance: SA}, required: ['id', 'run', 'kind', 'files', 'acceptance'], additionalProperties: ANY}   // a unit object itself, never a wrapper around the array
+const FULL = OBJ({units: {type: 'array', items: UNIT}, canon_len: I, ref: OBJ({name: S, path: S, exists: B, pipeline_sha: SHAS, index_sha: S, atlas_sha: S}, ['name', 'path', 'exists', 'pipeline_sha'])})
 const HOLDR = OBJ({fil1: FIL1, app_sha: SHAS, pipeline_sha: SHAS})
 const REB = OBJ({exit_code: I, path: S, sha256: S, index_sha: S, atlas_sha: S, pipeline_sha: SHAS, profile_errors: SA, infra_error: S})
 const ACC = OBJ({path: S, authored: B, lint_ok: B, lint_errors: SA, accept: LOOSE, sha256: S})
@@ -138,7 +139,7 @@ const fixModel = u => ({model: u.model === 'opus' ? 'opus' : 'sonnet', effort: u
 
 // ---- 1. preflight (read-only) ----
 phase('Preflight')
-const pre = await crit(P(`Preflight read for the mobile loop (write nothing; use a node script in a mktemp -d directory that reads files with fs.readFileSync and computes sha256 with the crypto module).
+const askPre = l => crit(P(`Preflight read for the mobile loop (write nothing; use a node script in a mktemp -d directory that reads files with fs.readFileSync and computes sha256 with the crypto module).
 1. units_exists = ${UNITS_ABS} exists and parses. The file is a JSON array of units, or an object whose "units" key is that array. index = one entry per unit, in file order: {id, run, kind, files, depends_on (default []), owner_key: unit.owner_gate ? String(unit.owner_gate.key) : ""}, every value copied exactly (no reordering, no trimming). index_len = JSON.stringify(index).length computed by node on exactly the array you return. When the file is missing or does not parse: units_exists false, index [], index_len 2.
 2. state_exists / state = ${STATE_ABS} parsed verbatim (null when absent).
 3. owner = ${REPO}/${OWNER_FILE} parsed verbatim (null when absent).
@@ -147,7 +148,9 @@ const pre = await crit(P(`Preflight read for the mobile loop (write nothing; use
 6. ${PIPE_RULE}
 7. baselines = {B0: sha256 of ${REPO}/docs/mobile/baseline.json, R1: of ${REPO}/docs/mobile/captures/R1.json, final: of ${REPO}/docs/mobile/final.json, or when that is absent of ${REPO}/docs/mobile/captures/final.json}; null for a missing file.
 8. b0_meta = {index_sha: meta.index_sha, atlas_sha: meta.atlas_sha} of docs/mobile/baseline.json (null when absent).
-Return {units_exists, index, index_len, state_exists, state, owner, fil1, app_sha, pipeline_sha, baselines, b0_meta}.`), {label: 'preflight read', phase: 'Preflight', schema: PRE, ...MECH})
+Return {units_exists, index, index_len, state_exists, state, owner, fil1, app_sha, pipeline_sha, baselines, b0_meta}.`), {label: l, phase: 'Preflight', schema: PRE, ...MECH})
+let pre = await askPre('preflight read')
+if (pre && pre.units_exists && JSON.stringify(pre.index).length !== pre.index_len) { log('preflight: index digest mismatch; one fresh read'); pre = await askPre('preflight read (digest retry)') }
 if (!pre) die('preflight read died twice')
 if (!pre.units_exists) die('units file ' + UNITS_ABS + ' is missing or does not parse (the central session copies the plan units.json there)')
 if (JSON.stringify(pre.index).length !== pre.index_len) die('preflight index digest mismatch (transcription altered or truncated the units index); re-run')
@@ -177,10 +180,12 @@ const runMatch = r => typeof r === 'string' && (r === ITEM || r.startsWith(ITEM 
 const SEL_IDS = ITEM_5B ? INDEX.filter(u => runMatch(u.run) || statusOf(u.id) === 'deferred-5b').map(u => u.id) : INDEX.filter(u => runMatch(u.run)).map(u => u.id)
 if (!SEL_IDS.length) return {job: JOB, item: ITEM, date: DATE, mode: MODE, pass: false, reason: 'no units', units: [], note: 'no unit in ' + UNITS_ABS + ' has run "' + ITEM + '"' + (ITEM_5B ? ' or status deferred-5b' : '')}
 const REF0 = lastRef()
-const full = await crit(P(`Read-only (a node script in a mktemp -d directory; write nothing).
+const askFull = l => crit(P(`Read-only (a node script in a mktemp -d directory; write nothing).
 1. From ${UNITS_ABS} (a JSON array of units, or an object whose "units" key is that array) return units = the full unit objects whose id is one of ${JSON.stringify(SEL_IDS)}, in file order, each copied exactly with every key and value (no reordering, no trimming, no added keys). canon_len = JSON.stringify(units).length computed by node on exactly the array you return.
 2. ref: the reference capture named ${JSON.stringify(REF0 || 'auto')}: ${REF0 ? `path docs/mobile/captures/${REF0}.json` : 'path docs/mobile/captures/R1.json when it exists, else docs/mobile/baseline.json'}; return {name: ${REF0 ? JSON.stringify(REF0) : '"R1" or "B0" (whichever path you used)'}, path (repo-relative), exists, pipeline_sha: parsed.repo.pipeline_sha ({} when absent), index_sha: parsed.meta.index_sha, atlas_sha: parsed.meta.atlas_sha}.
-Return {units, canon_len, ref}.`), {label: 'units + reference read', phase: 'Preflight', schema: FULL, ...MECH})
+Return {units, canon_len, ref}.`), {label: l, phase: 'Preflight', schema: FULL, ...MECH})
+let full = await askFull('units + reference read')
+if (full && JSON.stringify(full.units).length !== full.canon_len) { log('units read: digest mismatch (' + JSON.stringify(full.units).length + ' vs ' + full.canon_len + '); one fresh read'); full = await askFull('units + reference read (digest retry)') }
 if (!full) die('units read died twice')
 if (JSON.stringify(full.units).length !== full.canon_len) die('units digest mismatch (transcription altered or truncated a unit); re-run')
 if (!same(full.units.map(u => u.id), SEL_IDS)) die('units read returned ' + JSON.stringify(full.units.map(u => u.id)) + ', wanted ' + JSON.stringify(SEL_IDS))
