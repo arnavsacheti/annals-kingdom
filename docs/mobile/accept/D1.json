@@ -114,7 +114,7 @@
   "unscored": [
     "curl -sI -H \"Accept-Encoding: gzip\" matrix: .json .geojson .jpg .png .webp .svg .woff2 .webmanifest carry correct types (were octet-stream); html/js/css/json/svg gzip with Vary: Accept-Encoding; If-None-Match -> 304 with empty body",
     "Cache-Control: no-cache for *.html, sw.js, sw-kill.js, data/*.json, offline-manifest.json; public, max-age=31536000, immutable for vendor/** and any URL with ?t=; public, max-age=2592000 for other rasters",
-    "iphone13 repeat visit (a second page.goto of the same URL in the same context, not reload, not a new context): transferred <= 10% of the first load and >= 90% of requests 304 or cache hits (the checks bound this by absolute figures: repeat bytes <= 45,000 and cache_hits >= 30; the exact ratios are read by the review)",
+    "iphone13 repeat visit (a second page.goto of the same URL in the same context, not reload, not a new context): transferred <= 10% of the first load and >= 90% of requests 304 or cache hits (the checks bound this by absolute figures: repeat bytes <= 45,000 and cache_hits >= 34; the exact ratios are read by the review)",
     "a data JSON edited in a temp copy of the tree, served by `PORT=<free> node server.js` run from that copy (needs D1 PORT env) while tools/mobile-capture.js is pointed at it with --port, shows on a plain reload (closes POLISH \"Data fetch cache-busting\" by revalidation)",
     "`node server.js` with no PORT still listens on 8544; the 403 path guard and the \"/\" -> index.html mapping are unchanged"
   ]
