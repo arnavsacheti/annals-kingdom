@@ -72,7 +72,7 @@ const TREE = ['index.html', 'maps-site/', 'tools/', '.claude/', 'server.js', 've
 const isPipe = p => /^\.claude(\/|$)/.test(p) || p === 'tools/street-drift.js'   // any change here halts the whole item (UG11)
 const NODE_TOOL = 'NODE_PATH=/opt/node22/lib/node_modules node tools/mobile-capture.js'
 const TREE_TOOL = 'node tools/mobile-tree.js'
-const MECH = {model: 'haiku', effort: 'low'}
+const MECH = {model: 'sonnet', effort: 'low'}   // relays of 64-hex shas: haiku altered single digits (2026-10-05)
 const RULE_PIPE = `Never write, move or delete anything under ${REPO}/.claude/ or ${REPO}/tools/street-drift.js.`
 const RULE_HEAD = `Repo root: ${REPO} (cd there before any command; use absolute paths). Never run git, not even read-only commands. Never schedule reminders, triggers or wake-ups.`
 const RULE = `${RULE_HEAD} ${RULE_PIPE} Write ONLY the files this prompt names; throwaway scripts and temp files go in a mktemp -d directory outside the repo. Never start, stop or reuse a server on port 8544. Return only the requested JSON.`
@@ -102,25 +102,26 @@ const PRE = OBJ({units_exists: B, index: {type: 'array', items: IDX}, index_len:
   fil1: FIL1, app_sha: SHAS, pipeline_sha: SHAS, baselines: NSHAS, b0_meta: {type: ['object', 'null'], properties: {index_sha: S, atlas_sha: S}}})
 const UNIT = {type: 'object', properties: {id: S, run: S, kind: S, files: SA, acceptance: SA}, required: ['id', 'run', 'kind', 'files', 'acceptance'], additionalProperties: ANY}   // a unit object itself, never a wrapper around the array
 const FULL = OBJ({units: {type: 'array', items: UNIT}, canon_len: I, ref: OBJ({name: S, path: S, exists: B, pipeline_sha: SHAS, index_sha: S, atlas_sha: S}, ['name', 'path', 'exists', 'pipeline_sha'])})
-const HOLDR = OBJ({fil1: FIL1, app_sha: SHAS, pipeline_sha: SHAS})
+const HOLDR = OBJ({ok: B, len: I, sum: S, fil1: FIL1, app_sha: SHAS, pipeline_sha: SHAS})
 const REB = OBJ({exit_code: I, path: S, sha256: S, index_sha: S, atlas_sha: S, pipeline_sha: SHAS, profile_errors: SA, infra_error: S})
 const ACC = OBJ({path: S, authored: B, lint_ok: B, lint_errors: SA, accept: LOOSE, sha256: S})
 const MAN = OBJ({dirs: SA, files: NSHAS})
 const NS = {type: ['string', 'null']}
-const SNAPR = OBJ({ok: B, len: I, error: S, manifest: MAN, pipeline_sha: SHAS, accept_sha: NS, owner_sha: NS, app_sha: SHAS, tree_n: I, tree_sha256: S, repo_n: I}, ['ok', 'len', 'manifest', 'pipeline_sha', 'accept_sha', 'owner_sha', 'app_sha', 'tree_n', 'tree_sha256', 'repo_n'])
+const SNAPR = OBJ({ok: B, len: I, sum: S, error: S, manifest: MAN, pipeline_sha: SHAS, accept_sha: NS, owner_sha: NS, app_sha: SHAS, tree_n: I, tree_sha256: S, repo_n: I}, ['ok', 'len', 'sum', 'manifest', 'pipeline_sha', 'accept_sha', 'owner_sha', 'app_sha', 'tree_n', 'tree_sha256', 'repo_n'])
 const IMPL = OBJ({summary: S, files_changed: SA, strings_added: SA, notes: S})
-const CHECK = OBJ({ok: B, len: I, pipeline_sha: SHAS, accept_sha: NS, owner_sha: NS, changed: SA, tree_changed: SA, tree_base_sha256: S, ug1: OBJ({index: S, atlas: S}), files_sha: NSHAS, app_sha: SHAS})
-const RESTR = OBJ({ok: B, len: I, dirs: SA, files: NSHAS, accept_sha: NS, owner_sha: NS, tree_changed: SA, tree_base_sha256: S, reverted: SA})
+const CHECK = OBJ({ok: B, len: I, sum: S, pipeline_sha: SHAS, accept_sha: NS, owner_sha: NS, changed: SA, tree_changed: SA, tree_base_sha256: S, ug1: OBJ({index: S, atlas: S}), files_sha: NSHAS, app_sha: SHAS})
+const RESTR = OBJ({ok: B, len: I, sum: S, dirs: SA, files: NSHAS, accept_sha: NS, owner_sha: NS, tree_changed: SA, tree_base_sha256: S, reverted: SA})
 const MEAS = OBJ({exit_code: I, result: {type: ['object', 'null']}, failing_n: I, infra_error: S, stderr_tail: S})
 const FIND = OBJ({findings: {type: 'array', items: OBJ({severity: {type: 'string', enum: ['blocker', 'major', 'minor', 'nit']}, title: S, evidence: S, where: S})}})
 const REFUTE = OBJ({refuted: B, reason: S})
 const ADV = OBJ({path: S, sha256: S, orig_sha256: S, index_sha: S, atlas_sha: S, pipeline_sha: SHAS})
-const REC = OBJ({ok: B, len: I, path: S, sha256: S, canon_len: I, units_n: I, rebase_n: I})
+const REC = OBJ({ok: B, len: I, sum: S, path: S, sha256: S, canon_len: I, units_n: I, rebase_n: I})
 
 // ---- helpers ----
 const canonJ = v => Array.isArray(v) ? v.map(canonJ) : v && typeof v === 'object' ? Object.fromEntries(Object.keys(v).sort().map(k => [k, canonJ(v[k])])) : v
 const same = (a, b) => JSON.stringify(canonJ(a ?? null)) === JSON.stringify(canonJ(b ?? null))
-const lenOk = r => r && Number.isInteger(r.len) && JSON.stringify(canonJ(Object.fromEntries(Object.entries(r).filter(([k]) => k !== 'ok' && k !== 'len')))).length === r.len && r.ok === true   // tools/mobile-tree.js prints len over every other field: a relay that dropped or altered anything fails here
+const fnv = s => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0 } return h.toString(16).padStart(8, '0') }   // must equal fnv in tools/mobile-tree.js
+const lenOk = r => { if (!r || r.ok !== true || !Number.isInteger(r.len)) return false; const t = JSON.stringify(canonJ(Object.fromEntries(Object.entries(r).filter(([k]) => k !== 'ok' && k !== 'len' && k !== 'sum')))); return t.length === r.len && fnv(t) === r.sum }   // tools/mobile-tree.js prints len and sum over every other field: a relay that dropped or altered anything, even one hex digit, fails here
 const diffKeys = (a, b) => [...new Set([...Object.keys(a || {}), ...Object.keys(b || {})])].filter(k => (a || {})[k] !== (b || {})[k])
 async function crit(p, o) { return (await agent(p, o)) ?? (await agent(p, {...o, label: o.label + ' (retry)'})) }
 const F = (key, expected, got) => ({key, op: 'loop', expected, got: typeof got === 'string' ? got.slice(0, 300) : got})
@@ -291,7 +292,7 @@ async function recordState(label) {
   const L = label || 'record state', want = JSON.stringify(ST).length
   const ask = l => crit(P(`Record the loop state. In a mktemp -d directory T (outside the repo) write the JSON below VERBATIM to T/state.json with a quoted heredoc (cat > T/state.json <<'EOF_STATE', then the JSON, then a line EOF_STATE); add, drop or retype nothing. Then from ${REPO} run:
 ${TREE_TOOL} write-state --from T/state.json --to ${STATE_ABS} --expect-len ${want}
-The tool writes ${STATE_ABS} itself (write nothing else in the repo) and prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits). If it exits non-zero, return {ok: false, len: -1, path: "", sha256: "", canon_len: -1, units_n: -1, rebase_n: -1}.
+The tool writes ${STATE_ABS} itself (write nothing else in the repo) and prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits). If it exits non-zero, return {ok: false, len: -1, sum: "", path: "", sha256: "", canon_len: -1, units_n: -1, rebase_n: -1}.
 
 ${JSON.stringify(ST, null, 2)}`), {label: l, phase: 'Record', schema: REC, ...MECH})
   const good = r => lenOk(r) && r.canon_len === want && r.units_n === Object.keys(ST.units).length && r.rebase_n === ST.rebase.length
@@ -328,8 +329,14 @@ const HARD = `Hard rules (docs/mobile/README.md sections 1-5, docs/mobile/gates.
 - UG9: new player-visible strings use table vocabulary, are listed in docs/mobile/README.md section 3, and avoid menu, drawer, modal, dismiss, toggle, tap, pinch, swipe, download, install, offline mode, dark mode, theme, save; bronze-age Nimlad voice, the Kembar, years A.B.; never saint/abbey/priest/baron or other Christian-medieval words.
 - Desktop identity (UG8) on 1366x768@1 and 1440x900@2: guard phone-only CSS and JS behind (pointer:coarse) / (hover:none) / the device class, exactly as the unit specifies.`
 
-async function holdRead(u) {
-  return crit(P(`Hold read for unit ${u.id} (write nothing; a node script in a mktemp -d directory). ${FIL1_RULE} ${APP_RULE} ${PIPE_RULE} Return {fil1, app_sha, pipeline_sha}.`), {label: 'hold ' + u.id, phase: 'Hold', schema: HOLDR, ...MECH})
+async function holdRead(u, tag) {   // null unless the tool's line arrives intact (one fresh agent on a bad relay)
+  const ask = l => crit(P(`Hold read for unit ${u.id} (write nothing). From ${REPO} run exactly this one command (it reads docs/filigree/gates/1-research.json, the app files and the pipeline scripts, and writes nothing):
+${TREE_TOOL} hold
+It prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits). If it exits non-zero, return {ok: false, len: -1, sum: "", fil1: {exists: false, pass: false, rulings_used: {}}, app_sha: {}, pipeline_sha: {}}.`), {label: l, phase: 'Hold', schema: HOLDR, ...MECH})
+  const L = (tag ? tag + ' ' : '') + 'hold ' + u.id
+  let h = await ask(L)
+  if (h && !lenOk(h)) h = await ask(L + ' (relay retry)')
+  return h && lenOk(h) ? h : null
 }
 async function rebase(u, h, why) {
   const name = 'rebase-' + (ST.rebase.length + 1)
@@ -394,16 +401,20 @@ function acceptWhy(u, a) {
 
 const GUARD = u => [docsAccept(u.id), OWNER_FILE]   // never in a unit's writable set; snapshotted and restored with it
 async function snapshot(u) {
+  const s1 = await snapshot1(u, '')
+  return !s1 || lenOk(s1) || s1.ok === false ? s1 : snapshot1(u, ' (relay retry)')   // a refused snapshot is final; a mis-relayed one gets one fresh agent (the tool re-snapshots from scratch)
+}
+async function snapshot1(u, sfx) {
   const prune = Object.keys(ST.units).filter(id => id !== u.id && ID_OK.test(id) && ST.units[id].status === 'passed')   // a passed unit's tree copy is no longer needed (a failed one's stays for the central session)
   return crit(P(`Snapshot unit ${u.id} before any edit. From ${REPO} run exactly this one command (the tool does every copy and writes only under ${SNAP}; do not copy, move or delete anything yourself):
 ${TREE_TOOL} snapshot --unit ${u.id} --snap ${SNAP} --files '${JSON.stringify(u.files)}'${prune.length ? ' --prune ' + prune.join(',') : ''}
-It prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits, no re-ordering needed). If it exits non-zero, return {ok: false, len: -1, error: <the "error" string it printed, verbatim>, manifest: {dirs: [], files: {}}, pipeline_sha: {}, accept_sha: null, owner_sha: null, app_sha: {}, tree_n: 0, tree_sha256: "", repo_n: 0}.`),
-    {label: 'snapshot ' + u.id, phase: 'Snapshot', schema: SNAPR, ...MECH})
+It prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits, no re-ordering needed). If it exits non-zero, return {ok: false, len: -1, sum: "", error: <the "error" string it printed, verbatim>, manifest: {dirs: [], files: {}}, pipeline_sha: {}, accept_sha: null, owner_sha: null, app_sha: {}, tree_n: 0, tree_sha256: "", repo_n: 0}.`),
+    {label: 'snapshot ' + u.id + sfx, phase: 'Snapshot', schema: SNAPR, ...MECH})
 }
 async function postCheck(u, tag) {
   const ask = l => crit(P(`Post-${tag} check for unit ${u.id} (write nothing). From ${REPO} run exactly this one command (it reads the repo and the snapshot ${SNAPDIR(u.id)} and writes nothing):
 ${TREE_TOOL} check --unit ${u.id} --snap ${SNAP}
-It prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits). If it exits non-zero, return {ok: false, len: -1, pipeline_sha: {}, accept_sha: null, owner_sha: null, changed: [], tree_changed: [], tree_base_sha256: "", ug1: {index: "", atlas: ""}, files_sha: {}, app_sha: {}}.`),
+It prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits). If it exits non-zero, return {ok: false, len: -1, sum: "", pipeline_sha: {}, accept_sha: null, owner_sha: null, changed: [], tree_changed: [], tree_base_sha256: "", ug1: {index: "", atlas: ""}, files_sha: {}, app_sha: {}}.`),
     {label: l, phase: tag === 'pre-restore' ? 'Restore' : 'Implement', schema: CHECK, ...MECH})
   const c = await ask(tag + ' check ' + u.id)
   return !c || lenOk(c) ? c : (await ask(tag + ' check ' + u.id + ' (relay retry)')) || c   // a relay that altered the tool's line gets one fresh agent; checkWhy scores what comes back
@@ -462,7 +473,7 @@ async function restore(u, snap) {   // puts back the unit files, the accept file
   for (let k = 0; k < 2; k++) {
     const r = await crit(P_RESTORE(`Restore unit ${u.id} from its snapshot ${SNAPDIR(u.id)}. From ${REPO} run exactly this one command (it puts back the unit files, the guarded files ${JSON.stringify(GUARD(u))} and every moved tree path, and verifies the result):
 ${TREE_TOOL} restore --unit ${u.id} --snap ${SNAP}
-The tool does every copy and delete; do not copy, move or delete anything yourself. It prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits). If it exits non-zero, return {ok: false, len: -1, dirs: [], files: {}, accept_sha: null, owner_sha: null, tree_changed: [], tree_base_sha256: "", reverted: []}.`),
+The tool does every copy and delete; do not copy, move or delete anything yourself. It prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits). If it exits non-zero, return {ok: false, len: -1, sum: "", dirs: [], files: {}, accept_sha: null, owner_sha: null, tree_changed: [], tree_base_sha256: "", reverted: []}.`),
       {label: 'restore ' + u.id + (k ? ' (again)' : ''), phase: 'Restore', schema: RESTR, ...MECH})
     for (const p of (r && r.reverted) || []) reverted.add(p)
     const bad = !r ? ['restore died'] : [
@@ -559,7 +570,7 @@ for (const u of UNITS) {
   // run: hold flag + rebase trigger, then accept -> snapshot -> implement -> gates -> measure -> fix -> review -> record/restore
   phase('Hold')
   const h = await holdRead(u)
-  if (!h) return finish('stopped', {stopped_at: u.id, why: 'hold read died'})
+  if (!h) return finish('stopped', {stopped_at: u.id, why: 'hold read died or was not relayed intact twice'})
   if (appOf(u.files).length && fil1Why(h.fil1).length) { await recordState('record before hold'); return finish('held', {held_by: u.id, held_why: fil1Why(h.fil1).join('; ')}) }
   const appDrift = diffKeys(ST.app_sha, h.app_sha).filter(k => APP.includes(k)), pipeDrift = REF_PIPE ? diffKeys(REF_PIPE, h.pipeline_sha) : null
   if (appDrift.length || !REF_PIPE || ST.ref_stale === true || (pipeDrift.length && !docsOnly(u))) {   // a docs-only unit scores against the reference itself, so pipeline drift alone needs no new reference
@@ -610,7 +621,7 @@ for (const u of UNITS) {
   const LOOP_OUT = p => p === 'docs/mobile/captures/' + u.id + '.json' || p.startsWith('docs/mobile/shots/') || (STATE_REL && p === STATE_REL)
   const lost = dmg && lenOk(dmg) ? (dmg.changed || []).filter(p => !holdsPath(u.files, p) && !GUARD(u).includes(p) && !holdsPath(TREE, p) && !LOOP_OUT(p)) : ['(the pre-restore read died or was not relayed intact: writes outside the snapshotted paths are unknown)']   // no snapshot copy exists for these
   setUnit(u, 'failed', {attempts: ATT[u.id], capture: docsOnly(u) ? refPath() : 'docs/mobile/captures/' + u.id + '.json', files_sha: back.ok ? snap.manifest.files : {}, ref_before: refBefore, failing: outcome.failing || [], why: back.ok ? 'restored from the snapshot' + (back.reverted.length ? ' (' + back.reverted.length + ' path(s) put back)' : '') : 'RESTORE FAILED: ' + back.why})
-  const hb = back.ok ? await holdRead(u) : null   // the restored tree must equal the held tree; nothing a unit wrote is ever adopted as a baseline
+  const hb = back.ok ? await holdRead(u, 'post-restore') : null   // the restored tree must equal the held tree; nothing a unit wrote is ever adopted as a baseline
   const stray = !back.ok ? [] : hb ? [...diffKeys(h.app_sha, hb.app_sha).filter(k => APP.includes(k)), ...diffKeys(h.pipeline_sha, hb.pipeline_sha)] : ['(the tree read died)']
   const outside = back.reverted.filter(p => !holdsPath(u.files, p))
   if (!back.ok || pipeHit.length || lost.length || stray.length) {

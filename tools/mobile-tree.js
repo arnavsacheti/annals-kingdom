@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 // Deterministic file operations for the mobile loop (.claude/workflows/mobile-build.js): snapshot, check and
 // restore a unit's files, its guarded docs and the whole served/pipeline tree, and write the loop state.
-// Every command prints exactly one JSON line on stdout: {"ok":true,...fields,"len":N} (N = length of the
-// key-sorted JSON of the fields; the workflow re-checks it) or {"ok":false,"error":"..."} with exit 1.
+// Every command prints exactly one JSON line on stdout: {"ok":true,...fields,"len":N,"sum":H} (N = length and
+// H = 32-bit FNV-1a hex over the UTF-16 units of the key-sorted JSON of the fields; the workflow re-checks both,
+// so a relay that alters one hex digit is caught) or {"ok":false,"error":"..."} with exit 1.
 // Only restore writes the repo; snapshot writes only under --snap; check writes nothing.
 //
 //   node tools/mobile-tree.js snapshot --unit ID --snap DIR --files '<JSON array>' [--prune id1,id2] [--repo R]
 //   node tools/mobile-tree.js check --unit ID --snap DIR [--repo R]
 //   node tools/mobile-tree.js restore --unit ID --snap DIR [--repo R]
 //   node tools/mobile-tree.js write-state --from TMP --to PATH --expect-len N
+//   node tools/mobile-tree.js hold [--repo R]   (fil1 gate, app_sha, pipeline_sha; writes nothing)
 //   node tools/mobile-tree.js --self-test
 'use strict'
 const fs = require('fs'), path = require('path'), crypto = require('crypto'), os = require('os'), cp = require('child_process')
@@ -21,6 +23,7 @@ const ID_OK = /^[A-Za-z0-9][A-Za-z0-9._-]{0,31}$/
 const SHOTS = 'docs/mobile/shots/'
 
 const sha = b => crypto.createHash('sha256').update(b).digest('hex')
+const fnv = s => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0 } return h.toString(16).padStart(8, '0') }   // must equal fnv in mobile-build.js
 const canon = v => Array.isArray(v) ? v.map(canon) : v && typeof v === 'object' ? Object.fromEntries(Object.keys(v).sort().map(k => [k, canon(v[k])])) : v
 const sortObj = o => Object.fromEntries(Object.keys(o).sort().map(k => [k, o[k]]))
 const lst = p => { try { return fs.lstatSync(p) } catch { return null } }
@@ -222,6 +225,16 @@ function restore(a) {
   return {dirs: manifest.dirs, files: filesSha(c, manifest), ...guardSha(c), tree_changed: diff(s.tree, treeWalk(c)),
     tree_base_sha256: sha(fs.readFileSync(path.join(U, 'tree.json'))), reverted: [...reverted].sort()}
 }
+function hold(a) {   // the hold read: Filigree 1 gate flags plus the app and pipeline shas
+  const repo = path.resolve(a.repo || path.resolve(__dirname, '..'))
+  if (!isDir(repo)) fail('--repo is not a directory: ' + repo)
+  const c = {repo, R: rel => path.join(repo, rel)}
+  let g = null
+  try { g = JSON.parse(fs.readFileSync(c.R('docs/filigree/gates/1-research.json'), 'utf8')) } catch {}
+  const ru = g && g.rulings_used && typeof g.rulings_used === 'object' ? g.rulings_used : {}
+  const fil1 = {exists: !!g, pass: !!g && g.pass === true, rulings_used: Object.fromEntries(['R2', 'R7', 'R12', 'R14', 'R18'].map(r => [r, g && typeof ru[r] === 'string' ? ru[r] : 'missing']))}
+  return {fil1, app_sha: appSha(c), pipeline_sha: pipeSha(c)}
+}
 function writeState(a) {
   if (!a.from || !a.to) fail('write-state needs --from and --to')
   if (!/^\d+$/.test(a['expect-len'] || '')) fail('--expect-len must be a non-negative integer')
@@ -255,7 +268,7 @@ function selfTest() {
     try { j = JSON.parse(lines[0]) } catch {}
     return {code: r.status, j, oneLine: lines.length === 2 && lines[1] === '' && !!j, stderr: r.stderr}
   }
-  const lenOk = j => j && j.ok === true && j.len === JSON.stringify(canon(Object.fromEntries(Object.entries(j).filter(([k]) => k !== 'ok' && k !== 'len')))).length
+  const lenOk = j => { if (!j || j.ok !== true) return false; const t = JSON.stringify(canon(Object.fromEntries(Object.entries(j).filter(([k]) => k !== 'ok' && k !== 'len' && k !== 'sum')))); return j.len === t.length && j.sum === fnv(t) }
   const good = (r, name) => { if (!(r.code === 0 && r.oneLine && lenOk(r.j))) log(name, JSON.stringify(r)); ok(r.code === 0 && r.oneLine && lenOk(r.j), name + ': exit 0, one line, len digest') ; return r.j }
   const bad = (r, name) => ok(r.code === 1 && r.oneLine && r.j.ok === false && typeof r.j.error === 'string', name + ': refused with exit 1')
   const oneLiner = file => { const r = cp.spawnSync(process.execPath, ['-e', 'const fs=require("fs");const s=fs.readFileSync("index.html","utf8");const re=/<script(?![^>]*src)[^>]*>([\\s\\S]*?)<\\/script>/g;let m,n=0;while(m=re.exec(s)){n++;try{new Function(m[1])}catch(e){console.error("block "+n+": "+e.message);process.exit(1)}}console.log("OK "+n)'.replace('"index.html"', JSON.stringify(file))], {cwd: T, encoding: 'utf8'}); return (r.stdout + r.stderr).split('\n')[0] }
@@ -352,6 +365,14 @@ function selfTest() {
     const s4 = good(run(['snapshot', '--unit', 'T4', '--snap', SNAP, '--files', JSON.stringify(['DEPLOY.md', '.github/workflows/pages.yml', '.gitignore', '.claudex/'])]), 'snapshot accepts .github/x, .gitignore, .claudex/')
     ok(eq(s4.manifest.files, {'.github/workflows/pages.yml': S('.github/workflows/pages.yml'), '.gitignore': S('.gitignore'), 'DEPLOY.md': null}) && eq(s4.manifest.dirs, ['.claudex/']), 'snapshot manifest for dot-prefixed (non .git/.claude) entries')
     W('.github/workflows/pages.yml', 'on: pull\n'); fs.unlinkSync(path.join(T, '.gitignore')); W('DEPLOY.md', 'd\n')
+    ok(fnv('') === '811c9dc5' && fnv('a') === 'e40c292c' && fnv('foobar') === 'bf9cf968', 'fnv-1a 32 known vectors')
+    const h1 = good(run(['hold']), 'hold')
+    ok(h1.fil1.exists === false && h1.fil1.pass === false && h1.fil1.rulings_used.R12 === 'missing' && eq(h1.app_sha, {'index.html': S('index.html'), 'maps-site/index.html': S('maps-site/index.html')}) && h1.pipeline_sha['tools/street-drift.js'] === S('tools/street-drift.js'), 'hold: no gate file, app and pipeline shas')
+    W('docs/filigree/gates/1-research.json', JSON.stringify({pass: true, rulings_used: {R2: 'rulings.json', R7: 'default', R12: 'rulings.json', R14: 'rulings.json'}}))
+    const h2 = good(run(['hold']), 'hold with a gate')
+    ok(h2.fil1.exists && h2.fil1.pass === true && h2.fil1.rulings_used.R7 === 'default' && h2.fil1.rulings_used.R18 === 'missing' && h2.fil1.rulings_used.R2 === 'rulings.json', 'hold: gate flags read')
+    const tam = {...h2, sum: h2.sum, pipeline_sha: {...h2.pipeline_sha, 'tools/street-drift.js': h2.pipeline_sha['tools/street-drift.js'].replace(/^./, ch => ch === 'a' ? 'b' : 'a')}}
+    ok(!lenOk(tam) && tam.len === h2.len, 'sum: one altered hex digit keeps len but fails the sum')
     const r5 = good(run(['restore', '--unit', 'T4', '--snap', SNAP]), 'restore T4')
     ok(eq(r5.reverted, ['.github/workflows/pages.yml', '.gitignore', 'DEPLOY.md']) && RD('.github/workflows/pages.yml') === 'on: push\n' && RD('.gitignore') === 'x\n' && !lst(path.join(T, 'DEPLOY.md')), 'restore T4 reverts .github/x and .gitignore')
   } finally { fs.rmSync(T, {recursive: true, force: true}) }
@@ -364,10 +385,10 @@ function main() {
   try {
     const a = parseArgs(argv)
     if (a.selfTest) { process.stdout.write(JSON.stringify({ok: true, self_test: selfTest()}) + '\n'); return }
-    const cmd = a._[0], fn = {snapshot, check, restore, 'write-state': writeState}[cmd]
-    if (!fn || a._.length !== 1) fail('usage: mobile-tree.js snapshot|check|restore|write-state ... | --self-test')
-    const f = canon(fn(a))
-    process.stdout.write(JSON.stringify({ok: true, ...f, len: JSON.stringify(f).length}) + '\n')
+    const cmd = a._[0], fn = {snapshot, check, restore, 'write-state': writeState, hold}[cmd]
+    if (!fn || a._.length !== 1) fail('usage: mobile-tree.js snapshot|check|restore|write-state|hold ... | --self-test')
+    const f = canon(fn(a)), t = JSON.stringify(f)
+    process.stdout.write(JSON.stringify({ok: true, ...f, len: t.length, sum: fnv(t)}) + '\n')
   } catch (e) {
     if (!e.tool) log(e.stack || String(e))
     process.stdout.write(JSON.stringify({ok: false, error: String(e.message || e)}) + '\n')
