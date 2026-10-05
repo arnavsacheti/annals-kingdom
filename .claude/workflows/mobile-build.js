@@ -78,7 +78,7 @@ const RULE_HEAD = `Repo root: ${REPO} (cd there before any command; use absolute
 const RULE = `${RULE_HEAD} ${RULE_PIPE} Write ONLY the files this prompt names; throwaway scripts and temp files go in a mktemp -d directory outside the repo. Never start, stop or reuse a server on port 8544. Return only the requested JSON.`
 const P = body => RULE + '\n' + body
 const P_RESTORE = body => RULE.replace(RULE_PIPE, `Under ${REPO}/.claude/ and to ${REPO}/tools/street-drift.js you may only copy snapshot bytes back or delete a file the snapshot lacks, exactly as ordered below; nothing else there.`) + '\n' + body
-const CDN_STEP = A.cdnDir ? `Use --cdn-dir ${A.cdnDir}.` : 'In a mktemp -d directory T run "npm pack leaflet@1.9.4 three@0.128.0" (quiet) and pass --cdn-dir T (the tool accepts the two .tgz files; it routes the CDN globs to disk and is harmless once vendoring has landed).'
+const CDN_STEP = A.cdnDir ? `Use --cdn-dir ${A.cdnDir}.` : 'In a mktemp -d directory T run "npm pack leaflet@1.9.4 three@0.128.0 @fontsource/eb-garamond@5.3.0 @fontsource/lora@5.3.0 @fontsource/ibm-plex-mono@5.3.0 @fontsource/im-fell-english@5.3.0" (quiet) and pass --cdn-dir T (the tool accepts the .tgz files; it routes the CDN globs to disk, serves the Google Fonts hosts from the fontsource files so the production faces render and is harmless once vendoring has landed).'
 const BUSY = 'Before starting, if `pgrep -f \'tools/mobile-capture[.]js\'` finds a capture already running (an earlier attempt), wait for it to exit (poll every 30 s): never start a second one, never kill it.'   // the [.] keeps pgrep from matching a shell that carries the pattern itself
 const POLL = 'While the capture runs, keep polling with commands of at most 9 minutes each (e.g. `timeout 540 bash -c \'until [ -f T/code ]; do sleep 15; done\'`), as many times as needed (up to 2 hours). Never report infra_error because the capture is still running or slow; infra_error is only for a tool that could not start.'
 const LONG_RUN = BUSY + ' A full capture can take 30 minutes or more: start it in the background (run_in_background, or nohup ... &) with stdout and stderr redirected to files in T and its exit code written to T/code, then poll until T/code exists. ' + POLL + ' Never kill it early and never start a second capture while one runs.'
@@ -174,7 +174,7 @@ ST.item = ITEM
 ST.baselines = {B0: pre.baselines.B0 ?? null, R1: pre.baselines.R1 ?? null, final: pre.baselines.final ?? null}
 ST.owner_answers = OWNER_FILE
 const statusOf = id => (ST.units[id] || {}).status || null
-const lastRef = () => { const r = [...ST.rebase].reverse().find(x => x && typeof x.ref === 'string' && /^(rebase-\d+|after-[A-Za-z0-9][A-Za-z0-9._-]{0,31})$/.test(x.ref)); return r ? r.ref : null }
+const lastRef = () => { const r = [...ST.rebase].reverse().find(x => x && typeof x.ref === 'string' && /^(R1|rebase-\d+|after-[A-Za-z0-9][A-Za-z0-9._-]{0,31})$/.test(x.ref)); return r ? r.ref : null }   // R1: the font-faithful desktop reference, taken centrally
 
 // ---- 2. selection ----
 const runMatch = r => typeof r === 'string' && (r === ITEM || r.startsWith(ITEM + ' ('))
@@ -452,7 +452,7 @@ async function implement(u, og) {
 Writable paths (nothing else; directories end in "/"): ${JSON.stringify(writable)}. ${appOf(u.files).length ? 'Your only app file is ' + appOf(u.files)[0] + '.' : 'You edit no app file.'}
 Read-only for you: ${ap} (the accept file the measurer scores you with: read it, never edit it), ${OWNER_FILE} (the owner's recorded answers: read, never edit; any change fails the unit), every reference capture, POLISH.md unless listed above, CHANGELOG.md, VERSION, docs/filigree/**, docs/street/**.
 ${og ? og + '\n' : ''}${HARD}
-You may self-check with ${NODE_TOOL} (a capture with --out in your temp dir, or --accept ${ap}), with --cdn-dir as in the sandbox (npm pack leaflet@1.9.4 three@0.128.0 into a temp dir)${serverFlag(u) ? '; pass --server spawn' : ''}; never commit, never touch git.
+You may self-check with ${NODE_TOOL} (a capture with --out in your temp dir, or --accept ${ap}), with --cdn-dir as in the sandbox (npm pack leaflet@1.9.4 three@0.128.0 @fontsource/eb-garamond@5.3.0 @fontsource/lora@5.3.0 @fontsource/ibm-plex-mono@5.3.0 @fontsource/im-fell-english@5.3.0 into a temp dir)${serverFlag(u) ? '; pass --server spawn' : ''}; never commit, never touch git.
 Acceptance (the accept file scores the measurable part in code; reviewers read the rest):
 ${u.acceptance.map((b, i) => (i + 1) + '. ' + b).join('\n')}
 Return {summary, files_changed (repo-relative), strings_added (every new player-visible string, verbatim), notes}.`), {label: 'implement ' + u.id, phase: 'Implement', schema: IMPL, model: u.model, effort: u.effort})
