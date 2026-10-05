@@ -345,6 +345,28 @@ Agents never run git.
     Writes only `maps-site/index.html`, the manifest when present, and `docs/living/{accept,
     captures}/LRM*`.
 
+- [ ] **Atlas: re-measure the map after the web fonts swap in** — the atlas sizes its Leaflet map
+  once at startup (`fillZoom()` reads `map.getSize()`) and re-measures only on a window resize. The
+  header reflows when the web fonts land (iPhone 13: 111 px on the fallback serif, 116 px with EB
+  Garamond and Lora), so the `#map` box ends up smaller than Leaflet's cached size on every
+  profile (iPhone 13 509 vs 518 px, pixel7 698 vs 693, landscape 215 vs 218, desktop 688 vs 691,
+  desktop2x 820 vs 823) and fitZoom, minZoom and the view centre come from the pre-swap layout;
+  on a slow phone the first view can differ by a tile row. Found while making the capture tool's
+  first load deterministic (it now answers routed font files after the startup layout, so
+  references pin the fallback-startup state). Fix in `maps-site/index.html`: one `ResizeObserver`
+  on `#map` (or `document.fonts.ready`) that calls `map.invalidateSize()` and re-runs the existing
+  fit (`fillZoom()`), with no second timer and no clock token. A plain polish item (sonnet/medium).
+  - Done when: an iPhone 13, pixel7 and desktop capture (`tools/mobile-capture.js --atlas` with
+    the fontsource `--cdn-dir`, under `docs/living/` or a temp dir, never `docs/mobile/`) shows
+    Leaflet's `getSize()` equal to the `#map` box after the swap on all five profiles; the moved
+    keys (zoom.min, share_visible, first-load tiles, the layers list height, the tap fixture) are
+    declared in its accept file against the latest reference and every other key is unchanged;
+    desktop shots move only by the refit (declared); zero console errors; the atlas clock tokens
+    and `grep -c matchMedia maps-site/index.html` unchanged.
+  - Blocked by: Mobile 9 and Mobile 14 checked (an atlas edit mid-lane breaks the lane review's
+    reference). Prerequisites: as "Atlas reduced motion for its own animations" above (no
+    mobile-build or mobile-review run live; never beside Filigree 3 or a Street 3/4 run).
+
 ### Filigree for the Table (cont.) and the street research: the sheet spec, then the street bible
 
 - [ ] **Filigree 2 · Planning → sheet spec (USER REQUEST)** — from the bible alone: one coast, one
