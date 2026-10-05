@@ -243,7 +243,8 @@ const PRE = {type: 'object', properties: {
     seen_questions: SA}, required: ['questions', 'seen_questions']}},
 required: ['missing', 'anchors', 'rulings_overrides', 'ledger', 'dem']}
 const HEXCROP = {type: 'object', properties: {fixtures_changed: B, hexes_path: S, path: S, sha256: S, parsed: B,
-  crops: {type: 'array', items: {type: 'object', properties: {id: S, path: S}, required: ['id', 'path']}}},
+  crops: {type: 'array', items: {type: 'object', properties: {id: S, path: S}, required: ['id', 'path']}},
+  existing: {type: 'array', items: {type: 'object', properties: {id: S, cell: {type: 'array', items: {type: 'number'}}, bbox: {type: 'array', items: {type: 'number'}}, crop: {type: 'object', properties: {path: S, x0: {type: 'number'}, y0: {type: 'number'}, scale: {type: 'number'}}, required: ['path', 'x0', 'y0', 'scale']}}, required: ['id', 'cell', 'bbox', 'crop']}}},
 required: ['hexes_path', 'path', 'sha256', 'parsed', 'crops']}
 const INTEG = {type: 'object', properties: {
   md: S, json: S, sha_md: S, sha_json: S, rule_ids: SA, class_ids: SA, ground_classes: SA, exempt_rules: SA,
@@ -337,13 +338,14 @@ if (RESUME && MODE === 'full' && GP.exists === true && GP.pass === true && GP.mo
 const HX = cap(HEXES)
 const HEXES_JSON = {date: DATE, unit: 'z7 tile = 32 atlas px', hexes: HX.map(h => ({id: h.id, cell: h.cell, bbox: h.bbox,
   center: [(h.bbox[0] + h.bbox[2]) / 2, (h.bbox[1] + h.bbox[3]) / 2], crop: {path: `gates/hex/${h.id}.jpg`, x0: h.bbox[0] - 32, y0: h.bbox[1] - 32, scale: 4}}))}
-const crop = await crit(P(`Crop the fixture hexes (R17: one hex = one z7 tile = 32 atlas px). They are FROZEN once written: first check whether ${OUTABS}/gates/hexes.json exists, parses, lists exactly the hex ids ${HX.map(h => h.id).join(', ')}, and every crop it lists exists under ${OUTABS}/. If so, compare each hex of that file with the JSON below: cell, bbox and crop {path, x0, y0, scale} must all be equal. All equal: write nothing and go straight to the read-back. Any difference: write nothing, delete nothing, and return fixtures_changed true (still with the read-back of the existing file).
+const crop = await crit(P(`Crop the fixture hexes (R17: one hex = one z7 tile = 32 atlas px). They are FROZEN once written: first check whether ${OUTABS}/gates/hexes.json exists, parses, lists exactly the hex ids ${HX.map(h => h.id).join(', ')}, and every crop it lists exists under ${OUTABS}/. If so, compare each hex of that file with the JSON below: cell, bbox and crop {path, x0, y0, scale} must all be equal. If it exists, write nothing and delete nothing: return existing = its hexes exactly as stored ({id, cell, bbox, crop {path, x0, y0, scale}} each; ignore its date) and fixtures_changed false, with the read-back of the existing file; the script compares them with the JSON below.
 Otherwise, for each hex in the JSON below: the crop window is the bbox plus one cell of margin on every side, i.e. 96x96 atlas px starting at (crop.x0, crop.y0). Source: the z5 tiles ${REPO}/maps-site/tiles/5/<tx>/<ty>.jpg (256 px tiles, 2 screen px per atlas px, so tx = floor(x/128), ty = floor(y/128); F12 at (2656,192) is tile 20/1; verify this naming against the files on disk before cropping). Stitch the tiles the window needs (neighbours supply the margin) with ImageMagick convert (/usr/bin/convert) or Python PIL (no sharp, no playwright install), crop the 192x192 screen-px window, upscale x2 to 384x384 (4 px per atlas px), and write JPEG quality 85 (<= 300 KB) to ${OUTABS}/gates/hex/<id>.jpg.
 Then write ${OUTABS}/gates/hexes.json as exactly this JSON (2-space indent; crop paths are relative to ${OUTABS}):
 ${JSON.stringify(HEXES_JSON, null, 2)}
 ${READBACK} Also return hexes_path (= that path) and crops: [{id, path}] for every crop file that exists when you finish.`),
 {label: 'hex cropper', phase: 'Preflight', schema: HEXCROP, ...M('mech')})
-if (crop && crop.fixtures_changed === true) die('fixtures changed; delete gates/hex* (gates/hexes.json and gates/hex/) under ' + OUTABS + ' to re-crop (R17: a changed fixture cell needs a Job 1 re-run)')
+const fixtureDiff = (crop && Array.isArray(crop.existing) && crop.existing.length) ? HEXES_JSON.hexes.filter(h => { const e = crop.existing.find(x => x && x.id === h.id); return !e || JSON.stringify([e.cell, e.bbox, e.crop && [e.crop.path, e.crop.x0, e.crop.y0, e.crop.scale]]) !== JSON.stringify([h.cell, h.bbox, [h.crop.path, h.crop.x0, h.crop.y0, h.crop.scale]]) }).map(h => h.id) : []   // scored in code: date and key order never count
+if (fixtureDiff.length || (crop && Array.isArray(crop.existing) && crop.existing.length && crop.existing.length !== HEXES_JSON.hexes.length)) die('fixtures changed (' + fixtureDiff.join(', ') + '); delete gates/hex* (gates/hexes.json and gates/hex/) under ' + OUTABS + ' to re-crop (R17: a changed fixture cell needs a Job 1 re-run)')
 if (!FILE_OK(crop)) return done({reason: 'agent died: hex cropper', owner_rulings_used: RUSED})
 const cropIds = new Set((crop.crops || []).filter(c => c && c.id).map(c => c.id))
 
