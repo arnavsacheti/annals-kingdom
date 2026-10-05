@@ -1,0 +1,95 @@
+{
+  "unit": "D2",
+  "profiles": [
+    "iphone13",
+    "pixel7",
+    "landscape",
+    "desktop",
+    "desktop2x"
+  ],
+  "clock": "virtual",
+  "files_touched": [
+    "DEPLOY.md",
+    ".github/workflows/pages.yml",
+    "tools/lint-deploy.js"
+  ],
+  "gates": [
+    "UG1",
+    "UG2",
+    "UG3",
+    "UG4",
+    "UG5",
+    "UG6",
+    "UG7",
+    "UG8",
+    "UG9",
+    "UG10",
+    "UG11"
+  ],
+  "baseline": "after-D1",
+  "declared_change_keys": [],
+  "mask": [],
+  "strings": [],
+  "checks": [
+    {
+      "key": "atlas.iphone13.errors.unexplained",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.iphone13.errors.page",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.pixel7.errors.unexplained",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.pixel7.errors.page",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop.errors.unexplained",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop.errors.page",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop2x.errors.unexplained",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop2x.errors.page",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    }
+  ],
+  "unscored": [
+    "a node lint maps every DEPLOY.md header row to the header server.js sends for a sample path of that class (one source of truth): 0 mismatches",
+    "sim server block is an allowlist: /, /index.html, /share.jpg, /vendor/**, /sw.js, /sw-kill.js, /offline-manifest.json; any other path (e.g. /.git/HEAD, /docs/, /tools/street-drift.js, /POLISH.md, /lexicon/patrinaic.json) answers index.html or 404, never the repo file (rule-table lint; nginx -t when nginx is installed)",
+    "maps server block denies dotfiles; versioned paths immutable, mutable paths no-cache; gzip_types include application/json, application/geo+json, image/svg+xml, application/manifest+json",
+    "pages.yml \"Stage sites\" gains `for f in vendor sw.js sw-kill.js offline-manifest.json; do [ -e \"$f\" ] && cp -R \"$f\" _site/; done` (staged only when present)",
+    "a local replay of the Stage step into a temp _site served under /annals-kingdom/ loads both apps with 0 console errors (re-run in Mobile 9 and Mobile 14 with 0 foreign origins)",
+    "kill-switch procedure documented (copy sw-kill.js over sw.js; it unregisters and deletes caches); HTTPS stated as required for workers, storage.persist() and wake lock",
+    "review (sonnet/high) lens \"would this config serve .git? does every versioned path get immutable and every mutable path no-cache?\" leaves no blocker or major",
+    "DEPLOY.md already exists (a sim block serving the whole repo root and \"three.js loads from CDN\"; a maps block with `location /tiles/ { expires 30d; }`): this unit REPLACES it, keeping the DNS section; none of the old root-serving block survives",
+    "lint format: DEPLOY.md holds (1) a table with the header row `| path class | example path | Cache-Control | Content-Type | Content-Encoding |` and (2) a table with the header row `| request path | sim block answers |` listing /, /index.html, /vendor/three.js/r128/three.min.js, /sw.js, /.git/HEAD, /docs/a.md, /tools/street-drift.js, /POLISH.md, /lexicon/patrinaic.json, /maps-site/index.html with values `file` or `index.html-or-404`. tools/lint-deploy.js splits cells on `|`, strips backticks, starts `PORT=<free> node server.js`, requests each example path with Accept-Encoding: gzip and compares Cache-Control, Content-Type and Content-Encoding (0 mismatches), and evaluates the allowlist `location ~` regex written in the sim server block against table (2) (0 mismatches); it prints one line per mismatch and exits 1 on any",
+    "pages.yml anchor: inside step `Stage sites (sim at /, atlas at /maps-site/)`, immediately after the line `          cp -R maps-site _site/maps-site` (line 29) and before `- uses: actions/configure-pages@v5`; the existing `cp index.html share.jpg _site/ 2>/dev/null || cp index.html _site/` line stays"
+  ]
+}
