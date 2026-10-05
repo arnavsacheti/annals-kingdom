@@ -132,7 +132,7 @@ Every unit passes the universal gates, plus its own measured acceptance at 390x6
 A failing unit is restored from its snapshot; the item stays unchecked with the failing numbers.
 Agents never run git.
 
-- [ ] **Mobile 0 · Rulings, phone criteria, research copy (USER REQUEST)** — write
+- [x] **Mobile 0 · Rulings, phone criteria, research copy (USER REQUEST)** — write
   docs/street/rulings.json (ST8), docs/filigree/rulings.json (R2 R7 R12 R14 R18) and both "mobile"
   blocks, text-level with every existing byte kept; uncheck Filigree 1 for its re-integration. Copy
   the verified brief to docs/research/mobile-at-the-table.md (+ index line) and its inputs to
@@ -147,7 +147,7 @@ Agents never run git.
   - Prerequisites: no Filigree 1 agent running when the filigree files are written. Hold Street 1
     and Filigree 2 (full runs) until this item, the re-integration, Mobile 2 and both lane reviews
     are done. Docs only.
-- [ ] **Mobile 1 · The measuring stick, the baseline, the loop (USER REQUEST)** —
+- [x] **Mobile 1 · The measuring stick, the baseline, the loop (USER REQUEST)** —
   tools/mobile-capture.js (iPhone 13, Pixel 7, desktop 1366x768@1, desktop2x 1440x900@2, landscape;
   virtual and real clocks; bytes, rects, taps, fingerprints, anchors); baseline B0 captured twice
   before any app edit; the saved loop .claude/workflows/mobile-build.js and mobile-review.js
@@ -159,7 +159,7 @@ Agents never run git.
     at z4.55 opening the Lektān card, 11 of 13 sim controls under 44 px, degradeStep 0 after 60 s);
     the loop's plan mode and a no-op dry run pass; reviews leave no blocker or major.
   - Prerequisites: Mobile 0. Reads the app files only, so it may run while Filigree 1 runs.
-- [ ] **Mobile 2 · Workflow routes for phones (script)** — filigree-2-plan.js: the capture contract
+- [x] **Mobile 2 · Workflow routes for phones (script)** — filigree-2-plan.js: the capture contract
   gains the 390x664 phone page, the net block, throttles and serviceWorkers:'block'; every slice's
   /checks must hold a phone check (G2.1). street-2-plan.js: S0.U01 asks the probe for --phone on
   every view, --class and --cpu; /device_classes joins the spec shape with a code-scored SG2.17
@@ -282,6 +282,13 @@ Agents never run git.
   docs/mobile/devices.json; findings go directly above this item.
   - Blocked by: Mobile 9 and Mobile 14. Owner-run only (leave unchecked; take the next item). Before
     any default flip (R18, ST7).
+  - Result (2026-10-05): R2 R7 R12 R14 R18 and ST8 overridden append-only and owner-confirmed;
+    R6 ST7 ST9 ST19 kept; "mobile" blocks in both todo-inputs; Filigree 1 re-integrated (FM1-FM12).
+  - Result (2026-10-05): tools/mobile-capture.js (123 self-tests), B0 captured twice with zero
+    differing keys, mobile-build/mobile-review loop with whole-tree rollback; all review findings
+    closed.
+  - Result (2026-10-05): SE1a, SE2a, SE2b landed in job bodies; preludes byte-identical,
+    street-drift green; Street 2 plan preview reads the overrides with no baked check loosened.
 
 ### Filigree for the Table (cont.) and the street research: the sheet spec, then the street bible
 
