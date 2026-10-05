@@ -1,0 +1,2253 @@
+{
+ "desktop": {
+  "profile": "desktop",
+  "throttle": 1,
+  "readyMs": 3813,
+  "env": {
+   "iw": 1366,
+   "ih": 768,
+   "dpr": 1,
+   "pr": 1,
+   "buf": [
+    1366,
+    768
+   ],
+   "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+   "meta": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+   "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, l",
+   "touchPts": 0
+  },
+  "defaultView": {
+   "cam": {
+    "t": 0.7516323295608578,
+    "tT": 0.581100826152431,
+    "radius": 1882.107337046462,
+    "intro": true
+   },
+   "stats": {
+    "fps": 39,
+    "calls": 27,
+    "tris": 1132692,
+    "buildings": 1278,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 771,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 3
+   }
+  },
+  "taps_default": [
+   {
+    "tag": "a",
+    "id": "atlasLink",
+    "cls": "hudlink",
+    "txt": "⚘ Atlas",
+    "w": 59,
+    "h": 22,
+    "x": 525,
+    "y": 44
+   },
+   {
+    "tag": "a",
+    "id": "wikiLink",
+    "cls": "hudlink",
+    "txt": "✦ Wiki",
+    "w": 56,
+    "h": 22,
+    "x": 589,
+    "y": 44
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "⏸",
+    "w": 22,
+    "h": 25,
+    "x": 662,
+    "y": 42
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶",
+    "w": 25,
+    "h": 25,
+    "x": 688,
+    "y": 42
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "on",
+    "txt": "▶▶",
+    "w": 34,
+    "h": 25,
+    "x": 717,
+    "y": 42
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶",
+    "w": 43,
+    "h": 25,
+    "x": 755,
+    "y": 42
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶",
+    "w": 52,
+    "h": 25,
+    "x": 802,
+    "y": 42
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶▶",
+    "w": 61,
+    "h": 25,
+    "x": 858,
+    "y": 42
+   },
+   {
+    "tag": "button",
+    "id": "btnExport",
+    "cls": "",
+    "txt": "Export",
+    "w": 53,
+    "h": 20,
+    "x": 1257,
+    "y": 75
+   },
+   {
+    "tag": "button",
+    "id": "chronToggle",
+    "cls": "",
+    "txt": "▾",
+    "w": 25,
+    "h": 20,
+    "x": 1316,
+    "y": 75
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "on",
+    "txt": "All",
+    "w": 38,
+    "h": 16,
+    "x": 1063,
+    "y": 109
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "Crown",
+    "w": 52,
+    "h": 16,
+    "x": 1105,
+    "y": 109
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "War",
+    "w": 42,
+    "h": 16,
+    "x": 1161,
+    "y": 109
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "Trade",
+    "w": 49,
+    "h": 16,
+    "x": 1207,
+    "y": 109
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "Fates",
+    "w": 46,
+    "h": 16,
+    "x": 1260,
+    "y": 109
+   },
+   {
+    "tag": "button",
+    "id": "btnCharts",
+    "cls": "",
+    "txt": "Charts",
+    "w": 53,
+    "h": 16,
+    "x": 1310,
+    "y": 109
+   },
+   {
+    "tag": "button",
+    "id": "icoOverlay",
+    "cls": "",
+    "txt": "🗺",
+    "w": 34,
+    "h": 34,
+    "x": 1240,
+    "y": 12
+   },
+   {
+    "tag": "button",
+    "id": "icoWatch",
+    "cls": "",
+    "txt": "👁",
+    "w": 34,
+    "h": 34,
+    "x": 1280,
+    "y": 12
+   },
+   {
+    "tag": "button",
+    "id": "icoDirector",
+    "cls": "on",
+    "txt": "🎬",
+    "w": 34,
+    "h": 34,
+    "x": 1320,
+    "y": 12
+   }
+  ],
+  "overflow_default": {
+   "vw": 1366,
+   "vh": 768,
+   "docScrollW": 1366,
+   "docScrollH": 768,
+   "bodyScrollW": 1366,
+   "items": []
+  },
+  "defaultFrames": {
+   "frames": 14,
+   "meanMs": 680.9,
+   "fps": 1.47,
+   "p50": 650,
+   "p95": 1399.9,
+   "max": 1399.9,
+   "over50ms": 12
+  },
+  "defaultAfter": {
+   "fpsAvg": 32.823558519885886,
+   "degradeStep": 0,
+   "stats": {
+    "fps": 33,
+    "calls": 26,
+    "tris": 1064914,
+    "buildings": 1307,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 742,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 3
+   },
+   "info": {
+    "calls": 26,
+    "tris": 1064914,
+    "geoms": 27,
+    "tex": 1,
+    "progs": 11
+   }
+  },
+  "renderCostProbe_default": {
+   "pr1": {
+    "buf": [
+     1366,
+     768
+    ],
+    "renderMs": 0
+   },
+   "pr0.75": {
+    "buf": [
+     1024,
+     576
+    ],
+    "renderMs": 1
+   },
+   "pr0.5": {
+    "buf": [
+     683,
+     384
+    ],
+    "renderMs": 0
+   }
+  },
+  "settlementName": "Epēshu",
+  "zoomCam": {
+   "t": 0.5149815993453348,
+   "tT": 0.5149815993453348,
+   "radius": 349.9999999999999
+  },
+  "taps_zoom": [
+   {
+    "tag": "a",
+    "id": "atlasLink",
+    "cls": "hudlink",
+    "txt": "⚘ Atlas",
+    "w": 59,
+    "h": 22,
+    "x": 525,
+    "y": 44
+   },
+   {
+    "tag": "a",
+    "id": "wikiLink",
+    "cls": "hudlink",
+    "txt": "✦ Wiki",
+    "w": 56,
+    "h": 22,
+    "x": 589,
+    "y": 44
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "⏸",
+    "w": 22,
+    "h": 25,
+    "x": 662,
+    "y": 42
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶",
+    "w": 25,
+    "h": 25,
+    "x": 688,
+    "y": 42
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "on",
+    "txt": "▶▶",
+    "w": 34,
+    "h": 25,
+    "x": 717,
+    "y": 42
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶",
+    "w": 43,
+    "h": 25,
+    "x": 755,
+    "y": 42
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶",
+    "w": 52,
+    "h": 25,
+    "x": 802,
+    "y": 42
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶▶",
+    "w": 61,
+    "h": 25,
+    "x": 858,
+    "y": 42
+   },
+   {
+    "tag": "button",
+    "id": "btnExport",
+    "cls": "",
+    "txt": "Export",
+    "w": 53,
+    "h": 20,
+    "x": 1257,
+    "y": 75
+   },
+   {
+    "tag": "button",
+    "id": "chronToggle",
+    "cls": "",
+    "txt": "▾",
+    "w": 25,
+    "h": 20,
+    "x": 1316,
+    "y": 75
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "on",
+    "txt": "All",
+    "w": 38,
+    "h": 16,
+    "x": 1063,
+    "y": 109
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "Crown",
+    "w": 52,
+    "h": 16,
+    "x": 1105,
+    "y": 109
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "War",
+    "w": 42,
+    "h": 16,
+    "x": 1161,
+    "y": 109
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "Trade",
+    "w": 49,
+    "h": 16,
+    "x": 1207,
+    "y": 109
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "Fates",
+    "w": 46,
+    "h": 16,
+    "x": 1260,
+    "y": 109
+   },
+   {
+    "tag": "button",
+    "id": "btnCharts",
+    "cls": "",
+    "txt": "Charts",
+    "w": 53,
+    "h": 16,
+    "x": 1310,
+    "y": 109
+   },
+   {
+    "tag": "button",
+    "id": "icoOverlay",
+    "cls": "",
+    "txt": "🗺",
+    "w": 34,
+    "h": 34,
+    "x": 1240,
+    "y": 12
+   },
+   {
+    "tag": "button",
+    "id": "icoWatch",
+    "cls": "",
+    "txt": "👁",
+    "w": 34,
+    "h": 34,
+    "x": 1280,
+    "y": 12
+   },
+   {
+    "tag": "button",
+    "id": "icoDirector",
+    "cls": "on",
+    "txt": "🎬",
+    "w": 34,
+    "h": 34,
+    "x": 1320,
+    "y": 12
+   }
+  ],
+  "zoomFrames": {
+   "frames": 11,
+   "meanMs": 763.6,
+   "fps": 1.31,
+   "p50": 866.7,
+   "p95": 2116.6,
+   "max": 2116.6,
+   "over50ms": 9
+  },
+  "zoomAfter": {
+   "fpsAvg": 27.69894468951837,
+   "degradeStep": 0,
+   "stats": {
+    "fps": 28,
+    "calls": 30,
+    "tris": 1175274,
+    "buildings": 1334,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 713,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 4
+   },
+   "info": {
+    "calls": 30,
+    "tris": 1175274,
+    "geoms": 24,
+    "tex": 1
+   }
+  },
+  "renderCostProbe_zoom": {
+   "pr1": {
+    "buf": [
+     1366,
+     768
+    ],
+    "renderMs": 0
+   },
+   "pr0.75": {
+    "buf": [
+     1024,
+     576
+    ],
+    "renderMs": 0
+   },
+   "pr0.5": {
+    "buf": [
+     683,
+     384
+    ],
+    "renderMs": 0
+   }
+  },
+  "touch": "n/a (desktop control)",
+  "errors": [
+   "reqfail: https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap",
+   "error: Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID"
+  ],
+  "annalsLogs": [
+   "[ANNALS] seed=epeshu realm=Epēshu settlements=19 buildings=1245 trees=48568 rivers=9 lakes=5 coast=true"
+  ],
+  "finalDegrade": 0
+ },
+ "iphone13": {
+  "profile": "iphone13",
+  "throttle": 1,
+  "readyMs": 3929,
+  "env": {
+   "iw": 390,
+   "ih": 664,
+   "dpr": 3,
+   "pr": 1.6,
+   "buf": [
+    624,
+    1062
+   ],
+   "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+   "meta": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+   "ua": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) Apple",
+   "touchPts": 1
+  },
+  "defaultView": {
+   "cam": {
+    "t": 0.7374606712708475,
+    "tT": 0.581100826152431,
+    "radius": 1701.744479193258,
+    "intro": true
+   },
+   "stats": {
+    "fps": 38,
+    "calls": 25,
+    "tris": 993852,
+    "buildings": 1278,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 771,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 3
+   }
+  },
+  "taps_default": [
+   {
+    "tag": "a",
+    "id": "atlasLink",
+    "cls": "hudlink",
+    "txt": "⚘ Atlas",
+    "w": 59,
+    "h": 22,
+    "x": 189,
+    "y": 46
+   },
+   {
+    "tag": "a",
+    "id": "wikiLink",
+    "cls": "hudlink",
+    "txt": "✦ Wiki",
+    "w": 56,
+    "h": 22,
+    "x": 254,
+    "y": 46
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "⏸",
+    "w": 24,
+    "h": 31,
+    "x": 61,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶",
+    "w": 27,
+    "h": 31,
+    "x": 89,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "on",
+    "txt": "▶▶",
+    "w": 36,
+    "h": 31,
+    "x": 120,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶",
+    "w": 45,
+    "h": 31,
+    "x": 160,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶",
+    "w": 54,
+    "h": 31,
+    "x": 209,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶▶",
+    "w": 63,
+    "h": 31,
+    "x": 267,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "btnExport",
+    "cls": "",
+    "txt": "Export",
+    "w": 57,
+    "h": 28,
+    "x": 277,
+    "y": 617
+   },
+   {
+    "tag": "button",
+    "id": "chronToggle",
+    "cls": "",
+    "txt": "▸",
+    "w": 29,
+    "h": 28,
+    "x": 340,
+    "y": 617
+   },
+   {
+    "tag": "button",
+    "id": "icoOverlay",
+    "cls": "",
+    "txt": "🗺",
+    "w": 42,
+    "h": 42,
+    "x": 340,
+    "y": 456
+   },
+   {
+    "tag": "button",
+    "id": "icoWatch",
+    "cls": "",
+    "txt": "👁",
+    "w": 42,
+    "h": 42,
+    "x": 340,
+    "y": 504
+   },
+   {
+    "tag": "button",
+    "id": "icoDirector",
+    "cls": "on",
+    "txt": "🎬",
+    "w": 42,
+    "h": 42,
+    "x": 340,
+    "y": 552
+   }
+  ],
+  "overflow_default": {
+   "vw": 390,
+   "vh": 664,
+   "docScrollW": 390,
+   "docScrollH": 664,
+   "bodyScrollW": 390,
+   "items": []
+  },
+  "defaultFrames": {
+   "frames": 14,
+   "meanMs": 710.7,
+   "fps": 1.41,
+   "p50": 616.7,
+   "p95": 2183.2,
+   "max": 2183.2,
+   "over50ms": 11
+  },
+  "defaultAfter": {
+   "fpsAvg": 33.07807003441979,
+   "degradeStep": 0,
+   "stats": {
+    "fps": 33,
+    "calls": 24,
+    "tris": 950254,
+    "buildings": 1307,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 742,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 3
+   },
+   "info": {
+    "calls": 24,
+    "tris": 950254,
+    "geoms": 25,
+    "tex": 1,
+    "progs": 11
+   }
+  },
+  "renderCostProbe_default": {
+   "pr1.6": {
+    "buf": [
+     624,
+     1062
+    ],
+    "renderMs": 0
+   },
+   "pr1": {
+    "buf": [
+     390,
+     664
+    ],
+    "renderMs": 0
+   },
+   "pr0.75": {
+    "buf": [
+     292,
+     498
+    ],
+    "renderMs": 0
+   },
+   "pr0.5": {
+    "buf": [
+     195,
+     332
+    ],
+    "renderMs": 0
+   }
+  },
+  "settlementName": "Epēshu",
+  "zoomCam": {
+   "t": 0.5149815993453348,
+   "tT": 0.5149815993453348,
+   "radius": 349.9999999999999
+  },
+  "taps_zoom": [
+   {
+    "tag": "a",
+    "id": "atlasLink",
+    "cls": "hudlink",
+    "txt": "⚘ Atlas",
+    "w": 59,
+    "h": 22,
+    "x": 189,
+    "y": 46
+   },
+   {
+    "tag": "a",
+    "id": "wikiLink",
+    "cls": "hudlink",
+    "txt": "✦ Wiki",
+    "w": 56,
+    "h": 22,
+    "x": 254,
+    "y": 46
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "⏸",
+    "w": 24,
+    "h": 31,
+    "x": 61,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶",
+    "w": 27,
+    "h": 31,
+    "x": 89,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "on",
+    "txt": "▶▶",
+    "w": 36,
+    "h": 31,
+    "x": 120,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶",
+    "w": 45,
+    "h": 31,
+    "x": 160,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶",
+    "w": 54,
+    "h": 31,
+    "x": 209,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶▶",
+    "w": 63,
+    "h": 31,
+    "x": 267,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "btnExport",
+    "cls": "",
+    "txt": "Export",
+    "w": 57,
+    "h": 28,
+    "x": 277,
+    "y": 617
+   },
+   {
+    "tag": "button",
+    "id": "chronToggle",
+    "cls": "",
+    "txt": "▸",
+    "w": 29,
+    "h": 28,
+    "x": 340,
+    "y": 617
+   },
+   {
+    "tag": "button",
+    "id": "icoOverlay",
+    "cls": "",
+    "txt": "🗺",
+    "w": 42,
+    "h": 42,
+    "x": 340,
+    "y": 456
+   },
+   {
+    "tag": "button",
+    "id": "icoWatch",
+    "cls": "",
+    "txt": "👁",
+    "w": 42,
+    "h": 42,
+    "x": 340,
+    "y": 504
+   },
+   {
+    "tag": "button",
+    "id": "icoDirector",
+    "cls": "on",
+    "txt": "🎬",
+    "w": 42,
+    "h": 42,
+    "x": 340,
+    "y": 552
+   }
+  ],
+  "zoomFrames": {
+   "frames": 14,
+   "meanMs": 678.5,
+   "fps": 1.47,
+   "p50": 916.6,
+   "p95": 1483.4,
+   "max": 1483.4,
+   "over50ms": 13
+  },
+  "zoomAfter": {
+   "fpsAvg": 26.77677643050977,
+   "degradeStep": 0,
+   "stats": {
+    "fps": 27,
+    "calls": 26,
+    "tris": 992726,
+    "buildings": 1334,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 713,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 4
+   },
+   "info": {
+    "calls": 26,
+    "tris": 992726,
+    "geoms": 22,
+    "tex": 1
+   }
+  },
+  "renderCostProbe_zoom": {
+   "pr1.6": {
+    "buf": [
+     624,
+     1062
+    ],
+    "renderMs": 0
+   },
+   "pr1": {
+    "buf": [
+     390,
+     664
+    ],
+    "renderMs": 0
+   },
+   "pr0.75": {
+    "buf": [
+     292,
+     498
+    ],
+    "renderMs": 1
+   },
+   "pr0.5": {
+    "buf": [
+     195,
+     332
+    ],
+    "renderMs": 0
+   }
+  },
+  "touchProbe": "CANVAS#",
+  "touch_oneFingerDrag": {
+   "before": {
+    "yawT": 2.914947883420199,
+    "yaw": 2.9135231692187826,
+    "pitchOffT": 0,
+    "tT": 0.5149815993453348,
+    "fx": -2516.949152542373,
+    "fz": -2528.683181225554,
+    "fxc": -2516.949152542373,
+    "fzc": -2528.683181225554
+   },
+   "after": {
+    "yawT": 2.936750683420196,
+    "yaw": 2.9353189307131013,
+    "pitchOffT": 0,
+    "tT": 0.5149815993453348,
+    "fx": -2516.949152542373,
+    "fz": -2528.683181225554,
+    "fxc": -2516.949152542373,
+    "fzc": -2528.683181225554
+   },
+   "moved": [
+    "yawT",
+    "yaw"
+   ]
+  },
+  "touch_pinchOut": {
+   "before": {
+    "yawT": 2.936750683420196,
+    "yaw": 2.9353189307131013,
+    "pitchOffT": 0,
+    "tT": 0.5149815993453348,
+    "fx": -2516.949152542373,
+    "fz": -2528.683181225554,
+    "fxc": -2516.949152542373,
+    "fzc": -2528.683181225554
+   },
+   "after": {
+    "yawT": 2.5219506834201963,
+    "yaw": 2.526555771615313,
+    "pitchOffT": 0,
+    "tT": 0.5149815993453348,
+    "fx": -2516.949152542373,
+    "fz": -2528.683181225554,
+    "fxc": -2516.949152542373,
+    "fzc": -2528.683181225554
+   },
+   "moved": [
+    "yawT",
+    "yaw"
+   ]
+  },
+  "touch_pinchIn": {
+   "before": {
+    "yawT": 2.5219506834201963,
+    "yaw": 2.526555771615313,
+    "pitchOffT": 0,
+    "tT": 0.5149815993453348,
+    "fx": -2516.949152542373,
+    "fz": -2528.683181225554,
+    "fxc": -2516.949152542373,
+    "fzc": -2528.683181225554
+   },
+   "after": {
+    "yawT": 2.5219506834201963,
+    "yaw": 2.5219506868269925,
+    "pitchOffT": 0,
+    "tT": 0.7709815993453348,
+    "fx": -2516.949153445415,
+    "fz": -2528.683181870984,
+    "fxc": -2516.949153338716,
+    "fzc": -2528.6831817948682
+   },
+   "moved": [
+    "yaw",
+    "tT"
+   ]
+  },
+  "touch_twoFingerPan": {
+   "before": {
+    "yawT": 2.5219506834201963,
+    "yaw": 2.5219506868269925,
+    "pitchOffT": 0,
+    "tT": 0.7709815993453348,
+    "fx": -2516.949153445415,
+    "fz": -2528.683181870984,
+    "fxc": -2516.949153338716,
+    "fzc": -2528.6831817948682
+   },
+   "after": {
+    "yawT": 2.5219506834201963,
+    "yaw": 2.521950683420198,
+    "pitchOffT": 0,
+    "tT": 0.7709815993453348,
+    "fx": -2356.830641229753,
+    "fz": -2753.137276763801,
+    "fxc": -2370.555100159171,
+    "fzc": -2733.8983332863477
+   },
+   "moved": [
+    "fx",
+    "fz",
+    "fxc",
+    "fzc"
+   ]
+  },
+  "tapInspect": {
+   "display": "block",
+   "cls": "parch",
+   "txt": "Epēshucapital✕Souls2,600PatronThobraukProsperity55%Unrest6Br"
+  },
+  "errors": [
+   "reqfail: https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap",
+   "error: Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID"
+  ],
+  "annalsLogs": [
+   "[ANNALS] seed=epeshu realm=Epēshu settlements=19 buildings=1245 trees=48568 rivers=9 lakes=5 coast=true"
+  ],
+  "finalDegrade": 0
+ },
+ "pixel7-unthrottled": {
+  "profile": "pixel7-unthrottled",
+  "throttle": 1,
+  "readyMs": 3882,
+  "env": {
+   "iw": 412,
+   "ih": 839,
+   "dpr": 2.625,
+   "pr": 1.6,
+   "buf": [
+    659,
+    1342
+   ],
+   "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+   "meta": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+   "ua": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 ",
+   "touchPts": 1
+  },
+  "defaultView": {
+   "cam": {
+    "t": 0.740638493040017,
+    "tT": 0.581100826152431,
+    "radius": 1740.623182474269,
+    "intro": true
+   },
+   "stats": {
+    "fps": 39,
+    "calls": 25,
+    "tris": 993852,
+    "buildings": 1278,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 771,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 3
+   }
+  },
+  "taps_default": [
+   {
+    "tag": "a",
+    "id": "atlasLink",
+    "cls": "hudlink",
+    "txt": "⚘ Atlas",
+    "w": 59,
+    "h": 22,
+    "x": 200,
+    "y": 46
+   },
+   {
+    "tag": "a",
+    "id": "wikiLink",
+    "cls": "hudlink",
+    "txt": "✦ Wiki",
+    "w": 56,
+    "h": 22,
+    "x": 265,
+    "y": 46
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "⏸",
+    "w": 24,
+    "h": 31,
+    "x": 72,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶",
+    "w": 27,
+    "h": 31,
+    "x": 100,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "on",
+    "txt": "▶▶",
+    "w": 36,
+    "h": 31,
+    "x": 131,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶",
+    "w": 45,
+    "h": 31,
+    "x": 171,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶",
+    "w": 54,
+    "h": 31,
+    "x": 220,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶▶",
+    "w": 63,
+    "h": 31,
+    "x": 278,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "btnExport",
+    "cls": "",
+    "txt": "Export",
+    "w": 57,
+    "h": 28,
+    "x": 299,
+    "y": 792
+   },
+   {
+    "tag": "button",
+    "id": "chronToggle",
+    "cls": "",
+    "txt": "▸",
+    "w": 29,
+    "h": 28,
+    "x": 362,
+    "y": 792
+   },
+   {
+    "tag": "button",
+    "id": "icoOverlay",
+    "cls": "",
+    "txt": "🗺",
+    "w": 42,
+    "h": 42,
+    "x": 362,
+    "y": 631
+   },
+   {
+    "tag": "button",
+    "id": "icoWatch",
+    "cls": "",
+    "txt": "👁",
+    "w": 42,
+    "h": 42,
+    "x": 362,
+    "y": 679
+   },
+   {
+    "tag": "button",
+    "id": "icoDirector",
+    "cls": "on",
+    "txt": "🎬",
+    "w": 42,
+    "h": 42,
+    "x": 362,
+    "y": 727
+   }
+  ],
+  "overflow_default": {
+   "vw": 412,
+   "vh": 839,
+   "docScrollW": 412,
+   "docScrollH": 839,
+   "bodyScrollW": 412,
+   "items": []
+  },
+  "defaultFrames": {
+   "frames": 17,
+   "meanMs": 639.2,
+   "fps": 1.56,
+   "p50": 550,
+   "p95": 1650,
+   "max": 1650,
+   "over50ms": 11
+  },
+  "defaultAfter": {
+   "fpsAvg": 34.60195600670355,
+   "degradeStep": 0,
+   "stats": {
+    "fps": 35,
+    "calls": 24,
+    "tris": 950254,
+    "buildings": 1307,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 742,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 3
+   },
+   "info": {
+    "calls": 24,
+    "tris": 950254,
+    "geoms": 25,
+    "tex": 1,
+    "progs": 11
+   }
+  },
+  "renderCostProbe_default": {
+   "pr1.6": {
+    "buf": [
+     659,
+     1342
+    ],
+    "renderMs": 0
+   },
+   "pr1": {
+    "buf": [
+     412,
+     839
+    ],
+    "renderMs": 0
+   },
+   "pr0.75": {
+    "buf": [
+     309,
+     629
+    ],
+    "renderMs": 0
+   },
+   "pr0.5": {
+    "buf": [
+     206,
+     419
+    ],
+    "renderMs": 0
+   }
+  },
+  "settlementName": "Epēshu",
+  "zoomCam": {
+   "t": 0.5149815993453348,
+   "tT": 0.5149815993453348,
+   "radius": 349.9999999999999
+  },
+  "taps_zoom": [
+   {
+    "tag": "a",
+    "id": "atlasLink",
+    "cls": "hudlink",
+    "txt": "⚘ Atlas",
+    "w": 59,
+    "h": 22,
+    "x": 200,
+    "y": 46
+   },
+   {
+    "tag": "a",
+    "id": "wikiLink",
+    "cls": "hudlink",
+    "txt": "✦ Wiki",
+    "w": 56,
+    "h": 22,
+    "x": 265,
+    "y": 46
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "⏸",
+    "w": 24,
+    "h": 31,
+    "x": 72,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶",
+    "w": 27,
+    "h": 31,
+    "x": 100,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "on",
+    "txt": "▶▶",
+    "w": 36,
+    "h": 31,
+    "x": 131,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶",
+    "w": 45,
+    "h": 31,
+    "x": 171,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶",
+    "w": 54,
+    "h": 31,
+    "x": 220,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶▶",
+    "w": 63,
+    "h": 31,
+    "x": 278,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "btnExport",
+    "cls": "",
+    "txt": "Export",
+    "w": 57,
+    "h": 28,
+    "x": 299,
+    "y": 792
+   },
+   {
+    "tag": "button",
+    "id": "chronToggle",
+    "cls": "",
+    "txt": "▸",
+    "w": 29,
+    "h": 28,
+    "x": 362,
+    "y": 792
+   },
+   {
+    "tag": "button",
+    "id": "icoOverlay",
+    "cls": "",
+    "txt": "🗺",
+    "w": 42,
+    "h": 42,
+    "x": 362,
+    "y": 631
+   },
+   {
+    "tag": "button",
+    "id": "icoWatch",
+    "cls": "",
+    "txt": "👁",
+    "w": 42,
+    "h": 42,
+    "x": 362,
+    "y": 679
+   },
+   {
+    "tag": "button",
+    "id": "icoDirector",
+    "cls": "on",
+    "txt": "🎬",
+    "w": 42,
+    "h": 42,
+    "x": 362,
+    "y": 727
+   }
+  ],
+  "zoomFrames": {
+   "frames": 10,
+   "meanMs": 793.3,
+   "fps": 1.26,
+   "p50": 716.6,
+   "p95": 2799.9,
+   "max": 2799.9,
+   "over50ms": 9
+  },
+  "zoomAfter": {
+   "fpsAvg": 26.045781380332453,
+   "degradeStep": 0,
+   "stats": {
+    "fps": 26,
+    "calls": 26,
+    "tris": 992748,
+    "buildings": 1334,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 713,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 4
+   },
+   "info": {
+    "calls": 26,
+    "tris": 992748,
+    "geoms": 22,
+    "tex": 1
+   }
+  },
+  "renderCostProbe_zoom": {
+   "pr1.6": {
+    "buf": [
+     659,
+     1342
+    ],
+    "renderMs": 0
+   },
+   "pr1": {
+    "buf": [
+     412,
+     839
+    ],
+    "renderMs": 0
+   },
+   "pr0.75": {
+    "buf": [
+     309,
+     629
+    ],
+    "renderMs": 0
+   },
+   "pr0.5": {
+    "buf": [
+     206,
+     419
+    ],
+    "renderMs": 1
+   }
+  },
+  "touchProbe": "CANVAS#",
+  "touch_oneFingerDrag": {
+   "before": {
+    "yawT": 2.9179030834201996,
+    "yaw": 2.91644331660726,
+    "pitchOffT": 0,
+    "tT": 0.5149815993453348,
+    "fx": -2516.949152542373,
+    "fz": -2528.683181225554,
+    "fxc": -2516.949152542373,
+    "fzc": -2528.683181225554
+   },
+   "after": {
+    "yawT": 2.4511030834201977,
+    "yaw": 2.461979991658056,
+    "pitchOffT": 0.20399999999999993,
+    "tT": 0.5149815993453348,
+    "fx": -2516.949152542373,
+    "fz": -2528.683181225554,
+    "fxc": -2516.949152542373,
+    "fzc": -2528.683181225554
+   },
+   "moved": [
+    "yawT",
+    "yaw",
+    "pitchOffT"
+   ]
+  },
+  "touch_pinchOut": {
+   "before": {
+    "yawT": 2.4511030834201977,
+    "yaw": 2.461979991658056,
+    "pitchOffT": 0.20399999999999993,
+    "tT": 0.5149815993453348,
+    "fx": -2516.949152542373,
+    "fz": -2528.683181225554,
+    "fxc": -2516.949152542373,
+    "fzc": -2528.683181225554
+   },
+   "after": {
+    "yawT": 2.4511030834201977,
+    "yaw": 2.4511030898026513,
+    "pitchOffT": 0.20399999999999993,
+    "tT": 0.25898159934533477,
+    "fx": -2516.9491527203977,
+    "fz": -2528.683181372377,
+    "fxc": -2516.9491527145183,
+    "fzc": -2528.6831813675203
+   },
+   "moved": [
+    "yaw",
+    "tT"
+   ]
+  },
+  "touch_pinchIn": {
+   "before": {
+    "yawT": 2.4511030834201977,
+    "yaw": 2.4511030898026513,
+    "pitchOffT": 0.20399999999999993,
+    "tT": 0.25898159934533477,
+    "fx": -2516.9491527203977,
+    "fz": -2528.683181372377,
+    "fxc": -2516.9491527145183,
+    "fzc": -2528.6831813675203
+   },
+   "after": {
+    "yawT": 2.4511030834201977,
+    "yaw": 2.451103083420206,
+    "pitchOffT": 0.20399999999999993,
+    "tT": 0.5149815993453348,
+    "fx": -2516.979442550039,
+    "fz": -2528.70820560269,
+    "fxc": -2516.973356654739,
+    "fzc": -2528.703177682512
+   },
+   "moved": [
+    "tT",
+    "fx",
+    "fz",
+    "fxc",
+    "fzc"
+   ]
+  },
+  "touch_twoFingerPan": {
+   "before": {
+    "yawT": 2.4511030834201977,
+    "yaw": 2.451103083420206,
+    "pitchOffT": 0.20399999999999993,
+    "tT": 0.5149815993453348,
+    "fx": -2516.979442550039,
+    "fz": -2528.70820560269,
+    "fxc": -2516.973356654739,
+    "fzc": -2528.703177682512
+   },
+   "after": {
+    "yawT": 2.4511030834201977,
+    "yaw": 2.451103083420198,
+    "pitchOffT": 0.20399999999999993,
+    "tT": 0.5149815993453348,
+    "fx": -2488.5155695982553,
+    "fz": -2563.1614475943406,
+    "fxc": -2490.0877821258805,
+    "fzc": -2561.2584090819973
+   },
+   "moved": [
+    "fx",
+    "fz",
+    "fxc",
+    "fzc"
+   ]
+  },
+  "tapInspect": {
+   "display": "none",
+   "cls": "parch",
+   "txt": ""
+  },
+  "errors": [
+   "reqfail: https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap",
+   "error: Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID"
+  ],
+  "annalsLogs": [
+   "[ANNALS] seed=epeshu realm=Epēshu settlements=19 buildings=1245 trees=48568 rivers=9 lakes=5 coast=true"
+  ],
+  "finalDegrade": 0
+ },
+ "pixel7": {
+  "profile": "pixel7",
+  "throttle": 4,
+  "readyMs": 7549,
+  "env": {
+   "iw": 412,
+   "ih": 839,
+   "dpr": 2.625,
+   "pr": 1.6,
+   "buf": [
+    659,
+    1342
+   ],
+   "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+   "meta": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+   "ua": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 ",
+   "touchPts": 1
+  },
+  "defaultView": {
+   "cam": {
+    "t": 0.7385023552058151,
+    "tT": 0.581100826152431,
+    "radius": 1714.3922116873305,
+    "intro": true
+   },
+   "stats": {
+    "fps": 37,
+    "calls": 25,
+    "tris": 993852,
+    "buildings": 1278,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 771,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 3
+   }
+  },
+  "taps_default": [
+   {
+    "tag": "a",
+    "id": "atlasLink",
+    "cls": "hudlink",
+    "txt": "⚘ Atlas",
+    "w": 59,
+    "h": 22,
+    "x": 200,
+    "y": 46
+   },
+   {
+    "tag": "a",
+    "id": "wikiLink",
+    "cls": "hudlink",
+    "txt": "✦ Wiki",
+    "w": 56,
+    "h": 22,
+    "x": 265,
+    "y": 46
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "⏸",
+    "w": 24,
+    "h": 31,
+    "x": 72,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶",
+    "w": 27,
+    "h": 31,
+    "x": 100,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "on",
+    "txt": "▶▶",
+    "w": 36,
+    "h": 31,
+    "x": 131,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶",
+    "w": 45,
+    "h": 31,
+    "x": 171,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶",
+    "w": 54,
+    "h": 31,
+    "x": 220,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶▶",
+    "w": 63,
+    "h": 31,
+    "x": 278,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "btnExport",
+    "cls": "",
+    "txt": "Export",
+    "w": 57,
+    "h": 28,
+    "x": 299,
+    "y": 792
+   },
+   {
+    "tag": "button",
+    "id": "chronToggle",
+    "cls": "",
+    "txt": "▸",
+    "w": 29,
+    "h": 28,
+    "x": 362,
+    "y": 792
+   },
+   {
+    "tag": "button",
+    "id": "icoOverlay",
+    "cls": "",
+    "txt": "🗺",
+    "w": 42,
+    "h": 42,
+    "x": 362,
+    "y": 631
+   },
+   {
+    "tag": "button",
+    "id": "icoWatch",
+    "cls": "",
+    "txt": "👁",
+    "w": 42,
+    "h": 42,
+    "x": 362,
+    "y": 679
+   },
+   {
+    "tag": "button",
+    "id": "icoDirector",
+    "cls": "on",
+    "txt": "🎬",
+    "w": 42,
+    "h": 42,
+    "x": 362,
+    "y": 727
+   }
+  ],
+  "overflow_default": {
+   "vw": 412,
+   "vh": 839,
+   "docScrollW": 412,
+   "docScrollH": 839,
+   "bodyScrollW": 412,
+   "items": []
+  },
+  "defaultFrames": {
+   "frames": 13,
+   "meanMs": 946.1,
+   "fps": 1.06,
+   "p50": 566.7,
+   "p95": 3133.2,
+   "max": 3133.2,
+   "over50ms": 11
+  },
+  "defaultAfter": {
+   "fpsAvg": 31.648993121342833,
+   "degradeStep": 0,
+   "stats": {
+    "fps": 32,
+    "calls": 24,
+    "tris": 950254,
+    "buildings": 1307,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 742,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 3
+   },
+   "info": {
+    "calls": 24,
+    "tris": 950254,
+    "geoms": 26,
+    "tex": 1,
+    "progs": 11
+   }
+  },
+  "renderCostProbe_default": {
+   "pr1.6": {
+    "buf": [
+     659,
+     1342
+    ],
+    "renderMs": 4
+   },
+   "pr1": {
+    "buf": [
+     412,
+     839
+    ],
+    "renderMs": 2
+   },
+   "pr0.75": {
+    "buf": [
+     309,
+     629
+    ],
+    "renderMs": 2
+   },
+   "pr0.5": {
+    "buf": [
+     206,
+     419
+    ],
+    "renderMs": 3
+   }
+  },
+  "settlementName": "Epēshu",
+  "zoomCam": {
+   "t": 0.5149815993453348,
+   "tT": 0.5149815993453348,
+   "radius": 349.9999999999999
+  },
+  "taps_zoom": [
+   {
+    "tag": "a",
+    "id": "atlasLink",
+    "cls": "hudlink",
+    "txt": "⚘ Atlas",
+    "w": 59,
+    "h": 22,
+    "x": 200,
+    "y": 46
+   },
+   {
+    "tag": "a",
+    "id": "wikiLink",
+    "cls": "hudlink",
+    "txt": "✦ Wiki",
+    "w": 56,
+    "h": 22,
+    "x": 265,
+    "y": 46
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "⏸",
+    "w": 24,
+    "h": 31,
+    "x": 72,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶",
+    "w": 27,
+    "h": 31,
+    "x": 100,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "on",
+    "txt": "▶▶",
+    "w": 36,
+    "h": 31,
+    "x": 131,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶",
+    "w": 45,
+    "h": 31,
+    "x": 171,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶",
+    "w": 54,
+    "h": 31,
+    "x": 220,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "",
+    "cls": "",
+    "txt": "▶▶▶▶▶",
+    "w": 63,
+    "h": 31,
+    "x": 278,
+    "y": 69
+   },
+   {
+    "tag": "button",
+    "id": "btnExport",
+    "cls": "",
+    "txt": "Export",
+    "w": 57,
+    "h": 28,
+    "x": 299,
+    "y": 792
+   },
+   {
+    "tag": "button",
+    "id": "chronToggle",
+    "cls": "",
+    "txt": "▸",
+    "w": 29,
+    "h": 28,
+    "x": 362,
+    "y": 792
+   },
+   {
+    "tag": "button",
+    "id": "icoOverlay",
+    "cls": "",
+    "txt": "🗺",
+    "w": 42,
+    "h": 42,
+    "x": 362,
+    "y": 631
+   },
+   {
+    "tag": "button",
+    "id": "icoWatch",
+    "cls": "",
+    "txt": "👁",
+    "w": 42,
+    "h": 42,
+    "x": 362,
+    "y": 679
+   },
+   {
+    "tag": "button",
+    "id": "icoDirector",
+    "cls": "on",
+    "txt": "🎬",
+    "w": 42,
+    "h": 42,
+    "x": 362,
+    "y": 727
+   }
+  ],
+  "zoomFrames": {
+   "frames": 1,
+   "meanMs": 5499.7,
+   "fps": 0.18,
+   "p50": 5499.7,
+   "p95": 5499.7,
+   "max": 5499.7,
+   "over50ms": 1
+  },
+  "zoomAfter": {
+   "fpsAvg": 28.22605672048262,
+   "degradeStep": 0,
+   "stats": {
+    "fps": 28,
+    "calls": 25,
+    "tris": 992754,
+    "buildings": 1334,
+    "trees": 48568,
+    "seed": "epeshu",
+    "realm": "Epēshu",
+    "treasury": 713,
+    "pop": 9960,
+    "agents": 0,
+    "chron": 4
+   },
+   "info": {
+    "calls": 25,
+    "tris": 992754,
+    "geoms": 26,
+    "tex": 1
+   }
+  },
+  "renderCostProbe_zoom": {
+   "pr1.6": {
+    "buf": [
+     659,
+     1342
+    ],
+    "renderMs": 4
+   },
+   "pr1": {
+    "buf": [
+     412,
+     839
+    ],
+    "renderMs": 2
+   },
+   "pr0.75": {
+    "buf": [
+     309,
+     629
+    ],
+    "renderMs": 1
+   },
+   "pr0.5": {
+    "buf": [
+     206,
+     419
+    ],
+    "renderMs": 0
+   }
+  },
+  "touchProbe": "CANVAS#",
+  "touch_oneFingerDrag": {
+   "before": {
+    "yawT": 2.9221746834201996,
+    "yaw": 2.920757742247666,
+    "pitchOffT": 0,
+    "tT": 0.5149815993453348,
+    "fx": -2516.949152542373,
+    "fz": -2528.683181225554,
+    "fxc": -2516.949152542373,
+    "fzc": -2528.683181225554
+   },
+   "after": {
+    "yawT": 2.4549738834201977,
+    "yaw": 2.4643287126733315,
+    "pitchOffT": 0.20399999999999993,
+    "tT": 0.5149815993453348,
+    "fx": -2516.949152542373,
+    "fz": -2528.683181225554,
+    "fxc": -2516.949152542373,
+    "fzc": -2528.683181225554
+   },
+   "moved": [
+    "yawT",
+    "yaw",
+    "pitchOffT"
+   ]
+  },
+  "touch_pinchOut": {
+   "before": {
+    "yawT": 2.4549738834201977,
+    "yaw": 2.4643287126733315,
+    "pitchOffT": 0.20399999999999993,
+    "tT": 0.5149815993453348,
+    "fx": -2516.949152542373,
+    "fz": -2528.683181225554,
+    "fxc": -2516.949152542373,
+    "fzc": -2528.683181225554
+   },
+   "after": {
+    "yawT": 2.4549738834201977,
+    "yaw": 2.4549738834933805,
+    "pitchOffT": 0.20399999999999993,
+    "tT": 0.25898159934533477,
+    "fx": -2516.94915272384,
+    "fz": -2528.683181374257,
+    "fxc": -2516.949152711692,
+    "fzc": -2528.6831813643
+   },
+   "moved": [
+    "yaw",
+    "tT"
+   ]
+  },
+  "touch_pinchIn": {
+   "before": {
+    "yawT": 2.4549738834201977,
+    "yaw": 2.4549738834933805,
+    "pitchOffT": 0.20399999999999993,
+    "tT": 0.25898159934533477,
+    "fx": -2516.94915272384,
+    "fz": -2528.683181374257,
+    "fxc": -2516.949152711692,
+    "fzc": -2528.6831813643
+   },
+   "after": {
+    "yawT": 2.4549738834201977,
+    "yaw": 2.454973883420198,
+    "pitchOffT": 0.20399999999999993,
+    "tT": 0.5149815993453348,
+    "fx": -2516.9491526510524,
+    "fz": -2528.6831813145945,
+    "fxc": -2516.9491526696106,
+    "fzc": -2528.6831813298068
+   },
+   "moved": [
+    "tT"
+   ]
+  },
+  "touch_twoFingerPan": {
+   "before": {
+    "yawT": 2.4549738834201977,
+    "yaw": 2.454973883420198,
+    "pitchOffT": 0.20399999999999993,
+    "tT": 0.5149815993453348,
+    "fx": -2516.9491526510524,
+    "fz": -2528.6831813145945,
+    "fxc": -2516.9491526696106,
+    "fzc": -2528.6831813298068
+   },
+   "after": {
+    "yawT": 2.4549738834201977,
+    "yaw": 2.454973883420198,
+    "pitchOffT": 0.20399999999999993,
+    "tT": 0.5149815993453348,
+    "fx": -2488.6500157123623,
+    "fz": -2563.2083256369724,
+    "fxc": -2490.63097008803,
+    "fzc": -2560.7915474905603
+   },
+   "moved": [
+    "fx",
+    "fz",
+    "fxc",
+    "fzc"
+   ]
+  },
+  "tapInspect": {
+   "display": "none",
+   "cls": "parch",
+   "txt": ""
+  },
+  "errors": [
+   "reqfail: https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap",
+   "error: Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID"
+  ],
+  "annalsLogs": [
+   "[ANNALS] seed=epeshu realm=Epēshu settlements=19 buildings=1245 trees=48568 rivers=9 lakes=5 coast=true"
+  ],
+  "finalDegrade": 0
+ }
+}

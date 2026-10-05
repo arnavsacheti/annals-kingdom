@@ -234,3 +234,51 @@ Chromium-only caveat: there is no WebKit, phone GPU or thermal data in the sandb
 ## 10. Files of the track
 
 `docs/mobile/` holds this guide, `owner-answers.json`, `state.json`, `baseline.json`, `final.json`, `gates.md`, `metrics.md`, `voice-rubric.md`, `script-baseline.json`, `accept/`, `captures/` and `fixtures/`; screenshots go in the git-ignored `docs/mobile/shots/`. Several of these appear as their units land. The capture harness is `tools/mobile-capture.js`.
+
+## 11. Instrument
+
+`tools/mobile-capture.js` is the measuring stick (unit M1.1). It promotes the scratchpad harness kept in `docs/mobile/inputs/` (`capture.js`, `probe.js`, the baseline JSON, `brief.md`) into the repo. Every metric is the formula in [metrics.md](metrics.md); the gate table is [gates.md](gates.md); string review is [voice-rubric.md](voice-rubric.md); `controls.json` is the control inventory captured on desktop 1366x768. The tool is read-only on the repo: it writes only `--out`, `--controls` and the git-ignored `docs/mobile/shots/`. It never takes port 8544 and never runs git.
+
+```
+NODE_PATH=/opt/node22/lib/node_modules node tools/mobile-capture.js [--atlas] [--sim] [--profiles iphone13,pixel7,landscape,desktop,desktop2x]
+    [--unit ID] [--out F] [--controls F] [--cdn-dir D] [--clock virtual|real] [--cpu K] [--throttle slow4g] [--hw-cores N] [--device-memory M]
+    [--sw allow] [--save-data] [--query dc=phone] [--seeds epeshu,tamar1374] [--tap-n 12] [--phone WxH@D] [--extras safe_area,keyboard,ctxloss]
+    [--night-loaf] [--real-clock] [--no-shots] [--jobs N] [--port N | --url U | --server spawn]
+node tools/mobile-capture.js --accept docs/mobile/accept/<unit>.json [--capture F] [--ref NAME=F] [--allow-stale]
+node tools/mobile-capture.js --lint-accept FILE      node tools/mobile-capture.js --compare A.json B.json
+node tools/mobile-capture.js --mutate-only --mutate-html maps-site/index.html      node tools/mobile-capture.js --self-test
+```
+
+- **Sandbox.** Playwright from `NODE_PATH`; Chromium is the only engine. `--cdn-dir` routes the two CDN globs to disk (a directory holding `leaflet-1.9.4.tgz` and `three-0.128.0.tgz`, or `leaflet/dist` and `three/build`); the Google Fonts hosts are aborted. The default server is in-process and byte-equal to today's `server.js`; `--server spawn` runs `PORT=<free> node server.js` once D1 lands.
+- **Contexts.** Every context uses `serviceWorkers:'block'` (`--sw allow` adds `?sw=1`) and pins `navigator.hardwareConcurrency` / `deviceMemory` to 8 and 8 (`--hw-cores`, `--device-memory`); the pins are recorded in `meta.pinned` and in each profile's `env`.
+- **Clocks.** The sim always runs on the virtual clock (rAF, `performance.now`, `Date.now`, `new Date()` on a fixed timeline, `Math.random` from a seeded copy of the sim's `xmur3` and `sfc32`), with no frame pumped before `ANNALS.ready`. The atlas pumps the same clock on a timer when `--clock virtual` (the default). Real-clock results (`--real-clock`, `--night-loaf`, wall times) live under `timing` and are informational.
+- **Output.** `meta` (shas, pins, switches), `repo` (syntax, clock tokens by occurrence with the per-line multiset, keydown sha, `camera.near` and ladder literals, flag-1 anchors of the eight scripts read at run time, `STATS_KEYS` read from `street-1-research.js`, the `.claude/workflows/*.js` and `street-drift.js` shas, atlas function shas), then `atlas.<profile>` and `sim.<profile>`. Sim fingerprints are `sim.<profile>.seeds.<seed>.fingerprint` (speed 0, `ANNALS.hold(1e12)`, `simDays(400)`, sha256 of the canonical record) next to `rng_next` (the next value of `W.rng.gen/hist/amb/det`, taken last). `--compare` strips `meta`, `timing` and `shots` and diffs the rest.
+- **Shots** are css-pixel PNGs, taken with reduced motion, animations disabled and the clock frozen; one over 300 KB is box-reduced by the smallest integer factor that fits and records its `scale`.
+- **`--accept`** scores a capture against the accept file. With no `--capture` (and no `capture` field in the file) it takes a fresh capture of the file's profiles and surfaces first; a capture of another tree is refused as stale unless `--allow-stale`. References: `B0` is `docs/mobile/baseline.json`, `R1` and `final` are `docs/mobile/captures/<name>.json`, `--ref NAME=F` overrides. Beyond the listed checks it scores every gate it can in code (UG1-UG8, UG10, UG11; UG9 runs the `VOCAB`, jargon and README-listing checks, and the voice read stays a model step) and applies the rule that any key not under `declared_change_keys` equals the baseline. `--lint-accept` rejects an unknown op or gate, an unlisted gate without a `waive` reason, a declared key broader than `surface.profile.key`, a mask over 35% of the viewport and a declared clock line shorter than 12 characters. Exit code 1 on any failure, with `{unit, pass, failing:[{key, op, expected, got}]}` on stdout.
+
+Where the tool chose a reading of metrics.md:
+
+- The inventory selector also takes `#drawerHandle`, `[data-sheet-handle]` and `.sheet-handle` (a div today, named a primary action in section 5), and drawer tabs count as disclosure controls so that "Hide the court" has reach 2.
+- `chrome_cover` skips `pointer-events:none` wrappers and counts their interactive children (the Leaflet corner boxes paint nothing); `hover_ungated` skips cross-origin sheets; `top_occupancy` is the lowest bottom edge of fixed chrome that starts in the top 30% of the viewport and is under 35% tall.
+- `cityCanvasSha` hashes the generated plans of Tamaron, Sokundo and Kanae after `ATLAS.descend`; `tiers_derived` computes B and C from the fit zoom and `TIER_CEIL` until A-U2 adds `ATLAS.tiers()`.
+- The keydown range is 19 lines today (`window.addEventListener('keydown'` to its `});`); the 23 in metrics.md section 10 was approximate.
+
+B0 reproduction on the unchanged tree (two runs agree on every non-timing key; the measured value is B0, units read B0):
+
+| key | brief | measured |
+|---|---|---|
+| iphone13 atlas first load | 729,636 B / 37 | 729,636 B / 37 |
+| pixel7 and desktop first load | 661,199 B / 32 and 597,108 B / 32 | same |
+| repeat-visit cache hits | 0 | 0 |
+| `doc_scroll` vs `innerHeight` (iphone13, whole chart) | 974 vs 664 | 974 vs 664 |
+| Contents kicker and title top (iphone13) | -26 and -8 | -26 and -8 |
+| `share_visible` (iphone13, pixel7) | 0.36-0.37, 0.29-0.30 | 0.360, 0.292 |
+| Epēshu tap at z4.55 (iphone13) | opens the Lektān faction card | `#faction=The Lektān Priesthood` |
+| `hover_ungated` | 29 | 29 |
+| `chrome_cover.whole` (iphone13) | 0.29 | 0.254: the brief divides by the 553 px map stage; the metrics.md formula divides by the viewport and reads 0.254; the two cover the same pixels to about 5% |
+| sim `targets_under_44` (iphone13) | 11 of 13 | 14 of 14: the 13 controls the brief lists plus the ledger handle, each under 44 in a dimension; no border-box rule yields 11 |
+
+Findings the plan did not expect:
+
+- `cityCanvasSha` is equal on iphone13, pixel7, landscape and desktop2x but different on desktop 1366x768@1, with or without the atlas mask tiles. Faking `devicePixelRatio` or `L.Browser.retina` does not change it, so the likely cause is canvas text hinting at a device scale factor of 1. UG3 therefore compares each profile to B0 and checks equality within the dpr>1 class; a 1x desktop is its own class. If the owner wants all five equal, that is a fix to the generator, not to the tool.
+- The sim's `W.rng` streams are closures, so a cursor cannot be read without consuming a value; `rng_next` is the value drawn last, after the fingerprint.

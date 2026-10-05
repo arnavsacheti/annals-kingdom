@@ -1,0 +1,153 @@
+{
+ "desktop": {
+  "before": {
+   "fpsAvg": 47.31965490025746,
+   "degradeStep": 0,
+   "frameN": 14,
+   "ratio": 1,
+   "calls": 32,
+   "tris": 1235874,
+   "w": 1366,
+   "h": 768
+  },
+  "after": {
+   "fpsAvg": 44.17068219783418,
+   "degradeStep": 0,
+   "frameN": 17,
+   "ratio": 1,
+   "calls": 30,
+   "tris": 1140824,
+   "w": 1366,
+   "h": 768
+  },
+  "statsFps": 44,
+  "rafFps": 1.2414869466514502,
+  "stats": {
+   "fps": 38,
+   "calls": 27,
+   "tris": 1132692,
+   "buildings": 1278,
+   "trees": 48568,
+   "seed": "epeshu",
+   "realm": "Epēshu",
+   "treasury": 771,
+   "pop": 9960,
+   "agents": 0,
+   "chron": 3
+  },
+  "vp": [
+   1366,
+   768
+  ],
+  "errs": [],
+  "ctrl": {
+   "atlasLink|A": [
+    59,
+    22
+   ],
+   "wikiLink|A": [
+    56,
+    22
+   ],
+   "⏸|BUTTON": [
+    22,
+    25
+   ],
+   "▶|BUTTON": [
+    25,
+    25
+   ],
+   "▶▶|BUTTON": [
+    34,
+    25
+   ],
+   "▶▶▶|BUTTON": [
+    43,
+    25
+   ],
+   "▶▶▶▶|BUTTON": [
+    52,
+    25
+   ],
+   "▶▶▶▶▶|BUTTON": [
+    61,
+    25
+   ],
+   "btnExport|BUTTON": [
+    53,
+    20
+   ],
+   "chronToggle|BUTTON": [
+    25,
+    20
+   ],
+   "All|BUTTON": [
+    38,
+    16
+   ],
+   "Crown|BUTTON": [
+    52,
+    16
+   ],
+   "War|BUTTON": [
+    42,
+    16
+   ],
+   "Trade|BUTTON": [
+    49,
+    16
+   ],
+   "Fates|BUTTON": [
+    46,
+    16
+   ],
+   "btnCharts|BUTTON": [
+    53,
+    16
+   ],
+   "icoOverlay|BUTTON": [
+    34,
+    34
+   ],
+   "icoWatch|BUTTON": [
+    34,
+    34
+   ],
+   "icoDirector|BUTTON": [
+    34,
+    34
+   ]
+  },
+  "hud": {
+   "top": 10,
+   "h": 65,
+   "frac": 0.08463541666666667
+  },
+  "beat": {
+   "beat": {
+    "t": 0,
+    "b": 0,
+    "l": 0,
+    "r": 0,
+    "op": "1",
+    "vis": "visible"
+   },
+   "chron": {
+    "t": 66,
+    "b": 756,
+    "l": 1052,
+    "r": 1354,
+    "op": "1",
+    "vis": "visible"
+   },
+   "drawer": {
+    "t": 0,
+    "b": 0,
+    "l": 0,
+    "r": 0,
+    "op": "1",
+    "vis": "visible"
+   }
+  }
+ }
+}

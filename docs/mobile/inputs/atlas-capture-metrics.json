@@ -1,0 +1,5858 @@
+{
+ "iphone13": {
+  "profile": "iphone13",
+  "viewport": {
+   "w": 390,
+   "h": 664,
+   "dpr": 3,
+   "coarse": true,
+   "hover": false
+  },
+  "views": {
+   "1-contents": {
+    "vw": 390,
+    "vh": 664,
+    "sw": 390,
+    "sh": 974,
+    "hOverflow": false,
+    "bodySW": 390,
+    "pokes": [],
+    "interactiveTotal": 5,
+    "smallTargets": [],
+    "smallCount": 0,
+    "markersBehindContentsOverlay": 89,
+    "markers": 0,
+    "markerTypes": {},
+    "labels": 0,
+    "tooltips": 0,
+    "vectorPaths": 29,
+    "otherMarkerIcons": 22,
+    "tilesLoaded": 20,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     518
+    ],
+    "mapHeightPctOfViewport": 78,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 29,
+    "visibleFractionOfChart": 0.361,
+    "zoom": 1.9500000000000002,
+    "minZoom": 1.9500000000000002,
+    "maxZoom": 8,
+    "contents": {
+     "open": true,
+     "scrollTop": 0,
+     "innerScrollTop": 0,
+     "cScrollH": 722,
+     "cClientH": 664,
+     "innerScrollH": 716,
+     "innerClientH": 716,
+     "kickerTop": -26,
+     "titleTop": -8,
+     "footBottom": 690,
+     "cards": [
+      [
+       80,
+       179
+      ],
+      [
+       193,
+       312
+      ],
+      [
+       326,
+       425
+      ],
+      [
+       439,
+       537
+      ],
+      [
+       551,
+       650
+      ]
+     ],
+     "vh": 664,
+     "activeEl": "tcard"
+    }
+   },
+   "2-whole-chart": {
+    "vw": 390,
+    "vh": 664,
+    "sw": 390,
+    "sh": 974,
+    "hOverflow": false,
+    "bodySW": 390,
+    "pokes": [],
+    "interactiveTotal": 127,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 370,
+      "minH": 32,
+      "maxW": 370,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 22,
+      "minW": 18,
+      "minH": 18,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛵︎"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 89,
+      "minW": 16,
+      "minH": 16,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "≈"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 126.4,
+      "minH": 28,
+      "maxW": 126.4,
+      "maxH": 28,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     }
+    ],
+    "smallCount": 123,
+    "markersBehindContentsOverlay": 0,
+    "markers": 89,
+    "markerTypes": {
+     "t-water": 3,
+     "t-major": 8,
+     "t-mtn": 1,
+     "t-lesser": 63,
+     "t-set": 8,
+     "t-minor": 2,
+     "t-origin": 4
+    },
+    "labels": 0,
+    "tooltips": 0,
+    "vectorPaths": 29,
+    "otherMarkerIcons": 22,
+    "tilesLoaded": 20,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     518
+    ],
+    "mapHeightPctOfViewport": 78,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 29,
+    "visibleFractionOfChart": 0.361,
+    "zoom": 1.9500000000000002,
+    "minZoom": 1.9500000000000002,
+    "maxZoom": 8,
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "total": {
+      "requests": 0,
+      "bytes": 0
+     }
+    }
+   },
+   "3-layers-panel": {
+    "vw": 390,
+    "vh": 664,
+    "sw": 390,
+    "sh": 974,
+    "hOverflow": false,
+    "bodySW": 390,
+    "pokes": [],
+    "interactiveTotal": 158,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 370,
+      "minH": 32,
+      "maxW": 370,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 22,
+      "minW": 18,
+      "minH": 18,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛵︎"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 89,
+      "minW": 16,
+      "minH": 16,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "≈"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "label",
+      "count": 16,
+      "minW": 367,
+      "minH": 22.8,
+      "maxW": 367,
+      "maxH": 22.8,
+      "sample": "⌂ Settlements"
+     },
+     {
+      "selector": "input.leaflet-control-layers-selector",
+      "count": 16,
+      "minW": 13,
+      "minH": 13,
+      "maxW": 13,
+      "maxH": 13,
+      "sample": ""
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 126.4,
+      "minH": 28,
+      "maxW": 126.4,
+      "maxH": 28,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     }
+    ],
+    "smallCount": 155,
+    "markersBehindContentsOverlay": 0,
+    "markers": 89,
+    "markerTypes": {
+     "t-water": 3,
+     "t-major": 8,
+     "t-mtn": 1,
+     "t-lesser": 63,
+     "t-set": 8,
+     "t-minor": 2,
+     "t-origin": 4
+    },
+    "labels": 0,
+    "tooltips": 0,
+    "vectorPaths": 29,
+    "otherMarkerIcons": 22,
+    "tilesLoaded": 20,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     518
+    ],
+    "mapHeightPctOfViewport": 78,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 85,
+    "visibleFractionOfChart": 0.361,
+    "zoom": 1.9500000000000002,
+    "minZoom": 1.9500000000000002,
+    "maxZoom": 8,
+    "layers": {
+     "expanded": true,
+     "rect": {
+      "l": 4,
+      "t": 178,
+      "r": 376,
+      "b": 583,
+      "w": 372,
+      "h": 405
+     },
+     "vw": 390,
+     "vh": 664,
+     "fitsViewport": true,
+     "overflowY": "scroll",
+     "scrollH": 436,
+     "clientH": 405,
+     "rows": 16,
+     "rowSizes": [
+      [
+       367,
+       23
+      ],
+      [
+       367,
+       23
+      ],
+      [
+       367,
+       23
+      ],
+      [
+       367,
+       23
+      ],
+      [
+       367,
+       23
+      ],
+      [
+       367,
+       23
+      ]
+     ],
+     "checkbox": [
+      13,
+      13
+     ],
+     "labelFont": "15.1666px"
+    }
+   },
+   "4-place-card": {
+    "vw": 390,
+    "vh": 664,
+    "sw": 390,
+    "sh": 664,
+    "hOverflow": false,
+    "bodySW": 390,
+    "pokes": [],
+    "interactiveTotal": 25,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 370,
+      "minH": 32,
+      "maxW": 370,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 3,
+      "minW": 20.5,
+      "minH": 20.5,
+      "maxW": 25.1,
+      "maxH": 25.1,
+      "sample": "⌂"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 8,
+      "minW": 20,
+      "minH": 20,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛊"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     }
+    ],
+    "smallCount": 21,
+    "markersBehindContentsOverlay": 0,
+    "markers": 3,
+    "markerTypes": {
+     "t-set": 2,
+     "t-minor": 1
+    },
+    "labels": 3,
+    "tooltips": 0,
+    "vectorPaths": 7,
+    "otherMarkerIcons": 8,
+    "tilesLoaded": 12,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     518
+    ],
+    "mapHeightPctOfViewport": 78,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 29,
+    "visibleFractionOfChart": 0.01,
+    "zoom": 4.550000000000001,
+    "minZoom": 1.9500000000000002,
+    "maxZoom": 9.884522782580063,
+    "place": {
+     "found": true,
+     "glyph": {
+      "x": 195.00000762939453,
+      "y": 370,
+      "w": 25.080001831054688,
+      "h": 25.08001708984375,
+      "cls": "mk t-set"
+     },
+     "stackAtTap": [
+      "DIV.fac-badge \"⛊\"",
+      "DIV.leaflet-marker-icon leaflet-zoom-animated leaflet-intera \"⛊\"",
+      "SPAN.glyph \"⌂\"",
+      "DIV.leaflet-marker-icon leaflet-zoom-animated leaflet-intera \"⌂Epēshu\"",
+      "DIV.leaflet-container leaflet-touch leaflet-retina leaflet-s \"⛵︎⛵︎⛵︎⛵︎Road t\"",
+      "DIV. \"⛵︎⛵︎⛵︎⛵︎Road t\""
+     ],
+     "panel": {
+      "open": true,
+      "rect": {
+       "l": 0,
+       "t": 297,
+       "w": 390,
+       "h": 332
+      },
+      "vw": 390,
+      "vh": 664,
+      "coversPctOfViewportArea": 50,
+      "position": "absolute",
+      "bodyScrollH": 594,
+      "bodyClientH": 330,
+      "closeBtn": [
+       30,
+       30
+      ],
+      "h1": "The Lektān Priesthood",
+      "imgs": [],
+      "textLen": 809,
+      "hash": "#faction=The%20Lekt%C4%81n%20Priesthood"
+     }
+    },
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 12,
+      "bytes": 126610
+     },
+     "total": {
+      "requests": 12,
+      "bytes": 126610
+     }
+    }
+   },
+   "4b-place-card-epeshu": {
+    "vw": 390,
+    "vh": 664,
+    "sw": 390,
+    "sh": 664,
+    "hOverflow": false,
+    "bodySW": 390,
+    "pokes": [],
+    "interactiveTotal": 21,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 370,
+      "minH": 32,
+      "maxW": 370,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 1,
+      "minW": 28.6,
+      "minH": 28.6,
+      "maxW": 28.6,
+      "maxH": 28.6,
+      "sample": "⌂"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 5,
+      "minW": 20,
+      "minH": 20,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛊"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     },
+     {
+      "selector": "button.chart-btn",
+      "count": 1,
+      "minW": 350,
+      "minH": 41,
+      "maxW": 350,
+      "maxH": 41,
+      "sample": "⚘ Descend into Epēshu"
+     }
+    ],
+    "smallCount": 17,
+    "markersBehindContentsOverlay": 0,
+    "markers": 1,
+    "markerTypes": {
+     "t-set": 1
+    },
+    "labels": 1,
+    "tooltips": 0,
+    "vectorPaths": 7,
+    "otherMarkerIcons": 5,
+    "tilesLoaded": 2,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     518
+    ],
+    "mapHeightPctOfViewport": 78,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 29,
+    "visibleFractionOfChart": 0.001,
+    "zoom": 6.15,
+    "minZoom": 1.9500000000000002,
+    "maxZoom": 9.884522782580063,
+    "place": {
+     "panel": {
+      "open": true,
+      "h1": "Epēshu",
+      "rect": {
+       "t": 297,
+       "h": 332,
+       "w": 390
+      },
+      "coversPctOfViewportArea": 50,
+      "bodyScrollH": 4808,
+      "bodyClientH": 330,
+      "imgs": [
+       {
+        "src": "loc-Ep%C4%93shu.jpg",
+        "nw": 735,
+        "w": 390,
+        "h": 150
+       }
+      ],
+      "hash": "#place=Ep%C4%93shu"
+     },
+     "glyph": {
+      "x": 195.00000762939453,
+      "y": 370,
+      "w": 25.080001831054688,
+      "h": 25.08001708984375
+     }
+    },
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 2,
+      "bytes": 26597
+     },
+     "art": {
+      "requests": 1,
+      "bytes": 73451
+     },
+     "total": {
+      "requests": 3,
+      "bytes": 100048
+     }
+    }
+   },
+   "5-street-zoom-epeshu": {
+    "vw": 390,
+    "vh": 664,
+    "sw": 390,
+    "sh": 974,
+    "hOverflow": false,
+    "bodySW": 390,
+    "pokes": [],
+    "interactiveTotal": 19,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 370,
+      "minH": 32,
+      "maxW": 370,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 1,
+      "minW": 25.1,
+      "minH": 25.1,
+      "maxW": 25.1,
+      "maxH": 25.1,
+      "sample": "⌂"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 2,
+      "minW": 22,
+      "minH": 22,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛊"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 126.4,
+      "minH": 28,
+      "maxW": 126.4,
+      "maxH": 28,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     }
+    ],
+    "smallCount": 15,
+    "markersBehindContentsOverlay": 0,
+    "markers": 1,
+    "markerTypes": {
+     "t-set": 1
+    },
+    "labels": 1,
+    "tooltips": 0,
+    "vectorPaths": 0,
+    "otherMarkerIcons": 2,
+    "tilesLoaded": 2,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     518
+    ],
+    "mapHeightPctOfViewport": 78,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 29,
+    "visibleFractionOfChart": 0,
+    "zoom": 9.384522782580063,
+    "minZoom": 1.9500000000000002,
+    "maxZoom": 9.884522782580063,
+    "street": {
+     "zoom": 9.384522782580063,
+     "maxZoom": 9.884522782580063,
+     "hash": "#chart=Ep%C4%93shu",
+     "chartMode": false,
+     "canvases": [],
+     "bigImages": [
+      [
+       "art/overlay-Epeshu.jpg",
+       2863,
+       3072
+      ]
+     ]
+    },
+    "streetSettleMs": 5174,
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 2,
+      "bytes": 26597
+     },
+     "art": {
+      "requests": 1,
+      "bytes": 2171881
+     },
+     "total": {
+      "requests": 3,
+      "bytes": 2198478
+     }
+    }
+   },
+   "6-street-maxzoom": {
+    "vw": 390,
+    "vh": 664,
+    "sw": 390,
+    "sh": 974,
+    "hOverflow": false,
+    "bodySW": 390,
+    "pokes": [],
+    "interactiveTotal": 18,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 370,
+      "minH": 32,
+      "maxW": 370,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 1,
+      "minW": 25.1,
+      "minH": 25.1,
+      "maxW": 25.1,
+      "maxH": 25.1,
+      "sample": "⌂"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 1,
+      "minW": 22,
+      "minH": 22,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛊"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 126.4,
+      "minH": 28,
+      "maxW": 126.4,
+      "maxH": 28,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     }
+    ],
+    "smallCount": 14,
+    "markersBehindContentsOverlay": 0,
+    "markers": 1,
+    "markerTypes": {
+     "t-set": 1
+    },
+    "labels": 1,
+    "tooltips": 0,
+    "vectorPaths": 0,
+    "otherMarkerIcons": 1,
+    "tilesLoaded": 1,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     518
+    ],
+    "mapHeightPctOfViewport": 78,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 29,
+    "visibleFractionOfChart": 0,
+    "zoom": 9.884522782580063,
+    "minZoom": 1.9500000000000002,
+    "maxZoom": 9.884522782580063,
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 1,
+      "bytes": 18547
+     },
+     "art": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "total": {
+      "requests": 1,
+      "bytes": 18547
+     }
+    }
+   }
+  },
+  "timeToAtlasReadyMs": 408,
+  "firstLoadSettled": true,
+  "ttf": {
+   "firstTileLoadedMs": 204,
+   "tilesLoadedCount": 20,
+   "domContentLoadedMs": 127,
+   "loadEventMs": 287,
+   "firstTileRequestStartMs": 118,
+   "firstTileResponseDoneMs": 196,
+   "allDataDoneMs": 196
+  },
+  "firstLoadBytes": {
+   "html/other": {
+    "requests": 1,
+    "bytes": 211860
+   },
+   "data": {
+    "requests": 16,
+    "bytes": 228129
+   },
+   "tiles": {
+    "requests": 20,
+    "bytes": 289647
+   },
+   "total": {
+    "requests": 37,
+    "bytes": 729636
+   }
+  },
+  "firstLoadBytesNote": "all localhost responses (encodedDataLength via CDP) from navigation to settled Contents screen; fonts/CDN blocked or served from disk (not counted)",
+  "layersTapOpened": false,
+  "totalBytes": {
+   "html/other": {
+    "requests": 1,
+    "bytes": 211860
+   },
+   "data": {
+    "requests": 16,
+    "bytes": 228129
+   },
+   "tiles": {
+    "requests": 37,
+    "bytes": 487998
+   },
+   "art": {
+    "requests": 2,
+    "bytes": 2245332
+   },
+   "total": {
+    "requests": 56,
+    "bytes": 3173319
+   }
+  },
+  "pageScroll": {
+   "scrollY": 310,
+   "sh": 974,
+   "vh": 664
+  },
+  "consoleErrors": [
+   {
+    "type": "error",
+    "text": "Failed to load resource: net::ERR_FAILED",
+    "loc": "https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap"
+   }
+  ],
+  "pageErrors": [],
+  "failedRequests": [
+   "https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,600;1,400 :: net::ERR_FAILED"
+  ],
+  "status4xx": [],
+  "slowest": [
+   {
+    "u": "/maps-site/art/overlay-Epeshu.jpg",
+    "ms": 31,
+    "b": 2171881
+   },
+   {
+    "u": "/maps-site/?v=1",
+    "ms": 12,
+    "b": 211860
+   },
+   {
+    "u": "/maps-site/data/wiki-places.json",
+    "ms": 25,
+    "b": 91381
+   },
+   {
+    "u": "/maps-site/art/loc-Ep%C4%93shu.jpg",
+    "ms": 7,
+    "b": 73451
+   },
+   {
+    "u": "/maps-site/data/city-traits.json",
+    "ms": 68,
+    "b": 27160
+   },
+   {
+    "u": "/maps-site/tiles/3/1/0.jpg",
+    "ms": 112,
+    "b": 22710
+   },
+   {
+    "u": "/maps-site/tiles/3/1/1.jpg",
+    "ms": 81,
+    "b": 22690
+   },
+   {
+    "u": "/maps-site/tiles/3/0/0.jpg",
+    "ms": 119,
+    "b": 21139
+   },
+   {
+    "u": "/maps-site/tiles/3/2/1.jpg",
+    "ms": 81,
+    "b": 20068
+   },
+   {
+    "u": "/maps-site/tiles/3/2/0.jpg",
+    "ms": 113,
+    "b": 19995
+   }
+  ],
+  "repeatVisit": {
+   "requestsOverNetworkWithBytes": 37,
+   "bytes": 729636,
+   "servedFromMemoryCache": 0
+  }
+ },
+ "pixel7": {
+  "profile": "pixel7",
+  "viewport": {
+   "w": 412,
+   "h": 839,
+   "dpr": 2.625,
+   "coarse": true,
+   "hover": false
+  },
+  "views": {
+   "1-contents": {
+    "vw": 412,
+    "vh": 839,
+    "sw": 412,
+    "sh": 1265,
+    "hOverflow": false,
+    "bodySW": 412,
+    "pokes": [],
+    "interactiveTotal": 5,
+    "smallTargets": [],
+    "smallCount": 0,
+    "markersBehindContentsOverlay": 74,
+    "markers": 0,
+    "markerTypes": {},
+    "labels": 0,
+    "tooltips": 0,
+    "vectorPaths": 28,
+    "otherMarkerIcons": 20,
+    "tilesLoaded": 15,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     693
+    ],
+    "mapHeightPctOfViewport": 83,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 21,
+    "visibleFractionOfChart": 0.293,
+    "zoom": 2.35,
+    "minZoom": 2.35,
+    "maxZoom": 8,
+    "contents": {
+     "open": true,
+     "scrollTop": 0,
+     "innerScrollTop": 0,
+     "cScrollH": 839,
+     "cClientH": 839,
+     "innerScrollH": 696,
+     "innerClientH": 696,
+     "kickerTop": 72,
+     "titleTop": 90,
+     "footBottom": 767,
+     "cards": [
+      [
+       178,
+       276
+      ],
+      [
+       290,
+       389
+      ],
+      [
+       403,
+       502
+      ],
+      [
+       516,
+       615
+      ],
+      [
+       629,
+       727
+      ]
+     ],
+     "vh": 839,
+     "activeEl": "tcard"
+    }
+   },
+   "2-whole-chart": {
+    "vw": 412,
+    "vh": 839,
+    "sw": 412,
+    "sh": 1265,
+    "hOverflow": false,
+    "bodySW": 412,
+    "pokes": [],
+    "interactiveTotal": 110,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 392,
+      "minH": 32,
+      "maxW": 392,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 20,
+      "minW": 18,
+      "minH": 18,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛵︎"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 74,
+      "minW": 16,
+      "minH": 16,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "≈"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 126.4,
+      "minH": 28,
+      "maxW": 126.4,
+      "maxH": 28,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     }
+    ],
+    "smallCount": 106,
+    "markersBehindContentsOverlay": 0,
+    "markers": 74,
+    "markerTypes": {
+     "t-water": 2,
+     "t-major": 6,
+     "t-mtn": 1,
+     "t-lesser": 54,
+     "t-set": 6,
+     "t-minor": 2,
+     "t-origin": 3
+    },
+    "labels": 0,
+    "tooltips": 0,
+    "vectorPaths": 28,
+    "otherMarkerIcons": 20,
+    "tilesLoaded": 15,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     693
+    ],
+    "mapHeightPctOfViewport": 83,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 21,
+    "visibleFractionOfChart": 0.293,
+    "zoom": 2.35,
+    "minZoom": 2.35,
+    "maxZoom": 8,
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "total": {
+      "requests": 0,
+      "bytes": 0
+     }
+    }
+   },
+   "3-layers-panel": {
+    "vw": 412,
+    "vh": 839,
+    "sw": 412,
+    "sh": 1265,
+    "hOverflow": false,
+    "bodySW": 412,
+    "pokes": [],
+    "interactiveTotal": 141,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 392,
+      "minH": 32,
+      "maxW": 392,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 20,
+      "minW": 18,
+      "minH": 18,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛵︎"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 74,
+      "minW": 16,
+      "minH": 16,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "≈"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "label",
+      "count": 16,
+      "minW": 394,
+      "minH": 22.8,
+      "maxW": 394,
+      "maxH": 22.8,
+      "sample": "⌂ Settlements"
+     },
+     {
+      "selector": "input.leaflet-control-layers-selector",
+      "count": 16,
+      "minW": 13,
+      "minH": 13,
+      "maxW": 13,
+      "maxH": 13,
+      "sample": ""
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 126.4,
+      "minH": 28,
+      "maxW": 126.4,
+      "maxH": 28,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     }
+    ],
+    "smallCount": 138,
+    "markersBehindContentsOverlay": 0,
+    "markers": 74,
+    "markerTypes": {
+     "t-water": 2,
+     "t-major": 6,
+     "t-mtn": 1,
+     "t-lesser": 54,
+     "t-set": 6,
+     "t-minor": 2,
+     "t-origin": 3
+    },
+    "labels": 0,
+    "tooltips": 0,
+    "vectorPaths": 28,
+    "otherMarkerIcons": 20,
+    "tilesLoaded": 15,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     693
+    ],
+    "mapHeightPctOfViewport": 83,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 82,
+    "visibleFractionOfChart": 0.293,
+    "zoom": 2.35,
+    "minZoom": 2.35,
+    "maxZoom": 8,
+    "layers": {
+     "expanded": true,
+     "rect": {
+      "l": 4,
+      "t": 180,
+      "r": 398,
+      "b": 614,
+      "w": 394,
+      "h": 434
+     },
+     "vw": 412,
+     "vh": 839,
+     "fitsViewport": true,
+     "overflowY": "visible",
+     "scrollH": 434,
+     "clientH": 434,
+     "rows": 16,
+     "rowSizes": [
+      [
+       394,
+       23
+      ],
+      [
+       394,
+       23
+      ],
+      [
+       394,
+       23
+      ],
+      [
+       394,
+       23
+      ],
+      [
+       394,
+       23
+      ],
+      [
+       394,
+       23
+      ]
+     ],
+     "checkbox": [
+      13,
+      13
+     ],
+     "labelFont": "15.1666px"
+    }
+   },
+   "4-place-card": {
+    "vw": 412,
+    "vh": 839,
+    "sw": 412,
+    "sh": 839,
+    "hOverflow": false,
+    "bodySW": 412,
+    "pokes": [],
+    "interactiveTotal": 26,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 392,
+      "minH": 32,
+      "maxW": 392,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 3,
+      "minW": 20.5,
+      "minH": 20.5,
+      "maxW": 28.6,
+      "maxH": 28.6,
+      "sample": "⌂"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 8,
+      "minW": 20,
+      "minH": 20,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛊"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     },
+     {
+      "selector": "button.chart-btn",
+      "count": 1,
+      "minW": 372,
+      "minH": 41,
+      "maxW": 372,
+      "maxH": 41,
+      "sample": "⚘ Descend into Epēshu"
+     }
+    ],
+    "smallCount": 22,
+    "markersBehindContentsOverlay": 0,
+    "markers": 3,
+    "markerTypes": {
+     "t-set": 2,
+     "t-minor": 1
+    },
+    "labels": 2,
+    "tooltips": 0,
+    "vectorPaths": 7,
+    "otherMarkerIcons": 8,
+    "tilesLoaded": 12,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     693
+    ],
+    "mapHeightPctOfViewport": 83,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 21,
+    "visibleFractionOfChart": 0.008,
+    "zoom": 4.95,
+    "minZoom": 2.35,
+    "maxZoom": 9.884522782580063,
+    "place": {
+     "found": true,
+     "glyph": {
+      "x": 206.00000762939453,
+      "y": 457,
+      "w": 25.080001831054688,
+      "h": 25.08001708984375,
+      "cls": "mk t-set"
+     },
+     "stackAtTap": [
+      "SPAN.glyph \"⌂\"",
+      "DIV.leaflet-marker-icon leaflet-zoom-animated leaflet-intera \"⌂Epēshu\"",
+      "DIV.leaflet-container leaflet-touch leaflet-retina leaflet-f \"⛵︎⛵︎⛵︎⛵︎Road t\"",
+      "DIV. \"⛵︎⛵︎⛵︎⛵︎Road t\"",
+      "DIV. \"Agrakh Nīmilka\"",
+      "BODY. \"Agrakh Nīmilka\""
+     ],
+     "panel": {
+      "open": true,
+      "rect": {
+       "l": 0,
+       "t": 360,
+       "w": 412,
+       "h": 444
+      },
+      "vw": 412,
+      "vh": 839,
+      "coversPctOfViewportArea": 53,
+      "position": "absolute",
+      "bodyScrollH": 4675,
+      "bodyClientH": 442,
+      "closeBtn": [
+       30,
+       30
+      ],
+      "h1": "Epēshu",
+      "imgs": [
+       {
+        "src": "art/loc-Ep%C4%93shu.jpg",
+        "nw": 735,
+        "nh": 578,
+        "w": 412,
+        "h": 150
+       }
+      ],
+      "textLen": 7566,
+      "hash": "#place=Ep%C4%93shu"
+     }
+    },
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 12,
+      "bytes": 126610
+     },
+     "art": {
+      "requests": 1,
+      "bytes": 73451
+     },
+     "total": {
+      "requests": 13,
+      "bytes": 200061
+     }
+    }
+   },
+   "4b-place-card-epeshu": {
+    "vw": 412,
+    "vh": 839,
+    "sw": 412,
+    "sh": 839,
+    "hOverflow": false,
+    "bodySW": 412,
+    "pokes": [],
+    "interactiveTotal": 20,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 392,
+      "minH": 32,
+      "maxW": 392,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 1,
+      "minW": 28.6,
+      "minH": 28.6,
+      "maxW": 28.6,
+      "maxH": 28.6,
+      "sample": "⌂"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 4,
+      "minW": 20,
+      "minH": 20,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛊"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     },
+     {
+      "selector": "button.chart-btn",
+      "count": 1,
+      "minW": 372,
+      "minH": 41,
+      "maxW": 372,
+      "maxH": 41,
+      "sample": "⚘ Descend into Epēshu"
+     }
+    ],
+    "smallCount": 16,
+    "markersBehindContentsOverlay": 0,
+    "markers": 1,
+    "markerTypes": {
+     "t-set": 1
+    },
+    "labels": 1,
+    "tooltips": 0,
+    "vectorPaths": 7,
+    "otherMarkerIcons": 4,
+    "tilesLoaded": 2,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     693
+    ],
+    "mapHeightPctOfViewport": 83,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 21,
+    "visibleFractionOfChart": 0.001,
+    "zoom": 6.550000000000001,
+    "minZoom": 2.35,
+    "maxZoom": 9.884522782580063,
+    "place": {
+     "panel": {
+      "open": true,
+      "h1": "Epēshu",
+      "rect": {
+       "t": 360,
+       "h": 444,
+       "w": 412
+      },
+      "coversPctOfViewportArea": 53,
+      "bodyScrollH": 4675,
+      "bodyClientH": 442,
+      "imgs": [
+       {
+        "src": "loc-Ep%C4%93shu.jpg",
+        "nw": 735,
+        "w": 412,
+        "h": 150
+       }
+      ],
+      "hash": "#place=Ep%C4%93shu"
+     },
+     "glyph": {
+      "x": 206.00000762939453,
+      "y": 457,
+      "w": 25.080001831054688,
+      "h": 25.08001708984375
+     }
+    },
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 2,
+      "bytes": 26597
+     },
+     "art": {
+      "requests": 2,
+      "bytes": 2245332
+     },
+     "total": {
+      "requests": 4,
+      "bytes": 2271929
+     }
+    }
+   },
+   "5-street-zoom-epeshu": {
+    "vw": 412,
+    "vh": 839,
+    "sw": 412,
+    "sh": 1265,
+    "hOverflow": false,
+    "bodySW": 412,
+    "pokes": [],
+    "interactiveTotal": 19,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 392,
+      "minH": 32,
+      "maxW": 392,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 1,
+      "minW": 25.1,
+      "minH": 25.1,
+      "maxW": 25.1,
+      "maxH": 25.1,
+      "sample": "⌂"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 2,
+      "minW": 22,
+      "minH": 22,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛊"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 126.4,
+      "minH": 28,
+      "maxW": 126.4,
+      "maxH": 28,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     }
+    ],
+    "smallCount": 15,
+    "markersBehindContentsOverlay": 0,
+    "markers": 1,
+    "markerTypes": {
+     "t-set": 1
+    },
+    "labels": 1,
+    "tooltips": 0,
+    "vectorPaths": 2,
+    "otherMarkerIcons": 2,
+    "tilesLoaded": 2,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     693
+    ],
+    "mapHeightPctOfViewport": 83,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 21,
+    "visibleFractionOfChart": 0,
+    "zoom": 9.384522782580063,
+    "minZoom": 2.35,
+    "maxZoom": 9.884522782580063,
+    "street": {
+     "zoom": 9.384522782580063,
+     "maxZoom": 9.884522782580063,
+     "hash": "#chart=Ep%C4%93shu",
+     "chartMode": false,
+     "canvases": [],
+     "bigImages": [
+      [
+       "art/overlay-Epeshu.jpg",
+       2863,
+       3072
+      ]
+     ]
+    },
+    "streetSettleMs": 5163,
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "art": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "total": {
+      "requests": 0,
+      "bytes": 0
+     }
+    }
+   },
+   "6-street-maxzoom": {
+    "vw": 412,
+    "vh": 839,
+    "sw": 412,
+    "sh": 1265,
+    "hOverflow": false,
+    "bodySW": 412,
+    "pokes": [],
+    "interactiveTotal": 18,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 392,
+      "minH": 32,
+      "maxW": 392,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 1,
+      "minW": 25.1,
+      "minH": 25.1,
+      "maxW": 25.1,
+      "maxH": 25.1,
+      "sample": "⌂"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 1,
+      "minW": 22,
+      "minH": 22,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛊"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 126.4,
+      "minH": 28,
+      "maxW": 126.4,
+      "maxH": 28,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     }
+    ],
+    "smallCount": 14,
+    "markersBehindContentsOverlay": 0,
+    "markers": 1,
+    "markerTypes": {
+     "t-set": 1
+    },
+    "labels": 1,
+    "tooltips": 0,
+    "vectorPaths": 0,
+    "otherMarkerIcons": 1,
+    "tilesLoaded": 1,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     693
+    ],
+    "mapHeightPctOfViewport": 83,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 21,
+    "visibleFractionOfChart": 0,
+    "zoom": 9.884522782580063,
+    "minZoom": 2.35,
+    "maxZoom": 9.884522782580063,
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 1,
+      "bytes": 18547
+     },
+     "art": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "total": {
+      "requests": 1,
+      "bytes": 18547
+     }
+    }
+   }
+  },
+  "timeToAtlasReadyMs": 375,
+  "firstLoadSettled": true,
+  "ttf": {
+   "firstTileLoadedMs": 185,
+   "tilesLoadedCount": 15,
+   "domContentLoadedMs": 101,
+   "loadEventMs": 291,
+   "firstTileRequestStartMs": 94,
+   "firstTileResponseDoneMs": 172,
+   "allDataDoneMs": 172
+  },
+  "firstLoadBytes": {
+   "html/other": {
+    "requests": 1,
+    "bytes": 211860
+   },
+   "data": {
+    "requests": 16,
+    "bytes": 228129
+   },
+   "tiles": {
+    "requests": 15,
+    "bytes": 221210
+   },
+   "total": {
+    "requests": 32,
+    "bytes": 661199
+   }
+  },
+  "firstLoadBytesNote": "all localhost responses (encodedDataLength via CDP) from navigation to settled Contents screen; fonts/CDN blocked or served from disk (not counted)",
+  "layersTapOpened": false,
+  "totalBytes": {
+   "html/other": {
+    "requests": 1,
+    "bytes": 211860
+   },
+   "data": {
+    "requests": 16,
+    "bytes": 228129
+   },
+   "tiles": {
+    "requests": 30,
+    "bytes": 392964
+   },
+   "art": {
+    "requests": 3,
+    "bytes": 2318783
+   },
+   "total": {
+    "requests": 50,
+    "bytes": 3151736
+   }
+  },
+  "pageScroll": {
+   "scrollY": 426,
+   "sh": 1265,
+   "vh": 839
+  },
+  "consoleErrors": [
+   {
+    "type": "error",
+    "text": "Failed to load resource: net::ERR_FAILED",
+    "loc": "https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap"
+   }
+  ],
+  "pageErrors": [],
+  "failedRequests": [
+   "https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,600;1,400 :: net::ERR_FAILED"
+  ],
+  "status4xx": [],
+  "slowest": [
+   {
+    "u": "/maps-site/art/overlay-Epeshu.jpg",
+    "ms": 39,
+    "b": 2171881
+   },
+   {
+    "u": "/maps-site/?v=410956",
+    "ms": 10,
+    "b": 211860
+   },
+   {
+    "u": "/maps-site/data/wiki-places.json",
+    "ms": 45,
+    "b": 91381
+   },
+   {
+    "u": "/maps-site/art/loc-Ep%C4%93shu.jpg",
+    "ms": 16,
+    "b": 73451
+   },
+   {
+    "u": "/maps-site/art/loc-Ep%C4%93shu.jpg",
+    "ms": 9,
+    "b": 73451
+   },
+   {
+    "u": "/maps-site/data/city-traits.json",
+    "ms": 64,
+    "b": 27160
+   },
+   {
+    "u": "/maps-site/tiles/3/1/0.jpg",
+    "ms": 104,
+    "b": 22710
+   },
+   {
+    "u": "/maps-site/tiles/3/1/1.jpg",
+    "ms": 91,
+    "b": 22690
+   },
+   {
+    "u": "/maps-site/tiles/3/2/1.jpg",
+    "ms": 79,
+    "b": 20068
+   },
+   {
+    "u": "/maps-site/tiles/3/2/0.jpg",
+    "ms": 104,
+    "b": 19995
+   }
+  ],
+  "repeatVisit": {
+   "requestsOverNetworkWithBytes": 32,
+   "bytes": 661199,
+   "servedFromMemoryCache": 0
+  }
+ },
+ "desktop": {
+  "profile": "desktop",
+  "viewport": {
+   "w": 1366,
+   "h": 768,
+   "dpr": 1,
+   "coarse": false,
+   "hover": true
+  },
+  "views": {
+   "1-contents": {
+    "vw": 1366,
+    "vh": 768,
+    "sw": 1366,
+    "sh": 768,
+    "hOverflow": false,
+    "bodySW": 1366,
+    "pokes": [],
+    "interactiveTotal": 5,
+    "smallTargets": [],
+    "smallCount": 0,
+    "markersBehindContentsOverlay": 163,
+    "markers": 0,
+    "markerTypes": {},
+    "labels": 0,
+    "tooltips": 0,
+    "vectorPaths": 37,
+    "otherMarkerIcons": 22,
+    "tilesLoaded": 15,
+    "tilesLoading": 0,
+    "stageRect": [
+     50,
+     691
+    ],
+    "mapHeightPctOfViewport": 90,
+    "headerHeight": 50,
+    "mapAreaCoveredByControlsPct": 5,
+    "visibleFractionOfChart": 0.968,
+    "zoom": 2.35,
+    "minZoom": 2.35,
+    "maxZoom": 8,
+    "contents": {
+     "open": true,
+     "scrollTop": 0,
+     "innerScrollTop": 0,
+     "cScrollH": 768,
+     "cClientH": 768,
+     "innerScrollH": 413,
+     "innerClientH": 413,
+     "kickerTop": 177,
+     "titleTop": 195,
+     "footBottom": 591,
+     "cards": [
+      [
+       298,
+       418
+      ],
+      [
+       298,
+       418
+      ],
+      [
+       298,
+       418
+      ],
+      [
+       432,
+       551
+      ],
+      [
+       432,
+       551
+      ]
+     ],
+     "vh": 768,
+     "activeEl": "tcard"
+    }
+   },
+   "2-whole-chart": {
+    "vw": 1366,
+    "vh": 768,
+    "sw": 1366,
+    "sh": 768,
+    "hOverflow": false,
+    "bodySW": 1366,
+    "pokes": [],
+    "interactiveTotal": 200,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 360,
+      "minH": 32,
+      "maxW": 360,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 30,
+      "maxW": 37,
+      "maxH": 30,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 30,
+      "maxW": 77.3,
+      "maxH": 30,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 73.2,
+      "minH": 30,
+      "maxW": 73.2,
+      "maxH": 30,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 70.2,
+      "minH": 30,
+      "maxW": 70.2,
+      "maxH": 30,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 64.9,
+      "minH": 30,
+      "maxW": 64.9,
+      "maxH": 30,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 22,
+      "minW": 18,
+      "minH": 18,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛵︎"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 163,
+      "minW": 16,
+      "minH": 16,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "≈"
+     },
+     {
+      "selector": "a.leaflet-control-zoom-in[href=#]",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "+"
+     },
+     {
+      "selector": "a.leaflet-control-zoom-out.leaflet-disabled[href=#]",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "−"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 33,
+      "maxW": 147,
+      "maxH": 33,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 138.8,
+      "minH": 30,
+      "maxW": 138.8,
+      "maxH": 30,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     }
+    ],
+    "smallCount": 198,
+    "markersBehindContentsOverlay": 0,
+    "markers": 163,
+    "markerTypes": {
+     "t-water": 5,
+     "t-major": 13,
+     "t-mtn": 3,
+     "t-lesser": 119,
+     "t-set": 10,
+     "t-minor": 7,
+     "t-origin": 6
+    },
+    "labels": 0,
+    "tooltips": 0,
+    "vectorPaths": 37,
+    "otherMarkerIcons": 22,
+    "tilesLoaded": 15,
+    "tilesLoading": 0,
+    "stageRect": [
+     50,
+     691
+    ],
+    "mapHeightPctOfViewport": 90,
+    "headerHeight": 50,
+    "mapAreaCoveredByControlsPct": 5,
+    "visibleFractionOfChart": 0.968,
+    "zoom": 2.35,
+    "minZoom": 2.35,
+    "maxZoom": 8,
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "total": {
+      "requests": 0,
+      "bytes": 0
+     }
+    }
+   },
+   "3-layers-panel": {
+    "vw": 1366,
+    "vh": 768,
+    "sw": 1366,
+    "sh": 768,
+    "hOverflow": false,
+    "bodySW": 1366,
+    "pokes": [],
+    "interactiveTotal": 231,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 360,
+      "minH": 32,
+      "maxW": 360,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 30,
+      "maxW": 37,
+      "maxH": 30,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 30,
+      "maxW": 77.3,
+      "maxH": 30,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 73.2,
+      "minH": 30,
+      "maxW": 73.2,
+      "maxH": 30,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 70.2,
+      "minH": 30,
+      "maxW": 70.2,
+      "maxH": 30,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 64.9,
+      "minH": 30,
+      "maxW": 64.9,
+      "maxH": 30,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 22,
+      "minW": 18,
+      "minH": 18,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛵︎"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 163,
+      "minW": 16,
+      "minH": 16,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "≈"
+     },
+     {
+      "selector": "a.leaflet-control-zoom-in[href=#]",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "+"
+     },
+     {
+      "selector": "a.leaflet-control-zoom-out.leaflet-disabled[href=#]",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "−"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "label",
+      "count": 16,
+      "minW": 470.1,
+      "minH": 22.8,
+      "maxW": 470.1,
+      "maxH": 22.8,
+      "sample": "⌂ Settlements"
+     },
+     {
+      "selector": "input.leaflet-control-layers-selector",
+      "count": 16,
+      "minW": 13,
+      "minH": 13,
+      "maxW": 13,
+      "maxH": 13,
+      "sample": ""
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 33,
+      "maxW": 147,
+      "maxH": 33,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 138.8,
+      "minH": 30,
+      "maxW": 138.8,
+      "maxH": 30,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     }
+    ],
+    "smallCount": 230,
+    "markersBehindContentsOverlay": 0,
+    "markers": 163,
+    "markerTypes": {
+     "t-water": 5,
+     "t-major": 13,
+     "t-mtn": 3,
+     "t-lesser": 119,
+     "t-set": 10,
+     "t-minor": 7,
+     "t-origin": 6
+    },
+    "labels": 0,
+    "tooltips": 0,
+    "vectorPaths": 37,
+    "otherMarkerIcons": 22,
+    "tilesLoaded": 15,
+    "tilesLoading": 0,
+    "stageRect": [
+     50,
+     691
+    ],
+    "mapHeightPctOfViewport": 90,
+    "headerHeight": 50,
+    "mapAreaCoveredByControlsPct": 27,
+    "visibleFractionOfChart": 0.968,
+    "zoom": 2.35,
+    "minZoom": 2.35,
+    "maxZoom": 8,
+    "layers": {
+     "expanded": true,
+     "rect": {
+      "l": 882,
+      "t": 119,
+      "r": 1352,
+      "b": 539,
+      "w": 470,
+      "h": 420
+     },
+     "vw": 1366,
+     "vh": 768,
+     "fitsViewport": true,
+     "overflowY": "visible",
+     "scrollH": 420,
+     "clientH": 420,
+     "rows": 16,
+     "rowSizes": [
+      [
+       470,
+       23
+      ],
+      [
+       470,
+       23
+      ],
+      [
+       470,
+       23
+      ],
+      [
+       470,
+       23
+      ],
+      [
+       470,
+       23
+      ],
+      [
+       470,
+       23
+      ]
+     ],
+     "checkbox": [
+      13,
+      13
+     ],
+     "labelFont": "15.1666px"
+    }
+   },
+   "4-place-card": {
+    "vw": 1366,
+    "vh": 768,
+    "sw": 1366,
+    "sh": 768,
+    "hOverflow": false,
+    "bodySW": 1366,
+    "pokes": [],
+    "interactiveTotal": 33,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 360,
+      "minH": 32,
+      "maxW": 360,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 30,
+      "maxW": 37,
+      "maxH": 30,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 30,
+      "maxW": 77.3,
+      "maxH": 30,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 73.2,
+      "minH": 30,
+      "maxW": 73.2,
+      "maxH": 30,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 70.2,
+      "minH": 30,
+      "maxW": 70.2,
+      "maxH": 30,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 64.9,
+      "minH": 30,
+      "maxW": 64.9,
+      "maxH": 30,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 11,
+      "minW": 18,
+      "minH": 18,
+      "maxW": 175.9,
+      "maxH": 22.8,
+      "sample": "⛵︎"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 5,
+      "minW": 18.2,
+      "minH": 18.2,
+      "maxW": 28.6,
+      "maxH": 28.6,
+      "sample": "⌂"
+     },
+     {
+      "selector": "a.leaflet-control-zoom-in[href=#]",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "+"
+     },
+     {
+      "selector": "a.leaflet-control-zoom-out[href=#]",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "−"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 33,
+      "maxW": 147,
+      "maxH": 33,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 138.8,
+      "minH": 30,
+      "maxW": 138.8,
+      "maxH": 30,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     },
+     {
+      "selector": "button.chart-btn",
+      "count": 1,
+      "minW": 298,
+      "minH": 40,
+      "maxW": 298,
+      "maxH": 40,
+      "sample": "⚘ Descend into Epēshu"
+     }
+    ],
+    "smallCount": 31,
+    "markersBehindContentsOverlay": 0,
+    "markers": 5,
+    "markerTypes": {
+     "t-lesser": 2,
+     "t-set": 2,
+     "t-minor": 1
+    },
+    "labels": 3,
+    "tooltips": 0,
+    "vectorPaths": 8,
+    "otherMarkerIcons": 11,
+    "tilesLoaded": 28,
+    "tilesLoading": 0,
+    "stageRect": [
+     50,
+     691
+    ],
+    "mapHeightPctOfViewport": 90,
+    "headerHeight": 50,
+    "mapAreaCoveredByControlsPct": 5,
+    "visibleFractionOfChart": 0.026,
+    "zoom": 4.95,
+    "minZoom": 2.35,
+    "maxZoom": 9.884522782580063,
+    "place": {
+     "found": true,
+     "glyph": {
+      "x": 683,
+      "y": 395,
+      "w": 25.0799560546875,
+      "h": 25.08001708984375,
+      "cls": "mk t-set"
+     },
+     "stackAtTap": [
+      "SPAN.glyph \"⌂\"",
+      "DIV.leaflet-marker-icon leaflet-zoom-animated leaflet-intera \"⌂Epēshu\"",
+      "DIV.leaflet-container leaflet-touch leaflet-fade-anim leafle \"⛵︎⛵︎⛵︎⛵︎Road t\"",
+      "DIV. \"⛵︎⛵︎⛵︎⛵︎Road t\"",
+      "DIV. \"Agrakh Nīmilka\"",
+      "BODY. \"Agrakh Nīmilka\""
+     ],
+     "panel": {
+      "open": true,
+      "rect": {
+       "l": 0,
+       "t": 50,
+       "w": 340,
+       "h": 691
+      },
+      "vw": 1366,
+      "vh": 768,
+      "coversPctOfViewportArea": 22,
+      "position": "absolute",
+      "bodyScrollH": 5381,
+      "bodyClientH": 691,
+      "closeBtn": [
+       30,
+       30
+      ],
+      "h1": "Epēshu",
+      "imgs": [
+       {
+        "src": "art/loc-Ep%C4%93shu.jpg",
+        "nw": 735,
+        "nh": 578,
+        "w": 338,
+        "h": 184
+       }
+      ],
+      "textLen": 7566,
+      "hash": "#place=Ep%C4%93shu"
+     }
+    },
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 28,
+      "bytes": 259675
+     },
+     "art": {
+      "requests": 1,
+      "bytes": 73451
+     },
+     "total": {
+      "requests": 29,
+      "bytes": 333126
+     }
+    }
+   },
+   "4b-place-card-epeshu": {
+    "vw": 1366,
+    "vh": 768,
+    "sw": 1366,
+    "sh": 768,
+    "hOverflow": false,
+    "bodySW": 1366,
+    "pokes": [],
+    "interactiveTotal": 26,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 360,
+      "minH": 32,
+      "maxW": 360,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 30,
+      "maxW": 37,
+      "maxH": 30,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 30,
+      "maxW": 77.3,
+      "maxH": 30,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 73.2,
+      "minH": 30,
+      "maxW": 73.2,
+      "maxH": 30,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 70.2,
+      "minH": 30,
+      "maxW": 70.2,
+      "maxH": 30,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 64.9,
+      "minH": 30,
+      "maxW": 64.9,
+      "maxH": 30,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 2,
+      "minW": 25.1,
+      "minH": 25.1,
+      "maxW": 28.6,
+      "maxH": 28.6,
+      "sample": "⌂"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 7,
+      "minW": 20,
+      "minH": 20,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛊"
+     },
+     {
+      "selector": "a.leaflet-control-zoom-in[href=#]",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "+"
+     },
+     {
+      "selector": "a.leaflet-control-zoom-out[href=#]",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "−"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 33,
+      "maxW": 147,
+      "maxH": 33,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 138.8,
+      "minH": 30,
+      "maxW": 138.8,
+      "maxH": 30,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     },
+     {
+      "selector": "button.chart-btn",
+      "count": 1,
+      "minW": 298,
+      "minH": 40,
+      "maxW": 298,
+      "maxH": 40,
+      "sample": "⚘ Descend into Epēshu"
+     }
+    ],
+    "smallCount": 24,
+    "markersBehindContentsOverlay": 0,
+    "markers": 2,
+    "markerTypes": {
+     "t-set": 2
+    },
+    "labels": 2,
+    "tooltips": 0,
+    "vectorPaths": 7,
+    "otherMarkerIcons": 7,
+    "tilesLoaded": 6,
+    "tilesLoading": 0,
+    "stageRect": [
+     50,
+     691
+    ],
+    "mapHeightPctOfViewport": 90,
+    "headerHeight": 50,
+    "mapAreaCoveredByControlsPct": 5,
+    "visibleFractionOfChart": 0.003,
+    "zoom": 6.550000000000001,
+    "minZoom": 2.35,
+    "maxZoom": 9.884522782580063,
+    "place": {
+     "panel": {
+      "open": true,
+      "h1": "Epēshu",
+      "rect": {
+       "t": 50,
+       "h": 691,
+       "w": 340
+      },
+      "coversPctOfViewportArea": 22,
+      "bodyScrollH": 5381,
+      "bodyClientH": 691,
+      "imgs": [
+       {
+        "src": "loc-Ep%C4%93shu.jpg",
+        "nw": 735,
+        "w": 338,
+        "h": 184
+       }
+      ],
+      "hash": "#place=Ep%C4%93shu"
+     },
+     "glyph": {
+      "x": 683,
+      "y": 395,
+      "w": 25.0799560546875,
+      "h": 25.08001708984375
+     }
+    },
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 6,
+      "bytes": 71673
+     },
+     "art": {
+      "requests": 2,
+      "bytes": 2245332
+     },
+     "total": {
+      "requests": 8,
+      "bytes": 2317005
+     }
+    }
+   },
+   "5-street-zoom-epeshu": {
+    "vw": 1366,
+    "vh": 768,
+    "sw": 1366,
+    "sh": 768,
+    "hOverflow": false,
+    "bodySW": 1366,
+    "pokes": [],
+    "interactiveTotal": 29,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 360,
+      "minH": 32,
+      "maxW": 360,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 30,
+      "maxW": 37,
+      "maxH": 30,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 30,
+      "maxW": 77.3,
+      "maxH": 30,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 73.2,
+      "minH": 30,
+      "maxW": 73.2,
+      "maxH": 30,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 70.2,
+      "minH": 30,
+      "maxW": 70.2,
+      "maxH": 30,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 64.9,
+      "minH": 30,
+      "maxW": 64.9,
+      "maxH": 30,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 1,
+      "minW": 25.1,
+      "minH": 25.1,
+      "maxW": 25.1,
+      "maxH": 25.1,
+      "sample": "⌂"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 13,
+      "minW": 22,
+      "minH": 22,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛊"
+     },
+     {
+      "selector": "a.leaflet-control-zoom-in[href=#]",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "+"
+     },
+     {
+      "selector": "a.leaflet-control-zoom-out[href=#]",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "−"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 33,
+      "maxW": 147,
+      "maxH": 33,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 138.8,
+      "minH": 30,
+      "maxW": 138.8,
+      "maxH": 30,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     }
+    ],
+    "smallCount": 27,
+    "markersBehindContentsOverlay": 0,
+    "markers": 1,
+    "markerTypes": {
+     "t-set": 1
+    },
+    "labels": 1,
+    "tooltips": 1,
+    "vectorPaths": 2,
+    "otherMarkerIcons": 13,
+    "tilesLoaded": 6,
+    "tilesLoading": 0,
+    "stageRect": [
+     50,
+     691
+    ],
+    "mapHeightPctOfViewport": 90,
+    "headerHeight": 50,
+    "mapAreaCoveredByControlsPct": 5,
+    "visibleFractionOfChart": 0,
+    "zoom": 9.384522782580063,
+    "minZoom": 2.35,
+    "maxZoom": 9.884522782580063,
+    "street": {
+     "zoom": 9.384522782580063,
+     "maxZoom": 9.884522782580063,
+     "hash": "#chart=Ep%C4%93shu",
+     "chartMode": false,
+     "canvases": [],
+     "bigImages": [
+      [
+       "art/overlay-Epeshu.jpg",
+       2863,
+       3072
+      ]
+     ]
+    },
+    "streetSettleMs": 5160,
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "art": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "total": {
+      "requests": 0,
+      "bytes": 0
+     }
+    }
+   },
+   "6-street-maxzoom": {
+    "vw": 1366,
+    "vh": 768,
+    "sw": 1366,
+    "sh": 768,
+    "hOverflow": false,
+    "bodySW": 1366,
+    "pokes": [],
+    "interactiveTotal": 21,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 360,
+      "minH": 32,
+      "maxW": 360,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 30,
+      "maxW": 37,
+      "maxH": 30,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 30,
+      "maxW": 77.3,
+      "maxH": 30,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 73.2,
+      "minH": 30,
+      "maxW": 73.2,
+      "maxH": 30,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 70.2,
+      "minH": 30,
+      "maxW": 70.2,
+      "maxH": 30,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 64.9,
+      "minH": 30,
+      "maxW": 64.9,
+      "maxH": 30,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 1,
+      "minW": 25.1,
+      "minH": 25.1,
+      "maxW": 25.1,
+      "maxH": 25.1,
+      "sample": "⌂"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 5,
+      "minW": 22,
+      "minH": 22,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛊"
+     },
+     {
+      "selector": "a.leaflet-control-zoom-in.leaflet-disabled[href=#]",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "+"
+     },
+     {
+      "selector": "a.leaflet-control-zoom-out[href=#]",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "−"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 33,
+      "maxW": 147,
+      "maxH": 33,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 138.8,
+      "minH": 30,
+      "maxW": 138.8,
+      "maxH": 30,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     }
+    ],
+    "smallCount": 19,
+    "markersBehindContentsOverlay": 0,
+    "markers": 1,
+    "markerTypes": {
+     "t-set": 1
+    },
+    "labels": 1,
+    "tooltips": 0,
+    "vectorPaths": 2,
+    "otherMarkerIcons": 5,
+    "tilesLoaded": 1,
+    "tilesLoading": 0,
+    "stageRect": [
+     50,
+     691
+    ],
+    "mapHeightPctOfViewport": 90,
+    "headerHeight": 50,
+    "mapAreaCoveredByControlsPct": 5,
+    "visibleFractionOfChart": 0,
+    "zoom": 9.884522782580063,
+    "minZoom": 2.35,
+    "maxZoom": 9.884522782580063,
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 1,
+      "bytes": 18547
+     },
+     "art": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "total": {
+      "requests": 1,
+      "bytes": 18547
+     }
+    }
+   }
+  },
+  "timeToAtlasReadyMs": 394,
+  "firstLoadSettled": true,
+  "ttf": {
+   "firstTileLoadedMs": 261,
+   "tilesLoadedCount": 15,
+   "domContentLoadedMs": 91,
+   "loadEventMs": 261,
+   "firstTileRequestStartMs": 88,
+   "firstTileResponseDoneMs": 164,
+   "allDataDoneMs": 156
+  },
+  "firstLoadBytes": {
+   "html/other": {
+    "requests": 1,
+    "bytes": 211860
+   },
+   "data": {
+    "requests": 16,
+    "bytes": 228129
+   },
+   "tiles": {
+    "requests": 15,
+    "bytes": 157119
+   },
+   "total": {
+    "requests": 32,
+    "bytes": 597108
+   }
+  },
+  "firstLoadBytesNote": "all localhost responses (encodedDataLength via CDP) from navigation to settled Contents screen; fonts/CDN blocked or served from disk (not counted)",
+  "layersTapOpened": null,
+  "totalBytes": {
+   "html/other": {
+    "requests": 1,
+    "bytes": 211860
+   },
+   "data": {
+    "requests": 16,
+    "bytes": 228129
+   },
+   "tiles": {
+    "requests": 50,
+    "bytes": 507014
+   },
+   "art": {
+    "requests": 3,
+    "bytes": 2318783
+   },
+   "total": {
+    "requests": 70,
+    "bytes": 3265786
+   }
+  },
+  "pageScroll": {
+   "scrollY": 0,
+   "sh": 768,
+   "vh": 768
+  },
+  "consoleErrors": [
+   {
+    "type": "error",
+    "text": "Failed to load resource: net::ERR_FAILED",
+    "loc": "https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap"
+   }
+  ],
+  "pageErrors": [],
+  "failedRequests": [
+   "https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,600;1,400 :: net::ERR_FAILED"
+  ],
+  "status4xx": [],
+  "slowest": [
+   {
+    "u": "/maps-site/art/overlay-Epeshu.jpg",
+    "ms": 26,
+    "b": 2171881
+   },
+   {
+    "u": "/maps-site/?v=150712",
+    "ms": 9,
+    "b": 211860
+   },
+   {
+    "u": "/maps-site/data/wiki-places.json",
+    "ms": 49,
+    "b": 91381
+   },
+   {
+    "u": "/maps-site/art/loc-Ep%C4%93shu.jpg",
+    "ms": 9,
+    "b": 73451
+   },
+   {
+    "u": "/maps-site/art/loc-Ep%C4%93shu.jpg",
+    "ms": 43,
+    "b": 73451
+   },
+   {
+    "u": "/maps-site/data/city-traits.json",
+    "ms": 63,
+    "b": 27160
+   },
+   {
+    "u": "/maps-site/tiles/2/0/0.jpg",
+    "ms": 81,
+    "b": 21055
+   },
+   {
+    "u": "/maps-site/tiles/2/1/0.jpg",
+    "ms": 76,
+    "b": 18904
+   },
+   {
+    "u": "/maps-site/tiles/2/1/1.jpg",
+    "ms": 76,
+    "b": 18647
+   },
+   {
+    "u": "/maps-site/tiles/5/9/11.jpg",
+    "ms": 59,
+    "b": 18547
+   }
+  ],
+  "repeatVisit": {
+   "requestsOverNetworkWithBytes": 32,
+   "bytes": 597108,
+   "servedFromMemoryCache": 0
+  }
+ },
+ "iphone13-slow4g": {
+  "profile": "iphone13-slow4g",
+  "viewport": {
+   "w": 390,
+   "h": 664,
+   "dpr": 3,
+   "coarse": true,
+   "hover": false
+  },
+  "views": {
+   "1-contents": {
+    "vw": 390,
+    "vh": 664,
+    "sw": 390,
+    "sh": 974,
+    "hOverflow": false,
+    "bodySW": 390,
+    "pokes": [],
+    "interactiveTotal": 5,
+    "smallTargets": [],
+    "smallCount": 0,
+    "markersBehindContentsOverlay": 89,
+    "markers": 0,
+    "markerTypes": {},
+    "labels": 0,
+    "tooltips": 0,
+    "vectorPaths": 29,
+    "otherMarkerIcons": 22,
+    "tilesLoaded": 20,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     518
+    ],
+    "mapHeightPctOfViewport": 78,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 29,
+    "visibleFractionOfChart": 0.361,
+    "zoom": 1.9500000000000002,
+    "minZoom": 1.9500000000000002,
+    "maxZoom": 8,
+    "contents": {
+     "open": true,
+     "scrollTop": 0,
+     "innerScrollTop": 0,
+     "cScrollH": 722,
+     "cClientH": 664,
+     "innerScrollH": 716,
+     "innerClientH": 716,
+     "kickerTop": -26,
+     "titleTop": -8,
+     "footBottom": 690,
+     "cards": [
+      [
+       80,
+       179
+      ],
+      [
+       193,
+       312
+      ],
+      [
+       326,
+       425
+      ],
+      [
+       439,
+       537
+      ],
+      [
+       551,
+       650
+      ]
+     ],
+     "vh": 664,
+     "activeEl": "tcard"
+    }
+   },
+   "2-whole-chart": {
+    "vw": 390,
+    "vh": 664,
+    "sw": 390,
+    "sh": 974,
+    "hOverflow": false,
+    "bodySW": 390,
+    "pokes": [],
+    "interactiveTotal": 127,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 370,
+      "minH": 32,
+      "maxW": 370,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 22,
+      "minW": 18,
+      "minH": 18,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛵︎"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 89,
+      "minW": 16,
+      "minH": 16,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "≈"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 126.4,
+      "minH": 28,
+      "maxW": 126.4,
+      "maxH": 28,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     }
+    ],
+    "smallCount": 123,
+    "markersBehindContentsOverlay": 0,
+    "markers": 89,
+    "markerTypes": {
+     "t-water": 3,
+     "t-major": 8,
+     "t-mtn": 1,
+     "t-lesser": 63,
+     "t-set": 8,
+     "t-minor": 2,
+     "t-origin": 4
+    },
+    "labels": 0,
+    "tooltips": 0,
+    "vectorPaths": 29,
+    "otherMarkerIcons": 22,
+    "tilesLoaded": 20,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     518
+    ],
+    "mapHeightPctOfViewport": 78,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 29,
+    "visibleFractionOfChart": 0.361,
+    "zoom": 1.9500000000000002,
+    "minZoom": 1.9500000000000002,
+    "maxZoom": 8,
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "total": {
+      "requests": 0,
+      "bytes": 0
+     }
+    }
+   },
+   "3-layers-panel": {
+    "vw": 390,
+    "vh": 664,
+    "sw": 390,
+    "sh": 974,
+    "hOverflow": false,
+    "bodySW": 390,
+    "pokes": [],
+    "interactiveTotal": 158,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 370,
+      "minH": 32,
+      "maxW": 370,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 22,
+      "minW": 18,
+      "minH": 18,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛵︎"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 89,
+      "minW": 16,
+      "minH": 16,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "≈"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "label",
+      "count": 16,
+      "minW": 367,
+      "minH": 22.8,
+      "maxW": 367,
+      "maxH": 22.8,
+      "sample": "⌂ Settlements"
+     },
+     {
+      "selector": "input.leaflet-control-layers-selector",
+      "count": 16,
+      "minW": 13,
+      "minH": 13,
+      "maxW": 13,
+      "maxH": 13,
+      "sample": ""
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 126.4,
+      "minH": 28,
+      "maxW": 126.4,
+      "maxH": 28,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     }
+    ],
+    "smallCount": 155,
+    "markersBehindContentsOverlay": 0,
+    "markers": 89,
+    "markerTypes": {
+     "t-water": 3,
+     "t-major": 8,
+     "t-mtn": 1,
+     "t-lesser": 63,
+     "t-set": 8,
+     "t-minor": 2,
+     "t-origin": 4
+    },
+    "labels": 0,
+    "tooltips": 0,
+    "vectorPaths": 29,
+    "otherMarkerIcons": 22,
+    "tilesLoaded": 20,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     518
+    ],
+    "mapHeightPctOfViewport": 78,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 85,
+    "visibleFractionOfChart": 0.361,
+    "zoom": 1.9500000000000002,
+    "minZoom": 1.9500000000000002,
+    "maxZoom": 8,
+    "layers": {
+     "expanded": true,
+     "rect": {
+      "l": 4,
+      "t": 178,
+      "r": 376,
+      "b": 583,
+      "w": 372,
+      "h": 405
+     },
+     "vw": 390,
+     "vh": 664,
+     "fitsViewport": true,
+     "overflowY": "scroll",
+     "scrollH": 436,
+     "clientH": 405,
+     "rows": 16,
+     "rowSizes": [
+      [
+       367,
+       23
+      ],
+      [
+       367,
+       23
+      ],
+      [
+       367,
+       23
+      ],
+      [
+       367,
+       23
+      ],
+      [
+       367,
+       23
+      ],
+      [
+       367,
+       23
+      ]
+     ],
+     "checkbox": [
+      13,
+      13
+     ],
+     "labelFont": "15.1666px"
+    }
+   },
+   "4-place-card": {
+    "vw": 390,
+    "vh": 664,
+    "sw": 390,
+    "sh": 664,
+    "hOverflow": false,
+    "bodySW": 390,
+    "pokes": [],
+    "interactiveTotal": 25,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 370,
+      "minH": 32,
+      "maxW": 370,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 3,
+      "minW": 20.5,
+      "minH": 20.5,
+      "maxW": 25.1,
+      "maxH": 25.1,
+      "sample": "⌂"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 8,
+      "minW": 20,
+      "minH": 20,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛊"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     }
+    ],
+    "smallCount": 21,
+    "markersBehindContentsOverlay": 0,
+    "markers": 3,
+    "markerTypes": {
+     "t-set": 2,
+     "t-minor": 1
+    },
+    "labels": 3,
+    "tooltips": 0,
+    "vectorPaths": 7,
+    "otherMarkerIcons": 8,
+    "tilesLoaded": 12,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     518
+    ],
+    "mapHeightPctOfViewport": 78,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 29,
+    "visibleFractionOfChart": 0.01,
+    "zoom": 4.550000000000001,
+    "minZoom": 1.9500000000000002,
+    "maxZoom": 9.884522782580063,
+    "place": {
+     "found": true,
+     "glyph": {
+      "x": 195.00000762939453,
+      "y": 370,
+      "w": 25.080001831054688,
+      "h": 25.08001708984375,
+      "cls": "mk t-set"
+     },
+     "stackAtTap": [
+      "DIV.fac-badge \"⛊\"",
+      "DIV.leaflet-marker-icon leaflet-zoom-animated leaflet-intera \"⛊\"",
+      "SPAN.glyph \"⌂\"",
+      "DIV.leaflet-marker-icon leaflet-zoom-animated leaflet-intera \"⌂Epēshu\"",
+      "DIV.leaflet-container leaflet-touch leaflet-retina leaflet-s \"⛵︎⛵︎⛵︎⛵︎Road t\"",
+      "DIV. \"⛵︎⛵︎⛵︎⛵︎Road t\""
+     ],
+     "panel": {
+      "open": true,
+      "rect": {
+       "l": 0,
+       "t": 297,
+       "w": 390,
+       "h": 332
+      },
+      "vw": 390,
+      "vh": 664,
+      "coversPctOfViewportArea": 50,
+      "position": "absolute",
+      "bodyScrollH": 594,
+      "bodyClientH": 330,
+      "closeBtn": [
+       30,
+       30
+      ],
+      "h1": "The Lektān Priesthood",
+      "imgs": [],
+      "textLen": 809,
+      "hash": "#faction=The%20Lekt%C4%81n%20Priesthood"
+     }
+    },
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 12,
+      "bytes": 126610
+     },
+     "total": {
+      "requests": 12,
+      "bytes": 126610
+     }
+    }
+   },
+   "4b-place-card-epeshu": {
+    "vw": 390,
+    "vh": 664,
+    "sw": 390,
+    "sh": 664,
+    "hOverflow": false,
+    "bodySW": 390,
+    "pokes": [],
+    "interactiveTotal": 21,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 370,
+      "minH": 32,
+      "maxW": 370,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 1,
+      "minW": 25.1,
+      "minH": 25.1,
+      "maxW": 25.1,
+      "maxH": 25.1,
+      "sample": "⌂"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 5,
+      "minW": 20,
+      "minH": 20,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛊"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     },
+     {
+      "selector": "button.chart-btn",
+      "count": 1,
+      "minW": 350,
+      "minH": 41,
+      "maxW": 350,
+      "maxH": 41,
+      "sample": "⚘ Descend into Epēshu"
+     }
+    ],
+    "smallCount": 17,
+    "markersBehindContentsOverlay": 0,
+    "markers": 1,
+    "markerTypes": {
+     "t-set": 1
+    },
+    "labels": 1,
+    "tooltips": 0,
+    "vectorPaths": 7,
+    "otherMarkerIcons": 5,
+    "tilesLoaded": 2,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     518
+    ],
+    "mapHeightPctOfViewport": 78,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 29,
+    "visibleFractionOfChart": 0.001,
+    "zoom": 6.15,
+    "minZoom": 1.9500000000000002,
+    "maxZoom": 9.884522782580063,
+    "place": {
+     "panel": {
+      "open": true,
+      "h1": "Epēshu",
+      "rect": {
+       "t": 297,
+       "h": 332,
+       "w": 390
+      },
+      "coversPctOfViewportArea": 50,
+      "bodyScrollH": 4808,
+      "bodyClientH": 330,
+      "imgs": [
+       {
+        "src": "loc-Ep%C4%93shu.jpg",
+        "nw": 735,
+        "w": 390,
+        "h": 150
+       }
+      ],
+      "hash": "#place=Ep%C4%93shu"
+     },
+     "glyph": {
+      "x": 195.00000762939453,
+      "y": 370,
+      "w": 25.080001831054688,
+      "h": 25.08001708984375
+     }
+    },
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 2,
+      "bytes": 26597
+     },
+     "art": {
+      "requests": 1,
+      "bytes": 73451
+     },
+     "total": {
+      "requests": 3,
+      "bytes": 100048
+     }
+    }
+   },
+   "5-street-zoom-epeshu": {
+    "vw": 390,
+    "vh": 664,
+    "sw": 390,
+    "sh": 974,
+    "hOverflow": false,
+    "bodySW": 390,
+    "pokes": [],
+    "interactiveTotal": 19,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 370,
+      "minH": 32,
+      "maxW": 370,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 1,
+      "minW": 25.1,
+      "minH": 25.1,
+      "maxW": 25.1,
+      "maxH": 25.1,
+      "sample": "⌂"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 2,
+      "minW": 22,
+      "minH": 22,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛊"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 126.4,
+      "minH": 28,
+      "maxW": 126.4,
+      "maxH": 28,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     }
+    ],
+    "smallCount": 15,
+    "markersBehindContentsOverlay": 0,
+    "markers": 1,
+    "markerTypes": {
+     "t-set": 1
+    },
+    "labels": 1,
+    "tooltips": 0,
+    "vectorPaths": 0,
+    "otherMarkerIcons": 2,
+    "tilesLoaded": 2,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     518
+    ],
+    "mapHeightPctOfViewport": 78,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 29,
+    "visibleFractionOfChart": 0,
+    "zoom": 9.384522782580063,
+    "minZoom": 1.9500000000000002,
+    "maxZoom": 9.884522782580063,
+    "street": {
+     "zoom": 9.384522782580063,
+     "maxZoom": 9.884522782580063,
+     "hash": "#chart=Ep%C4%93shu",
+     "chartMode": false,
+     "canvases": [],
+     "bigImages": [
+      [
+       "art/overlay-Epeshu.jpg",
+       2863,
+       3072
+      ]
+     ]
+    },
+    "streetSettleMs": 14505,
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 2,
+      "bytes": 26597
+     },
+     "art": {
+      "requests": 1,
+      "bytes": 2171881
+     },
+     "total": {
+      "requests": 3,
+      "bytes": 2198478
+     }
+    }
+   },
+   "6-street-maxzoom": {
+    "vw": 390,
+    "vh": 664,
+    "sw": 390,
+    "sh": 974,
+    "hOverflow": false,
+    "bodySW": 390,
+    "pokes": [],
+    "interactiveTotal": 18,
+    "smallTargets": [
+     {
+      "selector": "input#search",
+      "count": 1,
+      "minW": 370,
+      "minH": 32,
+      "maxW": 370,
+      "maxH": 32,
+      "sample": ""
+     },
+     {
+      "selector": "button#themeToggle.theme-toggle",
+      "count": 1,
+      "minW": 37,
+      "minH": 31,
+      "maxW": 37,
+      "maxH": 31,
+      "sample": "☾"
+     },
+     {
+      "selector": "button#contentsBtn.contents-btn",
+      "count": 1,
+      "minW": 77.3,
+      "minH": 31,
+      "maxW": 77.3,
+      "maxH": 31,
+      "sample": "Contents"
+     },
+     {
+      "selector": "a[href=lexicon.html]",
+      "count": 1,
+      "minW": 60.6,
+      "minH": 31,
+      "maxW": 60.6,
+      "maxH": 31,
+      "sample": "Lexicon"
+     },
+     {
+      "selector": "a[href=https://princexizor.ddns.net/]",
+      "count": 1,
+      "minW": 57.7,
+      "minH": 31,
+      "maxW": 57.7,
+      "maxH": 31,
+      "sample": "Wiki ↗"
+     },
+     {
+      "selector": "a#simLink[href=../]",
+      "count": 1,
+      "minW": 53.2,
+      "minH": 31,
+      "maxW": 53.2,
+      "maxH": 31,
+      "sample": "Sim ↗"
+     },
+     {
+      "selector": "span.glyph",
+      "count": 1,
+      "minW": 25.1,
+      "minH": 25.1,
+      "maxW": 25.1,
+      "maxH": 25.1,
+      "sample": "⌂"
+     },
+     {
+      "selector": "div.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive",
+      "count": 1,
+      "minW": 22,
+      "minH": 22,
+      "maxW": 22,
+      "maxH": 22,
+      "sample": "⛊"
+     },
+     {
+      "selector": "div.era-title",
+      "count": 1,
+      "minW": 70.9,
+      "minH": 24.8,
+      "maxW": 70.9,
+      "maxH": 24.8,
+      "sample": "Modern ▾"
+     },
+     {
+      "selector": "button",
+      "count": 1,
+      "minW": 147,
+      "minH": 34,
+      "maxW": 147,
+      "maxH": 34,
+      "sample": "⚑ Follow the journey"
+     },
+     {
+      "selector": "button.grp-btn",
+      "count": 1,
+      "minW": 126.4,
+      "minH": 28,
+      "maxW": 126.4,
+      "maxH": 28,
+      "sample": "⛊ Groups & Powers"
+     },
+     {
+      "selector": "button.strip-toggle",
+      "count": 1,
+      "minW": 24,
+      "minH": 24,
+      "maxW": 24,
+      "maxH": 24,
+      "sample": "⚑"
+     },
+     {
+      "selector": "a[href=https://leafletjs.com]",
+      "count": 1,
+      "minW": 58.2,
+      "minH": 11,
+      "maxW": 58.2,
+      "maxH": 11,
+      "sample": "Leaflet"
+     },
+     {
+      "selector": "button#panelClose.panel-close",
+      "count": 1,
+      "minW": 30,
+      "minH": 30,
+      "maxW": 30,
+      "maxH": 30,
+      "sample": "×"
+     }
+    ],
+    "smallCount": 14,
+    "markersBehindContentsOverlay": 0,
+    "markers": 1,
+    "markerTypes": {
+     "t-set": 1
+    },
+    "labels": 1,
+    "tooltips": 0,
+    "vectorPaths": 0,
+    "otherMarkerIcons": 1,
+    "tilesLoaded": 1,
+    "tilesLoading": 0,
+    "stageRect": [
+     111,
+     518
+    ],
+    "mapHeightPctOfViewport": 78,
+    "headerHeight": 111,
+    "mapAreaCoveredByControlsPct": 29,
+    "visibleFractionOfChart": 0,
+    "zoom": 9.884522782580063,
+    "minZoom": 1.9500000000000002,
+    "maxZoom": 9.884522782580063,
+    "bytesDelta": {
+     "html/other": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "data": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "tiles": {
+      "requests": 1,
+      "bytes": 18547
+     },
+     "art": {
+      "requests": 0,
+      "bytes": 0
+     },
+     "total": {
+      "requests": 1,
+      "bytes": 18547
+     }
+    }
+   }
+  },
+  "timeToAtlasReadyMs": 4132,
+  "firstLoadSettled": true,
+  "ttf": {
+   "firstTileLoadedMs": 2465,
+   "tilesLoadedCount": 20,
+   "domContentLoadedMs": 1310,
+   "loadEventMs": 4061,
+   "firstTileRequestStartMs": 1276,
+   "firstTileResponseDoneMs": 2457,
+   "allDataDoneMs": 3123
+  },
+  "firstLoadBytes": {
+   "html/other": {
+    "requests": 1,
+    "bytes": 211860
+   },
+   "data": {
+    "requests": 16,
+    "bytes": 228129
+   },
+   "tiles": {
+    "requests": 20,
+    "bytes": 289647
+   },
+   "total": {
+    "requests": 37,
+    "bytes": 729636
+   }
+  },
+  "firstLoadBytesNote": "all localhost responses (encodedDataLength via CDP) from navigation to settled Contents screen; fonts/CDN blocked or served from disk (not counted)",
+  "layersTapOpened": false,
+  "totalBytes": {
+   "html/other": {
+    "requests": 1,
+    "bytes": 211860
+   },
+   "data": {
+    "requests": 16,
+    "bytes": 228129
+   },
+   "tiles": {
+    "requests": 37,
+    "bytes": 487998
+   },
+   "art": {
+    "requests": 2,
+    "bytes": 2245332
+   },
+   "total": {
+    "requests": 56,
+    "bytes": 3173319
+   }
+  },
+  "pageScroll": {
+   "scrollY": 310,
+   "sh": 974,
+   "vh": 664
+  },
+  "consoleErrors": [
+   {
+    "type": "error",
+    "text": "Failed to load resource: net::ERR_FAILED",
+    "loc": "https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap"
+   }
+  ],
+  "pageErrors": [],
+  "failedRequests": [
+   "https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,600;1,400 :: net::ERR_FAILED"
+  ],
+  "status4xx": [],
+  "slowest": [
+   {
+    "u": "/maps-site/art/overlay-Epeshu.jpg",
+    "ms": 10693,
+    "b": 2171881
+   },
+   {
+    "u": "/maps-site/?v=272184",
+    "ms": 1170,
+    "b": 211860
+   },
+   {
+    "u": "/maps-site/data/wiki-places.json",
+    "ms": 1855,
+    "b": 91381
+   },
+   {
+    "u": "/maps-site/art/loc-Ep%C4%93shu.jpg",
+    "ms": 507,
+    "b": 73451
+   },
+   {
+    "u": "/maps-site/data/city-traits.json",
+    "ms": 1200,
+    "b": 27160
+   },
+   {
+    "u": "/maps-site/tiles/3/1/0.jpg",
+    "ms": 2530,
+    "b": 22710
+   },
+   {
+    "u": "/maps-site/tiles/3/1/1.jpg",
+    "ms": 1610,
+    "b": 22690
+   },
+   {
+    "u": "/maps-site/tiles/3/0/0.jpg",
+    "ms": 2770,
+    "b": 21139
+   },
+   {
+    "u": "/maps-site/tiles/3/2/1.jpg",
+    "ms": 1818,
+    "b": 20068
+   },
+   {
+    "u": "/maps-site/tiles/3/2/0.jpg",
+    "ms": 2516,
+    "b": 19995
+   }
+  ]
+ },
+ "_extras": {
+  "iphone13": {
+   "visiblePins": 111,
+   "pairsCentresUnder22px": 97,
+   "pairsCentresUnder44px": 283,
+   "pinsInAnOverlapUnder22": 73,
+   "closedPanel": {
+    "ariaHidden": "true",
+    "top": 642,
+    "vh": 664,
+    "peekPx": 22,
+    "docScrollH": 974,
+    "visibility": "visible",
+    "tabbableInside": 1
+   },
+   "footerTop": 629,
+   "scrolledY": 310
+  },
+  "pixel7": {
+   "visiblePins": 94,
+   "pairsCentresUnder22px": 57,
+   "pairsCentresUnder44px": 156,
+   "pinsInAnOverlapUnder22": 49,
+   "closedPanel": {
+    "ariaHidden": "true",
+    "top": 822,
+    "vh": 839,
+    "peekPx": 17,
+    "docScrollH": 1265,
+    "visibility": "visible",
+    "tabbableInside": 1
+   },
+   "footerTop": 804,
+   "scrolledY": 426
+  },
+  "desktop": {
+   "visiblePins": 185,
+   "pairsCentresUnder22px": 82,
+   "pairsCentresUnder44px": 267,
+   "pinsInAnOverlapUnder22": 82,
+   "closedPanel": {
+    "ariaHidden": "true",
+    "top": 50,
+    "vh": 768,
+    "peekPx": 718,
+    "docScrollH": 768,
+    "visibility": "visible",
+    "tabbableInside": 1
+   },
+   "footerTop": 741
+  }
+ },
+ "_notes": [
+  "fonts.googleapis.com blocked (net::ERR_FAILED) -> the only console error in every profile; leaflet+three served from npm tarballs on disk so CDN latency is NOT represented",
+  "Playwright touch tap cannot open a collapsed stock Leaflet layers control (verified on a bare Leaflet page); panel opened by adding leaflet-control-layers-expanded",
+  "bytes = CDP encodedDataLength for localhost responses; server.js sends no gzip and no cache validators",
+  "slow4g profile = CDP 1.6Mbps/750kbps/150ms + 4x CPU throttle"
+ ]
+}

@@ -1,0 +1,1853 @@
+{
+ "tool": "mobile-capture",
+ "profile": "desktop",
+ "viewport": "1366x768@1",
+ "note": "ids are role:accessible-name; primary per metrics.md section 5; reach is taps on the profile the capture ran on",
+ "surfaces": {
+  "atlas": [
+   {
+    "id": "textbox:Search places…",
+    "primary": true,
+    "w": 360,
+    "h": 32,
+    "reach": 0
+   },
+   {
+    "id": "button:Switch to night map",
+    "primary": false,
+    "w": 37,
+    "h": 30,
+    "reach": 0
+   },
+   {
+    "id": "button:Contents",
+    "primary": false,
+    "w": 77.3,
+    "h": 30,
+    "reach": 0
+   },
+   {
+    "id": "link:Lexicon",
+    "primary": false,
+    "w": 73.2,
+    "h": 30,
+    "reach": 0
+   },
+   {
+    "id": "link:Wiki ↗",
+    "primary": false,
+    "w": 70.2,
+    "h": 30,
+    "reach": 0
+   },
+   {
+    "id": "link:Sim ↗",
+    "primary": false,
+    "w": 64.9,
+    "h": 30,
+    "reach": 0
+   },
+   {
+    "id": "region:Map of the Wide World — ",
+    "primary": false,
+    "w": 1366,
+    "h": 691,
+    "reach": 0
+   },
+   {
+    "id": "button:The Gulf Crossing",
+    "primary": false,
+    "w": 18,
+    "h": 18,
+    "reach": 0
+   },
+   {
+    "id": "button:The Strait Run",
+    "primary": false,
+    "w": 18,
+    "h": 18,
+    "reach": 0
+   },
+   {
+    "id": "button:The South Lane",
+    "primary": false,
+    "w": 18,
+    "h": 18,
+    "reach": 0
+   },
+   {
+    "id": "button:Green Sea — bodies of wa",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Aldronde — bodies of wat",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Great Chasmous Sea — bod",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Tungril — bodies of wate",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Empheros — major regions",
+    "primary": false,
+    "w": 24,
+    "h": 24,
+    "reach": 0
+   },
+   {
+    "id": "button:Alensis — major regions",
+    "primary": false,
+    "w": 24,
+    "h": 24,
+    "reach": 0
+   },
+   {
+    "id": "button:Garnatos — major regions",
+    "primary": false,
+    "w": 24,
+    "h": 24,
+    "reach": 0
+   },
+   {
+    "id": "button:Khōrgos — major regions",
+    "primary": false,
+    "w": 24,
+    "h": 24,
+    "reach": 0
+   },
+   {
+    "id": "button:Mākh Abath — major regio",
+    "primary": false,
+    "w": 24,
+    "h": 24,
+    "reach": 0
+   },
+   {
+    "id": "button:Leponnia — major regions",
+    "primary": false,
+    "w": 24,
+    "h": 24,
+    "reach": 0
+   },
+   {
+    "id": "button:Far South — major region",
+    "primary": false,
+    "w": 24,
+    "h": 24,
+    "reach": 0
+   },
+   {
+    "id": "button:Home Islands — major reg",
+    "primary": false,
+    "w": 24,
+    "h": 24,
+    "reach": 0
+   },
+   {
+    "id": "button:Moonless Lands — major r",
+    "primary": false,
+    "w": 24,
+    "h": 24,
+    "reach": 0
+   },
+   {
+    "id": "button:Mountain Wall — mountain",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Māmīth Māgrīn (Kingly Mi",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Feldspar — lesser settle",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Stony Ford — lesser sett",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Harney — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Bard's Hollow — lesser s",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Iimak-nūs-Ion — lesser s",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Karkōgael — lesser settl",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Bash Phaug — lesser sett",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Mākor — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Iorundo — lesser settlem",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Damoklir — lesser settle",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Kamīdo — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Zor Barāndo — lesser set",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Lendānak — lesser settle",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Mīthrabash — lesser sett",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Zhomphek — lesser settle",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Permūr — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Eldae — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Dargan — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Aldrakhar — lesser settl",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Ītor Hāspira — lesser se",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Līrider Hana — lesser se",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Hemdok Laego — lesser se",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Kash Ītor — lesser settl",
+    "primary": false,
+    "w": 18.7,
+    "h": 18.7,
+    "reach": 0
+   },
+   {
+    "id": "button:Atauk — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Ilongazoro — lesser sett",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Pomos — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Iet Ford — lesser settle",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Bash Dargis — lesser set",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Paril — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Ishin — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Pish — lesser settlement",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Tobit — lesser settlemen",
+    "primary": false,
+    "w": 16.4,
+    "h": 16.4,
+    "reach": 0
+   },
+   {
+    "id": "button:Palagnon — lesser settle",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Paga — lesser settlement",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Ghōdar — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Rūbril — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Sau Taran — lesser settl",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Lek Zagrok — lesser sett",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Hordon Mopher — lesser s",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Nembros — lesser settlem",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Lōt — lesser settlement",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Leprekhōr — lesser settl",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Karaphon — lesser settle",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Abila — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Ion Semthen — lesser set",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Mishimbril — lesser sett",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Philider — lesser settle",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Taemon — lesser settleme",
+    "primary": false,
+    "w": 24.7,
+    "h": 24.7,
+    "reach": 0
+   },
+   {
+    "id": "button:Zōr Iket — lesser settle",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Bēgroth Amar — lesser se",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Gel — lesser settlement",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Thūkhon — lesser settlem",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Bash Nena — lesser settl",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Hazad — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Sember — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Īngomes — lesser settlem",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Gehon Iepīr — lesser set",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Kezren — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Azrīnet — lesser settlem",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Gehon Or — lesser settle",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Rohodakos — lesser settl",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Graes — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Lokri — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Ierem — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Gārmīt — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Malagnon — lesser settle",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Ludo — lesser settlement",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Pel — lesser settlement",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Tamaron Mopher — lesser ",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Leshes — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Darā — lesser settlement",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Aenid — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Aegban — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Pontoron — lesser settle",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Authīr — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Nūmeron — lesser settlem",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Nāron — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Mhēlzi — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Sārūmeron — lesser settl",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Haedi — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Urip — lesser settlement",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Daeskhon — lesser settle",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Ion Nenīn — lesser settl",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Gakapē — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Arbezmara — lesser settl",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Sāzhram — lesser settlem",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Azrūmil — lesser settlem",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Malau — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Istīron — lesser settlem",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Bēgil — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Nhagi — lesser settlemen",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Laem — lesser settlement",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Cyrikon — lesser settlem",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Thārban — lesser settlem",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Sūl — lesser settlement",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Līrider — lesser settlem",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Ghirīs — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Nhin — lesser settlement",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Maeges — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Gīr — lesser settlement",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Molider — lesser settlem",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Nagash — lesser settleme",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Mhikel Or — lesser settl",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Netho — lesser settlemen",
+    "primary": false,
+    "w": 22.9,
+    "h": 22.9,
+    "reach": 0
+   },
+   {
+    "id": "button:Nīs Garnata — lesser set",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Ūmak-nūs-Ion — lesser se",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Nhandar Khezīn — lesser ",
+    "primary": false,
+    "w": 16,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Alensis City — lesser se",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Sepos — lesser settlemen",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Līm Haub — lesser settle",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Tamaron — lesser settlem",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Bōlkhar — lesser settlem",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Gizalīs — lesser settlem",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Ākat — lesser settlement",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Kurūgnon — lesser settle",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Nub-Nefer — lesser settl",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Penthelon — settlements",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Drāmūz — settlements",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Kolens — settlements",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Hordon — settlements",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Clickerhall-by-Goblin-Ho",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Ion Ephel — settlements",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Pārāgōl — minor regions",
+    "primary": false,
+    "w": 18,
+    "h": 18,
+    "reach": 0
+   },
+   {
+    "id": "button:Nenog — minor regions",
+    "primary": false,
+    "w": 18,
+    "h": 18,
+    "reach": 0
+   },
+   {
+    "id": "button:Drāgīnor — minor regions",
+    "primary": false,
+    "w": 18,
+    "h": 18,
+    "reach": 0
+   },
+   {
+    "id": "button:Bībūnor — minor regions",
+    "primary": false,
+    "w": 18,
+    "h": 18,
+    "reach": 0
+   },
+   {
+    "id": "button:Phagal — minor regions",
+    "primary": false,
+    "w": 18,
+    "h": 18,
+    "reach": 0
+   },
+   {
+    "id": "button:Hoarland — minor regions",
+    "primary": false,
+    "w": 18,
+    "h": 18,
+    "reach": 0
+   },
+   {
+    "id": "button:Hometown of Leon Mallist",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Hometown of Frösted Flæk",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Hometown of Maelys",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Hometown of Guantanamo M",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Haunt of Shiv Mathor",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Haunt of Eol Firenze",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Pebros's Army",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:East-West Road",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Watchwater",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Far North",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Fell Mountains",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Siege of the Seat",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Sepos",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:White Sea",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Paerāndas",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:White Sea (Dagon's attac",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Epēshu",
+    "primary": false,
+    "w": 20,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Zoom in",
+    "primary": true,
+    "w": 30,
+    "h": 30,
+    "reach": 0
+   },
+   {
+    "id": "button:Zoom out",
+    "primary": true,
+    "w": 30,
+    "h": 30,
+    "reach": 0
+   },
+   {
+    "id": "button:The Atlas Through the Ag",
+    "primary": false,
+    "w": 70.9,
+    "h": 24.8,
+    "reach": 0
+   },
+   {
+    "id": "button:Layers",
+    "primary": true,
+    "w": 44,
+    "h": 44,
+    "reach": 0
+   },
+   {
+    "id": "button:⚑ Follow the journey",
+    "primary": false,
+    "w": 147,
+    "h": 33,
+    "reach": 0
+   },
+   {
+    "id": "button:⛊ Groups & Powers",
+    "primary": false,
+    "w": 138.8,
+    "h": 30,
+    "reach": 0
+   },
+   {
+    "id": "button:Collapse the Company",
+    "primary": false,
+    "w": 24,
+    "h": 24,
+    "reach": 0
+   },
+   {
+    "id": "link:A JavaScript library for",
+    "primary": false,
+    "w": 58.2,
+    "h": 11,
+    "reach": 0
+   },
+   {
+    "id": "button:Epēshu — settlements",
+    "primary": false,
+    "w": 68.2,
+    "h": 22,
+    "reach": 1
+   },
+   {
+    "id": "button:The Lektān Priesthood",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 1
+   },
+   {
+    "id": "button:The Senate of Epēshu",
+    "primary": false,
+    "w": 22,
+    "h": 22,
+    "reach": 1
+   },
+   {
+    "id": "button:Close panel",
+    "primary": true,
+    "w": 30,
+    "h": 30,
+    "reach": 1
+   },
+   {
+    "id": "button:⚘ Descend into Epēshu",
+    "primary": true,
+    "w": 298,
+    "h": 40,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:#2",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:#3",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:#4",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:#5",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:#6",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:#7",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:#8",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:#9",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:#10",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:#11",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:#12",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:#13",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:#14",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:#15",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "checkbox:#16",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   }
+  ],
+  "sim": [
+   {
+    "id": "link:Open the atlas of the Wi",
+    "primary": false,
+    "w": 58.8,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "link:The campaign wiki",
+    "primary": false,
+    "w": 56.4,
+    "h": 22,
+    "reach": 0
+   },
+   {
+    "id": "button:Pause (Space)",
+    "primary": true,
+    "w": 22,
+    "h": 25,
+    "reach": 0
+   },
+   {
+    "id": "button:Watching pace — a day in",
+    "primary": true,
+    "w": 25,
+    "h": 25,
+    "reach": 0
+   },
+   {
+    "id": "button:1 day/sec",
+    "primary": true,
+    "w": 34,
+    "h": 25,
+    "reach": 0
+   },
+   {
+    "id": "button:5 days/sec",
+    "primary": true,
+    "w": 43,
+    "h": 25,
+    "reach": 0
+   },
+   {
+    "id": "button:30 days/sec — a year in ",
+    "primary": true,
+    "w": 52,
+    "h": 25,
+    "reach": 0
+   },
+   {
+    "id": "button:120 days/sec — a reign i",
+    "primary": true,
+    "w": 61,
+    "h": 25,
+    "reach": 0
+   },
+   {
+    "id": "button:Open the ledger",
+    "primary": true,
+    "w": 84.4,
+    "h": 31,
+    "reach": 0
+   },
+   {
+    "id": "button:Export the annals as tex",
+    "primary": false,
+    "w": 53.4,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:Fold the chronicle",
+    "primary": false,
+    "w": 25,
+    "h": 20,
+    "reach": 0
+   },
+   {
+    "id": "button:All",
+    "primary": false,
+    "w": 38.1,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Crown",
+    "primary": false,
+    "w": 52.1,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:War",
+    "primary": false,
+    "w": 42,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Trade",
+    "primary": false,
+    "w": 48.8,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Fates",
+    "primary": false,
+    "w": 45.5,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:The realm, drawn in line",
+    "primary": false,
+    "w": 53.4,
+    "h": 16,
+    "reach": 0
+   },
+   {
+    "id": "button:Overlays — territories, ",
+    "primary": false,
+    "w": 34,
+    "h": 34,
+    "reach": 0
+   },
+   {
+    "id": "button:Watch mode — the realm n",
+    "primary": false,
+    "w": 34,
+    "h": 34,
+    "reach": 0
+   },
+   {
+    "id": "button:Director — takes the cam",
+    "primary": false,
+    "w": 34,
+    "h": 34,
+    "reach": 0
+   },
+   {
+    "id": "button:Rates",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "button:Acts",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "button:Houses",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "button:World",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "button:Fold the ledger away",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "slider:",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "slider:#2",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "slider:#3",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "slider:#4",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "slider:#5",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "slider:#6",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "slider:#7",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "slider:#8",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "slider:#9",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "button:High",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 1
+   },
+   {
+    "id": "button:Unleash plague ⌖",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Start a great fire ⌖",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Flood the river",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Declare a drought",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Earthquake ⌖",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Wake the dragon",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Raise a bandit camp ⌖",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Assassinate the monarch",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Contest the succession",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Arrange a royal marriage",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Bless the harvest",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Send a comet",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Found a village ⌖",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Grant 5,000 gold",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Raze building ⌖",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Show territories (T)",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "textbox:seedIn",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Regenerate the realm fro",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Forge the canon Marble C",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "textbox:dndHeightmap",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "textbox:[{\"name\":\"Epēshu\",\"kind\"",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Forge a realm from the l",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Return to procedural rea",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Copy a link to this real",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Toggle place names (L)",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Watch mode (C) — the rea",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:The director takes the c",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Hide the court (H) — tap",
+    "primary": true,
+    "w": null,
+    "h": null,
+    "reach": 2
+   },
+   {
+    "id": "button:Show frame statistics (F",
+    "primary": false,
+    "w": null,
+    "h": null,
+    "reach": 2
+   }
+  ]
+ }
+}

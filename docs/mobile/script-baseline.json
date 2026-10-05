@@ -1,0 +1,84 @@
+{
+  "timestamp": "2026-10-05T00:53:00Z",
+  "filigree": {
+    "prelude_sha256": "093c3148017b34e8a965e30b60aaf711d19981c60d0f6b909d8f245e77304372",
+    "file_sha256": "ea26569a8eeba4194abeb7c6490ec7e658932601a80674cf8b2c707415fa156c",
+    "script": ".claude/workflows/filigree-2-plan.js"
+  },
+  "street": {
+    "prelude_sha256": "624c7035e2bdef2555b77774d088f14eb8a880e88b99c5f32dfe404dacca6ef4",
+    "file_sha256": "14541f58c01f106101185eb92e4250d90a61fc4b99ba2b7ddeb20f95c5998265",
+    "script": ".claude/workflows/street-2-plan.js"
+  },
+  "drift_check": {
+    "exit_code": 0,
+    "ok": true,
+    "checks": [
+      {
+        "id": "D0",
+        "ok": true,
+        "detail": "filigree preludes identical"
+      },
+      {
+        "id": "D1",
+        "ok": true,
+        "detail": "street-1-research.js: derived ok"
+      },
+      {
+        "id": "D1",
+        "ok": true,
+        "detail": "street-2-plan.js: derived ok"
+      },
+      {
+        "id": "D1",
+        "ok": true,
+        "detail": "street-3-build.js: derived ok"
+      },
+      {
+        "id": "D1",
+        "ok": true,
+        "detail": "street-4-review.js: derived ok"
+      },
+      {
+        "id": "D2",
+        "ok": true,
+        "detail": "street preludes identical"
+      },
+      {
+        "id": "D3",
+        "ok": true,
+        "detail": "sandbox recipe in step with filigree-3"
+      },
+      {
+        "id": "D4",
+        "ok": true,
+        "detail": "recordD verbatim"
+      },
+      {
+        "id": "D5",
+        "ok": true,
+        "detail": "citations and street rulings ok"
+      },
+      {
+        "id": "D6",
+        "ok": true,
+        "detail": "street-1-research.js: meta ok"
+      },
+      {
+        "id": "D6",
+        "ok": true,
+        "detail": "street-2-plan.js: meta ok"
+      },
+      {
+        "id": "D6",
+        "ok": true,
+        "detail": "street-3-build.js: meta ok"
+      },
+      {
+        "id": "D6",
+        "ok": true,
+        "detail": "street-4-review.js: meta ok"
+      }
+    ]
+  }
+}

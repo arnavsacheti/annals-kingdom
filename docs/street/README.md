@@ -416,6 +416,7 @@ readback returns `canon_len`, which the script cross-checks.
 | SG2.14 | blindness; zero schema-path guesses |
 | SG2.15 | artifacts hashed |
 | SG2.16 | limits Street 3 gates on (spec reader returns `/fade/ms`, `/stream/{max_jobs_frame,tri_cap_frame,resident_tris}`, `/traffic/{s0,T,v0}`, `/traffic/tiers` and `/tiers/hysteresis`): `fade.ms` ≤ 250 (R6), `max_jobs_frame` an integer 1..6 (ST9), `tri_cap_frame`, `resident_tris`, `s0`, `T`, `v0` positive numbers, at least 3 caravan tiers with `in_R`/`out_R` hysteresis, and every hysteresis pair 0 < in_R < out_R ≤ 2200; an R6 or ST9 override relaxes only that bound; failures go to the spec fixer as `limits` items |
+| SG2.17 | device classes (spec reader returns `/device_classes` as `{<class>: {max_jobs_frame, tri_cap_frame, resident_bytes, ladder_floor_fps, ladder_floor_step, pixel_ratio, instance_frac, draw_dist_frac, weather_step}}`): `desktop` and `phone` present (`tablet` optional); `desktop.max_jobs_frame` and `desktop.tri_cap_frame` equal `/stream`'s; `phone.max_jobs_frame` an integer 1..min(3, desktop's); `phone.tri_cap_frame` ≤ half the desktop's; `resident_bytes`, `ladder_floor_fps`, `pixel_ratio` positive; `ladder_floor_step` an integer 0..3; `instance_frac` and `draw_dist_frac` in (0, 1]; `weather_step` one of 1, 0.75, 0.5, 0.25 (skipped under an ST19 override); failures go to the spec fixer as `limits` items |
 
 ### 5.7 Street 3 — the walk test and the slice gates
 
@@ -610,6 +611,7 @@ probe writer fills those answers from the ruling text. An ST5 override adds a `n
 hash-param override must pass `PARAM_OK` (ST18) and flows into `hash.params`, `layers.param`, the minimum hash table
 and the S0.U00 text. The gate gaps record the overridden ids and the plan preview returns `overridden_baked`. An R6 or
 ST9 override relaxes only that bound of SG2.16; Street 3 still gates `fade.ms` ≤ 250 and `max_jobs_frame` ≤ 6.
+ST7, ST9 and ST19 keep their defaults on purpose for the phone: SG2.17 reads the phone class against `/stream` and `/weather/steps`, so a phone-specific budget is a `/device_classes` proposal (until the ST8 phone run), never an override of those rulings.
 
 | id | question | default |
 |---|---|---|

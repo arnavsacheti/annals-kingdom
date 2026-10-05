@@ -1,0 +1,130 @@
+{
+ "iphone13": {
+  "before": {
+   "fpsAvg": 48.94481305466012,
+   "degradeStep": 0,
+   "frameN": 16,
+   "ratio": 1.6,
+   "calls": 27,
+   "tris": 1014544,
+   "w": 624,
+   "h": 1062
+  },
+  "after": {
+   "fpsAvg": 44.58417739781867,
+   "degradeStep": 0,
+   "frameN": 20,
+   "ratio": 1.6,
+   "calls": 26,
+   "tris": 994062,
+   "w": 624,
+   "h": 1062
+  },
+  "statsFps": 45,
+  "rafFps": 3.2047331443362506,
+  "stats": {
+   "fps": 39,
+   "calls": 25,
+   "tris": 993852,
+   "buildings": 1278,
+   "trees": 48568,
+   "seed": "epeshu",
+   "realm": "Epēshu",
+   "treasury": 771,
+   "pop": 9960,
+   "agents": 0,
+   "chron": 3
+  },
+  "vp": [
+   390,
+   664
+  ],
+  "errs": [],
+  "ctrl": {
+   "atlasLink|A": [
+    59,
+    22
+   ],
+   "wikiLink|A": [
+    56,
+    22
+   ],
+   "⏸|BUTTON": [
+    24,
+    31
+   ],
+   "▶|BUTTON": [
+    27,
+    31
+   ],
+   "▶▶|BUTTON": [
+    36,
+    31
+   ],
+   "▶▶▶|BUTTON": [
+    45,
+    31
+   ],
+   "▶▶▶▶|BUTTON": [
+    54,
+    31
+   ],
+   "▶▶▶▶▶|BUTTON": [
+    63,
+    31
+   ],
+   "btnExport|BUTTON": [
+    57,
+    28
+   ],
+   "chronToggle|BUTTON": [
+    29,
+    28
+   ],
+   "icoOverlay|BUTTON": [
+    42,
+    42
+   ],
+   "icoWatch|BUTTON": [
+    42,
+    42
+   ],
+   "icoDirector|BUTTON": [
+    42,
+    42
+   ]
+  },
+  "hud": {
+   "top": 6,
+   "h": 100,
+   "frac": 0.15060240963855423
+  },
+  "beat": {
+   "beat": {
+    "t": 0,
+    "b": 0,
+    "l": 0,
+    "r": 0,
+    "op": "1",
+    "vis": "visible"
+   },
+   "chron": {
+    "t": 607,
+    "b": 656,
+    "l": 8,
+    "r": 382,
+    "op": "1",
+    "vis": "visible"
+   },
+   "drawer": {
+    "t": 0,
+    "b": 0,
+    "l": 0,
+    "r": 0,
+    "op": "1",
+    "vis": "visible"
+   }
+  },
+  "touch": {}
+ }
+}

@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "item": "Mobile 1",
+  "app_sha": {
+    "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+    "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+  },
+  "baselines": {
+    "B0": "761badd293c58466ff02458fefa202a50624da4cd9a9b5d300785606309329b2",
+    "R1": null,
+    "final": null
+  },
+  "owner_answers": "docs/mobile/owner-answers.json",
+  "units": {},
+  "rebase": []
+}

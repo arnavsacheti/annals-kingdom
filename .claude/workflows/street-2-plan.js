@@ -207,7 +207,7 @@ const SLICES = ['S0', 'S1', 'S2', 'S3', 'S4']
 const SLICE_NAME = {S0: 'instrument', S1: 'streaming', S2: 'near detail', S3: 'life', S4: 'sky and layers'}
 const SECTIONS = [
   {sid: 's01', title: 'Tiers, refine rule, hysteresis, fade', owns: ['/tiers', '/fade'], R: ['R6'], ST: ['ST2', 'ST4'], role: 'judge'},
-  {sid: 's02', title: 'Streaming queue, budget, LRU, culling', owns: ['/stream'], R: [], ST: ['ST8', 'ST9'], role: 'judge'},
+  {sid: 's02', title: 'Streaming queue, budget, LRU, culling', owns: ['/stream', '/device_classes'], R: [], ST: ['ST8', 'ST9'], role: 'judge'},
   {sid: 's03', title: 'Near facades, street surface, sub-cell ground', owns: ['/facades', '/surface', '/ground'], R: ['R22'], ST: ['ST2', 'ST12'], role: 'deep'},
   {sid: 's04', title: 'Instanced props and crowds', owns: ['/props', '/crowds'], R: [], ST: ['ST4', 'ST13'], role: 'audit'},
   {sid: 's05', title: 'Render-only caravans: tiers, spacing, obstacles, gate leaves', owns: ['/traffic', '/gates'], R: [], ST: ['ST3', 'ST4', 'ST5', 'ST6'], role: 'judge'},
@@ -222,7 +222,7 @@ const MANDATORY_CHECKS = ['street.fingerprint', 'street.off_identity', 'street.c
 const SLICE_CHECKS = {S0: ['street.hash_table'], S1: ['street.fade', 'street.swaps', 'street.paths'], S3: ['street.vfps', 'street.spacing', 'street.caravan_tiers'], S4: ['street.clouds', 'street.shadows_row', 'street.weather_dial', 'street.tidings', 'street.folk_row']}   // + 'street.fog_copy' when the fog unit exists
 const MANDATORY_UNITS = {
   'S0.U00': 'the STREET block (one namespace const STREET, placed per /block/placement) + the ANNALS.street getter hook (on, set, stats, settledHash, queueHash, parseHash, pinDegrade) + the default-off master row + street=1 read',
-  'S0.U01': 'probe extension: --layers street=1 (and street=0 now asserts ANNALS.street absent OR stats().objects === 0), metrics classes/appear/swaps/jobs/resident, path builds/jobs/resident, --paths and --vfps accept comma lists (--paths descent,oscillate,flyaway; --vfps 30,60) with --queue-hash <t>, --hash-table, --phone, device degrade_step; Street 1 literals unchanged (acceptance re-measures baseline.json fields exactly); S4 units add --tidings, --sky, --fog-pairs',
+  'S0.U01': 'probe extension: --layers street=1 (and street=0 now asserts ANNALS.street absent OR stats().objects === 0), metrics classes/appear/swaps/jobs/resident, path builds/jobs/resident, --paths and --vfps accept comma lists (--paths descent,oscillate,flyaway; --vfps 30,60) with --queue-hash <t>, --hash-table, --phone <SVn,..|all> (each listed view at 390x664, deviceScaleFactor 3, isMobile, hasTouch, loaded with ?dc=phone; default all nine SV views), --class desktop|phone (the page URL gets ?dc=<class> for every metric and the fingerprint; the sim reads it once at load), --cpu <k> (CDP CPU throttling, recorded, never gated), device degrade_step; Street 1 literals unchanged (acceptance re-measures baseline.json fields exactly); S4 units add --tidings, --sky, --fog-pairs',
   'S0.U02': 'hash parser (ST18): both seed parse sites anchored to (?:^#|&)s=; every #s= writer keeps the other params',
   'S4.Ufog': 'the R13 fog copy (only when q09 found the function; otherwise a recorded gap, no unit)',
   'S4.Unotices': 'notices reader for notices=<url> (after S0.U02) drawing shut ways and muster days from the R12 schema'}
@@ -304,7 +304,7 @@ const READER = OBJ({   // the spec reader's read-back: the ONLY source the scrip
   hook_lines: {type: 'array', items: OBJ({line: S, replaces: {type: ['string', 'null']}, anchor: {type: ['string', 'null']}})}, hook_map_ok: B,
   block: OBJ({placement: S, namespace: S}),
   fog_unit: B, notices_unit: B,
-  limits: OBJ({fade_ms: NN, max_jobs_frame: NN, tri_cap_frame: NN, resident_tris: NN, s0: NN, T: NN, v0: NN, hysteresis: {type: 'array', items: OBJ({tier: ANY, in_R: NN, out_R: NN})}, caravan_tiers: {type: 'array', items: OBJ({tier: ANY, in_R: NN, out_R: NN})}}),   // the spec values Street 3's gates read directly (SG2.16)
+  limits: OBJ({fade_ms: NN, max_jobs_frame: NN, tri_cap_frame: NN, resident_tris: NN, s0: NN, T: NN, v0: NN, hysteresis: {type: 'array', items: OBJ({tier: ANY, in_R: NN, out_R: NN})}, caravan_tiers: {type: 'array', items: OBJ({tier: ANY, in_R: NN, out_R: NN})}, device_classes: {type: ['object', 'null'], additionalProperties: OBJ({max_jobs_frame: NN, tri_cap_frame: NN, resident_bytes: NN, ladder_floor_fps: NN, ladder_floor_step: NN, pixel_ratio: NN, instance_frac: NN, draw_dist_frac: NN, weather_step: NN})}}),   // the spec values Street 3's gates read directly (SG2.16)
   pointers: {type: 'object', additionalProperties: ANY},
   sha_md: S, sha_json: S, sha_tidings: S, prereq_unqueued: SA})   // + sha_md/sha_json/sha_tidings (SG2.15 from an independent read) and prereq_unqueued (polish_inserts)
 const GUARD = OBJ({lost: SA, fil_literals_touched: SA, street_literals_touched: SA,
@@ -557,12 +557,13 @@ await checkpoint('probes')
 
 // ---- Sections ----
 phase('Sections')
-function SPEC_SHAPE_SHORT() { return 'tiers {bands [{tier, R_min, R_max}], refine {kind "sse", target_px, geom_err_m}, hysteresis [{tier, in_R, out_R}]}; fade {ms, method}; stream {max_jobs_frame, tri_cap_frame, resident_tris, lru, cull}; facades; surface; ground {rule}; props; crowds {key, scale}; traffic {s0, T, v0, obstacles [{class, key, rule}], tiers [{tier, in_R, out_R, repr}]}; gates {clock}; sky {clouds {key, states}, shadows {row_default}}; fog {source, helpers}; weather {steps}; layers {rows [{label, default}], param}; hash {params, consumes, parser {pattern, sites}, table [{hash, expect}]}; notices {schema_source, fixture, classes}; caps {SV1..SV9: {on: {' + CAP_METRICS.join(', ') + '}}}; probe {flags_added, api}; determinism {allowed_sources, new_sim_state, key_idiom, forbidden}; block {placement, namespace}; hook_lines [{line, replaces, anchor}]; static {checks}; checks {S0..S4: [{id, cmd, expect}]}; fixtures {views, baseline, tidings}; prerequisites [{item, blocks, polish_title}]; units' }
+function SPEC_SHAPE_SHORT() { return 'tiers {bands [{tier, R_min, R_max}], refine {kind "sse", target_px, geom_err_m}, hysteresis [{tier, in_R, out_R}]}; fade {ms, method}; stream {max_jobs_frame, tri_cap_frame, resident_tris, lru, cull}; device_classes {desktop, phone, tablet?: {inputs, pixel_ratio, max_jobs_frame, tri_cap_frame, resident_bytes, calls_cap, tris_cap, ladder_floor_fps, ladder_floor_step, instance_frac, draw_dist_frac, weather_step}}; facades; surface; ground {rule}; props; crowds {key, scale}; traffic {s0, T, v0, obstacles [{class, key, rule}], tiers [{tier, in_R, out_R, repr}]}; gates {clock}; sky {clouds {key, states}, shadows {row_default}}; fog {source, helpers}; weather {steps}; layers {rows [{label, default}], param}; hash {params, consumes, parser {pattern, sites}, table [{hash, expect}]}; notices {schema_source, fixture, classes}; caps {SV1..SV9: {on: {' + CAP_METRICS.join(', ') + '}}}; probe {flags_added, api}; determinism {allowed_sources, new_sim_state, key_idiom, forbidden}; block {placement, namespace}; hook_lines [{line, replaces, anchor}]; static {checks}; checks {S0..S4: [{id, cmd, expect}]}; fixtures {views, baseline, tidings}; prerequisites [{item, blocks, polish_title}]; units' }
 const SPEC_SHAPE = `street-spec.json (exact shape; a pointer named here holds exactly this):
 {date: "${DATE}", bible_sha256: "${BSHA}", rules: [{id: "SS-01", text, traces: [bible rule ids]}],
  tiers: {bands: [{tier, R_min, R_max}], refine: {kind: "sse", target_px, geom_err_m: {T0..T4}}, hysteresis: [{tier, in_R, out_R}]},   (out_R > in_R; all <= 2200, inside meshHi)
  fade: {ms, method: "opacity" | "dither"},   (ms a number${OVR.R6 ? ' within the overridden R6' : ' <= 250, R6'})
  stream: {max_jobs_frame, tri_cap_frame, resident_tris, lru: "map", cull: "sphere"},   (all numbers; max_jobs_frame an integer${OVR.ST9 ? ' within the overridden ST9' : ' 1..6, ST9'})
+ device_classes: {desktop: {...}, phone: {...}, tablet?: {...}},   each {inputs, pixel_ratio, max_jobs_frame, tri_cap_frame, resident_bytes, calls_cap, tris_cap, ladder_floor_fps, ladder_floor_step, instance_frac, draw_dist_frac, weather_step}   (numbers except inputs; desktop.max_jobs_frame and desktop.tri_cap_frame equal /stream's; phone.max_jobs_frame <= 3 and <= desktop's; phone.tri_cap_frame <= half the desktop's; instance_frac and draw_dist_frac in (0,1]; weather_step one of /weather/steps; the classes are the sim's DEVICE classes as the street bible's "## Phone (mobile block)" states them)
  facades: {...}, surface: {...}, ground: {rule}, props: {...}, crowds: {key, scale},
  traffic: {s0, T, v0, obstacles: [{class, key, rule}], tiers: [{tier: "far" | "mid" | "near", in_R, out_R, repr}]},   (s0, T, v0 positive numbers; tiers: at least far, mid and near caravan tiers (far dot or impostor, mid the current mesh, near individual animals and load), 0 < in_R < out_R <= ${MESH_HI} for each, the hysteresis inside the street band)
  gates: {clock: ${OVR.ST5 ? '"render" | "sim" | "wall" | "none" (as the overridden ST5 states; "none" = the leaves never shut)' : '"render"'}},
@@ -583,7 +584,7 @@ const SPEC_SHAPE = `street-spec.json (exact shape; a pointer named here holds ex
  units: [...]}`
 const SEC_NOTES = {
   s01: `Tier bands contiguous over the camera radius 9..11000 and consistent with the bible tiers; hysteresis 0 < in_R < out_R and every value <= ${MESH_HI} (inside the settlement meshHi band); fade.ms ${OVR.R6 ? 'as the overridden R6 states' : '<= 250 (R6)'}; a screen-space-error refine rule (refine.kind "sse").`,
-  s02: `${OVR.ST9 ? 'max_jobs_frame and the triangle cap per frame as the overridden ST9 states' : 'max_jobs_frame <= 6 and a triangle cap per frame (ST9: no workers, a time-sliced main-thread queue)'}; max_jobs_frame, tri_cap_frame and resident_tris numbers; lru "map"; cull "sphere"; resident_tris bounded.`,
+  s02: `${OVR.ST9 ? 'max_jobs_frame and the triangle cap per frame as the overridden ST9 states' : 'max_jobs_frame <= 6 and a triangle cap per frame (ST9: no workers, a time-sliced main-thread queue)'}; max_jobs_frame, tri_cap_frame and resident_tris numbers; lru "map"; cull "sphere"; resident_tris bounded; /device_classes: desktop and phone (tablet optional) from the bible's "## Phone (mobile block)" and ST8: desktop caps equal /stream; phone at most 3 quad jobs and half the desktop triangle cap per frame; each class with resident_bytes, ladder_floor_fps and ladder_floor_step (proposals until the ST8 phone run).`,
   s03: 'Street ground interpolates the 11.72 m heightfield corners, never new relief (R22); Epēshu-only facades inside Epēshu; marble-pale stone tier inside Epēshu\'s footprint and the Blue Temple of Thobrauk on Wood Quay\'s northern edge (ST12); every InstancedMesh sharing MAT.world carries instanceColor.',
   s04: `Crowds keyed daily by (seed, settlement, day) and scaled by s.pop (ST13), key form "st:crowd:<settlement id>:day"; props instanced; every keyed choice uses ${KEY_IDIOM}.`,
   s05: `Queueing is render-only (ST3): mesh transforms only, departDay/route/speed never touched, the queue offset a closed-form function of the day and the neighbours (ST6); ${OVR.ST5 ? 'gates.clock as the overridden ST5 states ("none" when the leaves never shut)' : 'gates.clock "render" (the drawn dark hour, ST5)'}; traffic {s0, T, v0} positive numbers at donkey pace from the bible; /traffic/tiers: at least far, mid and near caravan tiers with in_R/out_R hysteresis inside the street band, so vehicles gain detail on the descent (a far dot or impostor, then the current mesh, then individual animals), tier swaps render-only like the queue (the S3 slice check street.caravan_tiers reads the thresholds).`,
@@ -694,7 +695,7 @@ async function runChecks(tag) {
 - determinism: {allowed_sources, new_sim_state, key_idiom} from /determinism; rng_in_acceptance: "<unit id or slice>:<acceptance or check id>" for every unit acceptance or /checks entry that would CALL the clock or random source: skip entries whose kind is grep, whose id is street.static_clock or street.static_rng, or whose cmd only names the tokens inside a grep, rg, includes, indexOf or regex text scan; flag the rest whose cmd matches /${ST_CLOCK_GREP}/.
 - hash: {params, consumes} from /hash, table: every /hash/table[].hash.
 - hook_lines: /hook_lines verbatim as [{line, replaces (null when missing), anchor (null when missing)}]; hook_map_ok: every line contains "${HOOK_MARK}", no non-null replaces contains it, no two hooks replace the same line, every line with a non-null replaces starts with the same leading whitespace as its replaces, and every entry whose replaces is null has a non-empty string anchor.
-- limits: {fade_ms: /fade/ms, max_jobs_frame, tri_cap_frame, resident_tris: from /stream, s0, T, v0: from /traffic (each the number there, or null when missing or not a JSON number), hysteresis: /tiers/hysteresis as [{tier, in_R, out_R}] (in_R / out_R null when not a JSON number; [] when missing), caravan_tiers: /traffic/tiers as [{tier, in_R, out_R}] (same null/[] rules)}.
+- limits: {fade_ms: /fade/ms, max_jobs_frame, tri_cap_frame, resident_tris: from /stream, s0, T, v0: from /traffic (each the number there, or null when missing or not a JSON number), hysteresis: /tiers/hysteresis as [{tier, in_R, out_R}] (in_R / out_R null when not a JSON number; [] when missing), caravan_tiers: /traffic/tiers as [{tier, in_R, out_R}] (same null/[] rules), device_classes: /device_classes as {<class>: {those keys}} (each the number there or null; device_classes null when /device_classes is missing)}.
 - block: {placement, namespace} from /block; fog_unit: some unit id is "S4.Ufog"; notices_unit: some unit id is "S4.Unotices".
 - pointers: {<pointer>: the value at that RFC 6901 pointer of the spec json (any type), or null when it does not resolve} for each of ${J([...new Set(specProbes.map(p => p.pointer))])}.
 - sha_md, sha_json, sha_tidings: sha256sum of ${SPEC_MD}, ${SPEC_JSON} and ${TIDINGS}.
@@ -734,7 +735,7 @@ Exactly one verdict per guess id, none skipped. Write nothing. Return {verdicts:
   return {R, audits: {A: audits[0] || null, B: audits[1] || null}, tag}
 }
 
-// ---- evaluate: SG2.0..SG2.15, scored in code from the reader, the guard, the greps and the readers' answers ----
+// ---- evaluate: SG2.0..SG2.17, scored in code from the reader, the guard, the greps and the readers' answers ----
 function score(rdr, rd) {
   if (!rdr) return null
   const ans = rdr.answers || {}, pts = (rd && rd.pointers) || {}
@@ -814,6 +815,18 @@ function evaluate(ck, gt) {
     ...arr(lim.caravan_tiers).filter(Boolean).filter(h => !(isNum(h.in_R) && isNum(h.out_R) && h.in_R > 0 && h.out_R > h.in_R && h.out_R <= MESH_HI)).map(h => `/traffic/tiers ${J(h)} (0 < in_R < out_R <= ${MESH_HI})`),
     hy.length ? '' : '/tiers/hysteresis empty',
     ...hy.filter(h => !(isNum(h.in_R) && isNum(h.out_R) && h.in_R > 0 && h.out_R > h.in_R && h.out_R <= MESH_HI)).map(h => `/tiers/hysteresis ${J(h)} (0 < in_R < out_R <= ${MESH_HI})`)].filter(Boolean)
+  const dc = lim.device_classes && typeof lim.device_classes === 'object' ? lim.device_classes : null, dd = dc && dc.desktop, dp = dc && dc.phone
+  const s17 = !rd ? [RD] : !dc ? ['/device_classes missing (an object with desktop and phone)'] : [
+    ...['desktop', 'phone'].filter(k => !(dc[k] && typeof dc[k] === 'object')).map(k => `/device_classes/${k} missing`),
+    dd && !(isNum(dd.max_jobs_frame) && dd.max_jobs_frame === lim.max_jobs_frame && isNum(dd.tri_cap_frame) && dd.tri_cap_frame === lim.tri_cap_frame) ? `/device_classes/desktop max_jobs_frame ${J(dd.max_jobs_frame ?? null)} / tri_cap_frame ${J(dd.tri_cap_frame ?? null)} must equal /stream (${J(lim.max_jobs_frame ?? null)} / ${J(lim.tri_cap_frame ?? null)})` : '',
+    dp && !(Number.isInteger(dp.max_jobs_frame) && dp.max_jobs_frame >= 1 && dp.max_jobs_frame <= Math.min(3, dd && isNum(dd.max_jobs_frame) ? dd.max_jobs_frame : 3)) ? `/device_classes/phone/max_jobs_frame ${J(dp.max_jobs_frame ?? null)} (an integer 1..min(3, the desktop's))` : '',
+    dp && !(isNum(dp.tri_cap_frame) && dp.tri_cap_frame > 0 && dd && isNum(dd.tri_cap_frame) && dp.tri_cap_frame <= dd.tri_cap_frame / 2) ? `/device_classes/phone/tri_cap_frame ${J(dp.tri_cap_frame ?? null)} (positive and <= half the desktop's ${J(dd ? dd.tri_cap_frame ?? null : null)})` : '',
+    ...Object.entries(dc).filter(([, c]) => c && typeof c === 'object').flatMap(([k, c]) => [
+      ...['resident_bytes', 'ladder_floor_fps', 'pixel_ratio'].filter(f => !(isNum(c[f]) && c[f] > 0)).map(f => `/device_classes/${k}/${f} ${J(c[f] ?? null)} (a positive number)`),
+      Number.isInteger(c.ladder_floor_step) && c.ladder_floor_step >= 0 && c.ladder_floor_step <= 3 ? '' : `/device_classes/${k}/ladder_floor_step ${J(c.ladder_floor_step ?? null)} (an integer 0..3)`,
+      ...['instance_frac', 'draw_dist_frac'].filter(f => !(isNum(c[f]) && c[f] > 0 && c[f] <= 1)).map(f => `/device_classes/${k}/${f} ${J(c[f] ?? null)} (0 < x <= 1)`),
+      OVR.ST19 || [1, 0.75, 0.5, 0.25].includes(c.weather_step) ? '' : `/device_classes/${k}/weather_step ${J(c.weather_step ?? null)} (one of 1, 0.75, 0.5, 0.25)`]
+    )].filter(Boolean)
   const blind = [], guessBad = []
   for (const X of ['A', 'B']) {
     const r = gt.R[X]
@@ -848,10 +861,11 @@ function evaluate(ck, gt) {
     C('SG2.14', 'blindness (allowlist check on self-reported files_read) and zero schema-path guesses', blind.length || guessBad.length ? {blind, guesses: guessBad} : 'ok', 'files_read within READER_ALLOWED; 0 schema guesses; every guess audited', !blind.length && !guessBad.length),
     C('SG2.15', 'artifacts hashed: spec md/json and tidings (spec reader), bible json (preflight), probes (readback)', noSha.length || tideDrift.length ? {missing: noSha, drift: tideDrift} : 'ok', 'five 64-hex shas; tidings re-hash equals the recorded sha', !noSha.length && !tideDrift.length),
     C('SG2.16', 'limits Street 3 gates on (spec reader): fade.ms, stream max_jobs_frame / tri_cap_frame / resident_tris, traffic s0 / T / v0, hysteresis bounds', s16.length ? s16 : 'ok',
-      `fade.ms ${OVR.R6 ? '>= 0 (R6 overridden)' : '<= 250 (R6)'}; max_jobs_frame integer ${OVR.ST9 ? '>= 1 (ST9 overridden)' : '1..6 (ST9)'}; the rest positive numbers; 0 < in_R < out_R <= ${MESH_HI}`, !s16.length)]
+      `fade.ms ${OVR.R6 ? '>= 0 (R6 overridden)' : '<= 250 (R6)'}; max_jobs_frame integer ${OVR.ST9 ? '>= 1 (ST9 overridden)' : '1..6 (ST9)'}; the rest positive numbers; 0 < in_R < out_R <= ${MESH_HI}`, !s16.length),
+    C('SG2.17', 'device classes (spec reader): desktop = /stream, phone <= 3 jobs and <= half the triangle cap, budgets positive', s17.length ? s17 : 'ok', 'desktop caps equal /stream; phone max_jobs_frame 1..3; phone tri_cap_frame <= half the desktop cap; budgets positive; fractions in (0,1]', !s17.length)]
   const wrongBoth = sc.A && sc.B ? sc.A.wrong.filter(id => sc.B.wrong.includes(id)) : []
   const noise = sc.A && sc.B ? sc.A.wrong.concat(sc.B.wrong).filter(id => !wrongBoth.includes(id)) : []
-  return {criteria, sc, wrongBoth, noise, nullPtr, s1, s7, s8, s9, s10, s11, s11u, s12, s16, fileViol, guessBad, perSlice, units}
+  return {criteria, sc, wrongBoth, noise, nullPtr, s1, s7, s8, s9, s10, s11, s11u, s12, s16, s17, fileViol, guessBad, perSlice, units}
 }
 const failingIds = ev => ev.criteria.filter(c => !c.pass).map(c => c.id)
 const NOT_FIXABLE = new Set(['SG2.0', 'SG2.15'])
@@ -873,7 +887,7 @@ while (rounds < ROUNDS && ev.criteria.some(c => !c.pass && !NOT_FIXABLE.has(c.id
   ev.wrongBoth.forEach(id => { const p = probes.find(x => x.id === id); if (p) add('probe both readers missed', p.source === 'spec' ? {q: p.q, pointer: p.pointer} : {q: p.q, answer: p.answer, source: p.source}) })
   ev.nullPtr.forEach(x => add('null pointer', x))
   ev.s7.forEach(x => add('checks', x)); ev.s8.forEach(x => add('caps', x)); ev.s1.forEach(x => add('structure', x))
-  ev.s9.forEach(x => add('determinism', x)); ev.s10.forEach(x => add('hash', x)); ev.s11.forEach(x => add('hooks', x)); ev.s12.forEach(x => add('mandatory unit', x)); ev.s16.forEach(x => add('limits', x))
+  ev.s9.forEach(x => add('determinism', x)); ev.s10.forEach(x => add('hash', x)); ev.s11.forEach(x => add('hooks', x)); ev.s12.forEach(x => add('mandatory unit', x)); ev.s16.forEach(x => add('limits', x)); ev.s17.forEach(x => add('limits', x))
   ev.fileViol.forEach(x => add('unit files', x)); ev.guessBad.forEach(x => add('schema guess', x))
   if (ck.gd) ['lost', 'fil_literals_touched', 'street_literals_touched'].forEach(k => arr(ck.gd[k]).forEach(x => add('literal ' + k, x)))
   if (ck.lk) arr(ck.lk.hits).forEach(x => add('leak', x))
@@ -884,7 +898,7 @@ while (rounds < ROUNDS && ev.criteria.some(c => !c.pass && !NOT_FIXABLE.has(c.id
   const fx = await agent(PS(`You are the spec fixer, round ${rr}. Patch ${SPEC_MD} and ${SPEC_JSON} ONLY where cited below; never renumber or reuse rule or unit ids; keep both files consistent; keep everything else byte-for-byte.
 - A probe both readers missed means the spec is ambiguous there: state the answer explicitly (a fixed question: its answer is the one given, settled by the bible, the views, the baseline or a ruling; a spec question: the value at its pointer).
 - A null pointer: put the decision at exactly that JSON pointer.
-- checks / caps / structure / mandatory unit / unit files / hooks / hash / determinism / limits items: correct /checks, /caps, /units, /hook_lines, /hash, /determinism, /fade, /stream, /traffic (its tiers included) or /tiers/hysteresis to the shape and rules below (acceptance expect is ${EXPECT_GRAMMAR}).
+- checks / caps / structure / mandatory unit / unit files / hooks / hash / determinism / limits items: correct /checks, /caps, /units, /hook_lines, /hash, /determinism, /fade, /stream, /device_classes, /traffic (its tiers included) or /tiers/hysteresis to the shape and rules below (acceptance expect is ${EXPECT_GRAMMAR}).
 - A schema guess: state the missing decision where the spec's structure promises it.
 - hooks items about an anchor: ${HOOK_ANCHOR_RULE} (check each with grep -cF against ${REPO}/index.html before you write it).
 - literal items: re-anchor to the current index.html literal (grep -nF) or drop the claim; a hook may not touch an anchor literal (move it to another line).

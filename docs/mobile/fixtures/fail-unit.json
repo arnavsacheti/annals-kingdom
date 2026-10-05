@@ -1,0 +1,37 @@
+[
+  {
+    "id": "FX-FAIL",
+    "run": "Fixture fail",
+    "title": "Fixture: a docs-only unit whose acceptance cannot pass (the loop restores its files, marks it failed, skips its dependants)",
+    "files": [
+      "docs/mobile/fixtures/fail-target.txt"
+    ],
+    "kind": "config",
+    "defects": [],
+    "depends_on": [],
+    "model": "haiku",
+    "effort": "low",
+    "acceptance": [
+      "docs/mobile/fixtures/fail-target.txt exists and contains the line \"alpha\"",
+      "docs/mobile/fixtures/fail-target.txt does not exist (contradicts the previous bullet; this unit can never pass)"
+    ]
+  },
+  {
+    "id": "FX-FAIL-DEP",
+    "run": "Fixture fail",
+    "title": "Fixture: a dependant of FX-FAIL (must be skipped, never run)",
+    "files": [
+      "docs/mobile/fixtures/fail-dep-target.txt"
+    ],
+    "kind": "config",
+    "defects": [],
+    "depends_on": [
+      "FX-FAIL"
+    ],
+    "model": "haiku",
+    "effort": "low",
+    "acceptance": [
+      "docs/mobile/fixtures/fail-dep-target.txt exists and its whole content is the single line \"dep\" followed by a newline"
+    ]
+  }
+]

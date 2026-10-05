@@ -1,0 +1,1053 @@
+[
+  {
+    "id": "M0",
+    "run": "Mobile 0",
+    "title": "CENTRAL, first: write the four Mobile 0 files, the POLISH edits and the research copy; uncheck Filigree 1; delete docs/filigree/gates/1-research.json (Path B)",
+    "files": [
+      "docs/street/rulings.json",
+      "docs/filigree/rulings.json",
+      "docs/street/todo-inputs.json",
+      "docs/filigree/todo-inputs.json",
+      "POLISH.md",
+      "docs/mobile/README.md",
+      "docs/mobile/inputs.json",
+      "docs/research/mobile-at-the-table.md"
+    ],
+    "kind": "central",
+    "defects": [],
+    "depends_on": [],
+    "acceptance": [
+      "executor: the central session, not a workflow agent; the files equal final/docs-filigree-rulings.json, final/docs-street-rulings.json, final/docs-filigree-todo-inputs.json and final/docs-street-todo-inputs.json byte for byte (all four parse; earlier todo-inputs keys byte-identical)",
+      "docs/street/rulings.json ST8 = the default ST8 text verbatim plus the phone clause (diff-checked); written BEFORE Street 1 runs, because Street 1 stamps the overrides and chain_ok compares them later",
+      "docs/mobile/README.md contains the UG1-UG11 table, \"Player-visible strings\" (every label, title, aria-label, hint and tidings string the units add; only that list is voice-read) and the hard ordering constraints of plan section 7",
+      "ordering: no app-file edit (index.html, maps-site/index.html) while any Filigree 1 agent runs; M1.1 and M1.3 (read-only on the app) may run beside Filigree 1; every other unit that edits an app file is held until F1 passes; the Filigree 1 box in POLISH.md is unchecked until F1 passes",
+      "owner questions 1 and 2 are presented with the plan; their recorded answers live in docs/mobile/owner-answers.json ({\"q1\": \"a\"|\"b\"|\"c\"|null, \"q1_values\": {\"B\": n, \"C\": n}|null, \"q2\": \"a\"|\"b\"|null}); the file is created with nulls"
+    ]
+  },
+  {
+    "id": "F1",
+    "run": "Mobile 0 (Filigree 1 re-integration)",
+    "title": "CENTRAL: re-run Filigree 1 with the rulings and the filigree mobile block (plan section 1.3 Path B; Path C only with the owner's approval)",
+    "files": [
+      "docs/filigree/density-bible.json",
+      "docs/filigree/density-bible.md",
+      "docs/filigree/gates/1-research.json"
+    ],
+    "kind": "central",
+    "defects": [],
+    "depends_on": [
+      "M0"
+    ],
+    "acceptance": [
+      "Workflow filigree-1-research runs with its default resume:true after M0 deleted the old gate; gates/1-research.json is re-created, passes, and records R2/R7/R12/R14/R18 as overridden (none \"default\"); the class-id superset check against 72175a5 finds no dropped class",
+      "the bible has \"## Phone (mobile block)\" with FM1-FM12; if it lacks it after two attempts, queue SE1b (the contingency script edit) instead of a third run",
+      "this unit and every app-file edit never overlap in time (the lock is the hold flag in M1.3)"
+    ]
+  },
+  {
+    "id": "M1.1",
+    "title": "The measuring stick: tools/mobile-capture.js",
+    "files": [
+      "tools/mobile-capture.js",
+      "docs/mobile/README.md",
+      ".gitignore",
+      "docs/mobile/metrics.md",
+      "docs/mobile/gates.md",
+      "docs/mobile/voice-rubric.md",
+      "docs/mobile/controls.json",
+      "docs/mobile/inputs/"
+    ],
+    "kind": "tool",
+    "defects": [],
+    "depends_on": [
+      "M0"
+    ],
+    "model": "sonnet",
+    "effort": "high",
+    "acceptance": [
+      "starts from the harness the plan ships beside units.json (mobile-plan/inputs/: capture.js, probe.js, brief.md, atlas-capture-metrics.json, sim-capture-metrics.json, rm-metrics-*.json, vendor-shas.txt, metrics.md), copied to docs/mobile/inputs/; every metric is computed by the formula in docs/mobile/metrics.md (copied from inputs/metrics.md: counting rules, profiles, emulation mechanisms, metric formulas, control inventory, clock tokens, image diff, accept schema, voice rubric, keydown sha range); docs/mobile/gates.md holds the UG1-UG11 table copied verbatim from plan section 4.2",
+      "two runs on the unchanged tree agree on every non-timing key (bytes, requests, counts, rects, taps, fingerprints, anchors); timing-derived keys (real-clock degradeStep, fps_median, LoAF, wall times) are recorded as informational and excluded from the agreement check",
+      "reproduces the brief within 5%, or records the measured value as B0 with the difference noted (units read B0, never a hard-coded number): iphone13 atlas first load 729,636 B / 37 requests counted per metrics.md section 1 (app-origin responses only; the Leaflet stub and aborted font hosts excluded); repeat-visit cache hits 0 (second page.goto in the same context); whole-chart doc_scroll 974 vs innerHeight 664; chrome_cover.whole 0.29; contents.kickerTop -26; share_visible 0.36-0.37; Epēshu tap at z4.55 opens #faction=The Lektān Priesthood (a wiki canon name, exempt from the VOCAB grep); hover_ungated 29; sim targets_under_44 11 of 13. Real-clock sim degradeStep is recorded, not gated",
+      "stats_keys deep-equals the STATS_KEYS literal read from street-1-research.js; every flag-1 anchor of the eight scripts (read from their ANCHORS at run time) found; clock_tokens counted by OCCURRENCES (grep -oE, metrics.md section 6): index.html = 37 occurrences on 35 lines for pattern P and 37 for the wide pattern W; maps-site/index.html = 1 for P and 2 for W (requestIdleCallback, performance.now); the per-line token multiset is recorded in B0",
+      "fingerprint recipe = the street probe's (speed 0, ANNALS.hold(1e12), simDays(400), sha256 of canonical {clock, dayTicked, settlements, agents, chron, treasury, routeVolume}) and equal on two runs for epeshu and tamar1374; also exposes W.rng.gen/hist/amb cursor values",
+      "every profile pins navigator.hardwareConcurrency and navigator.deviceMemory (default 8 and 8; --hw-cores and --device-memory override) so no result depends on the harness host; the capture records the pinned values",
+      "every browser context uses serviceWorkers:'block' unless --sw allow; `docs/mobile/shots/` is git-ignored; shots <= 300 KB; the image-diff function (metrics.md section 7), the control inventory and reach rule (section 5), the emulation mechanisms (section 3) and `--accept` / `--lint-accept` (section 8) are implemented exactly as written there; docs/mobile/controls.json is captured on desktop 1366x768",
+      "self-check: `node tools/mobile-capture.js --accept` on a fixture accept file with one passing and one deliberately failing check exits 1 and names the failing key; `--lint-accept` rejects a file with an unknown op",
+      "review (opus/high, lens \"can a regression pass this?\") leaves no blocker or major"
+    ],
+    "run": "Mobile 1"
+  },
+  {
+    "id": "M1.2",
+    "title": "Baseline B0 before any app edit (twice)",
+    "files": [
+      "docs/mobile/baseline.json"
+    ],
+    "kind": "data",
+    "defects": [],
+    "depends_on": [
+      "M1.1"
+    ],
+    "model": "sonnet",
+    "effort": "low",
+    "acceptance": [
+      "captured twice on iphone13, pixel7, desktop, desktop2x and landscape with pinned hardwareConcurrency/deviceMemory; the two runs agree on every non-timing key",
+      "records MEASURED ATLAS tier zooms per profile into docs/mobile/baseline.json and the A19 delta table; the figures in the plan (desktop B 3.567 / C 4.783 at fit 2.35; desktop2x computed B 3.40 / C 4.20; pixel7 B 3.233 / C 4.117; iphone13 B 2.967 / C 3.983) are expectations only: if a measured value differs, the measured value is recorded and A-U2 reads its constants from baseline.json, never from these literals",
+      "no file outside docs/mobile/ changed, verified by a sha256 manifest of the tree (index.html, maps-site/, server.js, tools/, .claude/, vendor/) taken before and after, not by git"
+    ],
+    "run": "Mobile 1"
+  },
+  {
+    "id": "M1.3",
+    "title": "Saved loop: .claude/workflows/mobile-build.js and mobile-review.js (written by the central session only; never by a workflow agent)",
+    "files": [
+      ".claude/workflows/mobile-build.js",
+      ".claude/workflows/mobile-review.js",
+      "tools/mobile-loop-check.js",
+      "docs/mobile/fixtures/noop-unit.json",
+      "docs/mobile/fixtures/fail-unit.json",
+      "docs/mobile/state.json"
+    ],
+    "kind": "central",
+    "defects": [],
+    "depends_on": [
+      "M1.1"
+    ],
+    "acceptance": [
+      "executor: the central session (it has the Workflow tool); no workflow agent is ever given this unit. mobile-build.js refuses to write to any path under .claude/ and rejects any unit whose files include .claude/; kind 'central' units are never run by the loop",
+      "parse and meta check by tools/mobile-loop-check.js, which copies the logic of metaCheck in tools/street-drift.js:67 (that function is not exported and only walks the street scripts): meta a pure literal, name = file stem, JOB line, phases declared = phases used, no clock/random/require/import in the body, AsyncFunction parse; `node tools/street-drift.js` still exits 0 and `node tools/street-drift.js --self-test` exits 0",
+      "docs/mobile/state.json schema: {version:1, item, app_sha:{\"index.html\":sha256,\"maps-site/index.html\":sha256}, baselines:{B0:sha,R1:sha|null,final:sha|null}, owner_answers:\"docs/mobile/owner-answers.json\", units:{<id>:{status:\"passed\"|\"failed\"|\"skipped\"|\"deferred-5b\",attempts:n,capture:path,files_sha:{path:sha256},failing:[{key,op,expected,got}]}}, rebase:[{before_unit:id,app_sha_before,app_sha_after,reason}]}; the REBASE TRIGGER: before each unit the loop compares the sha256 of the app files in the tree with state.json app_sha (as left by the previous unit); a difference not made by the loop (for example the \"Traced road network\" commit) is recorded under rebase and the references are re-taken before the unit runs",
+      "mode:'plan' returns the schedule for a POLISH item; a dry run on docs/mobile/fixtures/noop-unit.json (docs-only, passes) completes and writes state.json; a run on fail-unit.json (an acceptance that cannot pass) restores its files from the snapshot, leaves its status failed and skips its dependants",
+      "the build loop per unit: accept-author (writes docs/mobile/accept/<id>.json from the unit's acceptance bullets) -> snapshot files -> implementer -> UG1 -> measurer (haiku/low runs the tool; the script scores) -> <=2 fix rounds -> reviewer lenses -> refute -> fix -> fresh re-review (<=2 cycles) -> restore from snapshot on failure",
+      "never runs git; hash gate UG11 scored in code: sha256 of every .claude/workflows/*.js and of tools/street-drift.js before and after each implementer or fixer run must be unchanged, else the unit fails and restores; units hold their app file as the only writable app path (maps-site/index.html or index.html), never both",
+      "unit hold flag: a unit whose files include index.html or maps-site/index.html starts only when docs/filigree/gates/1-research.json exists, passes, and records R2/R7/R12/R14/R18 as overridden (not \"default\"); the loop checks this before its snapshot step",
+      "adversarial review (opus/high) + refute leaves no blocker or major"
+    ],
+    "run": "Mobile 1"
+  },
+  {
+    "id": "M2",
+    "run": "Mobile 2",
+    "title": "CENTRAL: script edits SE1a, SE2a, SE2b and SE10 (script-edits.json) before Filigree 2 and Street 2 ever run",
+    "files": [
+      ".claude/workflows/filigree-2-plan.js",
+      ".claude/workflows/street-2-plan.js",
+      "docs/filigree/README.md",
+      "docs/street/README.md",
+      "docs/mobile/script-baseline.json"
+    ],
+    "kind": "central",
+    "defects": [],
+    "depends_on": [
+      "M0"
+    ],
+    "acceptance": [
+      "executor: the central session, then an opus/high reviewer; no unit or workflow agent edits .claude/ (UG11); before the first edit the central session records docs/mobile/script-baseline.json = per script the marker-to-marker prelude sha256 (filigree-2: lines 19-132; street-2: lines 18-201 as of this plan) and the output of `node tools/street-drift.js` and `node tools/street-drift.js --self-test` (both exit 0)",
+      "after each edit: the G-script gate of script-edits.json passes (parse, drift exit 0 and --self-test exit 0, prelude shas equal script-baseline.json, masked diff, synthetic fixtures)",
+      "SE4 and SE6 (which move the F08 and L09 lenses from 390x844 to 390x664) must land before Filigree 4 or Street 4 runs; until then those unedited calls pass an explicit --phone 390x844@3",
+      "never edits filigree-1-research.js or street-1-research.js"
+    ]
+  },
+  {
+    "id": "D1",
+    "title": "server.js: gzip, MIME, ETag/304, Cache-Control, HEAD, PORT env",
+    "files": [
+      "server.js",
+      "docs/mobile/accept/D1.json"
+    ],
+    "kind": "config",
+    "defects": [
+      "A8",
+      "S6"
+    ],
+    "depends_on": [
+      "M1.2"
+    ],
+    "model": "sonnet",
+    "effort": "medium",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/D1.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "curl -sI -H \"Accept-Encoding: gzip\" matrix: .json .geojson .jpg .png .webp .svg .woff2 .webmanifest carry correct types (were octet-stream); html/js/css/json/svg gzip with Vary: Accept-Encoding; If-None-Match -> 304 with empty body",
+      "Cache-Control: no-cache for *.html, sw.js, sw-kill.js, data/*.json, offline-manifest.json; public, max-age=31536000, immutable for vendor/** and any URL with ?t=; public, max-age=2592000 for other rasters",
+      "atlas index.html transferred <= 70 KB (211,860 raw); data JSON first load <= 75 KB (~216 KB raw); sim index.html transferred <= 760 KB (1,203,659 raw)",
+      "iphone13 atlas first load, font requests excluded, <= 450 KB transferred counted per metrics.md section 1 (app-origin responses; the routed Leaflet stub and aborted font hosts are excluded, exactly as the 729,636 B baseline was taken); repeat visit = a second page.goto of the same URL in the same context (not reload, not a new context): transferred <= 10% of first and >= 90% of requests 304 or cache hits (was 0 hits)",
+      "a data JSON edited in a temp copy of the tree, served by `PORT=<free> node server.js` run from that copy (needs D1's PORT env) while tools/mobile-capture.js is pointed at it with --port, shows on a plain reload (closes POLISH \"Data fetch cache-busting\" by revalidation)",
+      "`node server.js` with no PORT still listens on 8544; the 403 path guard and the \"/\" -> index.html mapping are unchanged"
+    ],
+    "run": "Mobile 3"
+  },
+  {
+    "id": "D2",
+    "title": "REWRITE the existing DEPLOY.md (nginx/Caddy, deny/allowlist, HTTPS, kill switch, TILES_V rule) + pages.yml staging",
+    "files": [
+      "DEPLOY.md",
+      ".github/workflows/pages.yml",
+      "tools/lint-deploy.js"
+    ],
+    "kind": "config",
+    "defects": [
+      "A8",
+      "S6"
+    ],
+    "depends_on": [
+      "D1"
+    ],
+    "model": "sonnet",
+    "effort": "medium",
+    "acceptance": [
+      "a node lint maps every DEPLOY.md header row to the header server.js sends for a sample path of that class (one source of truth): 0 mismatches",
+      "sim server block is an allowlist: /, /index.html, /share.jpg, /vendor/**, /sw.js, /sw-kill.js, /offline-manifest.json; any other path (e.g. /.git/HEAD, /docs/, /tools/street-drift.js, /POLISH.md, /lexicon/patrinaic.json) answers index.html or 404, never the repo file (rule-table lint; nginx -t when nginx is installed)",
+      "maps server block denies dotfiles; versioned paths immutable, mutable paths no-cache; gzip_types include application/json, application/geo+json, image/svg+xml, application/manifest+json",
+      "pages.yml \"Stage sites\" gains `for f in vendor sw.js sw-kill.js offline-manifest.json; do [ -e \"$f\" ] && cp -R \"$f\" _site/; done` (staged only when present)",
+      "a local replay of the Stage step into a temp _site served under /annals-kingdom/ loads both apps with 0 console errors (re-run in Mobile 9 and Mobile 14 with 0 foreign origins)",
+      "kill-switch procedure documented (copy sw-kill.js over sw.js; it unregisters and deletes caches); HTTPS stated as required for workers, storage.persist() and wake lock",
+      "review (sonnet/high) lens \"would this config serve .git? does every versioned path get immutable and every mutable path no-cache?\" leaves no blocker or major",
+      "DEPLOY.md already exists (a sim block serving the whole repo root and \"three.js loads from CDN\"; a maps block with `location /tiles/ { expires 30d; }`): this unit REPLACES it, keeping the DNS section; none of the old root-serving block survives",
+      "lint format: DEPLOY.md holds (1) a table with the header row `| path class | example path | Cache-Control | Content-Type | Content-Encoding |` and (2) a table with the header row `| request path | sim block answers |` listing /, /index.html, /vendor/three.js/r128/three.min.js, /sw.js, /.git/HEAD, /docs/a.md, /tools/street-drift.js, /POLISH.md, /lexicon/patrinaic.json, /maps-site/index.html with values `file` or `index.html-or-404`. tools/lint-deploy.js splits cells on `|`, strips backticks, starts `PORT=<free> node server.js`, requests each example path with Accept-Encoding: gzip and compares Cache-Control, Content-Type and Content-Encoding (0 mismatches), and evaluates the allowlist `location ~` regex written in the sim server block against table (2) (0 mismatches); it prints one line per mismatch and exits 1 on any",
+      "pages.yml anchor: inside step `Stage sites (sim at /, atlas at /maps-site/)`, immediately after the line `          cp -R maps-site _site/maps-site` (line 29) and before `- uses: actions/configure-pages@v5`; the existing `cp index.html share.jpg _site/ 2>/dev/null || cp index.html _site/` line stays"
+    ],
+    "run": "Mobile 3"
+  },
+  {
+    "id": "D6",
+    "title": "tools/build-offline-manifest.js (--atlas | --sim | --check)",
+    "files": [
+      "tools/build-offline-manifest.js"
+    ],
+    "kind": "tool",
+    "defects": [
+      "A10",
+      "S6"
+    ],
+    "depends_on": [
+      "D1"
+    ],
+    "model": "sonnet",
+    "effort": "medium",
+    "acceptance": [
+      "run twice -> byte-identical output; sorted keys; no clock in output",
+      "per-file byte sums equal `du -b` of the listed files",
+      "--check exits 1 on a temp copy where a listed raster changed and TILES_V did not; exits 0 when TILES_V was bumped",
+      "works before D3/D4/D5 land (absent TILES_V -> tileset null; absent vendor/ -> omitted); writes only maps-site/data/offline-manifest.json (--atlas) or offline-manifest.json (--sim); `--check` is also run as the last step of A-U7 and S-U10 (the last app-file edit of each lane) because later unit edits change the file set"
+    ],
+    "run": "Mobile 3"
+  },
+  {
+    "id": "D3",
+    "title": "Atlas: vendor Leaflet 1.9.4 and the OFL fonts",
+    "files": [
+      "maps-site/index.html",
+      "maps-site/vendor/",
+      "docs/mobile/accept/D3.json",
+      "maps-site/vendor/fonts/"
+    ],
+    "kind": "config",
+    "defects": [
+      "A9"
+    ],
+    "depends_on": [
+      "D1",
+      "F1"
+    ],
+    "model": "sonnet",
+    "effort": "medium",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/D3.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "foreign_origins = 0 on the atlas (was 3: fonts.googleapis.com, fonts.gstatic.com, unpkg.com)",
+      "sources (npm, run in a scratch dir): `npm pack leaflet@1.9.4` -> package/dist/{leaflet.css,leaflet.js,images/*}; `npm pack @fontsource/eb-garamond@5.3.0 @fontsource/lora@5.3.0 @fontsource/ibm-plex-mono@5.3.0` -> package/files/<family>-{latin,latin-ext}-<weight>-<style>.woff2 for exactly EB Garamond 400 normal, 400 italic, 600 normal; Lora 400 normal, 400 italic, 600 normal; IBM Plex Mono 400 normal, 600 normal, plus each package's LICENSE (OFL) beside the files and hand-written @font-face rules with the fontsource unicode-range. sha256 of leaflet.css = a7837102824184820dfa198d1ebcd109ff6d0ff9a2672a074b9a1b4d147d04c6 and of leaflet.js = db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a, equal to the existing SRI hashes (integrity attributes kept); the font shas are listed in docs/mobile/inputs/vendor-shas.txt and recorded in maps-site/vendor/SHA256SUMS; a Playwright route on **/leaflet@1.9.4/dist/* fires for the vendored URL (the filigree sandbox recipe still applies)",
+      "document.fonts.check true for EB Garamond 400/600/400i, Lora 400/600/400i, IBM Plex Mono 400/600; the latin-ext woff2 is requested when Epēshu or Nīmlad is on screen; font-display:swap; OFL texts beside the files",
+      "font bytes on iphone13 first load <= 200 KB transferred; desktop reference re-taken as R1 after this unit (declared change: fonts now render)"
+    ],
+    "run": "Mobile 4"
+  },
+  {
+    "id": "D5",
+    "title": "Atlas: versioned rasters (?t=TILES_V)",
+    "files": [
+      "maps-site/index.html",
+      "docs/mobile/accept/D5.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "A8"
+    ],
+    "depends_on": [
+      "D3"
+    ],
+    "model": "sonnet",
+    "effort": "medium",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/D5.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "`var TILES_V=1` present; every request under tiles/, tiles-war/, tiles-imperial/, charts/, art/ carries ?t=1; data JSON URLs unchanged",
+      "tile request count per view equal to R1; 0 404s; desktop and desktop2x shots identical to R1",
+      "tile directory names unchanged (Filigree 1 preflight INPUTS and the hex crops still resolve)"
+    ],
+    "run": "Mobile 4"
+  },
+  {
+    "id": "A-U1",
+    "title": "Atlas: the frame (closed sheet clipped, Contents heading safe, safe areas, dvh)",
+    "files": [
+      "maps-site/index.html",
+      "docs/mobile/accept/A-U1.json"
+    ],
+    "kind": "css",
+    "defects": [
+      "A1",
+      "A11",
+      "A14"
+    ],
+    "depends_on": [
+      "D5"
+    ],
+    "model": "sonnet",
+    "effort": "medium",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/A-U1.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "with the sheet closed, document.scrollingElement.scrollHeight === innerHeight: iphone13 664 (was 974), pixel7 839 (was 1,265); closed #panel computed visibility hidden and top >= viewport height",
+      "iphone13 Contents kicker top >= 0 (was -26) and title top >= 0 (was -8)",
+      "viewport meta has viewport-fit=cover; under an emulated 47 px top / 34 px bottom inset (CDP Emulation.setSafeAreaInsetsOverride, metrics.md section 3) no control box intersects the inset band; if the CDP command is unavailable the tool records safe_area:'unavailable' and this bullet is a proposal until Mobile 15, with the checkable pass condition that every fixed or absolute control rule uses env(safe-area-inset-*)",
+      "desktop and desktop2x shots identical to R1"
+    ],
+    "run": "Mobile 4"
+  },
+  {
+    "id": "A-U2",
+    "title": "Atlas: absolute reveal bands (A19), pinned to the earlier desktop",
+    "files": [
+      "maps-site/index.html",
+      "docs/mobile/accept/A-U2.json",
+      "docs/mobile/owner-answers.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "A19"
+    ],
+    "depends_on": [
+      "A-U1"
+    ],
+    "model": "opus",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/A-U2.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "tierZoom reads absolute constants Z_TIER_B and Z_TIER_C chosen by the recorded owner answer (a: for each tier the MIN of today's tierZoom on desktop 1366x768@1 and desktop2x 1440x900@2, read from docs/mobile/baseline.json (expected about 3.40 / 4.20); b: the 1x values; c: q1_values), clamped to >= the live minZoom; tier A stays \"from minZoom\"; the `var TIER_CEIL=` literal is kept; ATLAS.tiers() returns {a, b, c, d}",
+      "ATLAS.tiers() b, c and d are identical on iphone13, pixel7, landscape, desktop and desktop2x (|delta| < 1e-9); `a` is reported per profile and is EXPECTED to vary with the viewport-derived minZoom (fit 1.95 on iphone13 vs 2.35 on desktop); the cross-profile equality never includes `a`",
+      "per-profile delta table vs B0 written to docs/mobile/captures/A-U2.json; no desktop control reveals later (delta <= 0 on both); if any desktop |delta| > 0.35 (computed: 1x desktop tier C -0.58) and the owner answer is not recorded, the unit stops and is DEFERRED to Mobile 5b (see owner_gate); with answer a recorded it ships the min-of-two values",
+      "tier-A content present at minZoom on every profile; desktop flyTo targets unchanged",
+      "G2 parity sweep: at z 2.0, 2.5, 3.0, 3.5, 4.0, 4.55, 6.15 the marker types drawn are identical across all five profiles"
+    ],
+    "run": "Mobile 5",
+    "owner_gate": {
+      "file": "docs/mobile/owner-answers.json",
+      "key": "q1",
+      "values": {
+        "a": "pin to the earlier of the two desktops (recommended, the plan default)",
+        "b": "pin to the 1x desktop values",
+        "c": "pin to q1_values {B, C} written in the same file"
+      },
+      "if_absent": "DEFER: mark A-U2 and A-U10 status deferred-5b in state.json, queue POLISH \"Mobile 5b\" (polish-entries E11), continue the lane; dependants treat the deferred unit as satisfied; the loop never assumes answer a"
+    }
+  },
+  {
+    "id": "A-U3",
+    "title": "Atlas: one coarse-pointer tap resolver and a chooser; faded glyphs never take a tap",
+    "files": [
+      "maps-site/index.html",
+      "docs/mobile/accept/A-U3.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "A2"
+    ],
+    "depends_on": [
+      "A-U2"
+    ],
+    "model": "opus",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/A-U3.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "tap fixture (every interactive glyph centre in whole chart, Leponnia z3.5, Epēshu z4.55, Epēshu z4.95, city z6.15) on iphone13 and pixel7: wrong_card = 0 (was: Epēshu at z4.55 opened the Lektān faction card); the tapped glyph opened or listed in 100% of taps",
+      "chooser shown iff >= 2 glyph centres lie within 22 px (scripted on the 10 most crowded pairs); rows >= 44 px, nearest first, names plus kind; a tap with no centre within 22 px opens no card",
+      "elementsFromPoint at any faded (tier-hidden) marker returns no faded element on any profile (closes POLISH \"Tier-hidden markers intercept clicks\")",
+      "glyphs never move (no badge offset): marker glyph rects equal R1; desktop click fixture opens the same hashes as R1 (except clicks that landed on faded waypoints, which now reach the marker beneath: listed as the declared change)",
+      "no Leaflet pane created (UG7)",
+      "if A-U2 is deferred-5b the unit proceeds against B0 tiers and records tiers_deferred:true"
+    ],
+    "run": "Mobile 5"
+  },
+  {
+    "id": "A-U4",
+    "title": "Atlas: 44 px touch targets and invisible marker pads",
+    "files": [
+      "maps-site/index.html",
+      "docs/mobile/accept/A-U4.json"
+    ],
+    "kind": "css",
+    "defects": [
+      "A3"
+    ],
+    "depends_on": [
+      "A-U3"
+    ],
+    "model": "sonnet",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/A-U4.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "coarse profiles: interactive controls under 44x44 <= 5% (was 123/127 iphone13, 106/110 pixel7); markers counted by pad size; header links, close, toggles, era control, jbar, layer rows, Leaflet zoom all >= 44",
+      "marker glyph rects equal R1 (map-region shot diff <= 0.5% by the metrics.md section 7 function); chrome text >= 12 px on coarse pointers (min_font_px)",
+      "tap fixture still wrong_card = 0 (pads never decide a tap)",
+      "desktop and desktop2x identical (fine pointer)"
+    ],
+    "run": "Mobile 5"
+  },
+  {
+    "id": "A-U8",
+    "title": "Atlas: the table drawer (one-row header, thumb-zone cluster, layers inside, landscape side sheet)",
+    "files": [
+      "maps-site/index.html",
+      "docs/mobile/accept/A-U8.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "A4",
+      "A6",
+      "A16",
+      "A21"
+    ],
+    "depends_on": [
+      "A-U4"
+    ],
+    "model": "opus",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/A-U8.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "on (max-width:640px), (max-height:500px) and (pointer:coarse): chrome_cover.whole <= 0.12 (was 0.29 iphone13 / 0.21 pixel7); drawer at peek <= 0.35 (layers open was 0.85)",
+      "reach: every id in docs/mobile/controls.json (desktop control inventory, role + accessible name) reachable on iphone13 in <= 2 taps by the BFS rule of metrics.md section 5, each target >= 44 px; the layers list row count equals desktop; 0 rows covered by other chrome (elementFromPoint)",
+      "standard sheet: no scrim, map pans while the drawer is at peek; handle >= 48 px; every control with primary:true in controls.json (metrics.md section 5) has its centre inside the bottom 25% of the viewport",
+      "landscape 844x340: drawer is a right-side sheet <= 50% wide, no horizontal overflow",
+      "desktop and desktop2x DOM layout and shots identical to R1",
+      "new aria-labels and titles use table vocabulary and are listed under \"Player-visible strings\" in docs/mobile/README.md: handle \"Draw the sheet up or down\", layers \"Layers of the chart\", close \"Close the card\"; never menu, drawer, modal, dismiss, toggle or \"Drag handle\""
+    ],
+    "run": "Mobile 6"
+  },
+  {
+    "id": "A-U10",
+    "title": "Atlas: The Whole Chart fits a portrait phone (letterboxed fit-width)",
+    "files": [
+      "maps-site/index.html",
+      "docs/mobile/accept/A-U10.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "A5"
+    ],
+    "depends_on": [
+      "A-U8",
+      "A-U2"
+    ],
+    "model": "sonnet",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/A-U10.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "coarse + portrait: minZoom = min(fillZoom, fitWidthZoom); share_visible at The Whole Chart >= 0.95 on iphone13 (was 0.361) and pixel7 (was 0.29-0.30)",
+      "pixels sampled outside the chart rect equal the parchment colour (no void)",
+      "ATLAS.tiers() b, c and d unchanged from A-U2 on every profile (from B0 when A-U2 is deferred-5b); `a` is reported per profile and is expected to drop on coarse portrait because minZoom is lowered here; desktop minZoom and The Whole Chart view identical to R1"
+    ],
+    "run": "Mobile 6",
+    "owner_gate": {
+      "file": "docs/mobile/owner-answers.json",
+      "key": "q2",
+      "values": {
+        "a": "fit-width letterbox (the plan default)",
+        "b": "keep fill-height with an overview inset"
+      },
+      "if_absent": "DEFER with A-U2 to Mobile 5b unless A-U2 ran and q2 is absent, in which case ship the plan default (a)"
+    }
+  },
+  {
+    "id": "A-U11",
+    "title": "Atlas: 720 px overlay previews before the full plate",
+    "files": [
+      "maps-site/index.html",
+      "tools/art-previews.js",
+      "maps-site/art/overlay-Epeshu-720.jpg",
+      "maps-site/art/overlay-Summarch-720.jpg",
+      "docs/mobile/accept/A-U11.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "A7"
+    ],
+    "depends_on": [
+      "A-U10"
+    ],
+    "model": "sonnet",
+    "effort": "medium",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/A-U11.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "tools/art-previews.js (ImageMagick convert, 720 px long side, fixed quality) is byte-identical on rerun; each preview <= 180 KB",
+      "#chart=Epēshu: bytes before the full image starts <= 250 KB; no asset > 500 KB has a requestWillBeSent timestamp (CDP) earlier than its preview's (was 2,171,881 B first)",
+      "after load the full image is the same file and the final shot equals R1 at max zoom; registerCityOverlay literal kept"
+    ],
+    "run": "Mobile 6"
+  },
+  {
+    "id": "D7",
+    "title": "Atlas worker maps-site/sw.js + sw-kill.js + guarded registration",
+    "files": [
+      "maps-site/index.html",
+      "maps-site/sw.js",
+      "maps-site/sw-kill.js",
+      "maps-site/data/offline-manifest.json",
+      "docs/mobile/accept/D7.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "A10"
+    ],
+    "depends_on": [
+      "A-U11",
+      "D6"
+    ],
+    "model": "opus",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/D7.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "the registration guard is one pure function swShouldRegister({hostname, isSecureContext, webdriver, search, hasSW}) defined inline and extracted by the test under node: true only when hasSW && isSecureContext && !webdriver && hostname is not localhost/127.0.0.1, or when search has sw=1; under Playwright without ?sw=1 navigator.serviceWorker.getRegistrations() = 0",
+      "with ?sw=1: an offline reload after a first visit shows Contents and The Whole Chart with 0 failed requests for already-seen tiles",
+      "strategies: HTML network-first (3 s) cached without its query; vendor/** and ?t= rasters cache-first in atlas-raster-t<TILES_V>; data JSON stale-while-revalidate; cross-origin untouched; opaque responses never cached",
+      "a changed index.html on the server shows \"A newer chart has been drawn — unroll it\" within one reload; sw-kill.js unregisters and deletes every cache",
+      "manifest regenerated with --atlas; --check passes",
+      "test matrix (origin, flag, scope): (1) http://localhost:PORT/ no flag: 0 registrations; (2) same with ?sw=1: registers with scope \"/\" (the atlas served from its own root); (3) Pages replay http://localhost:PORT/annals-kingdom/ and /annals-kingdom/maps-site/ with ?sw=1: the atlas worker scope is /annals-kingdom/maps-site/ and does not control the sim page; (4) the production path (HTTPS host, no flag) is tested only as the pure function, true; webdriver true and localhost both false. Sandbox cannot verify a real HTTPS host: that row is proposal until Mobile 15",
+      "the \"changed index.html\" check uses tools/mobile-capture.js --mutate-html, which serves a temp copy of the tree whose index.html has one trailing `<!-- v2 -->` comment appended after the first visit"
+    ],
+    "run": "Mobile 7"
+  },
+  {
+    "id": "D9",
+    "title": "Atlas: \"Keep this chart for the table\" (size first) and \"Keep the chart lit\"",
+    "files": [
+      "maps-site/index.html",
+      "docs/mobile/accept/D9.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "A10",
+      "A20"
+    ],
+    "depends_on": [
+      "D7"
+    ],
+    "model": "sonnet",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/D9.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "the drawer row shows the exact size from data/offline-manifest.json before any byte moves; bytes fetched after the tap within 5% of it; the size is written \"about <n> MB\" (rounded), and the visible row avoids \"Save\", \"Download\", \"Install\" and \"Offline mode\"",
+      "nothing downloads until the tap (with and without emulated Save-Data, 10 s watch); the tap calls navigator.storage.persist() once",
+      "after Keep + context.setOffline(true): the kept era pans z0-4 with 0 failed tile requests and the open city chart opens; the Elder Chart (R14's era layer) is kept only if it was on",
+      "the row is re-offered while the pack is incomplete or storage.persisted() is false",
+      "\"Keep the chart lit\" present iff \"wakeLock\" in navigator && isSecureContext; a rejected request (Chromium under automation may reject) is handled with 0 console errors; lock released on hidden, re-taken on visible when granted; the real lock and storage.persisted() are proposal until Mobile 15, the sandbox pass condition is the presence rule plus the handled rejection"
+    ],
+    "run": "Mobile 7"
+  },
+  {
+    "id": "A-U9",
+    "title": "Atlas: the place card as a peek / half / full standard sheet",
+    "files": [
+      "maps-site/index.html",
+      "docs/mobile/accept/A-U9.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "A13"
+    ],
+    "depends_on": [
+      "D9"
+    ],
+    "model": "sonnet",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/A-U9.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "peek height 100-140 px (name, kind, primary action); half = 50%; full; handle >= 48 px; a synthesized 120 px swipe-down on the handle closes it",
+      "card targets under 44 px = 0 (was 17 of 21; close 30x30); jbar never intersects the sheet at peek or half (the shared CSS variable replaces calc(64% + 10px))",
+      "the A-U1 closed-sheet checks still hold; desktop side panel identical to R1",
+      "new aria-labels and titles use table vocabulary and are listed under \"Player-visible strings\": the sheet handle is \"Draw the sheet up or down\", the close control \"Close the card\"; no \"dismiss\", \"drawer\" or \"modal\""
+    ],
+    "run": "Mobile 8"
+  },
+  {
+    "id": "A-U5",
+    "title": "Atlas: touch parity (hover gated, halo ring, realm tap, long-press name, census pads)",
+    "files": [
+      "maps-site/index.html",
+      "docs/mobile/accept/A-U5.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "A15",
+      "A12"
+    ],
+    "depends_on": [
+      "A-U9"
+    ],
+    "model": "sonnet",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/A-U5.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "hover_ungated = 0 (was 29): every :hover rule inside @media (hover:hover)",
+      "a 650 ms press on 5 pins shows the name and leaves location.hash unchanged; a tap on a realm highlights it",
+      "POI halo ring visible on hover:none (computed opacity > 0); census pins carry 44 px pads; 0 census mousemove listeners under hover:none",
+      "desktop hover shots identical to R1; the ranked label budget (A12 part b) is NOT built here (deferred)"
+    ],
+    "run": "Mobile 8"
+  },
+  {
+    "id": "A-U6",
+    "title": "Atlas: search at 16 px with 44 px rows above the keyboard",
+    "files": [
+      "maps-site/index.html",
+      "docs/mobile/accept/A-U6.json"
+    ],
+    "kind": "css",
+    "defects": [
+      "A17"
+    ],
+    "depends_on": [
+      "A-U5"
+    ],
+    "model": "sonnet",
+    "effort": "medium",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/A-U6.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "coarse: search input computed font-size >= 16 px; focusing it leaves visualViewport.scale = 1",
+      "suggestion rows >= 44 px; with visualViewport height emulated at 300 (Emulation.setDeviceMetricsOverride: exercises the layout path only) the list bottom <= 300; the real iOS keyboard is proposal until Mobile 15",
+      "desktop identical"
+    ],
+    "run": "Mobile 8"
+  },
+  {
+    "id": "A-U7",
+    "title": "Atlas: half-step zoom buttons on touch; Save-Data idle tiles",
+    "files": [
+      "maps-site/index.html",
+      "docs/mobile/accept/A-U7.json",
+      "maps-site/data/offline-manifest.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "A18"
+    ],
+    "depends_on": [
+      "A-U6"
+    ],
+    "model": "sonnet",
+    "effort": "medium",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/A-U7.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "coarse: one zoom-button press changes zoom by 0.5; fine pointers keep today's step",
+      "with navigator.connection.saveData emulated true (init script + Save-Data: on header, metrics.md section 3) the base layer has updateWhenIdle true; absent API = unchanged; deterministic proxy: under a scripted pan (5 steps, 400 ms apart on the virtual clock, then idle 3 s) the count of tile requests during the pan with saveData true is <= with saveData false; the real-network benefit is unmeasured until Mobile 15",
+      "keepBuffer stays 4 and detectRetina stays on (no blank tiles on pan-back); desktop identical",
+      "last atlas app-file edit: regenerate `node tools/build-offline-manifest.js --atlas` and `--check` passes (the file set changed since D7); the manifest is part of this unit's output"
+    ],
+    "run": "Mobile 8"
+  },
+  {
+    "id": "A-U12",
+    "title": "Atlas: night-mode pinch measured on phones (no edit)",
+    "files": [
+      "docs/mobile/captures/A-U12.json",
+      "POLISH.md"
+    ],
+    "kind": "data",
+    "defects": [
+      "A22"
+    ],
+    "depends_on": [
+      "A-U7"
+    ],
+    "model": "haiku",
+    "effort": "low",
+    "acceptance": [
+      "night-pinch and day-pinch captures on iphone13 and pixel7 with --cpu 4: LoAF p95 and long-frame counts recorded",
+      "verdict recorded by sonnet/medium: keep filter:invert if night LoAF p95 <= 1.25 x day and <= 50 ms; else insert POLISH \"Mobile later · night tiles\" below Filigree 4 (the only edit, to POLISH.md, made by the central session). The numbers are ADVISORY in the sandbox: SwiftShader tile compositing says nothing about a phone GPU, so a fail only queues the item for Mobile 15 confirmation",
+      "maps-site/index.html sha unchanged by this unit; no file other than captures/A-U12.json and (conditionally) POLISH.md changes"
+    ],
+    "run": "Mobile 8"
+  },
+  {
+    "id": "G9",
+    "run": "Mobile 9",
+    "title": "CENTRAL gate: atlas lane complete before Filigree 2",
+    "files": [
+      "docs/mobile/final.json"
+    ],
+    "kind": "central",
+    "defects": [],
+    "depends_on": [
+      "A-U12"
+    ],
+    "acceptance": [
+      "MR-A (mobile-review.js, five blind lenses) left no blocker or major; the staged Pages replay and both desktops re-captured clean; docs/mobile/final.json holds ATLAS.tiers() per profile (Filigree 2's FM10 stamp source)",
+      "if A-U2 or A-U10 are deferred-5b, this gate FAILS for Filigree 2 purposes: Filigree 2 stays held until Mobile 5b lands (it stamps sheet bands on ATLAS.tiers())",
+      "node tools/build-offline-manifest.js --atlas --check passes; maps-site/index.html sha recorded in state.json as the Filigree 2 baseline; any later non-mobile change to it triggers the rebase rule of M1.3"
+    ]
+  },
+  {
+    "id": "D4",
+    "title": "Sim: vendor three r128 and IM Fell English",
+    "files": [
+      "index.html",
+      "vendor/three.js/r128/three.min.js",
+      "vendor/fonts/",
+      "docs/mobile/accept/D4.json"
+    ],
+    "kind": "config",
+    "defects": [
+      "S6"
+    ],
+    "depends_on": [
+      "D1",
+      "F1"
+    ],
+    "model": "sonnet",
+    "effort": "medium",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/D4.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "foreign_origins = 0 on the sim (was cdnjs + Google Fonts); no render-blocking foreign stylesheet",
+      "sources (npm): `npm pack three@0.128.0` -> package/build/three.min.js with sha256 9274bbcec8d96168626c732b5d31c775aa8cfb7eaa0599bec0c175908a2c1ce2 (docs/mobile/inputs/vendor-shas.txt); `npm pack @fontsource/im-fell-english@5.3.0` -> package/files/im-fell-english-latin-400-{normal,italic}.woff2 (shas in vendor-shas.txt) plus LICENSE. If the cdnjs r128 file the page loads today differs byte-wise from the npm file (cdnjs is unreachable from the sandbox: record \"cdnjs: unverified\"), vendor the npm file anyway and write both shas to vendor/three.js/r128/SOURCE.txt; THREE.REVISION === \"128\"; a Playwright route on **/three.js/r128/three.min.js fires for the vendored URL (street probe and filigree sandbox recipes still apply)",
+      "IM Fell English 400/400i latin woff2 loaded (document.fonts.check); macrons fall back exactly as today (fontsource ships latin only: verified in the packed package, which lists only latin files; recorded, not a regression)",
+      "desktop calls/tris at 3 views equal B0; desktop reference re-taken as R1 after this unit (declared change: the face now renders)"
+    ],
+    "run": "Mobile 10"
+  },
+  {
+    "id": "S-U1",
+    "title": "Sim: 44 px controls, HUD 13 px, page zoom allowed",
+    "files": [
+      "index.html",
+      "docs/mobile/accept/S-U1.json"
+    ],
+    "kind": "css",
+    "defects": [
+      "S5",
+      "S13"
+    ],
+    "depends_on": [
+      "D4"
+    ],
+    "model": "sonnet",
+    "effort": "medium",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/S-U1.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "iphone13 and pixel7: visible HUD and ledger controls under 44 px = 0 of 13 (was 11); slider thumbs >= 28 px in >= 44 px rows; ledger tabs and fold >= 44",
+      "viewport meta has neither maximum-scale nor user-scalable; a scripted double-tap on a speed button leaves visualViewport.scale = 1; a canvas pinch moves the camera (CAM changes), not the page",
+      "HUD text >= 13 px on coarse; desktop computed-style snapshot identical"
+    ],
+    "run": "Mobile 10"
+  },
+  {
+    "id": "S-U2",
+    "title": "Sim: \"Return the court\" tab and a close button on the full chart",
+    "files": [
+      "index.html",
+      "docs/mobile/accept/S-U2.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "S4",
+      "S11"
+    ],
+    "depends_on": [
+      "S-U1"
+    ],
+    "model": "sonnet",
+    "effort": "medium",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/S-U2.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "after Hide the court, one tap on the 44 px \"❦ Return the court\" tab shows the HUD on iphone13 and pixel7; the button title no longer promises \"tap the map edge\" and reads \"Bring back the court\" on coarse pointers (\"Bring back the court (H)\" on fine pointers)",
+      "a 44 px close button in #mapPanel closes the chart by touch; it reads \"Close the chart\" on coarse pointers and \"Close the chart (Esc)\" on fine pointers only; H and Esc still work; the keydown handler's sha (metrics.md section 10) is unchanged: the button has its own click listener",
+      "voice read (docs/mobile/voice-rubric.md over the listed player-visible strings) passes; VOCAB/VOCAB_ST (the consts read from .claude/workflows/filigree-1-research.js:97 and the street config) 0 hits"
+    ],
+    "run": "Mobile 10"
+  },
+  {
+    "id": "S-U3",
+    "title": "Sim: device classes chosen once at load (creation-time levers only)",
+    "files": [
+      "index.html",
+      "docs/mobile/accept/S-U3.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "S2"
+    ],
+    "depends_on": [
+      "S-U2"
+    ],
+    "model": "opus",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/S-U3.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "DEVICE chosen once in initRenderer: ?dc=desktop|tablet|phone wins; otherwise the class is \"phone\" ONLY when matchMedia('(pointer:coarse)') matches AND min(innerWidth, innerHeight) <= 600 CSS px; every other case is \"desktop\" (tablet = desktop settings). A fine pointer never auto-selects phone. navigator.deviceMemory and hardwareConcurrency (absent values ignored) may only tighten the choice INSIDE the phone gate: deviceMemory <= 2 or hardwareConcurrency <= 4 picks a lower starting rung of the phone class and never changes the class. Never W.rng or the seed",
+      "desktop class: getContextAttributes().antialias true, powerPreference high-performance, PCFSoftShadowMap, shadow mapSize 2048, today's pixel-ratio rule; calls/tris at 3 views (virtual clock) equal B0. Measured on 1366x768@1 and 1440x900@2 (fine pointer) with navigator.hardwareConcurrency x deviceMemory pinned to every pair of {2,4,8} x {1,2,4,8} (--hw-cores / --device-memory): the class is \"desktop\" and getContextAttributes, shadow type, mapSize and renderer.getPixelRatio() equal B0 in all 12 combinations; on iphone13 and pixel7 the class is \"phone\" in all 12",
+      "phone class (auto on iphone13/pixel7 and with ?dc=phone): antialias false, powerPreference default, PCFShadowMap, mapSize 1024, pixel ratio 1.6",
+      "fingerprints (epeshu and tamar1374) equal B0 on all five profiles with the auto-detected class, under ?dc=desktop and ?dc=phone, and under the host-property matrix above; W.rng.gen/hist/amb cursors equal before and after any class choice; every InstancedMesh count equal across classes (no instance trimming: W.treeIndex addresses instances by index); ANNALS.stats() keys unchanged",
+      "benefit is unmeasured until Mobile 15 and the ST8 phone run (SwiftShader says nothing about phones); deterministic proxies recorded for the class change on iphone13 vs desktop: shadow-map texels x shadow casters (mapSize^2 x count of castShadow meshes), renderer.info.memory.{geometries,textures}, and drawing-buffer pixels (innerWidth x innerHeight x ratio^2); the phone class must be strictly lower on each"
+    ],
+    "run": "Mobile 11"
+  },
+  {
+    "id": "S-U4",
+    "title": "Sim: the honest ladder (real frame time, recovery, 30 fps phone cap) + ANNALS.device() / deviceReport()",
+    "files": [
+      "index.html",
+      "docs/mobile/accept/S-U4.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "S1",
+      "S16"
+    ],
+    "depends_on": [
+      "S-U3"
+    ],
+    "model": "opus",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/S-U4.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "the ladder is first unit-tested as a pure function under node on synthetic interval streams (steady 60, slow 20, recovery 20->60, one 500 ms hitch, capped 30 with 0% and 25% deadline misses): expected step sequences exactly",
+      "browser, virtual clock: 60 fps -> degradeStep 0 for 60 s on both classes; desktop 20 fps -> step 1 within 10 s of arming and 3 within 20 s; back to 60 fps -> 0 after 30-40 s (antialias never restored)",
+      "real clock, pixel7 profile, --cpu 4: degradeStep and ANNALS.device().fps_median are RECORDED as informational and not gated (the host's SwiftShader speed is not a phone's); the gated form is: the pure ladder fed the recorded rAF intervals steps down iff their median is under the step threshold; fps_median = median of per-second frame counts over a 10 s window from the rAF timestamp argument",
+      "live loop on the virtual clock at speed > 0: (a) 60 fps, (b) the 30 fps phone cap (?dc=phone, <= 31 frames per virtual second at a 60 Hz rAF), (c) a forced ladder step-down and step-up, (d) a hidden/resume cycle; each run stopped at the same W.dayTicked (day-aligned, fractional clock excluded) yields an identical sha256 fingerprint for epeshu and tamar1374; W.rng.gen/hist/amb cursors are identical before and after any class, viewport or ladder step",
+      "deviceReport({seconds:10, date}) returns {date, index_sha, cls, frame_cap, seconds:[10 x {t, fps, degrade_step}]}; clock-token occurrences in index.html stay exactly 37 and the per-line token multiset equals B0 (UG3): timing from the rAF timestamp only",
+      "literal `let fpsAvg = 60, degradeStep` kept; degradeStep keeps 1/2/3; phone extra rungs live in a separate ladder state",
+      "pixel ratio comes from ONE pure function pixelRatioFor(cls, devicePixelRatio, step) = min(class ratio, step ratio) (step >= 1 gives 1), owned by this unit and unit-tested under node on class x step; initRenderer, the ladder and S-U6's resize path call only it"
+    ],
+    "run": "Mobile 11"
+  },
+  {
+    "id": "S-U5",
+    "title": "Sim: survive WebGL context loss; pause while hidden",
+    "files": [
+      "index.html",
+      "docs/mobile/accept/S-U5.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "S3",
+      "S8"
+    ],
+    "depends_on": [
+      "S-U4"
+    ],
+    "model": "opus",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/S-U5.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "WEBGL_lose_context lose -> restore (run at degradeStep 0 and at 3, on desktop and on ?dc=phone, and a second round trip also passes): ANNALS.world is the same object; stats() minus fps, chronicle length and fingerprint equal before and after; centre pixel non-black within 2 s and within tolerance of the pre-loss shot; 0 console errors. If WEBGL_lose_context is unavailable (tool records ctxloss:'unavailable') this bullet is proposal until Mobile 15",
+      "hidden for 10 s: 0 frames rendered, 0 sim days advanced; the first dt after resume <= 0.05; ANNALS.step(n) still drives frames",
+      "rebuild from CPU-side state only, proven: instrumented entry points genTerrain, forgeWorld, buildSettlementMeshes and buildRoads have a call count of 0 across lose/restore; W.rng.gen, hist and amb cursors equal before and after; geometry and InstancedMesh object identity and every W.treeIndex {mesh,i} entry unchanged; no CPU attribute array freed (array lengths unchanged) and the terrTex canvas is the same object",
+      "ladder state re-applied after restore: the pre-loss degradeStep, renderer.getPixelRatio(), terrain castShadow, shadowMap.enabled and shadow map size are equal before and after; the webglcontextlost event is default-prevented (event.defaultPrevented true), without which the context never restores"
+    ],
+    "run": "Mobile 11"
+  },
+  {
+    "id": "D8",
+    "title": "Sim worker sw.js + sw-kill.js + guarded registration",
+    "files": [
+      "index.html",
+      "sw.js",
+      "sw-kill.js",
+      "offline-manifest.json",
+      "docs/mobile/accept/D8.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "S6"
+    ],
+    "depends_on": [
+      "S-U5",
+      "D6"
+    ],
+    "model": "opus",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/D8.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "same registration guard as D7; under Playwright without ?sw=1 getRegistrations() = 0",
+      "with ?sw=1: an offline reload after a first visit reaches ANNALS.ready with 0 failed requests; fingerprint equal offline vs online",
+      "Pages staging replay (/annals-kingdom/): the sim worker returns early for maps-site/ and docs/ paths (network log shows those served by network or the atlas worker)",
+      "sw-kill.js unregisters and deletes caches; manifest regenerated with --sim; --check passes",
+      "scope test follows the D7 matrix for the sim worker: no scope collision with the atlas worker on the Pages replay (each controls only its own pages); the fixture for a changed sim index.html is the same --mutate-html option"
+    ],
+    "run": "Mobile 12"
+  },
+  {
+    "id": "D10",
+    "title": "Sim: \"Keep the realm for the table\" (size first) and \"Keep the chronicle lit\"",
+    "files": [
+      "index.html",
+      "docs/mobile/accept/D10.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "S6",
+      "S17"
+    ],
+    "depends_on": [
+      "D8"
+    ],
+    "model": "sonnet",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/D10.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "ledger World tab row shows the exact size from offline-manifest.json before any byte moves; fetched bytes within 5%; nothing downloads before the tap; the size is written \"about <n> MB\" (rounded), and the visible row avoids \"Save\", \"Download\", \"Install\" and \"Offline mode\"",
+      "wake row present iff supported and secure; released on hidden, re-taken on visible when granted; a rejected request is handled with 0 console errors (real lock = proposal until Mobile 15)",
+      "no clock token added; status computed from cache contents; 0 console errors"
+    ],
+    "run": "Mobile 12"
+  },
+  {
+    "id": "S-U6",
+    "title": "Sim: debounced resize with the class pixel ratio; capped graphs canvas",
+    "files": [
+      "index.html",
+      "docs/mobile/accept/S-U6.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "S9",
+      "S14"
+    ],
+    "depends_on": [
+      "D10"
+    ],
+    "model": "sonnet",
+    "effort": "medium",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/S-U6.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "10 resizes within 100 ms -> 1 setSize; after rotation 390x664 -> 664x390 -> back renderer.getPixelRatio() equals pixelRatioFor(cls, dpr, step) for the current ladder step: at degradeStep 0 the class value, and after a virtual-clock ladder step 1 the ladder-adjusted value (min of class and step ratio) with degradeStep unchanged by the rotation; a ladder step-up restores the class ratio",
+      "graphs canvas buffer <= 2x its CSS size; 1 allocation across 10 redraws (instrumented)",
+      "S-U6 takes the ratio only from S-U4's pixelRatioFor (node/pure test of the function lives in S-U4)"
+    ],
+    "run": "Mobile 13"
+  },
+  {
+    "id": "S-U7",
+    "title": "Sim: speed controls in a bottom bar on portrait phones; compact landscape HUD",
+    "files": [
+      "index.html",
+      "docs/mobile/accept/S-U7.json"
+    ],
+    "kind": "css",
+    "defects": [
+      "S10"
+    ],
+    "depends_on": [
+      "S-U6"
+    ],
+    "model": "sonnet",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/S-U7.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "portrait iphone13 and pixel7: the top chrome's lowest edge <= 10% of viewport height (was 15-22%); speed controls inside the bottom 25%; bottom bar <= 64 px + safe-area inset",
+      "landscape 844x340: no two controls overlap (pairwise rect intersection 0), top chrome <= 20% of height",
+      "desktop computed-style snapshot identical"
+    ],
+    "run": "Mobile 13"
+  },
+  {
+    "id": "S-U8",
+    "title": "Sim: the ledger as a three-stop sheet",
+    "files": [
+      "index.html",
+      "docs/mobile/accept/S-U8.json"
+    ],
+    "kind": "css",
+    "defects": [
+      "S12"
+    ],
+    "depends_on": [
+      "S-U7"
+    ],
+    "model": "sonnet",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/S-U8.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "pixel7: ledger at peek <= 35% and at half <= 50% of the height (was 60%); handle >= 48 px",
+      "the last slider is reachable by in-sheet scroll (scrolled into view, elementFromPoint hits it); desktop identical",
+      "new aria-labels and titles use table vocabulary (sheet handle \"Draw the sheet up or down\"; no \"drawer\", \"menu\", \"modal\", \"dismiss\", \"toggle\") and are listed under \"Player-visible strings\""
+    ],
+    "run": "Mobile 13"
+  },
+  {
+    "id": "S-U9",
+    "title": "Sim: first-touch hint card and per-pointer hint text",
+    "files": [
+      "index.html",
+      "docs/mobile/accept/S-U9.json"
+    ],
+    "kind": "logic",
+    "defects": [
+      "S7"
+    ],
+    "depends_on": [
+      "S-U8"
+    ],
+    "model": "sonnet",
+    "effort": "medium",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/S-U9.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "coarse first load shows \"One finger turns the sky · two fingers walk the land · draw two fingers together to come near · touch to look · touch twice to journey\"; one touch dismisses; not shown on the next load (localStorage in try/catch; without storage it shows again and still dismisses)",
+      "never shown on desktop or desktop2x; hint text differs by pointer type",
+      "VOCAB/VOCAB_ST 0 hits (no \"coach\"); voice read passes"
+    ],
+    "run": "Mobile 13"
+  },
+  {
+    "id": "S-U10",
+    "title": "Sim: Night ink for the HUD, ledger and sheets",
+    "files": [
+      "index.html",
+      "docs/mobile/accept/S-U10.json",
+      "offline-manifest.json"
+    ],
+    "kind": "css",
+    "defects": [
+      "S18"
+    ],
+    "depends_on": [
+      "S-U9"
+    ],
+    "model": "sonnet",
+    "effort": "high",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/S-U10.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "a \"Night ink\" toggle in the ledger World tab (localStorage in try/catch) whose on state reads \"Night ink: lit by Tamar's dark hour\" and off state \"Day ink\" (never \"Dark mode\" or \"Theme\"); auto under prefers-color-scheme: dark only on coarse pointers",
+      "WCAG 1.4.3 >= 4.5:1 for HUD, ledger and sheet text in both themes (computed colours)",
+      "canvas-region shots identical (the 3D scene untouched); desktop control (light, fine pointer) identical",
+      "last sim app-file edit: regenerate `node tools/build-offline-manifest.js --sim` and `--check` passes (the file set changed since D8); the manifest is part of this unit's output"
+    ],
+    "run": "Mobile 13"
+  },
+  {
+    "id": "G14",
+    "run": "Mobile 14",
+    "title": "CENTRAL gate: sim lane complete before Street 1 (Street 1 freezes under ?dc=desktop)",
+    "files": [
+      "docs/mobile/final.json"
+    ],
+    "kind": "central",
+    "defects": [],
+    "depends_on": [
+      "S-U10",
+      "G9",
+      "F1"
+    ],
+    "acceptance": [
+      "MR-S left no blocker or major; `node tools/street-drift.js` and `node tools/street-drift.js --self-test` exit 0 after the sim lane; every flag-1 anchor still found (some live in frame, updateLOD and tick, which S-U4/S-U5 touch)",
+      "sim_after_mobile_pass grep on index.html finds deviceReport, webglcontextlost, visibilitychange, the DEVICE class constant and the dc query reader; if one is missing the sentence in the street block is edited",
+      "Street 1 freezes its views, STATS_KEYS and keydown sha under ?dc=desktop (the desktop class); ANNALS.device() and deviceReport() stay out of stats() and out of the probe's STATS_KEYS (UG5)",
+      "node tools/build-offline-manifest.js --sim --check passes; the final reference docs/mobile/final.json is completed for the sim"
+    ]
+  }
+]

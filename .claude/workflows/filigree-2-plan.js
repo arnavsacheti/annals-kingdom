@@ -166,17 +166,19 @@ const MASK_RULE = 'Settlement disc: radius max(96, 1.5 × footprint) atlas px. E
 const HASH_RULE = 'Views are written #view=x,y,z&filigree=1&…. Today the moveend writer (anchor !/^#view=/.test(location.hash)) rewrites the hash to #view=x,y,z and drops trailing params. U00 must make it keep them.'
 const CAPTURE_CONTRACT = `node tools/filigree-capture.js --views <views.json> [--only V2,V3] [--modes dense,sparse] [--themes day,night]
   [--dpr 1,2] [--mask auto|none] [--mask-scale 1|1.5] [--cells <hexes.json>]
-  [--metrics labels,counts,tiles,stack,appear,loaf,phone,city,edges,fog] [--viewport 1280x800]
+  [--metrics labels,counts,tiles,stack,appear,loaf,phone,net,city,edges,fog] [--viewport 1280x800]
+  [--phone 390x664@3] [--throttle none|slow4g] [--cpu 1|4]
   [--port 8544] [--cdn-dir <dir>] --out <dir>
   -> <out>/<view>-<mode>-<theme>-dpr<k>.jpg (<=300 KB each) and <out>/metrics.json:
-  {views:{<V>:{<mode>:{labels:[{text,class,rank,x,y,opacity}], counts:{<class>:n}, heights:n, visible_landform_labels_outside_mask:[name]}}},
+  {viewport:{w,h,dpr}, phone_viewport:{w,h,dpr}, views:{<V>:{<mode>:{labels:[{text,class,rank,x,y,opacity}], counts:{<class>:n}, heights:n, visible_landform_labels_outside_mask:[name]}}},
    cells:{<F>:{<mode>:{<class>:n}}},
    tiles:{<toggle>:{base_requests:n}},
    stack:{node_identity_kept:bool, reload:bool, roundtrip_equal:bool, moveend_keeps_params:bool},
    appear:{steps:n, violations:[{class, z_from, z_to, op_from, op_to}], below_minzoom_visible:[class]},
-   loaf:{p95_ms, max_ms, frames}, phone:{min_label_gap_px, overlaps, hscroll:bool},
+   loaf:{p95_ms, max_ms, frames}, phone:{min_label_gap_px, overlaps, hscroll:bool, min_name_px, min_italic_px, wrong_taps, chrome_cover, dom_nodes},
    city:{pins_at_rest, controls_at_rest, block_labels, street_names_below, street_names_above, label_count},
    edges:{<V>:{band_mean, interior_mean}}, fog:{opacity, same_day_equal:bool, diff_day_differs:bool},
+   net:{views:{<V>:{<mode>:{bytes, requests}}}, max_asset_bytes, max_asset_path, toggle_off_requests},
    panes_when_off:[name], filigree_counts_when_off:{<class>:n},
    console_errors:[string], infra_error:null|string}
 Behaviour:
@@ -187,6 +189,9 @@ Behaviour:
 - Never runs \`playwright install\`.
 - Waits for window.ATLAS.ready + document.fonts.ready + network idle + 400 ms after zoomend.
 - Counts are taken ONLY through ATLAS.filigree (visible = pane opacity > 0.5 AND intersects the viewport).
+- Phone metrics come from a second page at --phone (default 390x664, deviceScaleFactor 3, isMobile, hasTouch), never from the --viewport page; visible = intersects that page's recorded viewport. min_name_px = the smallest computed font-size in CSS px among upright (non-italic) filigree names visible in that page's viewport (null when none); min_italic_px = the same among italic filigree names (null when none), because the coarse-pointer floor is 12 px upright and 11 px italic (R2, FM3). chrome_cover = the fraction of that viewport's area covered by the union of visible fixed or absolute non-map chrome rects. dom_nodes = document.querySelectorAll('*').length after settle. wrong_taps = taps at each interactive filigree glyph centre in the --cells fixture cells that open a card other than that glyph's (a chooser that lists it counts as right); it is a number whenever --cells is passed and null only without --cells.
+- net counts the app's OWN assets only: transferred bytes (CDP Network.loadingFinished encodedDataLength) of responses from the server origin, per view and mode from a cold cache. Requests fulfilled by the CDN routes from --cdn-dir (leaflet, three.js) report no real encodedDataLength, so they are excluded from net and ignored by max_asset_path. max_asset_bytes and max_asset_path = the largest single app-origin response in the first view. toggle_off_requests = the number of requests, from a page loaded without filigree=1, to any URL that a page loaded with filigree=1 additionally requests (set difference of the two loads' request URLs). --throttle slow4g = 1.6 Mbps / 150 ms RTT and --cpu k = CDP CPU throttling are recorded, never gated on time.
+- Every browser context is created with serviceWorkers:'block' (a context option).
 - Any setup failure sets infra_error and exits 2. Map defects never set infra_error.`
 const HOOK_CONTRACT = `ATLAS.filigree = {on, classes, version, count(bbox)->{class:n}, names(bbox)->[{text,class,rank,x,y}], sparse(bool)}
 - bbox is [x0,y0,x1,y1] in atlas px.
@@ -223,7 +228,7 @@ const SECTIONS = [
   {sid: 's11', role: 'deep', title: 'Paint on the base', owns: ['/paint'], rulings: ['R3'],
     brief: 'A pooled-edge contrast pass on the land/water mask (reuse function washMake / function sampleCityMask) for coast, parks and reserves (method, band px, luminance delta); washes print-sampled, each wash fill (water, reserves, fog, city tone, relief shading) given as explicit sampled hex at /paint/wash_hex/<name> (a #rrggbb string; drafters may use these for fills); the real-colour check (ΔE <= 10 vs the print hue / biome).'},
   {sid: 's12', role: 'audit', title: 'Fixtures and test contracts', owns: ['/fixtures', '/hook', '/capture', '/checks', '/generators'], rulings: ['R8', 'R17', 'R18', 'R19'],
-    brief: `Fixtures + test contracts. /fixtures/views from these seeds (zoom = midpoint of the named sheet's band): ${JSON.stringify(VIEWS_SEED)}; masks: ${MASK_RULE} /hook = this contract VERBATIM plus pre_filigree_panes (the pane names present today, read from the pane-creation code in maps-site/index.html):\n${HOOK_CONTRACT}\n/capture = this contract VERBATIM:\n${CAPTURE_CONTRACT}\nPer-slice /checks as {id, cmd, expect} (a command printing JSON plus a condition on it, such as overlap >= 0.9); /generators = every tools/filigree-*.js, mint-names and build-gazetteer command.`}
+    brief: `Fixtures + test contracts. /fixtures/views from these seeds (zoom = midpoint of the named sheet's band): ${JSON.stringify(VIEWS_SEED)}; masks: ${MASK_RULE} /hook = this contract VERBATIM plus pre_filigree_panes (the pane names present today, read from the pane-creation code in maps-site/index.html):\n${HOOK_CONTRACT}\n/capture = this contract VERBATIM:\n${CAPTURE_CONTRACT}\nPer-slice /checks as {id, cmd, expect} (a command printing JSON plus a condition on it, such as overlap >= 0.9); every slice's /checks also holds a check with id "phone" that runs the capture with --phone 390x664@3 and --cells <hexes.json> on that slice's gate views and expects phone.overlaps = 0, phone.hscroll false, phone.min_name_px null or >= 12, phone.min_italic_px null or >= 11 (upright names 12 px, italic names 11 px: R2, FM3) and phone.wrong_taps = 0 as a number (FM3, FM4); /generators = every tools/filigree-*.js, mint-names and build-gazetteer command.`}
 ]
 const RUBRIC = ['canon_fit', 'dem_window', 'data_ready', 'shield_even', 'table_play']
 const DEFAULT_GROUND = {coast: 'C1 (Pēshunor north coast, Epēshu-Sokundo-Kanae-Rhup-Tamaron)', river_town: 'Aldorūs', city: 'Epēshu'}
@@ -404,7 +409,9 @@ function checksFailures(rd) {   // Job 3's spec('<S>') criterion can never pass 
     const xs = Array.isArray(c[s]) ? c[s] : []
     if (!xs.length) return [`slice ${s}: /checks/${s} in sheet-spec.json is missing or empty (Job 3 needs at least one {id, cmd, expect} check per slice; s12 owns /checks)`]
     const blank = xs.filter(x => !String((x || {}).id ?? '').trim() || !String((x || {}).cmd ?? '').trim() || !String((x || {}).expect ?? '').trim())
-    return blank.length ? [`slice ${s}: /checks/${s} has ${blank.length} check(s) without a non-empty id, cmd and expect`] : []
+    const ph = xs.filter(x => String((x || {}).id).trim().toLowerCase() === 'phone' && /(^|\s)--phone\s+\S/.test(String((x || {}).cmd)) && /(^|\s)--cells\s+\S/.test(String((x || {}).cmd)))
+    const phone = ph.some(x => ['overlaps', 'hscroll', 'min_name_px', 'min_italic_px', 'wrong_taps'].every(k => String(x.expect).includes(k)))
+    return (blank.length ? [`slice ${s}: /checks/${s} has ${blank.length} check(s) without a non-empty id, cmd and expect`] : []).concat(phone ? [] : [`slice ${s}: /checks/${s} has no check with id "phone" whose cmd passes --phone and --cells and whose expect names overlaps, hscroll, min_name_px, min_italic_px and wrong_taps (FM3; s12 owns /checks)`])
   })
 }
 
@@ -869,7 +876,7 @@ function criteriaOf(st) {
   const g21 = st.unitFails.concat(st.checkFails, secFails, pre.ground_six.length || !pre.class_ids.length ? [] : ['ground_six unavailable: preflight returned no ground-six classes although the bible has classes; slice coverage unchecked'])
   return [
     G20,
-    C('G2.1', 'traceability + DAG + acceptance + slices + mandatory U00/U01 + non-empty /checks per slice', g21.length ? g21 : 'ok', 'all code checks', !g21.length),
+    C('G2.1', 'traceability + DAG + acceptance + slices + mandatory U00/U01 + non-empty /checks per slice + a phone check per slice', g21.length ? g21 : 'ok', 'all code checks', !g21.length),
     C('G2.2', 'anchors resolve (by pattern)', ck[0] ? ck[0].bad : 'agent died: anchor check', '0 bad', !!ck[0] && !ck[0].bad.length),
     C('G2.3', 'leak check', ck[1] ? ck[1].hits : 'agent died: leak check', '0 hits', !!ck[1] && !ck[1].hits.length),
     C('G2.4', 'spec answers every spec probe pointer', nullPtr, '0 null', !nullPtr.length),
@@ -917,7 +924,7 @@ while (rounds < ROUNDS && fixableFailing(st).length) {
     leak_hits: ck[1] ? ck[1].hits : [], canon_violations: ck[2] ? ck[2].violations : [], broken_anchors: ck[0] ? ck[0].bad : [],
     unit_failures: st.unitFails, checks_missing: st.checkFails, view_mismatches: st.viewFails.length ? {mismatches: st.viewFails, seeds: VIEWS_SEED} : [], roots_missing: SPEC_ROOTS.filter(r => !UNIT_ROOTS.includes(r) && !spec.roots_present.map(x => '/' + String(x).replace(/^\/+/, '')).includes(r))
   }
-  const fx = await crit(P(`You are the spec fixer, round ${rounds}. Patch ${SPEC_MD} and ${SPEC_JSON} ONLY where cited below; keep every rule id, keep /hook and /capture verbatim, keep units/slices/slice_classes unless a unit failure is cited. Each "both wrong" probe means the spec is ambiguous there: make the answer explicit (never mention probes or drafters in the spec). For a source "spec" probe, make the value at its pointer explicit. For a bible/brief/ruling probe, the correct answer is its "expected" value, fixed by its cite (B-xx = that density-bible rule in ${BIBLE}; brief pN = page N of ${BRIEF}; Rnn = that ruling below): align the spec with that rule, page or ruling so it states that answer unambiguously. Each null pointer: put the answer at exactly that JSON pointer. Each schema gap: state the missing decision at its pointer. View mismatches: rewrite /fixtures/views as one {id, sheet, x, y, zoom, mask} per seed (id, sheet, x, y and mask exactly as seeded, mask "" when none) with zoom = the midpoint of /sheets/<sheet>/band. Each checks_missing entry: write /checks/<slice> for that slice as [{id, cmd, expect}] (a command printing JSON plus a condition on it, as section s12 specifies) so every slice A-D has at least one.
+  const fx = await crit(P(`You are the spec fixer, round ${rounds}. Patch ${SPEC_MD} and ${SPEC_JSON} ONLY where cited below; keep every rule id, keep /hook and /capture verbatim, keep units/slices/slice_classes unless a unit failure is cited. Each "both wrong" probe means the spec is ambiguous there: make the answer explicit (never mention probes or drafters in the spec). For a source "spec" probe, make the value at its pointer explicit. For a bible/brief/ruling probe, the correct answer is its "expected" value, fixed by its cite (B-xx = that density-bible rule in ${BIBLE}; brief pN = page N of ${BRIEF}; Rnn = that ruling below): align the spec with that rule, page or ruling so it states that answer unambiguously. Each null pointer: put the answer at exactly that JSON pointer. Each schema gap: state the missing decision at its pointer. View mismatches: rewrite /fixtures/views as one {id, sheet, x, y, zoom, mask} per seed (id, sheet, x, y and mask exactly as seeded, mask "" when none) with zoom = the midpoint of /sheets/<sheet>/band. Each checks_missing entry: write /checks/<slice> for that slice as [{id, cmd, expect}] (a command printing JSON plus a condition on it, as section s12 specifies) so every slice A-D has at least one. For a checks_missing entry about a missing "phone" check, APPEND to that slice's existing /checks/<slice> and keep every existing check unchanged (never rewrite or drop one; Job 3 requires ids such as rivers_overlap and one_shield to survive): add {id: "phone", cmd: the capture run with --phone 390x664@3 and --cells <hexes.json> on that slice's gate views, expect: phone.overlaps = 0, phone.hscroll false, phone.min_name_px null or >= 12, phone.min_italic_px null or >= 11 and phone.wrong_taps = 0 as a number}; only an entry saying the slice is missing or empty is written whole.
 ${J(cite)}
 Rulings:
 ${rulingText(RUL, Object.keys(RULINGS))}

@@ -1,0 +1,19 @@
+[
+  {
+    "id": "FX-NOOP",
+    "run": "Fixture noop",
+    "title": "Fixture: a docs-only unit that passes (dry run of the loop; edits no served file)",
+    "files": [
+      "docs/mobile/fixtures/noop-target.txt"
+    ],
+    "kind": "config",
+    "defects": [],
+    "depends_on": [],
+    "model": "haiku",
+    "effort": "low",
+    "acceptance": [
+      "docs/mobile/fixtures/noop-target.txt exists and its whole content is the single line \"noop\" followed by a newline",
+      "no file other than docs/mobile/fixtures/noop-target.txt changes; index.html and maps-site/index.html are byte-identical to the snapshot"
+    ]
+  }
+]
