@@ -1,0 +1,873 @@
+{
+  "defects": [
+    {
+      "id": "A1",
+      "title": "The closed bottom sheet leaks: the page scrolls and a strip of the card shows over the footer",
+      "file": "maps-site/index.html",
+      "anchor": "maps-site/index.html:141 (#stage has no overflow), maps-site/index.html:613-616",
+      "evidence": "p01: iPhone panel top 642 < 664, doc 974 vs 664; Pixel 1,265 vs 839",
+      "fix": "#stage{overflow:hidden}; #panel:not(.open){visibility:hidden} after the transition (transitionend or a delay)",
+      "size": "S",
+      "severity": "major"
+    },
+    {
+      "id": "A2",
+      "title": "Ambiguous taps open the wrong entity (the faction badge stacked on Epēshu)",
+      "file": "maps-site/index.html",
+      "anchor": "maps-site/index.html:408 (.fac-badge), the marker build around :1227-1243",
+      "evidence": "p05: iPhone z4.55 opened #faction=The Lektān Priesthood; 97-106 pin pairs < 22 px",
+      "fix": "On coarse pointers, a tap is resolved by distance to the glyph centre: exactly one interactive glyph within 22 px → open it; two or more within 22 px → a \"which?\" chooser sheet. Offset faction badges from their seat glyph. A3's marker hit pads must land with or after this item, otherwise wrong-card taps get worse",
+      "size": "M",
+      "severity": "major"
+    },
+    {
+      "id": "A3",
+      "title": "About 98% of interactive elements are under 44 px on phones",
+      "file": "maps-site/index.html",
+      "anchor": "maps-site/index.html:382-385 (only the zoom buttons are enlarged), maps-site/index.html:69,99-103,249,302,337-355,479,485",
+      "evidence": "p04, F5, F6: theme 37x31, search 370x32, close 30x30, strip toggle 24x24, era-title 71x25, grp-btn 126x28, layer rows 22.8 px",
+      "fix": "One @media (pointer:coarse) block: min 44 px for header links, close, toggles, era control, jbar buttons, layer rows. Markers get a transparent ::after hit pad of 44 px (pads only enlarge the target; the tap is still resolved by A2's glyph-centre rule, and this lands with or after A2); glyph sizes are unchanged",
+      "size": "M",
+      "severity": "major"
+    },
+    {
+      "id": "A4",
+      "title": "Chrome covers 29% of the map at the whole chart (85% with layers open)",
+      "file": "maps-site/index.html",
+      "anchor": "header :606-611, dock :468-476, era :296-312, jbar :325-362",
+      "evidence": "p02",
+      "fix": "On phones: header to one row (search collapses to an icon), and era, layers, Groups, Company and journey merge into one \"table drawer\" bottom sheet. Target ≤ 12%",
+      "size": "M",
+      "severity": "major"
+    },
+    {
+      "id": "A5",
+      "title": "\"The Whole Chart\" shows only 29-37% of the chart on portrait phones",
+      "file": "maps-site/index.html",
+      "anchor": "fillZoom() :838-846",
+      "evidence": "p03",
+      "fix": "Tier bands are decoupled from fitZoom by A19. On portrait set minZoom = min(fillZoom, fitWidthZoom). The Whole Chart plate does fitBounds (letterboxed on parchment)",
+      "size": "M",
+      "severity": "major"
+    },
+    {
+      "id": "A6",
+      "title": "The layers panel overlaps the dock, scrolls internally, and has 13 px checkboxes",
+      "file": "maps-site/index.html",
+      "anchor": "maps-site/index.html:3616-3623",
+      "evidence": "p06: 372x405 at 61% of height (iPhone)",
+      "fix": "Coarse pointer: render the layers list inside the table drawer (A4) with 44 px rows, above the dock's z-index",
+      "size": "M",
+      "severity": "major"
+    },
+    {
+      "id": "A7",
+      "title": "The street fly-in is one 2.17 MB JPEG with no low-res step",
+      "file": "maps-site/index.html",
+      "anchor": "art/overlay-Epeshu.jpg, chart load around :1734-1741",
+      "evidence": "p07: 2,171,881 B, 61-68% of session bytes (no slow-4G timing was re-measured)",
+      "fix": "Ship a ~720 px preview (about 120-180 KB) first and swap to the full image on load, or cut the overlay into the tile pyramid. WebP version after a visual check",
+      "size": "M",
+      "severity": "major"
+    },
+    {
+      "id": "A8",
+      "title": "No compression, no cache headers, and repeat visits refetch everything",
+      "file": "maps-site/index.html",
+      "anchor": "DEPLOY.md:35, server.js:4,11 (also serves .json/.jpg as octet-stream)",
+      "evidence": "p08: 729,636 B / 37 req with 0 cache hits on revisit; the nginx block only has `/tiles/ expires 30d`",
+      "fix": "nginx: gzip on for html/json/css/js/svg, no-cache + ETag for index.html. Tile paths carry no version today (tiles/, tiles/5/x/y.jpg, maps-site/index.html:820,2961), so immutable is only allowed once the tile root is versioned (tiles-v<N>/); until then keep max-age 30d with ETag. Only versioned art and charts take Cache-Control: public, max-age=31536000, immutable. server.js: add the json/jpg/png/webp MIME types",
+      "size": "S",
+      "severity": "major"
+    },
+    {
+      "id": "A9",
+      "title": "Three foreign origins in the render path (Google Fonts CSS, unpkg leaflet.css/.js)",
+      "file": "maps-site/index.html",
+      "anchor": "maps-site/index.html:7-10, maps-site/index.html:720",
+      "evidence": "p09",
+      "fix": "Vendor Leaflet 1.9.4 into maps-site/vendor/ (keep the SRI hashes). Vendor the OFL fonts as woff2 into maps-site/vendor/ too (no Google Fonts CSS), with font-display:swap and system serif fallbacks, so the service worker never caches opaque cross-origin font responses (which inflate the Chromium storage quota)",
+      "size": "S",
+      "severity": "major"
+    },
+    {
+      "id": "A10",
+      "title": "No offline capability; table wifi is poor",
+      "file": "maps-site/index.html",
+      "anchor": "whole file",
+      "evidence": "D6, F20: no SW or manifest",
+      "fix": "Service worker plus a \"Keep for the table\" button (principle 9): shell precache, tiles cache-first from the versioned tile root (A8), cache name keyed on VERSION with an \"a new chart is ready\" notice after each cut, storage.persist(), re-offered every visit. Shows its size before downloading and never starts by itself on Save-Data. Needs HTTPS on the maps. origin",
+      "size": "L",
+      "severity": "major"
+    },
+    {
+      "id": "A11",
+      "title": "The Contents heading is clipped on short phones",
+      "file": "maps-site/index.html",
+      "anchor": "maps-site/index.html:107-108",
+      "evidence": "p10: kicker -26 px, iPhone",
+      "fix": "#contents{align-items:safe center} (fallback: inner margin:auto)",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "A12",
+      "title": "Phones see unlabeled pins at the whole chart; the census swell is mouse-only",
+      "file": "maps-site/index.html",
+      "anchor": "maps-site/index.html:1251-1273, maps-site/index.html:168-181",
+      "evidence": "p11 (0 labels, 0 tooltips); F10",
+      "fix": "On hover:none: a ranked label budget (principle 2) for top-rank names, long-press peek, 44 px hit pads on census pins. Skip the mousemove loop on touch",
+      "size": "M",
+      "severity": "minor"
+    },
+    {
+      "id": "A13",
+      "title": "The place card is half the screen and about 15 screens long, with no peek",
+      "file": "maps-site/index.html",
+      "anchor": "maps-site/index.html:241-252, maps-site/index.html:613-616; jbar coupling :361",
+      "evidence": "p12; F9: no handle, swipe or snap",
+      "fix": "A 3-stop standard sheet (peek/half/full) with a 48 px handle and swipe-to-dismiss. Move jbar's calc(64% + 10px) onto a CSS variable shared with the sheet",
+      "size": "M",
+      "severity": "minor"
+    },
+    {
+      "id": "A14",
+      "title": "No safe-area or dvh support",
+      "file": "maps-site/index.html",
+      "anchor": "maps-site/index.html:5; already queued at POLISH.md:117",
+      "evidence": "F1, M6",
+      "fix": "Add viewport-fit=cover, env(safe-area-inset-*) on header/footer/jbar/dock, 100dvh with a 100% fallback",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "A15",
+      "title": "Hover styles stick after a tap; the POI halo is invisible on touch",
+      "file": "maps-site/index.html",
+      "anchor": "maps-site/index.html:63-598 (:hover), maps-site/index.html:508-514, maps-site/index.html:1341, maps-site/index.html:1467",
+      "evidence": "F11, F12, M7: 29 `:hover` lines, none gated",
+      "fix": "Wrap :hover in @media (hover:hover). Give the POI halo a faint visible ring on hover:none. Realm highlight on tap",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "A16",
+      "title": "A landscape phone (>640 px wide) gets the desktop drawer",
+      "file": "maps-site/index.html",
+      "anchor": "maps-site/index.html:606 (width-only)",
+      "evidence": "F17",
+      "fix": "Extend the mobile query to (max-width:640px), (max-height:500px) and (pointer:coarse). In landscape use a right-side sheet capped at 50% width",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "A17",
+      "title": "The search input is 14 px, so iOS zooms on focus; the keyboard can cover suggestions",
+      "file": "maps-site/index.html",
+      "anchor": "maps-site/index.html:86, maps-site/index.html:90-93",
+      "evidence": "F5, F21",
+      "fix": "16 px on coarse pointers; 44 px suggestion rows; visualViewport resize to keep the dropdown above the keyboard",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "A18",
+      "title": "Tile cost on phones: `keepBuffer:4`, and quarter-step zoom buttons need many taps per tier",
+      "file": "maps-site/index.html",
+      "anchor": "maps-site/index.html:775-778, maps-site/index.html:816, maps-site/index.html:1735",
+      "evidence": "M3, M8, F14, F16",
+      "fix": "Coarse pointer: keepBuffer:2, updateWhenIdle:true on Save-Data, zoom buttons step 0.5. Keep detectRetina (quality)",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "A19",
+      "title": "Atlas tier bands ride on the viewport-dependent `fitZoom`, so presence thresholds differ per device (contradicts principle 2)",
+      "file": "maps-site/index.html",
+      "anchor": "maps-site/index.html:1205-1211, fillZoom() :838-846",
+      "evidence": "`tierZoom()` puts tier B at (2·fitZoom + TIER_CEIL)/3; fitZoom 1.95 iPhone, 2.35 Pixel, lower on desktop",
+      "fix": "Decouple the tier bands from fitZoom (absolute zooms), or pin them to the desktop value. Lands before Filigree 3 stamps sheet bands",
+      "size": "M",
+      "severity": "major"
+    },
+    {
+      "id": "A20",
+      "title": "No screen wake lock; the screen sleeps mid-session at the table",
+      "file": "maps-site/index.html",
+      "anchor": "whole file",
+      "evidence": "none in the file",
+      "fix": "An opt-in \"Keep the chart lit\" row in the table drawer (Wake Lock API, HTTPS only). Whether iOS supports it is unverified (open question 11)",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "A21",
+      "title": "One-handed reach: the floating cluster and primary actions sit at the top",
+      "file": "maps-site/index.html",
+      "anchor": "as A4",
+      "evidence": "header `:606-611`, dock `:468-476`",
+      "fix": "Put the floating cluster and the table drawer's primary actions in the bottom thumb zone (extends A4)",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "A22",
+      "title": "Night mode phone cost is uncaptured: `filter: invert` runs on the whole tile pane",
+      "file": "maps-site/index.html",
+      "anchor": "maps-site/index.html:37",
+      "evidence": "principle 10 requires night-mode phone runs; none exists",
+      "fix": "Capture a night-mode pinch and pan on the phone profiles (frame time, jank) and decide whether to keep the filter or pre-render a night tile style",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "S1",
+      "title": "The degrade ladder cannot see a slow phone",
+      "file": "index.html",
+      "anchor": "index.html:7318-7336",
+      "evidence": "p1: rAF 1.06-1.42 fps while fpsAvg read 26-37; dt clamped to 0.05 s; frameN > 300 gate",
+      "fix": "Measure fps from the **unclamped** rAF delta (presentation only; the sim keeps the clamped dt). Gate on elapsed real time (about 4 s after sceneReady), not on frameN. Use the median over a sliding window, with thresholds per device class: desktop keeps today's step-down below 42 (:7328-7333), the phone class steps down below the phone floor (28 proposed, stated in /device_classes). Step back up above 50 fps for 30 s. Show a small notice. Samples come from uncapped frames only, so S16's cap cannot pin fps under the recovery bar",
+      "size": "S",
+      "severity": "major"
+    },
+    {
+      "id": "S2",
+      "title": "The ladder never reduces geometry; phones carry desktop load (about 1 M tris, 48,568 trees)",
+      "file": "index.html",
+      "anchor": "index.html:2208-2212, index.html:7179, flora :3170-3202, index.html:4405, index.html:4434",
+      "evidence": "p2",
+      "fix": "Choose a device class at init (principle 7). Phone class: antialias off (fixed at context creation, so the upward recovery cannot restore it; accepted for the phone class), powerPreference:'default' instead of the hard-coded 'high-performance' (:2208, creation-time, battery), shadow map 1024, PCFShadowMap, InstancedMesh .count fraction for far chunks, terrain shadow frozen via autoUpdate=false and refreshed on time-of-day steps. The .count trim keeps the first k instances, which follow generation order and may cluster, so it must use a stride or an index-hash permutation (xmur3/mulberry over the chunk id) and never draw from W.rng (extra draws would change the world). Presentation only; N, the seed and the sim are untouched",
+      "size": "M",
+      "severity": "major"
+    },
+    {
+      "id": "S3",
+      "title": "No WebGL context-loss handling (black canvas after backgrounding)",
+      "file": "index.html",
+      "anchor": "index.html:2207-2214",
+      "evidence": "F9",
+      "fix": "Add webglcontextlost (preventDefault, pause) and webglcontextrestored (re-upload GPU resources from the existing CPU-side state; three r128 re-uploads geometries and textures itself after initGLContext, so only custom render targets and shadow maps need attention). The world and sim state are never regenerated, so affairs, chronicle and caravans survive. Check with WEBGL_lose_context: ANNALS.stats() and the chronicle match before and after",
+      "size": "M",
+      "severity": "major"
+    },
+    {
+      "id": "S4",
+      "title": "Hide-the-court promises \"tap the map edge to return\", but that is not implemented",
+      "file": "index.html",
+      "anchor": "index.html:391, index.html:6292-6296",
+      "evidence": "F16 (partly: only key H restores)",
+      "fix": "Add a small always-visible restore tab (44 px) or implement the edge tap",
+      "size": "S",
+      "severity": "major"
+    },
+    {
+      "id": "S5",
+      "title": "Controls under 44 px on phones",
+      "file": "index.html",
+      "anchor": "index.html:228-275",
+      "evidence": "p4: speed 24-63x31, links 22 px tall, Export 57x28, toggle 29x28, ledger tabs 22 px, fold 21x19, sliders 18 px",
+      "fix": "A @media (pointer:coarse) block: min-height 44, slider thumbs 28 px",
+      "size": "S",
+      "severity": "major"
+    },
+    {
+      "id": "S6",
+      "title": "1.2 MB uncompressed, no cache headers, three.js from a CDN, render-blocking fonts, no SW",
+      "file": "index.html",
+      "anchor": "server.js, index.html:24, index.html:463",
+      "evidence": "p8",
+      "fix": "Same server or nginx fix as A8. Vendor three.min.js r128. Vendor the OFL fonts as woff2 next to the sim (no render-blocking Google Fonts CSS). The sim is a separate origin from the atlas, so it needs its own service worker and its own \"Keep for the table\" offer (same rules as A10); HTTPS on the sim. origin",
+      "size": "S",
+      "severity": "major"
+    },
+    {
+      "id": "S7",
+      "title": "Panning cannot be found on touch; the hint is mouse-worded and buried",
+      "file": "index.html",
+      "anchor": "index.html:395-398, index.html:5998-6066",
+      "evidence": "p3 (partly), F11",
+      "fix": "A first-run coach card on touch (\"one finger turns the sky · two fingers walk the land · pinch to draw near\"), hint text per pointer type. Optional: one-finger pan at high altitude",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "S8",
+      "title": "No pause when hidden (battery)",
+      "file": "index.html",
+      "anchor": "index.html:7670",
+      "evidence": "F8",
+      "fix": "On visibilitychange, stop the rAF loop and resume with prevMs reset",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "S9",
+      "title": "Resize does not re-apply DPR and is not debounced",
+      "file": "index.html",
+      "anchor": "index.html:2215-2219",
+      "evidence": "F4",
+      "fix": "Debounce 150 ms and re-apply the device-class DPR on resize or orientation change",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "S10",
+      "title": "Only one `@media`; a landscape phone gets the desktop HUD",
+      "file": "index.html",
+      "anchor": "index.html:228",
+      "evidence": "F12",
+      "fix": "Add (max-height:500px) and (pointer:coarse): compact HUD, side sheets. On portrait phones move the speed controls from the 100 px top HUD into a bottom bar (thumb zone)",
+      "size": "M",
+      "severity": "minor"
+    },
+    {
+      "id": "S11",
+      "title": "The full chart closes with Esc only",
+      "file": "index.html",
+      "anchor": "index.html:7499-7503",
+      "evidence": "F15",
+      "fix": "Add a 44 px close button in #mapPanel",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "S12",
+      "title": "The ledger sheet covers 60%; its sliders are below the fold",
+      "file": "index.html",
+      "anchor": "index.html:228-266",
+      "evidence": "p7 (partly; the gesture-blocking claim was dropped)",
+      "fix": "Make the ledger a 3-stop sheet; tabs at top, sliders scroll",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "S13",
+      "title": "The viewport meta locks page zoom; HUD text is 11.5 px",
+      "file": "index.html",
+      "anchor": "index.html:5",
+      "evidence": "p9",
+      "fix": "Drop maximum-scale=1, user-scalable=no (the canvas already owns gestures through touch-action:none + gesture preventDefault); add touch-action:manipulation on HUD buttons so a double-tap on a control never zooms the page; HUD text 13 px on phones",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "S14",
+      "title": "The graphs canvas uses uncapped DPR and reallocates on each draw",
+      "file": "index.html",
+      "anchor": "index.html:6772-6776",
+      "evidence": "F20",
+      "fix": "Cap at 2 and reallocate only on a size change",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "S15",
+      "title": "Top occupancy 15-22%; the camera is not offset to the free area",
+      "file": "index.html",
+      "anchor": "index.html:228-266",
+      "evidence": "p5 (partly; corrected numbers)",
+      "fix": "Set the camera view offset (setViewOffset) to the unobscured rectangle when sheets open, counting the S10 bottom bar",
+      "size": "M",
+      "severity": "minor"
+    },
+    {
+      "id": "S16",
+      "title": "Idle frames at full rate drain the battery",
+      "file": "index.html",
+      "anchor": "render loop :7318-7336",
+      "evidence": "principle 11",
+      "fix": "A 30 fps cap for the phone class, presentation only. At 30 fps dt is 0.033 s, below the 0.05 s clamp, so sim speed is unchanged",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "S17",
+      "title": "No screen wake lock in the sim",
+      "file": "index.html",
+      "anchor": "whole file",
+      "evidence": "none in the file",
+      "fix": "An opt-in \"Keep the chart lit\" row (HTTPS only), as A20",
+      "size": "S",
+      "severity": "minor"
+    },
+    {
+      "id": "S18",
+      "title": "The sim has no dark UI theme; the glare and night use is unserved",
+      "file": "index.html",
+      "anchor": "index.html:228-275",
+      "evidence": "0 hits for `data-theme` or `prefers-color-scheme` in `index.html`",
+      "fix": "A dark theme for the HUD, ledger and sheets (prefers-color-scheme plus a manual toggle)",
+      "size": "M",
+      "severity": "minor"
+    }
+  ],
+  "principles": [
+    "Delay, never drop. A phone shows the same classes of ink and names as the desktop on the same sheet. A per-viewport label budget may move a lower-rank name to a higher zoom. Every name a desktop shows on a sheet appears on the phone by that sheet's next zoom step. Type never shrinks to fit more names. On coarse-pointer viewports no name is drawn below 12 px (11 px for italic sub-labels).",
+    "Thresholds in absolute zoom; budgets in CSS px. Ink scale per CSS pixel is device-independent at a given zoom, so presence thresholds must be absolute zooms that no viewport can move. Today they are not: the atlas tiers ride on fitZoom, which depends on the viewport (tierZoom() at maps-site/index.html:1205-1211, fillZoom at :838-846). Tier B sits at (2·fitZoom + TIER_CEIL)/3, so it lands at a different absolute zoom on every device (fitZoom 1.95 on iPhone, 2.35 on Pixel; the desktop shows 97-98% of the chart at minZoom, so its value is lower still). A19 decouples the bands or pins them to the desktop value. What changes with the device is how much fits. Spacing and label count are budgets over the viewport's CSS-px area, computed in CSS px so DPR never changes *what* is shown. DPR only picks raster sharpness. Placement is ranked and greedy, with variable anchors (practice 1-2).",
+    "One question per view on a phone; the full sheet is one tap away. The phone default is the map plus one floating control cluster. Search, layers, era, the Company and journeys live in one bottom sheet (\"the table drawer\") instead of five floating controls. Chrome target: ≤ 12% of the map at the whole chart, ≤ 35% with any sheet at peek.",
+    "Tap reveals what hover reveals. Every hover-only effect (halos, realm brighten, census swell, tooltips) has a named tap or long-press path. :hover styles are gated by @media (hover:hover). Long-press (Leaflet contextmenu) peeks a name without opening a card. Taps resolve by distance to the glyph centre: one glyph within 22 px opens directly, and a small \"which?\" chooser appears only when two or more are within 22 px. A tap never opens the wrong card.",
+    "Bottom-sheet cards with three stops. Stops: peek (name, kind, primary action, about 120 px), half (50%) and full. A standard sheet with no scrim, so the map stays live. A drag handle of at least 48 px; swipe down dismisses. The closed sheet is clipped and visibility:hidden.",
+    "Hit areas grow, glyphs do not. On pointer:coarse, controls get min 44x44. Markers get invisible padded hit areas (44 px, or the WCAG 24 px-circle spacing rule) so the drawn density stays as it is. Pads never decide a tap: the glyph-centre rule above does, so overlapping pads cannot send most city taps to the chooser.",
+    "Device classes for the street view (phone / tablet / desktop). These are not the street spec's tiers, which are camera-radius LOD bands (T0..T4). The class is chosen at load from pointer, short side, deviceMemory and hardwareConcurrency. It never touches W.rng or the seed. Each class has budgets for calls, tris, resident bytes and quad jobs per frame, recorded in the spec's /device_classes (§5.3 item 9). The quality ladder works on real frame time over a sustained window, with hysteresis and upward recovery. Antialias is fixed at context creation, so recovery cannot restore it: the phone class runs without antialias for the whole session (accepted). Device classes scale instance fractions, draw distance and weather density first. Shadows come off last. Device classes touch presentation only, never the seed or the sim.",
+    "Bytes are a budget, not an accident. Serve compressed with explicit cache headers and versioned immutable assets. No single asset above 500 KB without a low-res step first. Overlays fetch only when turned on. Proposed budget: first atlas view ≤ 400 KB gzip, each pan or zoom step ≤ 100 KB.",
+    "Offline plates for the table. A service worker precaches the shell (HTML, vendored Leaflet, data JSON, vendored woff2 fonts) and caches tiles cache-first. Tile paths must be versioned (tiles-v<N>/) before they are cached immutably or cache-first; the worker's cache name is keyed on VERSION, so each release cut invalidates it and shows an \"a new chart is ready\" notice. A \"Keep for the table\" action stores one era's z0-4 (about 3 MB; about 1.6 MB as WebP) plus the current city and the herald's tidings snapshot. It calls storage.persist() and is offered again each visit, because of the iOS 7-day eviction. It is offered on both origins (the atlas and the sim are separate origins with separate caches), shows its size before downloading, and never starts by itself on Save-Data. Service workers, the Cache API, storage.persist() and the Wake Lock API all need HTTPS, so both subdomains need certificates (open question 11).",
+    "The phone is a gate, not a review note. Every density gate also passes at 390x664 portrait and about 844x340 landscape (both with browser toolbars) at DPR 3. 390x664 is the viewport the iPhone capture actually had, and A11 reproduces only at that height. The landscape size is proposed and was not captured. Phone runs also cover reduced motion and night mode, including a night-mode pinch capture (A22).",
+    "Live through the session. Pause on visibilitychange. Handle WebGL context loss without regenerating anything: on restore, re-upload GPU resources from the existing CPU-side state. three r128 re-uploads geometries and textures itself after initGLContext, so only custom render targets and shadow maps need attention. The world and sim state (affairs, chronicle, caravans, every simulated day since load) are never rebuilt from the seed. Debounce resize and re-apply DPR. Keep idle frames cheap: render on demand or cap at 30 fps when nothing moves (S16 for the sim)."
+  ],
+  "ruling_overrides": {
+    "filigree": [
+      {
+        "id": "R2",
+        "text": "Rank decides WHEN a name appears (its threshold), not HOW it is inked: one ink colour and one face family for landform and homestead names; at most one size step between ranks. Placement is ranked and greedy in CSS px with a per-viewport spacing minimum; on a small viewport the rank pass may delay a name to a higher zoom but never drops a class the desktop shows on that sheet, and every delayed name appears by the sheet's next zoom step. No name shrinks below its desktop size to fit a small viewport, and on a coarse-pointer viewport none is drawn below 12 px (11 px italic).",
+        "why": "Turns the vague \"cramped\" item (q15) into delay-not-drop with a size floor on coarse pointers, so phones keep every class and desktop filigree type is not forced up."
+      },
+      {
+        "id": "R6",
+        "text": "Presence is a threshold (absent below minZoom); after arriving, ink eases over <=0.25 zoom or <=250 ms; names arrive at or after their own ink; nothing fades in below its threshold. On the atlas, thresholds are evaluated on the settled zoom after a pinch or fling (an ease never restarts mid-gesture); eases animate opacity/transform only; with prefers-reduced-motion the ease is instant.",
+        "why": "Continuous pinch (`zoomSnap:0`) would otherwise retrigger eases mid-gesture; compositor-only animation holds on low-end GPUs. Cited by Street for its fade, so it must be set before Street 1; the settled-zoom clause is scoped to the atlas so a continuous 3D descent can still swap street LOD."
+      },
+      {
+        "id": "R7",
+        "text": "City sheet (z >= Z_TIER_D): nothing drawn at rest. Epēshu halos stay invisible at rest; on hover devices hover reveals them, on touch devices (hover:none) a tap on a halo's footprint reveals it and opens its card, and a long-press peeks its name without opening the card. Cursor-growing census pins are suppressed inside the city footprint at the city band; on touch no pin depends on cursor growth; every pin has an invisible hit pad, but a tap is resolved by distance to the glyph centre: one glyph within 22 px opens directly, and a chooser appears only when two or more glyphs are within 22 px. Deep links still land.",
+        "why": "Hover-only halos and mouse-only swell leave phones with invisible or untappable targets (F10, F12, p05). With 283-299 pin pairs under 44 px, overlapping pads would send most city taps to a chooser, so the rule follows A2."
+      },
+      {
+        "id": "R12",
+        "text": "Notices (muster days, shut ways; player-facing label: the herald's tidings) load outside the release: a hash param notices=<url> or a local file import; one sample snapshot (fixed seed, fixed simDays) is committed; no mid-cycle pushes. Each surface (the atlas and the sim, which are separate origins) keeps its own last loaded snapshot on the device (Cache API), dated in the A.B. reckoning (the day it was cried), and shows it when the network is down.",
+        "why": "Table wifi is poor; the tidings must not vanish when the connection drops. Cited by Street, so it must be set before Street 1."
+      },
+      {
+        "id": "R14",
+        "text": "Old survey = an era tile layer (tiles-imperial/ or tiles-war/) stacked UNDER the live base with opacity or swipe, fetched only while the reader has it turned on (never prefetched); if research finds the eras differ only in names/borders, add an old-name layer as well.",
+        "why": "A second full tile layer doubles phone requests; on-demand keeps the toggle free when off."
+      },
+      {
+        "id": "R18",
+        "text": "The table map ships behind a default-off toggle (hash param filigree=1 + a layers-panel row). The sparse version = the same view with the toggle off, verified by DOM (no filigree pane or feature) and, once Filigree 4 records a network metric (§5.3 item 3), by network (no filigree request). The owner flips the default after Job 4 passes at desktop and at 390x664 portrait; the owner may flip it per device class (fine pointer first).",
+        "why": "Lets phones keep the sparse view until the phone review passes, and makes toggle-off cost zero bytes. Cited by Street."
+      }
+    ],
+    "street": [
+      {
+        "id": "ST7",
+        "text": "Layers: rows only, no new keys; hash param street=1, default off; sub-rows \"roads and folk\", \"clouds\", \"weather\", \"shadows\"; the shadows row defaults on (today's look) and reads \"held off for speed\" at degradeStep >= 3; on coarse-pointer devices these rows live in the existing drawer as 44 px rows; the owner flips the street default only after Street 4 passes and the ST8 device runs pass, and may flip it for desktops before phones.",
+        "why": "A per-class default flip, and a touch-sized home for the rows."
+      },
+      {
+        "id": "ST8",
+        "text": "Perf evidence: sandbox gates use deterministic counts (calls, tris, geometries, quads and tris built per frame, resident tris) and exact off-identity under the probe's virtual clock, never wall-clock times, measured for each device class the spec defines (phone class at 390x664, ratio 1.6); device evidence is owner-run on owner hardware: a desktop run (fps >= 42 with degradeStep 0 over a 60 s descent, tools/street-probe.js --device -> docs/street/device/<date>.json) and one phone run (sustained >= 30 fps over a 5-minute descent and idle, at a ladder step no lower than the spec's phone floor, read from ANNALS.stats(), filed as docs/street/device-phone/<date>.json and never under docs/street/device/), both preconditions for the respective default flip.",
+        "why": "One desktop run cannot vouch for phones (spec-gap F17). Thermal throttling needs a sustained run. The phone file has its own directory because Street 3 and Street 4 read the newest `docs/street/device/*.json` against fps >= 42 and degradeStep 0 (§5.3 item 6)."
+      },
+      {
+        "id": "ST9",
+        "text": "Workers: none; a time-sliced main-thread queue with at most 6 quad jobs and a triangle cap per frame on the desktop class and at most 3 jobs and half the triangle cap on the phone class; a full LRU stays coarse; the spec states these per-class budgets and an LRU resident-byte cap per class in `/device_classes`.",
+        "why": "Phone main threads are slower and memory is capped (iOS ~384 MB is a lead, unverified). The numbers are proposals. `/stream` holds only scalars today, so the per-class values need the `/device_classes` shape (§5.3 item 9)."
+      },
+      {
+        "id": "ST19",
+        "text": "Weather density: a \"weather\" sub-row with four steps (full, three-quarters, half, quarter) scales the drawn count of the existing precipitation points (draw range only, no new randomness); the default step follows the device class (desktop full, phone half) and the quality ladder may lower it before it touches shadows; roof masks only where the count is exact under the probe, else a recorded gap.",
+        "why": "Draw range is a presentation-only lever that keeps the effect present; it is cheaper than losing shadows."
+      }
+    ]
+  },
+  "spec_criteria": {
+    "filigree": [
+      "FM1: Every sheet unit states its phone behaviour at 390x664 portrait and about 844x340 landscape, both with browser toolbars (DPR 3): label budget, minimum label gap in CSS px, and the zoom at which delayed names arrive.",
+      "FM2: Class parity: every class visible on a sheet at desktop is visible on that sheet on a phone by the next zoom step (delay, not drop), checked by capture.",
+      "FM3: No name shrinks below its desktop size to fit a small viewport, and on a coarse-pointer viewport none is drawn below 12 px (11 px italic), checked at 390x664; `phone.overlaps = 0`; no horizontal scroll.",
+      "FM4: Every interactive filigree feature has a hit area ≥ 44 CSS px on pointer:coarse, or meets the WCAG 2.5.8 spacing rule. Taps resolve by distance to the glyph centre: one glyph within 22 px opens directly, and the chooser appears only when two or more are within 22 px. Zero wrong-card taps on the fixture cells.",
+      "FM5: No information is hover-only: each hover reveal names its tap or long-press path, and `:hover` styles are gated by `(hover:hover)`.",
+      "FM6: Appear effects are opacity/transform only, honour prefers-reduced-motion, and evaluate on the settled zoom after a pinch.",
+      "FM7: Bytes:",
+      "FM8: Filigree adds no floating control. Its rows live in the layers list / table drawer. The chrome cover at the whole chart stays at or below the post-A4 baseline.",
+      "FM9: Out-of-band panes are removed, not left at opacity 0. The phone DOM node count at the whole chart has a stated cap.",
+      "FM10: Sheet bands are stated as absolute zoom, not derived from `fitZoom` (viewport-dependent: 1.95 on iPhone vs 2.35 on Pixel today; see A19). Capture shows the same band zoom on every profile.",
+      "FM11: Night mode and day mode both pass FM1-FM5 on the phone. A WCAG 1.4.3 contrast check covers the 10-11 px muted mono chrome text (e.g. `.card-type` 10 px at `maps-site/index.html:256`, `.rev .when` at `:292`).",
+      "FM12: Every filigree asset sits under a versioned URL (e.g. `tiles-v<N>/`) so it can be cached immutably and offline."
+    ],
+    "street": [
+      "SM1: Device classes (not the spec's `tiers`, which are camera-radius LOD bands) are defined (inputs, thresholds), each with budgets for calls, tris, resident bytes, quad jobs and tris per frame, recorded in `/device_classes`. Phone-class sandbox counts are measured at 390x664, ratio 1.6.",
+      "SM2: Every unit names its device-class behaviour as a scale (instance fraction, draw distance, weather step, cloud count), never a removed feature. Off-identity and the simDays fingerprint are identical at every device class.",
+      "SM3: The quality ladder spec:",
+      "SM4: On WebGL context loss and restore, street resources rebuild from their ST4 keys (the world and sim are never regenerated), and the fingerprint plus the visible street match before and after (`WEBGL_lose_context` test).",
+      "SM5: `visibilitychange` hidden pauses the streaming queue and rendering. Idle frames are capped or rendered on demand.",
+      "SM6: Touch:",
+      "SM7: Phone shots and metrics are required for every SV view, not only SV1/SV2. This needs the §5.3 item 4 script change.",
+      "SM8: The LRU resident cap per device class stays under the phone ceiling stated in the spec. The cap fills coarse, never stalls black.",
+      "SM9: Session overlays (tidings, weather notes) render in the existing bottom sheets on phones. Sheets do not cover more than 50% at peek or half.",
+      "SM10: Code weight: the STREET block's added gzip bytes are stated and capped. Street data is generated from the seed, never shipped.",
+      "SM11: The ST8 phone run is defined: device, duration (≥ 5 min), success bar and file path (`docs/street/device-phone/<date>.json`)."
+    ]
+  },
+  "criteria_routing": [
+    {
+      "id": "FM1",
+      "carrier": "R2 (budget, delay) and R18 (viewport); block for the landscape size",
+      "block": true
+    },
+    {
+      "id": "FM2",
+      "carrier": "R2",
+      "block": false
+    },
+    {
+      "id": "FM3",
+      "carrier": "block (R2 carries only the size rule; overlaps and scroll need the block)",
+      "block": true
+    },
+    {
+      "id": "FM4",
+      "carrier": "R7",
+      "block": false
+    },
+    {
+      "id": "FM5",
+      "carrier": "R7 for halos and long-press; block for the `(hover:hover)` gating",
+      "block": true
+    },
+    {
+      "id": "FM6",
+      "carrier": "R6",
+      "block": false
+    },
+    {
+      "id": "FM7",
+      "carrier": "R14 (on demand) and R18 (toggle off); block for the 150 KB and 500 KB caps",
+      "block": true
+    },
+    {
+      "id": "FM8",
+      "carrier": "R18 (layers row); block for the chrome-cover cap",
+      "block": true
+    },
+    {
+      "id": "FM9",
+      "carrier": "block",
+      "block": true
+    },
+    {
+      "id": "FM10",
+      "carrier": "block (and A19)",
+      "block": true
+    },
+    {
+      "id": "FM11",
+      "carrier": "block",
+      "block": true
+    },
+    {
+      "id": "FM12",
+      "carrier": "block",
+      "block": true
+    },
+    {
+      "id": "SM1",
+      "carrier": "ST9 (budgets) and ST8 (viewport); block for the class inputs",
+      "block": true
+    },
+    {
+      "id": "SM2",
+      "carrier": "block",
+      "block": true
+    },
+    {
+      "id": "SM3",
+      "carrier": "ST7 and ST19 (steps before shadows); block for the ladder spec",
+      "block": true
+    },
+    {
+      "id": "SM4",
+      "carrier": "block",
+      "block": true
+    },
+    {
+      "id": "SM5",
+      "carrier": "block",
+      "block": true
+    },
+    {
+      "id": "SM6",
+      "carrier": "block",
+      "block": true
+    },
+    {
+      "id": "SM7",
+      "carrier": "block, plus the §5.3 item 4 script change",
+      "block": true
+    },
+    {
+      "id": "SM8",
+      "carrier": "ST9",
+      "block": false
+    },
+    {
+      "id": "SM9",
+      "carrier": "block",
+      "block": true
+    },
+    {
+      "id": "SM10",
+      "carrier": "block",
+      "block": true
+    },
+    {
+      "id": "SM11",
+      "carrier": "ST8",
+      "block": false
+    }
+  ],
+  "todo_inputs_mobile": {
+    "filigree": [
+      "FM1: Every sheet unit states its phone behaviour at 390x664 portrait and about 844x340 landscape, both with browser toolbars (DPR 3): label budget, minimum label gap in CSS px, and the zoom at which delayed names arrive.",
+      "FM3: No name shrinks below its desktop size to fit a small viewport, and on a coarse-pointer viewport none is drawn below 12 px (11 px italic), checked at 390x664; `phone.overlaps = 0`; no horizontal scroll.",
+      "FM5: No information is hover-only: each hover reveal names its tap or long-press path, and `:hover` styles are gated by `(hover:hover)`.",
+      "FM7: Bytes:",
+      "FM8: Filigree adds no floating control. Its rows live in the layers list / table drawer. The chrome cover at the whole chart stays at or below the post-A4 baseline.",
+      "FM9: Out-of-band panes are removed, not left at opacity 0. The phone DOM node count at the whole chart has a stated cap.",
+      "FM10: Sheet bands are stated as absolute zoom, not derived from `fitZoom` (viewport-dependent: 1.95 on iPhone vs 2.35 on Pixel today; see A19). Capture shows the same band zoom on every profile.",
+      "FM11: Night mode and day mode both pass FM1-FM5 on the phone. A WCAG 1.4.3 contrast check covers the 10-11 px muted mono chrome text (e.g. `.card-type` 10 px at `maps-site/index.html:256`, `.rev .when` at `:292`).",
+      "FM12: Every filigree asset sits under a versioned URL (e.g. `tiles-v<N>/`) so it can be cached immutably and offline."
+    ],
+    "street": [
+      "SM1: Device classes (not the spec's `tiers`, which are camera-radius LOD bands) are defined (inputs, thresholds), each with budgets for calls, tris, resident bytes, quad jobs and tris per frame, recorded in `/device_classes`. Phone-class sandbox counts are measured at 390x664, ratio 1.6.",
+      "SM2: Every unit names its device-class behaviour as a scale (instance fraction, draw distance, weather step, cloud count), never a removed feature. Off-identity and the simDays fingerprint are identical at every device class.",
+      "SM3: The quality ladder spec:",
+      "SM4: On WebGL context loss and restore, street resources rebuild from their ST4 keys (the world and sim are never regenerated), and the fingerprint plus the visible street match before and after (`WEBGL_lose_context` test).",
+      "SM5: `visibilitychange` hidden pauses the streaming queue and rendering. Idle frames are capped or rendered on demand.",
+      "SM6: Touch:",
+      "SM7: Phone shots and metrics are required for every SV view, not only SV1/SV2. This needs the §5.3 item 4 script change.",
+      "SM9: Session overlays (tidings, weather notes) render in the existing bottom sheets on phones. Sheets do not cover more than 50% at peek or half.",
+      "SM10: Code weight: the STREET block's added gzip bytes are stated and capped. Street data is generated from the seed, never shipped."
+    ]
+  },
+  "needs_script_change": [
+    "Phone viewport in build gates: The Filigree 3 slice gates count features \"that intersect the viewport\", but no viewport is recorded (README:413). Needed: filigree-3-build.js / tools/filigree-capture.js record the viewport and add a 390x664 portrait DPR 3 pass to each slice gate.",
+    "The F08 phone finder is review-only (filigree-4-review.js:176). Make a phone failure a gate criterion in Job 4, not just a finding.",
+    "A byte and request metric: MET_KEYS (filigree-4-review.js:270) lacks bytes_first_view, requests_first_view and max_asset_bytes. The capture tool has no network or CPU throttle flag.",
+    "The street phone list is hard-coded: const PHONE = ['SV1','SV2'] (street-4-review.js:213). Derive it from the spec, or extend it to every SV view.",
+    "The street probe lacks device flags. Street 2 already plans a --phone flag (street-2-plan.js:224, S0.U01), and Street 4 passes --phone SV1,SV2 at 390x844 (street-4-review.js:242). The gap: no --dpr, --cpu-throttle or --class flag, a phone list limited to SV1/SV2, and a phone viewport of 390x844 where the gate wants 390x664. Phone-class sandbox counts need all of them.",
+    "Phone device evidence for ST8 must not share the desktop directory. Street 3 reads the *newest* docs/street/device/*.json and requires fps_min >= 42 and degrade_max 0 (street-3-build.js:787,930-932). Street 4 hard-codes DEVICE_FPS = 42 with the same check (street-4-review.js:241,430). A phone file named docs/street/device/<date>-phone.json would become the newest file: Street 4's device gate would read fail and Street 3 would record a miss. So phone runs are filed under docs/street/device-phone/<date>.json (the ST8 override says so). If Street 3 and 4 are to gate the phone run, they need a script edit to read that directory against the phone bar. --device assumes Node on the owner's machine. Needed: an in-page ANNALS.deviceReport() (index.html, a Street S0 unit) plus a way to file its JSON in docs/street/device-phone/.",
+    "No home for a standalone \"mobile\" ruling. Folding mobile into R2, R6, R7, R12, R14, R18, ST7, ST8, ST9 and ST19 (above) works. A first-class R23/ST20 (offline and byte budgets) needs the RULINGS and ST_RULINGS tables extended.",
+    "Delivery work (A8, A9, A10, S6: server and nginx headers, vendoring, service worker) sits outside both programs. It needs its own POLISH items, not ruling text.",
+    "Per-class budgets have no home in the street spec. /stream holds scalar max_jobs_frame, tri_cap_frame and resident_tris, which Street 3 reads directly (street-2-plan.js:305,694,797; street-3-build.js:892-893). The ST9 phone caps (3 jobs, half the triangle cap, an LRU byte cap) and SM1's per-class budgets would never be gated. Needed: extend the spec shape with a /device_classes object (per class: inputs, thresholds, calls, tris, resident bytes, quad jobs and tris per frame, ladder floor), and a Street 3 gate that reads it.",
+    "Mobile criteria need a route into the specs. The plan jobs read rulings and bibles, not a criteria file; the research jobs read todo-inputs.json (filigree-1-research.js:438, street-1-research.js:794). §6.3 names the carrier of every criterion. The \"mobile\" block in todo-inputs.json (draft in inputs.json under todo_inputs_mobile) must be written before Filigree 1 and Street 1."
+  ],
+  "measurements": [
+    {
+      "id": "atlas-m01",
+      "profile": "iphone13",
+      "view": "first load",
+      "metric": "time to first tile / atlas ready",
+      "value": "204 / 408 ms (localhost, unthrottled)",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m04",
+      "profile": "iphone13 slow4G+4xCPU",
+      "view": "first load",
+      "metric": "first tile / atlas ready",
+      "value": "2465 / 4132 ms; CDN latency not included",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m05",
+      "profile": "iphone13",
+      "view": "first load",
+      "metric": "bytes/requests",
+      "value": "729,636 B / 37 req (tiles 289,647); pixel7 661,199/32; desktop 597,108/32; uncompressed",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m06",
+      "profile": "iphone13",
+      "view": "session",
+      "metric": "total bytes",
+      "value": "3.17-3.57 MB; overlay-Epeshu.jpg 2,171,881 B = 61-68%",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m07",
+      "profile": "iphone13",
+      "view": "street zoom #chart=Epēshu",
+      "metric": "bytes / settle",
+      "value": "+2.18-2.20 MB in 3 req; settle 5.17 s unthrottled (no slow-4G settle time re-measured)",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m08",
+      "profile": "iphone13",
+      "view": "repeat visit",
+      "metric": "bytes refetched",
+      "value": "729,636 B, 0 cache hits (server.js sends no cache headers)",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m09",
+      "profile": "local",
+      "view": "first-load assets",
+      "metric": "gzip -9 potential",
+      "value": "index.html 211,860 -> 66,752 B; data ~216 -> ~62 KB",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m10",
+      "profile": "iphone13",
+      "view": "Contents",
+      "metric": "heading clip",
+      "value": "kicker -26 px, title -8 px, scrollTop 0 (unreachable)",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m12",
+      "profile": "iphone13",
+      "view": "whole chart",
+      "metric": "map share / chrome cover / chart visible",
+      "value": "78% / 29% / 36-37% (minZoom 1.95); pixel7 83/21/29-30; desktop 90/5/97-98",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m12b",
+      "profile": "iphone13",
+      "view": "whole chart",
+      "metric": "pins / labels",
+      "value": "89-113 pins, 0 labels, 0 tooltips",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m15",
+      "profile": "iphone13",
+      "view": "whole chart",
+      "metric": "pin crowding",
+      "value": "97-106 pairs <22 px; 283-299 pairs <44 px; pixel7 57-62 pairs <22 px",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m04t",
+      "profile": "iphone13",
+      "view": "whole chart",
+      "metric": "targets under 44x44",
+      "value": "about 98% (123/127 or 211/215 by selector)",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m16",
+      "profile": "iphone13",
+      "view": "layers panel",
+      "metric": "geometry",
+      "value": "372x405 (61% height), internal scroll, rows 22.8 px, 13 px checkboxes, overlapped by dock; chrome cover 85-86%",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m18",
+      "profile": "iphone13",
+      "view": "place card tap z4.55",
+      "metric": "card opened",
+      "value": "Lektān faction instead of Epēshu (fac-badge on top); zoom-dependent, pixel7 correct at z4.95",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m19",
+      "profile": "iphone13",
+      "view": "place card Epēshu",
+      "metric": "sheet",
+      "value": "390x332 (50%), body 4808 vs 330 px, close 30x30",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m27",
+      "profile": "iphone13",
+      "view": "closed sheet",
+      "metric": "leak",
+      "value": "panel top 642 < 664; doc scrollHeight 974 vs 664; pixel7 1265 vs 839",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m25",
+      "profile": "all",
+      "view": "all views",
+      "metric": "horizontal overflow / console",
+      "value": "none; only blocked Google Fonts (infra)",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "atlas-m28",
+      "profile": "iphone13, pixel7",
+      "view": "layers tap",
+      "metric": "emulation",
+      "value": "opens then closes <100 ms, same on stock Leaflet; real device unverified",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "sim-m6",
+      "profile": "all",
+      "view": "default",
+      "metric": "renderer.info",
+      "value": "phones 993,852 tris / 25 calls; desktop 1.13-1.14 M / 27-30; trees 48,568 all",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "sim-m7",
+      "profile": "pixel7, iphone13",
+      "view": "load",
+      "metric": "buffer",
+      "value": "pixel7 659x1342 at 1.6 (884k px); iphone 624x1062; desktop 1.05 M px at 1",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "sim-m8",
+      "profile": "pixel7 CPU x4",
+      "view": "3 windows",
+      "metric": "degrade",
+      "value": "rAF 1.06-1.42 fps (SwiftShader) yet fpsAvg 26-37, degradeStep 0",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "sim-m9",
+      "profile": "pixel7, iphone13",
+      "view": "any",
+      "metric": "JS per tick+submit",
+      "value": "3-9 ms; frame GPU/raster bound",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "sim-m12",
+      "profile": "pixel7",
+      "view": "default / ledger",
+      "metric": "targets under 44",
+      "value": "11/13 default; ledger tabs 22 px tall, fold 21x19, sliders 18 px",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "sim-m13",
+      "profile": "pixel7, iphone13",
+      "view": "zoomed Epeshu",
+      "metric": "gestures",
+      "value": "1 finger orbit only; 2-finger pinch zoom + parallel pan",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "sim-m14",
+      "profile": "all",
+      "view": "load",
+      "metric": "payload",
+      "value": "index.html 1,203,659 B raw (749,705 gzip, not served); three.js cdnjs; no SW",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "sim-p5",
+      "profile": "pixel7",
+      "view": "default",
+      "metric": "top occupancy",
+      "value": "HUD + ledger handle to y=146 (17%); iphone 15-22%",
+      "artifact": "(session scratchpad, not kept)"
+    },
+    {
+      "id": "sim-p10",
+      "profile": "all",
+      "view": "env",
+      "metric": "capture limit",
+      "value": "SwiftShader software GL; iPhone profile is Chromium; no real GPU/WebKit data",
+      "artifact": "(session scratchpad, not kept)"
+    }
+  ]
+}

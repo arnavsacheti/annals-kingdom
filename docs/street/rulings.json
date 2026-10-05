@@ -1,6 +1,10 @@
 {
-  "date": "2026-10-04",
+  "date": "2026-10-05",
   "about": "owner overrides of the street rulings ST1..ST19 (empty = defaults; ST3, ST4, ST18 are fixed); filigree R overrides live only in docs/filigree/rulings.json",
-  "overrides": {},
-  "confirmed": []
+  "overrides": {
+    "ST8": "Perf evidence: sandbox gates use deterministic counts (calls, tris, geometries, quads and tris built per frame, resident tris) and exact off-identity under the probe's virtual clock, never wall-clock times; device fps >= 42 with degradeStep 0 over a 60 s descent is owner-run (tools/street-probe.js --device -> docs/street/device/<date>.json) and is the precondition for the default flip. That desktop run gates the desktop flip. Sandbox counts are measured for every device class the spec defines, the phone class at 390x664 and pixel ratio 1.6, forced with ?dc=phone. A phone run is separate owner-run evidence on a real phone: ANNALS.deviceReport() over a 5-minute descent and idle, median fps >= 27 at the phone class's 30 fps cap and degradeStep never past the spec's phone floor step, in the --device shape, filed as docs/street/device-phone/<date>.json and never under docs/street/device/; it is the precondition for the phone flip only, so the owner may flip desktops first."
+  },
+  "confirmed": [
+    "ST8"
+  ]
 }

@@ -29,4 +29,7 @@ those counts.
   refine, a bounded queue + LRU that stays coarse, 250 ms fades, render-only IDM spacing) and bronze-age readings
   (fords and one-lane bridges in turn, toll halts, gates at the dark hour, the herald's tidings); verified
   2026-10-04 by two lenses per claim, outside the counts above; feeds `docs/street/`
-
+- `mobile-at-the-table.md` — what phones get today (Chromium phone emulation with software GL, not real devices), verified
+  mobile practice (label placement, touch targets, sheets, caching, storage), eleven principles, the atlas/sim defect
+  summary and the ruling overrides (R2 R7 R12 R14 R18 ST8 overridden; R6 ST7 ST9 ST19 kept); verified 2026-10-04 by
+  verification lenses, outside the counts above; full brief in `../mobile/README.md`, data in `../mobile/inputs.json`

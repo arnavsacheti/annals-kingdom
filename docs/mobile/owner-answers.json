@@ -1,0 +1,12 @@
+{
+  "q1": "a",
+  "q1_values": null,
+  "q2": "a",
+  "answered": "2026-10-05",
+  "notes": {
+    "q1": "accept: tiers B/C pinned to the retina-desktop zooms (3.40/4.20); 1x desktops reveal earlier, nothing later anywhere",
+    "q2": "fit width, letterboxed on parchment",
+    "rulings": "owner confirmed R2 R7 R12 R14 R18 and ST8; R6 ST7 ST9 ST19 stay default",
+    "releases": "keep work on the feature branch; versioned cuts happen at merge"
+  }
+}

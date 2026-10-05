@@ -623,5 +623,130 @@
    "(d) Azlen 'texture over type' vs v2 Google/Apple dropping street names: street names on a threshold at city zoom",
    "(e) country sheet 'nothing smaller than the one town' vs baked base that prints every ○ town and hand-lettered name at z0-5: accept the print or plan a de-lettered country raster"
   ]
- }
+ },
+  "mobile": {
+    "_meta": {
+      "date": "2026-10-04",
+      "source": "Mobile at the table (USER REQUEST): keep the quality, fit the phone. Research docs/research/mobile-at-the-table.md; protocol and records docs/mobile/README.md; instrument tools/mobile-capture.js.",
+      "read_by": "The density-bible integrator (Filigree 1). Filigree 2 reads the bible, not this file, so these criteria reach the sheet spec only through the bible.",
+      "carry": "Restate every criterion below in a density-bible section titled \"## Phone (mobile block)\", each with its id (FM1-FM12) and its carrier. They are acceptance criteria for the sheet spec and the build, not classes or rules about the land. They never change a hex answer, a class, or a sheet's must and forbidden lists.",
+      "rule": "Delay, never drop. A phone shows every class the desktop shows on the same sheet; a lower-ranked name may arrive later (by its desktop threshold + 0.5 zoom or the end of its band, R2), never not at all. A phone budget never thins, delays or shrinks the desktop.",
+      "atlas_mobile_plan": "Planned to land in maps-site/index.html before Filigree 2 runs: absolute reveal bands, read through ATLAS.tiers(); one coarse-pointer tap resolver (glyph-centre distance, with a chooser for two or more) that filigree features register with; the table drawer (era, layers, Groups, the Company and journeys in one bottom sheet on coarse pointers); the place card as a peek/half/full sheet; raster URLs carrying ?t=<TILES_V>. Filigree 2 reads what is actually in the file. Anything absent there is a gap to record, not an assumption.",
+      "rulings_kept": "R6 keeps its default text on purpose, because an override would drop Street 2's baked fade check. Its phone clauses are FM6 below.",
+      "anchor_convention": "'maps-site/index.html:' = atlas; 'index.html:' = sim (repo root)"
+    },
+    "profiles": {
+      "phone_portrait": {
+        "w": 390,
+        "h": 664,
+        "dpr": 3,
+        "touch": true,
+        "note": "iPhone 13 with browser toolbars, as captured; the gate viewport"
+      },
+      "phone_tall": {
+        "w": 412,
+        "h": 839,
+        "dpr": 2.625,
+        "touch": true,
+        "note": "Pixel 7"
+      },
+      "phone_landscape": {
+        "w": 844,
+        "h": 340,
+        "dpr": 3,
+        "touch": true,
+        "note": "proposed, not captured; toolbar heights vary by browser"
+      },
+      "desktop_control": {
+        "w": 1366,
+        "h": 768,
+        "dpr": 1,
+        "touch": false,
+        "note": "must not regress"
+      },
+      "desktop_retina": {
+        "w": 1440,
+        "h": 900,
+        "dpr": 2,
+        "touch": false,
+        "note": "must not regress"
+      }
+    },
+    "targets": {
+      "note": "proposals, not measurements; no real phone has been measured yet",
+      "chrome_cover_whole_chart_max": 0.12,
+      "chrome_cover_sheet_at_peek_max": 0.35,
+      "sheet_entry_bytes_phone_max": 153600,
+      "single_asset_bytes_without_lowres_max": 512000,
+      "first_view_bytes_gzip_max": 409600,
+      "pan_or_zoom_step_bytes_max": 102400,
+      "min_name_px_coarse": 12,
+      "min_italic_name_px_coarse": 11,
+      "tap_radius_px": 22,
+      "hit_pad_px": 44,
+      "delay_max_zoom": 0.5
+    },
+    "criteria": [
+      {
+        "id": "FM1",
+        "carrier": "R2, R18 + this block",
+        "text": "Every sheet unit states its phone behaviour at phone_portrait (390x664, DPR 3) and at phone_landscape (about 844x340, DPR 3), both with browser toolbars: its label budget, its minimum label gap in CSS px, and the zoom at which each held-back name arrives. The bound is its desktop threshold + 0.5 zoom or the end of its band, whichever comes first (R2)."
+      },
+      {
+        "id": "FM2",
+        "carrier": "R2",
+        "text": "Class parity, checked by capture on both phone profiles: at each class's desktop threshold + 0.5 zoom (or the band end, if sooner) the phone draws every class the desktop draws on that sheet. Names are held back, never dropped."
+      },
+      {
+        "id": "FM3",
+        "carrier": "R2 + this block",
+        "text": "Type never shrinks to fit. No name is smaller than its desktop size, and on a coarse pointer none is below 12 px (11 px italic). At phone_portrait the capture reads phone.overlaps = 0 and phone.hscroll false."
+      },
+      {
+        "id": "FM4",
+        "carrier": "R7",
+        "text": "Touch: every interactive filigree feature has a hit area of at least 44 CSS px on a coarse pointer, or meets the WCAG 2.5.8 24 px spacing rule. It registers with the atlas's one tap resolver: one glyph centre within 22 CSS px opens it, two or more open the chooser, none opens no card. Zero wrong-card taps on the fixture cells."
+      },
+      {
+        "id": "FM5",
+        "carrier": "R7 + this block",
+        "text": "No information is hover-only. Each hover reveal names its tap or long-press path (R7), and every :hover style sits inside @media (hover:hover)."
+      },
+      {
+        "id": "FM6",
+        "carrier": "this block (R6 keeps its default text)",
+        "text": "Appear effects on the atlas animate CSS opacity or transform only. They are instant under prefers-reduced-motion, with the presence thresholds unchanged. Presence is decided on the settled zoom after a pinch, wheel burst or fling (Leaflet zoomend), so no ease starts or restarts mid-gesture. R6's thresholds and ease limits are unchanged, and these clauses do not bind the street view."
+      },
+      {
+        "id": "FM7",
+        "carrier": "R14, R18 + this block",
+        "text": "Bytes, from the capture's net block: with the toggle off the filigree adds 0 requests (R18). Each sheet entry at phone_portrait adds at most 150 KB transferred (a proposal). No asset over 500 KB ships without a low-resolution step first. Elder Chart tiles fetch only while the Elder Chart is on (R14). The capture records bytes_first_view, requests_first_view and max_asset_bytes per view."
+      },
+      {
+        "id": "FM8",
+        "carrier": "R18 + this block",
+        "text": "Chrome: the filigree adds no floating control. Its rows live in the layers list, which is the table drawer on a coarse pointer. On a phone, the chrome cover of the map at the whole chart stays at or below the value in docs/mobile/final.json (target 12%)."
+      },
+      {
+        "id": "FM9",
+        "carrier": "this block",
+        "text": "DOM: panes and features outside their band are removed from the DOM, not left at opacity 0. The spec states a cap on the phone_portrait DOM node count at the whole chart, and the capture checks it."
+      },
+      {
+        "id": "FM10",
+        "carrier": "this block",
+        "text": "Bands: every sheet band is an absolute zoom that no viewport or device pixel ratio moves. It is read from the atlas's reveal constants (ATLAS.tiers() once the mobile pass lands), never derived from fitZoom or TIER_CEIL. The capture shows the same band zooms on the iPhone, the Pixel and both desktop profiles."
+      },
+      {
+        "id": "FM11",
+        "carrier": "this block",
+        "text": "Night and day both pass FM1-FM5 at phone_portrait; night is checked under a pinch capture. WCAG 1.4.3 contrast (4.5:1) holds in both themes for every filigree name and for the 10-11 px muted mono chrome text (for example .card-type and .rev .when), so the sheet reads in glare and in a dark room."
+      },
+      {
+        "id": "FM12",
+        "carrier": "this block",
+        "text": "Offline: every filigree raster (baked relief, any tile) is fetched as <path>?t=<TILES_V>, never from a renamed tile directory: Filigree 1's inputs and the hex crops name tiles/, tiles-war/ and tiles-imperial/. The atlas worker can then keep it cache-first. Filigree JSON follows the atlas data rule (no-cache with ETag revalidation) and joins the chart kept for the table."
+      }
+    ]
+  }
 }

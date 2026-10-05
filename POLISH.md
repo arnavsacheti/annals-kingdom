@@ -35,7 +35,7 @@ vibe check"). Use the returned `polish_note` as the result note, `polish_inserts
 `changelog_line` in the release. Queue rules for these items (reason codes, where inserted items go,
 releases, the on-return table): `docs/filigree/README.md` §1.
 
-- [x] **Filigree 1 · Research → density bible (USER REQUEST)** — inventory what plate one bothers to
+- [ ] **Filigree 1 · Research → density bible (USER REQUEST)** — inventory what plate one bothers to
   name (peak, height, homestead, reserve, river fork, coast road) against what plates two and three
   delete; walk the Pēshunor north coast once (three fixed bands of the sheet-one box) and one fixed
   Epēshu quarter in Azlen's grain (block, park void, arterial, fog wash, contour hill); carry the
@@ -81,9 +81,206 @@ releases, the on-return table): `docs/filigree/README.md` §1.
     is already in the checkout. Docs + a read-only probe tool; never edits `index.html` or
     `maps-site/index.html`. If the dotted "Traced road network" data file is missing or unloaded,
     that is a q17 finding, not a preflight failure.
-  - Result (2026-10-04): density bible: 59 rules, 12/12 hexes agree ≥5/6 (min 6/6), 100%
+  - Default-rulings result (2026-10-04, superseded by the mobile re-integration):
+    density bible: 59 rules, 12/12 hexes agree ≥5/6 (min 6/6), 100%
     instances resolve, checklist 27/27, round 1; gaps for Job 2 recorded in
     `docs/filigree/gates/1-research.json`.
+  - Mobile re-integration (Mobile 0): docs/filigree/rulings.json now overrides R2 R7 R12 R14 R18 and
+    todo-inputs.json carries a "mobile" block, so the bible is re-integrated. Path B: delete
+    gates/1-research.json (the deletion the script's own message names) and run fresh with
+    resume:true. The ledger skips research; the hex crops stay. Path C, a full re-run, needs the
+    owner's go. Check this box again only on the re-integrated pass, when all of these hold:
+    rulings_used names the overrides; density-bible.md has "## Phone (mobile block)" with FM1-FM12;
+    the bible's class ids are a superset of 72175a5's. Then add the new Result line here.
+
+### Mobile at the table (USER REQUEST): keep the quality, fit the phone
+
+The owner's ask: keep the atlas and the sim at their present quality on phones at the table, and
+make them work
+there: one hand, poor wifi, three hours of battery, glare and night, the right tap first time, the
+plates kept
+offline. Rule: delay, never drop. Every class the desktop shows stays reachable on a phone; a phone
+budget never
+thins, delays or shrinks the desktop; nothing touches the seed, W.rng, the sim, canon or the
+chronicle voice.
+Research `docs/research/mobile-at-the-table.md`; guide, gates and records `docs/mobile/README.md`;
+instrument
+`tools/mobile-capture.js` against `docs/mobile/baseline.json`; loop
+`.claude/workflows/mobile-build.js` and
+`mobile-review.js`.
+
+How the items run:
+- Each item is one polish run with one patch release. Its units run one at a time through the build
+  workflow, then the item's review workflow runs.
+- The atlas items (Mobile 4-9, maps-site/index.html) and the sim items (Mobile 10-14, index.html)
+  may run in parallel sessions, each strictly in order. Release cuts are serialized by the
+  orchestrator.
+
+Every unit passes the universal gates, plus its own measured acceptance at 390x664 (iPhone 13) and
+412x839
+(Pixel 7). The universal gates are:
+- the CLAUDE.md syntax check;
+- zero console errors;
+- simDays(400) fingerprints identical for epeshu and tamar1374;
+- every workflow anchor, ANNALS.stats() keys, the keydown handler and the Leaflet panes unchanged;
+- the desktop unchanged at 1366x768@1 and 1440x900@2;
+- voice.
+
+A failing unit is restored from its snapshot; the item stays unchecked with the failing numbers.
+Agents never run git.
+
+- [ ] **Mobile 0 · Rulings, phone criteria, research copy (USER REQUEST)** — write
+  docs/street/rulings.json (ST8), docs/filigree/rulings.json (R2 R7 R12 R14 R18) and both "mobile"
+  blocks, text-level with every existing byte kept; uncheck Filigree 1 for its re-integration. Copy
+  the verified brief to docs/research/mobile-at-the-table.md (+ index line) and its inputs to
+  docs/mobile/inputs.json; write docs/mobile/README.md; apply these POLISH edits. R6, ST7, ST9 and
+  ST19 keep their defaults (an override would drop Street 2's baked checks).
+  - Done when: all four files parse and match the plan's files byte for byte; earlier todo-inputs
+    keys deep-equal before and after; no override hits VOCAB or VOCAB_ST; each override starts with
+    its default text; player-visible strings (labels, titles, aria-labels, hint, tidings) are
+    enumerated in docs/mobile/README.md as a list, and only that list is voice-read (wiki canon
+    names such as The Lektān Priesthood are exempt from the VOCAB grep);
+    docs/mobile/owner-answers.json exists with null answers.
+  - Prerequisites: no Filigree 1 agent running when the filigree files are written. Hold Street 1
+    and Filigree 2 (full runs) until this item, the re-integration, Mobile 2 and both lane reviews
+    are done. Docs only.
+- [ ] **Mobile 1 · The measuring stick, the baseline, the loop (USER REQUEST)** —
+  tools/mobile-capture.js (iPhone 13, Pixel 7, desktop 1366x768@1, desktop2x 1440x900@2, landscape;
+  virtual and real clocks; bytes, rects, taps, fingerprints, anchors); baseline B0 captured twice
+  before any app edit; the saved loop .claude/workflows/mobile-build.js and mobile-review.js
+  (written by the central session only, never a workflow agent; checked by
+  tools/mobile-loop-check.js and reviewed). The units start from the verified harness shipped beside
+  units.json (inputs/) and score against accept files authored before each implementer runs.
+  - Done when: two runs agree on every non-timing key; the capture reproduces the brief within 5%
+    (first load 729,636 B, doc 974 vs 664, chrome cover 29%, Contents kicker −26 px, the Epēshu tap
+    at z4.55 opening the Lektān card, 11 of 13 sim controls under 44 px, degradeStep 0 after 60 s);
+    the loop's plan mode and a no-op dry run pass; reviews leave no blocker or major.
+  - Prerequisites: Mobile 0. Reads the app files only, so it may run while Filigree 1 runs.
+- [ ] **Mobile 2 · Workflow routes for phones (script)** — filigree-2-plan.js: the capture contract
+  gains the 390x664 phone page, the net block, throttles and serviceWorkers:'block'; every slice's
+  /checks must hold a phone check (G2.1). street-2-plan.js: S0.U01 asks the probe for --phone on
+  every view, --class and --cpu; /device_classes joins the spec shape with a code-scored SG2.17
+  (desktop = /stream, phone ≤ 3 jobs and ≤ half the triangle cap). Job bodies only; never a prelude,
+  filigree-1-research.js or street-1-research.js.
+  - Done when: each script parses; node tools/street-drift.js exits 0; prelude shas unchanged; the
+    masked diffs show nothing else moved; the synthetic checksFailures and SG2.17 fixtures pass; the
+    adversarial review leaves no blocker or major (≤2 cycles). The live plan-mode previews run at
+    the top of Filigree 2 and Street 2.
+  - Prerequisites: Mobile 0. Never while Filigree 2 or Street 2 runs.
+- [ ] **Mobile 3 · Delivery: compression, cache, staging, manifests (USER REQUEST)** — server.js
+  (gzip, MIME, ETag/304, Cache-Control, HEAD, PORT env); DEPLOY.md (nginx and Caddy blocks, the sim
+  root as an allowlist so .git, docs and tools are never served, HTTPS, the worker kill switch, the
+  TILES_V rule); pages.yml stages vendor/ and the workers when present;
+  tools/build-offline-manifest.js. Resolves "Data fetch cache-busting" by revalidation.
+  - Done when: atlas index.html ≤ 70 KB transferred (211,860 raw); sim index.html ≤ 760 KB
+    (1,203,659 raw); iPhone first load without fonts ≤ 450 KB (was 729,636 B); repeat visit ≤ 10% of
+    the first (was 100%); header lint 0 mismatches; a staged Pages copy loads clean; the manifest
+    tool is byte-identical on rerun.
+  - Prerequisites: Mobile 1 baseline captured; Filigree 1 not running.
+- [ ] **Mobile 4 · Atlas: vendored, versioned, framed (USER REQUEST)** — vendored Leaflet 1.9.4 and
+  the OFL fonts (A9); raster URLs carry ?t=TILES_V (A8); the closed sheet clipped, the Contents
+  heading safe, safe areas and dvh (A1, A11, A14). Resolves "Notch safe-areas".
+  - Done when: 0 foreign origins (was 3), and the vendored Leaflet bytes equal its SRI; every raster
+    request carries ?t=1; with the sheet closed the page height equals the viewport (664/839, was
+    974/1,265); the Contents kicker's top ≥ 0 (was −26); the desktop reference is re-taken once
+    (fonts now render).
+  - Prerequisites: Mobile 3.
+- [ ] **Mobile 5 · Atlas: absolute bands and the right tap (USER REQUEST)** — reveal tiers pinned to
+  absolute zooms at the earlier of the two desktops (A19); one glyph-centre tap resolver with a
+  "which mark?" chooser, so faded glyphs never take a tap (A2); 44 px controls and invisible marker
+  pads (A3). Resolves "Tier-hidden markers intercept clicks".
+  - Done when: ATLAS.tiers() is identical on all five profiles and no desktop reveals later; 0
+    wrong-card taps in the five tap views (was: Epēshu at z4.55 opened the Lektān card); ≤ 5% of
+    targets under 44 px (was ~98%); glyphs unmoved.
+  - Prerequisites: Mobile 4. The tier pin needs the owner's answer (plan owner question 1) whenever
+    a desktop moves more than 0.35 zoom (computed: the 1x desktop's tier C moves 0.58 earlier).
+    Without the answer, A19 and A5 move to a "Mobile 5b · absolute bands (OWNER-GATED)" item
+    directly above Filigree 2, and the lane continues.
+- [ ] **Mobile 6 · Atlas: the table drawer, the whole chart, light overlays (USER REQUEST)** —
+  one-row header, a thumb-zone cluster, and era, layers, Groups, the Company and journeys in one
+  bottom sheet (a side sheet in landscape) (A4, A6, A16, A21); The Whole Chart letterboxed to the
+  phone's width (A5); 720 px overlay previews before the full plate (A7).
+  - Done when: chrome cover ≤ 12% at the whole chart (was 29%/21%) and ≤ 35% at peek; every desktop
+    control reachable in ≤ 2 taps; ≥ 95% of the chart visible at The Whole Chart on both phones (was
+    36%/30%); ≤ 250 KB before the Epēshu overlay swaps in (was 2,171,881 B); desktop identical.
+    Every new aria-label and title uses table vocabulary (sheet handle "Draw the sheet up or down",
+    layers "Layers of the chart", close "Close the card"); never menu, drawer, modal, dismiss or
+    toggle in visible or accessible text.
+  - Prerequisites: Mobile 5.
+- [ ] **Mobile 7 · Atlas: kept for the table and kept lit (USER REQUEST)** — the atlas service
+  worker (registers only on a secure, non-localhost host and never under automation, unless ?sw=1;
+  kill switch); "Keep this chart for the table — <size>", with the exact size from the manifest
+  shown first; "Keep the chart lit" (A10, A20).
+  - Done when: offline reload shows the kept era z0-4 with 0 failed tiles; the shown size is within
+    5% of the bytes fetched; nothing downloads before the tap; 0 registrations under Playwright
+    without ?sw=1; the kill switch clears everything.
+  - Prerequisites: Mobile 6.
+- [ ] **Mobile 8 · Atlas: card sheet, touch parity, search, zoom steps, night measured (USER
+  REQUEST)** — the place card as a peek/half/full sheet (A13); :hover gated, halo ring, realm tap,
+  long-press name peek, census pads (A15, A12 part a); search at 16 px with 44 px rows (A17);
+  half-step zoom buttons, Save-Data idle tiles, keepBuffer kept at 4 (A18); a night-pinch capture
+  and a recorded verdict (A22).
+  - Done when: card peek 100-140 px with a 48 px handle and swipe-down; 0 ungated :hover rules (was
+    29); a long-press names without opening; focusing search never zooms the page; the A22 verdict
+    is recorded (it inserts "Mobile later · night tiles" only if night fails; the LoAF numbers are
+    advisory in the sandbox). Same table-vocabulary rule for every new aria-label and title (the
+    card handle, close and sheet controls).
+  - Prerequisites: Mobile 7.
+- [ ] **Mobile 9 · Atlas lane review (USER REQUEST)** — five blind finder lenses on the lane's whole
+  diff and its captures (delay-not-drop, desktop identity, tap correctness, bytes, voice). Each
+  finding is reproduced and refuted; an opus/high judge rules. Surviving majors become fix items
+  directly above this one.
+  - Done when: no surviving blocker or major; the staged Pages copy and both desktops re-captured
+    clean; docs/mobile/final.json written for the atlas (the FM8 reference).
+  - Prerequisites: Mobile 4-8. Must pass before Filigree 2.
+- [ ] **Mobile 10 · Sim: vendored, reach and escape (USER REQUEST)** — three r128 and IM Fell
+  English vendored (S6); 44 px controls, 13 px HUD text, page zoom unlocked, manipulation on HUD
+  buttons (S5, S13); a "Return the court" tab and a close button on the full chart (S4, S11).
+  - Done when: 0 foreign origins; 0 of 13 controls under 44 px (was 11); one tap restores the court
+    and one closes the chart; the keydown handler unchanged; the desktop reference re-taken once.
+  - Prerequisites: Mobile 3. Before Street 1.
+- [ ] **Mobile 11 · Sim: device classes and honest frames (USER REQUEST)** — a device class chosen
+  once at load (?dc=, pointer, short side, memory, cores), with creation-time levers only and no
+  instance trimming (S2); the ladder on real frame time with upward recovery and a 30 fps phone cap,
+  plus ANNALS.device() and ANNALS.deviceReport() (S1, S16); WebGL context loss survived without
+  regenerating, and a pause while hidden (S3, S8).
+  - Done when: the ladder's node unit test passes; the ladder fires within 10 s on a throttled phone
+    profile and never at a virtual 60 fps; desktop calls and tris identical; fingerprints identical
+    under both classes; a context loss restores the same world; ANNALS.stats() keys unchanged.
+  - Prerequisites: Mobile 10. Before Street 1.
+- [ ] **Mobile 12 · Sim: kept for the table and kept lit (USER REQUEST)** — the sim service worker
+  (same guard; returns early for maps-site/ on Pages; kill switch); "Keep the realm for the table —
+  <size>" and "Keep the chronicle lit" (S6, S17).
+  - Done when: offline reload reaches ANNALS.ready with 0 failed requests and the same fingerprint;
+    the sim worker never answers a maps-site/ request; the size is within 5%; no clock token added.
+  - Prerequisites: Mobile 11. Before Street 1.
+- [ ] **Mobile 13 · Sim: resize, phone layout, ledger sheet, first touch, night ink (USER REQUEST)**
+  — debounced resize with the class pixel ratio, and a capped graphs canvas (S9, S14); speed
+  controls in a bottom bar and a compact landscape HUD (S10); the ledger as a three-stop sheet
+  (S12); a first-touch hint card (S7); Night ink for the HUD, ledger and sheets (S18).
+  - Done when: top chrome ≤ 10% of the height on iPhone (was 15-22%); ledger ≤ 35% at peek and ≤ 50%
+    at half (was 60%); the hint shows once and never on desktop; HUD contrast ≥ 4.5:1 in both
+    themes; the 3D scene untouched. The hint reads "One finger turns the sky · two fingers walk the
+    land · draw two fingers together to come near · touch to look · touch twice to journey"; Night
+    ink reads "Night ink: lit by Tamar's dark hour" / "Day ink"; new aria-labels use table
+    vocabulary (never menu, drawer, modal, dismiss, toggle, "Dark mode" or "Theme").
+  - Prerequisites: Mobile 12. Before Street 1.
+- [ ] **Mobile 14 · Sim lane review (USER REQUEST)** — five blind lenses (determinism, desktop
+  identity, phone parity, lifecycle, voice), each finding reproduced and refuted, then an opus/high
+  judge; majors become fix items directly above this one.
+  - Done when: no surviving blocker or major; docs/mobile/final.json completed for the sim; the
+    "sim_after_mobile_pass" features grep-confirmed in index.html (else the street block's sentence
+    is edited).
+  - Prerequisites: Mobile 10-13. Must pass before Street 1.
+- [ ] **Mobile 15 · Real-device pass (OWNER-RUN)** — on a real iPhone (Safari) and an Android phone
+  (Chrome), at the table. Check: the five tap views; drawer and card gestures; whether the layers
+  rows stay open; 100dvh and safe areas; Keep for the table and storage.persist(); wake lock; night
+  mode under a pinch; the sim's ladder; ANNALS.deviceReport(). Record real viewports in
+  docs/mobile/devices.json; findings go directly above this item.
+  - Blocked by: Mobile 9 and Mobile 14. Owner-run only (leave unchecked; take the next item). Before
+    any default flip (R18, ST7).
+
+### Filigree for the Table (cont.) and the street research: the sheet spec, then the street bible
 
 - [ ] **Filigree 2 · Planning → sheet spec (USER REQUEST)** — from the bible alone: one coast, one
   river town, one painted city (default Pēshunor north coast / Aldorūs / Epēshu unless a challenger
@@ -114,125 +311,12 @@ releases, the on-return table): `docs/filigree/README.md` §1.
   - Run: `Workflow({name:'filigree-2-plan', args:{date:'YYYY-MM-DD'}})`.
   - Blocked by: Filigree 1 (preflight refuses by throwing an Error naming the gate, which the run
     treats as blocked; needs `gates/1-research.json` passed and the bible unchanged since).
-  - Prerequisites: owner glance at rulings R1, R5, R6, R7, R9, R18 (defaults apply otherwise).
+  - Prerequisites: owner glance at rulings R1, R5, R6, R7, R9, R18 (defaults apply otherwise; R7 and
+    R18 now carry the mobile overrides). Mobile 2 checked (phone capture contract, per-slice phone
+    check); Mobile 4-9 checked (absolute bands, the tap resolver, the table drawer, the card sheet
+    and ?t= rasters the spec plans against); no edit to index.html or maps-site/index.html in
+    flight. First run its `mode:'plan'` preview (the live gate of Mobile 2's filigree edit).
     Docs-only.
-
-- [ ] **Notch safe-areas** — add viewport-fit=cover + env(safe-area-inset-*) padding
-  on the header/dock so notched phones in landscape don't clip controls.
-- [ ] **Trackpad gesture feel** — after real-finger feedback: tune the sim's pan gain
-  and the atlas handler's pinch sensitivity so both apps feel identical.
-- [ ] **Region-chart zoom-through** — evaluate footprint-anchoring the REGION MapArt
-  (Rhusagos, Relkor…) at mid zooms the way cities anchor at street zooms; keep modal
-  where the geometry doesn't fit.
-- [ ] **Uncharted-band softening** — the parchment grain pops in abruptly near z6.8 in
-  open country; ease it with the same opacity ramp the base uses.
-- [ ] **Data fetch cache-busting** — append the app VERSION to data/*.json fetch URLs
-  so local demos never show stale cards after a data edit (Pages ETags already handle
-  the deployed site).
-- [ ] **Tier-hidden markers intercept clicks** — invisible (tier-faded) route waypoints
-  still capture pointer events and can steal clicks from markers beneath them
-  (pre-existing Leaflet pane quirk): set pointer-events none on faded panes.
-- [ ] **Sim ↔ atlas continuity** — matching deep-link vocabulary both ways
-  (sim `#goto=` ↔ atlas `#chart=`), so cross-links can land on the same place.
-
-- [ ] **Census second pass — orphan ○ dots & unmarkered towns** — the snapping lab
-  exposed ~28 strong unclaimed ring-dots incl. printed towns with no marker at all
-  (Parli, Mūmakon, Ilongazoro, Ūgdon, Kroton, Tōron; Tasta and Nhandar visible bare
-  by Gizalīs) and one marker whose label is unfindable at its coords (Pish — likely a
-  mis-transcription in that dense cluster). Transcribe the orphans' labels, add
-  markers, resolve Pish. The ◉ major-city sweep is DONE (15 found, 10 added
-  v0.9.12); only ○ towns remain. Artifacts: lab_orphans.json, lab_assign.json,
-  lab_ncc_r1.npy in the session scratchpad. Consider whether ◉ majors should reveal
-  a tier earlier than lesser towns.
-
-### Filigree for the Table (cont.): build and review
-
-- [ ] **Filigree 3 · Implementation → the table map (USER REQUEST, MULTI-RUN)** — build
-  `sheet-spec.json`'s units in paint order (relief first, contours tight enough to read as
-  fingerprints, water, the rust coast road, green reserves, homestead dots, names and heights, then
-  the city grain and fog washes last) with the overlays as separate sheets (old survey, structures,
-  caravan halts, blazed paths, muster days, shut ways); never generalize a ridge to save ink; mint a
-  Patrinaic name for any unnamed knoll (deterministic, `prov:'invented'`, listed for the owner).
-  Each run builds up to 8 ready units of the current slice (A ground → B ink → C city → D stack)
-  under per-file locks and runs that slice's gate when the slice is complete; everything ships
-  behind the default-off table-map toggle. Leave unchecked between runs with the returned note
-  (`slice X: n/m units …`); check off only when the workflow returns `check_off: true`.
-  - Input: `docs/filigree/sheet-spec.json` (units, checks, contracts) + `gates/views.json`,
-    `gates/hexes.json`.
-  - Output: the table map in `maps-site/` (FILIGREE block in `maps-site/index.html`, baked relief,
-    `filigree-*.json`, `rivers.json`, notices sample), tools `tools/filigree-*.js` +
-    `tools/mint-names.js`, regenerated gazetteer, `docs/filigree/names-for-owner.md`, per-unit
-    ledger `docs/filigree/state/3-build/`, slice gates `gates/3-build-{A,B,C,D}.json`, final
-    `gates/3-build.json`; also `gates/3-handtest-questions.json`, `state/3-build.json`,
-    `tools/filigree-handq.js` (full list: docs/filigree/README.md §4).
-  - Done when (hand test, inside the slice B gate and again in the final slice D gate): with the
-    settlement covered by an opaque disc (and every other town in view disc'd) on 3 fixed views, two
-    navigators on different models that see only the screenshot answer ≥80% of frozen,
-    data-computed route questions by ridge names (a names answer scores by Jaccard ≥ 0.5, precision
-    and recall together), read ≥70% of the visible landform labels, see ≥6 named heights outside
-    the mask, and cannot name the covered town; plus ≥10/12 fixture hexes show their six and none
-    below 4, overlay toggles refetch zero base tiles, the toggle off leaves no filigree pane, the
-    pane z-order follows the spec's paint order, generators are byte-identical on rerun, and the
-    smoke is clean (sim `#s=epeshu` + a procedural seed with `simDays(400)`, atlas, zero console
-    errors).
-  - Run: `Workflow({name:'filigree-3-build', args:{date:'YYYY-MM-DD'}})`. A unit stuck after 3
-    failed runs is queued once above this item; fix it by hand, then re-run with
-    `args.unstick ["<id>"]` (or `args.discard ["fix-<S><n>"]` for an obsolete fix unit).
-  - Blocked by: Filigree 2 (`gates/2-plan.json` pass, spec unchanged; a missing or changed Job 2
-    gate, a refused slice and a spec with no `/checks` are thrown Errors, which the run treats as
-    blocked); "Traced road network" and "Census second pass" checked (R11; only these come back as a
-    returned `reason:'blocked'`). The owner may pass `overridePrereqs:true` to build slice A only.
-  - Prerequisites: holds `maps-site/index.html` while running. Data gaps it finds go directly
-    above this item.
-
-- [ ] **Filigree 4 · Review → punch list (USER REQUEST)** — review the finished sheets against
-  plate one (not a normal VTT map), the city against Azlen (painted, or a UI?), the stack (pull the
-  old survey, the shut ways and the muster notice without a redraw), every name read aloud
-  (unsayable → cut or rewritten at the generator), the holes where the build flinched and
-  generalized, plus the v2 lenses (navigator, data truth, appear effect, real colour, cramped on
-  phones). Thirteen single-lens finders; every finding must carry reproducible evidence and survive
-  reproduce + refute + severity.
-  - Input: the finished sheets (`gates/3-build.json` pass), plates 1–3, the Swiss layer list, the
-    density bible, the sheet spec.
-  - Output: `docs/filigree/punch-list.{md,json}` (with "Why the sparse map is worse" and "Where we
-    flinched"), verified findings `docs/filigree/findings/`, capture
-    `docs/filigree/review-c<k>/`, gate record `gates/4-review-c<k>.json`; also
-    `state/4-review.json`, `review-c<k>/cited/` (full list: docs/filigree/README.md §4).
-  - Done when (angry-sparse gate): on every open-country view at least 2 of 3 blind judges
-    (opus/sonnet/opus, fixed A/B order) prefer the dense sheet and each lists ≥3 omissions the DOM
-    confirms (named dense, absent with the toggle off); dense counts meet the bible's per-view
-    targets and the sparse view carries ≤ a third of the dense names; ≥10/12 fixtures show their six
-    and none below 4; zero unsayable names (and the read-aloud finder ran); overlay pulls refetch
-    zero base tiles; zero appear-effect pop-ins; zero surviving blocker or major; no lens died in
-    round 0; on V1-V6 (dense) no `/sheets/<sheet>/forbidden` class is drawn and every must class
-    is; V1 has exactly one shield, at the river town, and zero homestead-class features.
-  - Run: `Workflow({name:'filigree-4-review', args:{date:'YYYY-MM-DD'}})`. Optional:
-    `args.preview:true` reviews a partial build (findings only, written under
-    `docs/filigree/preview/`, never a polish result).
-  - Blocked by: Filigree 3 (`gates/3-build.json` pass; a premature run throws "review must wait
-    for the finished sheet", an Error treated as blocked).
-  - Prerequisites: none. Docs-only. On fail the returned punch items go DIRECTLY ABOVE this entry
-    and this item stays unchecked for a re-review (at most 2 cycles, then the owner decides; R16).
-    On pass the owner may flip the table map on by default (R18).
-
-### Street view (USER REQUEST): the streamed street view in four jobs, after the table map
-
-The owner's request: a streamed city whose detail emerges as the camera nears (blocks, then houses,
-facades and doors), with caravans, crowds, a cloud deck, weather and session overlays as toggled
-layers, never cluttering the far zooms, carried into the sim at street level. Research digest
-`docs/research/streamed-streets.md`; operator's guide (protocol, invocation, args, outputs, gates,
-model/effort pairings, smoke recipe, owner rulings ST1–ST19, what is copied from the filigree
-package and how drift is caught) `docs/street/README.md`. Each job is ONE saved workflow, run as its
-own polish run in a fresh session; every output and gate record lands in `docs/street/`. A job's
-preflight refuses to start unless the previous street gate says `"pass": true`; every gate is scored
-by the script from fixed fixtures (frozen camera views, a virtual-clock probe, sim fingerprints),
-never by taste. Determinism is a gate: caravan queues, crowds, clouds and shut ways are render-only
-keyed streams, and the `simDays(400)` fingerprint must be identical with the street view on, off and
-never loaded. This track never edits `maps-site/`, `docs/filigree/` or a filigree script; Street 3
-builds only while filigree does not hold the sim and otherwise returns `held`. Use the returned
-`polish_note`, `polish_inserts` (placed directly above `polish_inserts_above`) and `changelog_line`
-as for the filigree items; queue rules and reason codes (`held`, `blocked`, `prelude drift`):
-`docs/street/README.md` §1.
 
 - [ ] **Street 1 · Research → street bible (USER REQUEST)** — measure and read what the street view
   must stand on: write the probe (`tools/street-probe.js`: its own read-only server, a virtual clock
@@ -284,16 +368,19 @@ as for the filigree items; queue rules and reason codes (`held`, `blocked`, `pre
     unchanged; otherwise the preflight throws `street research waits for the density bible …`,
     treated as blocked; this holds for `mode:'plan'` too, so the plan-mode check cannot be done
     before Filigree 1 passes). Thrown-string classes (blocked, run fault, infra):
-    `docs/street/README.md` §1.6. Prefer running Street 1 after Filigree 3 is checked: the frozen
-    views and the baseline are measured from the live `index.html`, and if Filigree 3 moves the sim
-    afterwards Street 3 re-baselines (the `rebaselined` note; it does not re-resolve view focuses;
-    README §12). After a later Filigree 1 re-run, re-run Street 1 with `resume:true` (README §12).
+    `docs/street/README.md` §1.6. Runs after the mobile sim lane (Mobile 10-14) so the frozen views,
+    the baseline and STATS_KEYS are measured on the phone-ready sim; if Filigree 3 later moves the
+    sim, Street 3 re-baselines (the `rebaselined` note; it does not re-resolve view focuses; README
+    §12). After a later Filigree 1 re-run, re-run Street 1 with `resume:true` (README §12).
   - Prerequisites: the street delivery commit (scripts, `tools/street-drift.js`, README, dossier,
     todo-inputs, rulings, design docs) is in the checkout; verify with `ls
     .claude/workflows/street-1-research.js docs/street/README.md tools/street-drift.js && node
     tools/street-drift.js` (the first release cut after it absorbs the delivery commit; there is no
     delivery tag). Docs + the read-only probe; never edits `index.html`, `maps-site/**` or
-    `docs/filigree/**`.
+    `docs/filigree/**`. Mobile 0 checked (ST8 override and the street "mobile" block written);
+    Filigree 1 checked on the re-integrated bible; Mobile 14 checked. After it passes, grep
+    docs/street/street-bible.md for "## Phone (mobile block)" and SM1-SM11 (if absent, insert
+    "Mobile · phone criteria into Street 2 (contingency, script)" directly above Street 2).
 
 - [ ] **Street 2 · Planning → street spec (USER REQUEST)** — from the street bible alone: the tiers
   and the refine rule (screen-space error off `CAM.radius`, hand-rolled in/out hysteresis pairs
@@ -335,7 +422,166 @@ as for the filigree items; queue rules and reason codes (`held`, `blocked`, `pre
     density bible and the cited filigree rulings unchanged since Street 1; a thrown Error otherwise,
     treated as blocked).
   - Prerequisites: owner glance at ST1, ST2, ST5, ST8, ST10, ST12 (defaults apply otherwise).
-    Docs-only. Data items it finds go directly above Street 3 as `Street data (S3) — …`.
+    Docs-only. Data items it finds go directly above Street 3 as `Street data (S3) — …`. Mobile 2
+    checked; first re-run its `mode:'plan'` preview (the live gate of Mobile 2's street edits);
+    SG2.17 (/device_classes) joins its gate.
+
+- [ ] **Notch safe-areas** — add viewport-fit=cover + env(safe-area-inset-*) padding
+  on the header/dock so notched phones in landscape don't clip controls.
+- [ ] **Trackpad gesture feel** — after real-finger feedback: tune the sim's pan gain
+  and the atlas handler's pinch sensitivity so both apps feel identical.
+- [ ] **Region-chart zoom-through** — evaluate footprint-anchoring the REGION MapArt
+  (Rhusagos, Relkor…) at mid zooms the way cities anchor at street zooms; keep modal
+  where the geometry doesn't fit.
+- [ ] **Uncharted-band softening** — the parchment grain pops in abruptly near z6.8 in
+  open country; ease it with the same opacity ramp the base uses.
+- [ ] **Data fetch cache-busting** — append the app VERSION to data/*.json fetch URLs
+  so local demos never show stale cards after a data edit (Pages ETags already handle
+  the deployed site).
+- [ ] **Tier-hidden markers intercept clicks** — invisible (tier-faded) route waypoints
+  still capture pointer events and can steal clicks from markers beneath them
+  (pre-existing Leaflet pane quirk): set pointer-events none on faded panes.
+- [ ] **Sim ↔ atlas continuity** — matching deep-link vocabulary both ways
+  (sim `#goto=` ↔ atlas `#chart=`), so cross-links can land on the same place.
+
+- [ ] **Census second pass — orphan ○ dots & unmarkered towns** — the snapping lab
+  exposed ~28 strong unclaimed ring-dots incl. printed towns with no marker at all
+  (Parli, Mūmakon, Ilongazoro, Ūgdon, Kroton, Tōron; Tasta and Nhandar visible bare
+  by Gizalīs) and one marker whose label is unfindable at its coords (Pish — likely a
+  mis-transcription in that dense cluster). Transcribe the orphans' labels, add
+  markers, resolve Pish. The ◉ major-city sweep is DONE (15 found, 10 added
+  v0.9.12); only ○ towns remain. Artifacts: lab_orphans.json, lab_assign.json,
+  lab_ncc_r1.npy in the session scratchpad. Consider whether ◉ majors should reveal
+  a tier earlier than lesser towns.
+
+### Filigree for the Table (cont.): build and review
+
+- [ ] **Mobile · Filigree 3 phone slice pass (script)** — filigree-3-build.js job body: REQ_CHECKS
+  requires the per-slice "phone" check as a backstop (Job 2 already enforces it). The slice-gate
+  capture also runs the 390x664 DPR 3 phone page and the net block, and each slice gate records its
+  viewports. A slice fails on phone overlaps, horizontal scroll, names under 12 px on a coarse
+  pointer, wrong-card taps, or any filigree request with the toggle off.
+  - Done when: parse; node tools/street-drift.js exits 0; prelude shas unchanged; the Filigree 3
+    `mode:'plan'` preview passes; an adversarial review leaves no blocker or major (≤2 cycles).
+  - Blocked by: Filigree 2. Must be checked before the first Filigree 3 run.
+
+- [ ] **Filigree 3 · Implementation → the table map (USER REQUEST, MULTI-RUN)** — build
+  `sheet-spec.json`'s units in paint order (relief first, contours tight enough to read as
+  fingerprints, water, the rust coast road, green reserves, homestead dots, names and heights, then
+  the city grain and fog washes last) with the overlays as separate sheets (old survey, structures,
+  caravan halts, blazed paths, muster days, shut ways); never generalize a ridge to save ink; mint a
+  Patrinaic name for any unnamed knoll (deterministic, `prov:'invented'`, listed for the owner).
+  Each run builds up to 8 ready units of the current slice (A ground → B ink → C city → D stack)
+  under per-file locks and runs that slice's gate when the slice is complete; everything ships
+  behind the default-off table-map toggle. Leave unchecked between runs with the returned note
+  (`slice X: n/m units …`); check off only when the workflow returns `check_off: true`.
+  - Input: `docs/filigree/sheet-spec.json` (units, checks, contracts) + `gates/views.json`,
+    `gates/hexes.json`.
+  - Output: the table map in `maps-site/` (FILIGREE block in `maps-site/index.html`, baked relief,
+    `filigree-*.json`, `rivers.json`, notices sample), tools `tools/filigree-*.js` +
+    `tools/mint-names.js`, regenerated gazetteer, `docs/filigree/names-for-owner.md`, per-unit
+    ledger `docs/filigree/state/3-build/`, slice gates `gates/3-build-{A,B,C,D}.json`, final
+    `gates/3-build.json`; also `gates/3-handtest-questions.json`, `state/3-build.json`,
+    `tools/filigree-handq.js` (full list: docs/filigree/README.md §4).
+  - Done when (hand test, inside the slice B gate and again in the final slice D gate): with the
+    settlement covered by an opaque disc (and every other town in view disc'd) on 3 fixed views, two
+    navigators on different models that see only the screenshot answer ≥80% of frozen,
+    data-computed route questions by ridge names (a names answer scores by Jaccard ≥ 0.5, precision
+    and recall together), read ≥70% of the visible landform labels, see ≥6 named heights outside
+    the mask, and cannot name the covered town; plus ≥10/12 fixture hexes show their six and none
+    below 4, overlay toggles refetch zero base tiles, the toggle off leaves no filigree pane, the
+    pane z-order follows the spec's paint order, generators are byte-identical on rerun, and the
+    smoke is clean (sim `#s=epeshu` + a procedural seed with `simDays(400)`, atlas, zero console
+    errors).
+  - Run: `Workflow({name:'filigree-3-build', args:{date:'YYYY-MM-DD'}})`. A unit stuck after 3
+    failed runs is queued once above this item; fix it by hand, then re-run with
+    `args.unstick ["<id>"]` (or `args.discard ["fix-<S><n>"]` for an obsolete fix unit).
+  - Blocked by: Filigree 2 (`gates/2-plan.json` pass, spec unchanged; a missing or changed Job 2
+    gate, a refused slice and a spec with no `/checks` are thrown Errors, which the run treats as
+    blocked); "Traced road network" and "Census second pass" checked (R11; only these come back as a
+    returned `reason:'blocked'`). The owner may pass `overridePrereqs:true` to build slice A only.
+  - Prerequisites: holds `maps-site/index.html` while running. Data gaps it finds go directly above
+    this item. "Mobile · Filigree 3 phone slice pass (script)" checked; Mobile 4-14 checked (this
+    job holds both maps-site/index.html and index.html).
+
+- [ ] **Mobile · Filigree 4 phone gate and bytes (script)** — filigree-4-review.js job body: F08
+  moves from 390x844 to 390x664 (plus 844x340). MET_KEYS and the metrics digest gain net and the new
+  phone keys. A code-scored phone criterion (overlaps 0, no horizontal scroll, gap ≥ the spec
+  minimum, names ≥ 12 px, 0 wrong taps, chrome cover ≤ 12%) makes a phone failure fail the gate;
+  byte criteria cover 0 requests with the toggle off and ≤ 500 KB per asset without a low-res step.
+  R18's coarse-pointer flip waits on it.
+  - Done when: parse; drift ok; a Job 4 `preview:true` run after Filigree 3 passes; the phone
+    criterion is scored on synthetic pass and fail metrics; review clean.
+  - Blocked by: Filigree 3.
+
+- [ ] **Filigree 4 · Review → punch list (USER REQUEST)** — review the finished sheets against
+  plate one (not a normal VTT map), the city against Azlen (painted, or a UI?), the stack (pull the
+  old survey, the shut ways and the muster notice without a redraw), every name read aloud
+  (unsayable → cut or rewritten at the generator), the holes where the build flinched and
+  generalized, plus the v2 lenses (navigator, data truth, appear effect, real colour, cramped on
+  phones). Thirteen single-lens finders; every finding must carry reproducible evidence and survive
+  reproduce + refute + severity.
+  - Input: the finished sheets (`gates/3-build.json` pass), plates 1–3, the Swiss layer list, the
+    density bible, the sheet spec.
+  - Output: `docs/filigree/punch-list.{md,json}` (with "Why the sparse map is worse" and "Where we
+    flinched"), verified findings `docs/filigree/findings/`, capture
+    `docs/filigree/review-c<k>/`, gate record `gates/4-review-c<k>.json`; also
+    `state/4-review.json`, `review-c<k>/cited/` (full list: docs/filigree/README.md §4).
+  - Done when (angry-sparse gate): on every open-country view at least 2 of 3 blind judges
+    (opus/sonnet/opus, fixed A/B order) prefer the dense sheet and each lists ≥3 omissions the DOM
+    confirms (named dense, absent with the toggle off); dense counts meet the bible's per-view
+    targets and the sparse view carries ≤ a third of the dense names; ≥10/12 fixtures show their six
+    and none below 4; zero unsayable names (and the read-aloud finder ran); overlay pulls refetch
+    zero base tiles; zero appear-effect pop-ins; zero surviving blocker or major; no lens died in
+    round 0; on V1-V6 (dense) no `/sheets/<sheet>/forbidden` class is drawn and every must class
+    is; V1 has exactly one shield, at the river town, and zero homestead-class features.
+  - Run: `Workflow({name:'filigree-4-review', args:{date:'YYYY-MM-DD'}})`. Optional:
+    `args.preview:true` reviews a partial build (findings only, written under
+    `docs/filigree/preview/`, never a polish result).
+  - Blocked by: Filigree 3 (`gates/3-build.json` pass; a premature run throws "review must wait
+    for the finished sheet", an Error treated as blocked).
+  - Prerequisites: none. Docs-only. On fail the returned punch items go DIRECTLY ABOVE this entry
+    and this item stays unchecked for a re-review (at most 2 cycles, then the owner decides; R16).
+    On pass the owner may flip the table map on by default (R18).
+
+- [ ] **Mobile later · census pin names on phones (A12 part b)** — a ranked, delay-not-drop label
+  budget for the atlas's own census pins at the whole chart on phones. It reuses the filigree
+  collision pass (R2 bounds: desktop threshold + 0.5 zoom); never a second label engine.
+  - Blocked by: Filigree 4 passed and the Filigree 3 hold clear.
+- [ ] **Mobile later · WebP rasters (OWNER-GATED)** — a WebP q80 cut of the z0-4 pyramids (about
+  0.55x the bytes) behind a TILES_V bump and a regenerated offline manifest, after the owner
+  eyeballs ink-dense tiles (cities, coasts); no AVIF without a perceptual check. Leave unchecked
+  until the owner says go.
+
+### Street view (USER REQUEST): the streamed street view in four jobs, after the table map
+
+The owner's request: a streamed city whose detail emerges as the camera nears (blocks, then houses,
+facades and doors), with caravans, crowds, a cloud deck, weather and session overlays as toggled
+layers, never cluttering the far zooms, carried into the sim at street level. Research digest
+`docs/research/streamed-streets.md`; operator's guide (protocol, invocation, args, outputs, gates,
+model/effort pairings, smoke recipe, owner rulings ST1–ST19, what is copied from the filigree
+package and how drift is caught) `docs/street/README.md`. Each job is ONE saved workflow, run as its
+own polish run in a fresh session; every output and gate record lands in `docs/street/`. A job's
+preflight refuses to start unless the previous street gate says `"pass": true`; every gate is scored
+by the script from fixed fixtures (frozen camera views, a virtual-clock probe, sim fingerprints),
+never by taste. Determinism is a gate: caravan queues, crowds, clouds and shut ways are render-only
+keyed streams, and the `simDays(400)` fingerprint must be identical with the street view on, off and
+never loaded. This track never edits `maps-site/`, `docs/filigree/` or a filigree script; Street 3
+builds only while filigree does not hold the sim and otherwise returns `held`. Use the returned
+`polish_note`, `polish_inserts` (placed directly above `polish_inserts_above`) and `changelog_line`
+as for the filigree items; queue rules and reason codes (`held`, `blocked`, `prelude drift`):
+`docs/street/README.md` §1.
+Street 1 and Street 2 sit higher in the queue (below Filigree 2) by the mobile plan of 2026-10-04:
+they run
+after the mobile sim lane and before Filigree 3; Street 3 and Street 4 stay here.
+
+- [ ] **Mobile · Street 3 device classes gate and phone device record (script)** — street-3-build.js
+  job body: read /device_classes. Slice gates at ?dc=phone check quad jobs and triangles per frame
+  and resident bytes against the phone class (GS.P7c). The newest docs/street/device-phone/*.json is
+  recorded, never gated (GS.Rp: absent = gap). The desktop device reader is unchanged.
+  - Done when: parse; node tools/street-drift.js exits 0; the Street 3 `mode:'plan'` preview after
+    Street 2 passes; synthetic GS.P7c and GS.Rp cases; review clean.
+  - Blocked by: Street 2.
 
 - [ ] **Street 3 · Implementation → the street view (USER REQUEST, MULTI-RUN)** — build
   `street-spec.json`'s units slice by slice (S0 instrument: the STREET block, the `ANNALS.street`
@@ -381,6 +627,17 @@ as for the filigree items; queue rules and reason codes (`held`, `blocked`, `pre
     strict also until the latest Filigree 4 gate passes).
   - Prerequisites: holds `index.html` while running; never touches `maps-site/`, `docs/filigree/` or
     port 8544.
+    "Mobile · Street 3 device classes gate and phone device record (script)" checked.
+
+- [ ] **Mobile · Street 4 phone views and phone device gate (script)** — street-4-review.js job
+  body: phone shots and metrics for every frozen view (SV1-SV9) at 390x664 with --class phone, where
+  today there are two at 390x844. A phone device gate reads docs/street/device-phone/: median fps ≥
+  27 at the 30 fps cap, degradeStep within the phone floor, the current index sha. It is reported
+  beside the desktop gate; absent never fails the review; the phone default flip needs pass (ST7,
+  ST8).
+  - Done when: parse; drift ok; a Street 4 preview after Street 3 passes; synthetic device-phone
+    cases (absent, stale, median 26, median 28 within floor); review clean.
+  - Blocked by: Street 3.
 
 - [ ] **Street 4 · Review → punch list (USER REQUEST)** — review the finished street view against
   the bible and the spec through eleven single-lens finders (determinism, performance and caps, pop
@@ -420,6 +677,19 @@ as for the filigree items; queue rules and reason codes (`held`, `blocked`, `pre
     `tools/street-probe.js --device` run records smoothed fps ≥42 and degrade step 0 over a 60 s
     descent on the current `index.html` (ST8; the return names it `device_gate`: pass, fail, absent
     or stale).
+
+- [ ] **Mobile later · the camera clears the sheets (S15)** — set the camera view offset to the
+  unobscured rectangle while a sheet is open, counting the bottom speed bar; presentation only.
+  - Blocked by: Street 4 passed and the street hold clear (it changes the projection the frozen
+    views measure).
+- [ ] **Mobile later · far-instance thinning the street spec did not absorb (S2 rest)** — any
+  phone-class instance fraction or static-shadow freeze still wanted after Street 4. It must never
+  reorder or rewrite instances that W.treeIndex addresses, and never move a per-tree draw out of its
+  generation order (SM2).
+  - Blocked by: Street 4 passed.
+- [ ] **Mobile later · one-finger pan at altitude (OWNER-GATED)** — a map-like one-finger pan high
+  above the land, with orbit kept near the ground (brief open question 3); only after the owner's
+  real-finger verdict in Mobile 15. Leave unchecked until the owner says go.
 
 - [ ] **Street battle sheet (OWNER-GATED, ST10)** — a top-down orthographic export of the current
   street view with a square grid at the scale the owner sets in ST10 (for example 5 ft squares at 70

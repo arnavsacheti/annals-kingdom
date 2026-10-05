@@ -460,5 +460,142 @@
   "Budget: tri and call budget for a street-level frame on a phone is unmeasured",
   "Workers: Blob Workers duplicate gen code; are time-sliced main-thread builds enough?",
   "Camera near plane: is a dynamic near plane needed at R≈9 m?"
- ]
+ ],
+  "mobile": {
+    "_meta": {
+      "date": "2026-10-04",
+      "source": "Mobile at the table (USER REQUEST): keep the quality, fit the phone. Research docs/research/mobile-at-the-table.md; protocol and records docs/mobile/README.md; instrument tools/mobile-capture.js.",
+      "read_by": "The street-bible integrator (Street 1). Street 2 reads the bible and the rulings, not this file. The mobile plan adds the /device_classes shape and its numeric check (SG2.17) to street-2-plan.js.",
+      "carry": "Restate every criterion below in a street-bible section titled \"## Phone (mobile block)\", each with its id (SM1-SM11) and its carrier, together with the proposals table. They are acceptance criteria and proposed budgets for the street spec, not street classes. They change no frozen view, baseline or fingerprint.",
+      "rule": "Delay, never drop. A device class scales how much is drawn and how far (instance fraction, draw distance, weather step, cloud count). It never removes a class, and it never touches W.rng, the seed or the sim.",
+      "sim_after_mobile_pass": "index.html gains the following before Street 1 runs (the orchestrator greps for each one before Street 1 and edits this sentence if any slipped): a device class (desktop, tablet, phone) chosen once at load, from ?dc= when present, else from pointer, short screen side, deviceMemory and hardwareConcurrency; a quality ladder on real (unclamped) rAF intervals with hysteresis and upward recovery, its state in ANNALS.device(); ANNALS.deviceReport({seconds}) in the --device shape; WebGL context-loss handling that never regenerates; a pause while hidden; a 30 fps phone cap. ANNALS.stats() keys are unchanged, and degradeStep keeps its meaning (1 pixel ratio 1, 2 terrain shadows off, 3 shadows held off).",
+      "rulings_kept": "ST7, ST9 and ST19 keep their default texts on purpose. An override would drop Street 2's baked checks: the hash param, the shadows default, the row names, max_jobs_frame 1..6 and the weather steps. Their phone parts are SM1, SM2, SM3 and SM6 below.",
+      "anchor_convention": "'index.html:' = sim (repo root)"
+    },
+    "profiles": {
+      "phone_portrait": {
+        "w": 390,
+        "h": 664,
+        "dpr": 3,
+        "pixel_ratio": 1.6,
+        "touch": true,
+        "query": "?dc=phone",
+        "note": "the gate viewport"
+      },
+      "phone_tall": {
+        "w": 412,
+        "h": 839,
+        "dpr": 2.625,
+        "pixel_ratio": 1.6,
+        "touch": true,
+        "query": "?dc=phone"
+      },
+      "phone_landscape": {
+        "w": 844,
+        "h": 340,
+        "dpr": 3,
+        "pixel_ratio": 1.6,
+        "touch": true,
+        "query": "?dc=phone",
+        "note": "proposed, not captured"
+      },
+      "desktop_control": {
+        "w": 1366,
+        "h": 768,
+        "dpr": 1,
+        "pixel_ratio": 1,
+        "touch": false,
+        "query": "?dc=desktop"
+      },
+      "desktop_retina": {
+        "w": 1440,
+        "h": 900,
+        "dpr": 2,
+        "pixel_ratio": 2,
+        "touch": false,
+        "query": "?dc=desktop"
+      }
+    },
+    "proposals": {
+      "note": "proposals, not measurements: no real phone GPU or WebKit run exists yet; the owner's real-device pass and the ST8 phone run settle them",
+      "desktop": {
+        "max_jobs_frame": 6,
+        "ladder": "median below 42 fps over 4 s steps down; above 50 fps for 30 s steps up",
+        "ladder_floor_fps": 42,
+        "ladder_floor_step": 0,
+        "instance_frac": 1,
+        "draw_dist_frac": 1,
+        "weather_step": 1
+      },
+      "phone": {
+        "max_jobs_frame": 3,
+        "tri_cap_frac_of_desktop": 0.5,
+        "resident_bytes_cap": 100000000,
+        "frame_cap_fps": 30,
+        "ladder": "more than 20% of frames in 4 s missing the 33 ms deadline steps down; under 2% for 30 s steps up (a failed step-up doubles the wait)",
+        "ladder_floor_fps": 27,
+        "ladder_floor_step": 2,
+        "instance_frac": 0.5,
+        "draw_dist_frac": 0.7,
+        "weather_step": 0.5
+      }
+    },
+    "criteria": [
+      {
+        "id": "SM1",
+        "carrier": "ST8 + this block",
+        "text": "Device classes (desktop, tablet, phone; separate from the radius tiers T0-T4) live in /device_classes and mirror the sim's DEVICE table. Per class: the selection inputs and thresholds, then max_jobs_frame, tri_cap_frame, resident_bytes, calls_cap, tris_cap, ladder_floor_fps, ladder_floor_step, instance_frac, draw_dist_frac and weather_step. The desktop max_jobs_frame and tri_cap_frame equal /stream (ST9's default caps). The phone class runs at most 3 quad jobs and half the desktop triangle cap per frame. Phone-class sandbox counts are measured at 390x664, pixel ratio 1.6, with ?dc=phone."
+      },
+      {
+        "id": "SM2",
+        "carrier": "this block",
+        "text": "Every unit states its device-class behaviour as a scale (instance fraction, draw distance, weather step, cloud count), never as a removed class. ST19's steps stay (full, three-quarters, half, quarter), and the default step follows the class (desktop full, phone half). The simDays(400) fingerprint and street-off identity are identical under ?dc=desktop and ?dc=phone. An instance fraction never reorders or rewrites instances that W.treeIndex (or any W field) addresses by index, and never moves a per-instance draw out of its generation order. Instead it thins a separately built presentation copy by draw range or by distance, keyed off the chunk id, never W.rng."
+      },
+      {
+        "id": "SM3",
+        "carrier": "this block",
+        "text": "Quality ladder: the spec builds on the sim's ladder as the mobile pass leaves it. That ladder uses real, unclamped rAF intervals over a sliding window, with hysteresis and upward recovery. The desktop steps down below a 42 fps median over 4 s and back up above 50 fps for 30 s. The phone class, capped at 30 fps, steps down when more than 20% of frames in 4 s miss the 33 ms deadline, and back up after 30 s under 2%. degradeStep keeps its meaning. The street steps (weather step, cloud count, instance fraction, draw distance) come before the ladder holds shadows off. The shadows row reads \"held off for speed\" from the live ladder state. Antialias is fixed at context creation, so the phone class runs without it all session."
+      },
+      {
+        "id": "SM4",
+        "carrier": "this block",
+        "text": "Context loss: on webglcontextlost and webglcontextrestored, street resources rebuild from their ST4 keys, and the world and the sim are never regenerated. The fingerprint and the visible street match before and after a WEBGL_lose_context round trip in the probe."
+      },
+      {
+        "id": "SM5",
+        "carrier": "this block",
+        "text": "Hidden and idle: visibilitychange to hidden pauses the streaming queue and rendering. Idle frames stay inside the class's frame cap or are rendered on demand, and dt accounting keeps sim days per second unchanged."
+      },
+      {
+        "id": "SM6",
+        "carrier": "this block",
+        "text": "Touch: caravan and building picks use a screen-space tolerance of at least 22 px radius, resolved to the nearest drawn centre: two or more within 22 px offer a choice, none picks nothing. The street camera gestures are stated for one and two fingers, with a hint per pointer type. No street function is keyboard-only. On a coarse pointer the street rows sit in the existing overlay menu (#ovMenu), at least 44 CSS px tall, never as a new floating control."
+      },
+      {
+        "id": "SM7",
+        "carrier": "this block + the S0.U01 probe text",
+        "text": "Phone shots and metrics are required for every SV view (SV1-SV9) at 390x664 with ?dc=phone, not only for SV1 and SV2. The probe gains --phone and --class (S0.U01)."
+      },
+      {
+        "id": "SM8",
+        "carrier": "this block",
+        "text": "Resident caps: each class's resident-byte cap stays under the phone ceiling that /device_classes states. A full cache stays coarse and never leaves a quad undrawn (never black)."
+      },
+      {
+        "id": "SM9",
+        "carrier": "R12 + this block",
+        "text": "Session overlays (the herald's tidings, weather notes) render in the sim's existing sheets on phones (the ledger or the inspector), never in a new floating panel. No sheet covers more than 50% of the screen at peek or half."
+      },
+      {
+        "id": "SM10",
+        "carrier": "this block",
+        "text": "Code weight: the spec states and caps the gzip bytes the STREET block adds. Street data is generated from the seed, never shipped."
+      },
+      {
+        "id": "SM11",
+        "carrier": "ST8",
+        "text": "The phone device run: a real phone runs ANNALS.deviceReport() over a 5-minute descent plus idle. It needs a median fps >= 27 at the 30 fps cap, with degradeStep never past the phone floor step. The run is filed as docs/street/device-phone/<date>.json and gates only the phone default flip."
+      }
+    ]
+  }
 }

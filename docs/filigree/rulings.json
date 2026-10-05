@@ -1,6 +1,18 @@
 {
-  "date": "2026-10-04",
+  "date": "2026-10-05",
   "about": "Owner overrides of the Filigree rulings R1-R22. Defaults and questions: docs/filigree/README.md §9. Put a ruling id and its replacement text under overrides; list the ids the owner has signed off under confirmed.",
-  "overrides": {},
-  "confirmed": []
+  "overrides": {
+    "R2": "Rank decides WHEN a name appears (its threshold), not HOW it is inked: one ink colour and one face family for landform and homestead names; at most one size step between ranks. Thresholds are absolute zooms that no viewport or device pixel ratio moves, and the desktop placement is the reference. Placement is one ranked, greedy pass in CSS px with a minimum gap per viewport, trying each name's anchors before holding it back; a smaller viewport may hold a lower-ranked name back to a closer zoom but never drops a class the desktop shows on that sheet, and every held-back name appears by its desktop threshold + 0.5 zoom or by the end of its sheet's band, whichever comes first. Type never shrinks to fit: no name is drawn smaller than on the desktop, and on a coarse-pointer viewport none is drawn below 12 CSS px (11 px italic). A phone budget never removes, delays or shrinks anything on the desktop.",
+    "R7": "City sheet (z >= Z_TIER_D): nothing drawn at rest. Epēshu hover halos stay (invisible at rest); cursor-growing census pins are suppressed inside the city footprint at the city band; deep links still land. On touch (hover:none) a halo is reached by tap: a tap on its footprint reveals it and opens its card, and a long-press (Leaflet's 600 ms) shows its name without opening a card; no pin depends on cursor growth. On every sheet an interactive glyph keeps its drawn size and may carry an invisible hit pad up to 44 CSS px, but a pad never decides a tap: one drawn glyph centre within 22 CSS px of the tap opens that card, two or more open a small chooser naming each (nearest first), and none opens no card and leaves the tap to the map; faded or tier-hidden glyphs never take a tap.",
+    "R12": "Notices (muster days, shut ways; player-facing label: the herald's tidings) load outside the release: a hash param notices=<url> or a local file import; one sample snapshot (fixed seed, fixed simDays) is committed; no mid-cycle pushes. When stale it reads 'last cried, <n> A.B.'. Each app (the atlas and the sim) keeps the last snapshot it loaded on the device (the Cache API, or local storage where there is no secure context) and, when the network is down, shows it marked as last cried with the snapshot's own A.B. date, never a date read from the device clock; a kept snapshot is never shown as current.",
+    "R14": "Old survey = an era tile layer (tiles-imperial/ or tiles-war/) stacked UNDER the live base with opacity or swipe; if research finds the eras differ only in names/borders, add an old-name layer as well. Player-facing label: the Elder Chart (the chart of the elder days), never 'old survey'; the era names come from canon (imperial, war), and the internal tiles-imperial/ and tiles-war/ names stay. Its tiles are fetched only while the reader has the Elder Chart turned on (never prefetched) and are kept for offline play only if it is on when the reader keeps the chart for the table; on touch the swipe moves by a handle at least 44 CSS px wide, never by a map drag.",
+    "R18": "The table map ships behind a default-off toggle (hash param filigree=1 + a layers-panel row). The sparse version = the same view with the toggle off, verified by DOM (no filigree pane or feature). The owner flips the default after Job 4 passes. Wherever the capture records requests, the sparse view also makes zero filigree requests. On a coarse-pointer viewport the toggle row sits in the table drawer's layers list, at least 44 CSS px tall, never as a floating control. The owner may flip the default for fine pointers first; coarse pointers flip only after Job 4's phone checks at 390x664 portrait, DPR 3, pass (no label overlap, no horizontal scroll, no name under 12 px, no wrong-card tap)."
+  },
+  "confirmed": [
+    "R2",
+    "R7",
+    "R12",
+    "R14",
+    "R18"
+  ]
 }
