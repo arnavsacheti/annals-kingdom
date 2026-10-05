@@ -170,7 +170,7 @@ Agents never run git.
     adversarial review leaves no blocker or major (≤2 cycles). The live plan-mode previews run at
     the top of Filigree 2 and Street 2.
   - Prerequisites: Mobile 0. Never while Filigree 2 or Street 2 runs.
-- [ ] **Mobile 3 · Delivery: compression, cache, staging, manifests (USER REQUEST)** — server.js
+- [x] **Mobile 3 · Delivery: compression, cache, staging, manifests (USER REQUEST)** — server.js
   (gzip, MIME, ETag/304, Cache-Control, HEAD, PORT env); DEPLOY.md (nginx and Caddy blocks, the sim
   root as an allowlist so .git, docs and tools are never served, HTTPS, the worker kill switch, the
   TILES_V rule); pages.yml stages vendor/ and the workers when present;
@@ -180,6 +180,10 @@ Agents never run git.
     the first (was 100%); header lint 0 mismatches; a staged Pages copy loads clean; the manifest
     tool is byte-identical on rerun.
   - Prerequisites: Mobile 1 baseline captured; Filigree 1 not running.
+  - Result (2026-10-05): D1, D2, D6 passed the loop (first attempt each). iPhone atlas page
+    67,676 B, data 68,427 B, first load 427,384 B; repeat visit 4,843 B, 37/37 cached; sim page
+    746,236 B. Header lint 0 mismatches; manifest byte-identical on rerun. The capture tool now
+    takes the repeat visit in a cache-on probe (page.route turns the HTTP cache off).
 - [ ] **Mobile 4 · Atlas: vendored, versioned, framed (USER REQUEST)** — vendored Leaflet 1.9.4 and
   the OFL fonts (A9); raster URLs carry ?t=TILES_V (A8); the closed sheet clipped, the Contents
   heading safe, safe areas and dvh (A1, A11, A14). Resolves "Notch safe-areas".

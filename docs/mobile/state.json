@@ -13,31 +13,37 @@
   "owner_answers": "docs/mobile/owner-answers.json",
   "units": {
     "D1": {
-      "status": "failed",
-      "attempts": 3,
+      "status": "passed",
+      "attempts": 1,
       "capture": "docs/mobile/captures/D1.json",
-      "files_sha": {},
-      "ref_before": "rebase-2",
-      "failing": [
-        {
-          "key": "atlas.iphone13.repeat_visit.bytes",
-          "op": "<=",
-          "expected": 45000,
-          "got": 425608
-        },
-        {
-          "key": "atlas.iphone13.repeat_visit.cache_hits",
-          "op": ">=",
-          "expected": 34,
-          "got": 0
-        },
-        {
-          "key": "measure.tool",
-          "op": "loop",
-          "expected": "a repeat visit measured with the HTTP cache on",
-          "got": "page.route disables the browser cache, so every repeat visit refetches; every other D1 check passed. The run stopped at a container restart; the unit was restored from its snapshot by tools/mobile-tree.js"
-        }
-      ]
+      "files_sha": {
+        "docs/mobile/accept/D1.json": "ad440ae784f6c753ef123501f460d6dd815147b3e1ca6f5d15051b3129a67daf",
+        "server.js": "f093d3423e3d78c47a2405a79cfb3212c5273577bab9fe598e610a741c1eb233"
+      },
+      "failing": [],
+      "ref_before": "rebase-2"
+    },
+    "D2": {
+      "status": "passed",
+      "attempts": 1,
+      "capture": "docs/mobile/captures/D2.json",
+      "files_sha": {
+        ".github/workflows/pages.yml": "37e2157d6512dd7a30547c14cd805d6c17be711d8dc2718d62c8f25337211938",
+        "DEPLOY.md": "a42ab67791389cdf8e756bb3c1f1dd3391e70c093dded78b48a3159272a73648",
+        "tools/lint-deploy.js": "de6ab244cc1aa11ef332c3cf218e629e79f1c1834dc59077cd0904ebc2629130"
+      },
+      "failing": [],
+      "ref_before": "after-D1"
+    },
+    "D6": {
+      "status": "passed",
+      "attempts": 1,
+      "capture": "docs/mobile/captures/D6.json",
+      "files_sha": {
+        "tools/build-offline-manifest.js": "6f15f81520325ae0f6e7bf272c767c25151c204d1d80f0c7abfc66e24d167bcb"
+      },
+      "failing": [],
+      "ref_before": "after-D2"
     }
   },
   "rebase": [
@@ -66,6 +72,48 @@
       },
       "reason": "pipeline scripts changed since the reference (UG11 compares against it): .claude/workflows/mobile-build.js, .claude/workflows/mobile-review.js",
       "ref": "rebase-2"
+    },
+    {
+      "before_unit": null,
+      "after_unit": "D1",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "reason": "unit passed",
+      "ref": "after-D1"
+    },
+    {
+      "before_unit": null,
+      "after_unit": "D2",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "reason": "unit passed",
+      "ref": "after-D2"
+    },
+    {
+      "before_unit": null,
+      "after_unit": "D6",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "reason": "unit passed",
+      "ref": "after-D6"
     }
   ]
 }
