@@ -1,0 +1,121 @@
+{
+  "unit": "D1",
+  "profiles": [
+    "iphone13",
+    "pixel7",
+    "landscape",
+    "desktop",
+    "desktop2x"
+  ],
+  "clock": "virtual",
+  "files_touched": [
+    "server.js",
+    "docs/mobile/accept/D1.json"
+  ],
+  "gates": [
+    "UG1",
+    "UG2",
+    "UG3",
+    "UG4",
+    "UG5",
+    "UG6",
+    "UG7",
+    "UG8",
+    "UG9",
+    "UG10",
+    "UG11"
+  ],
+  "baseline": "rebase-1",
+  "declared_change_keys": [
+    "atlas.iphone13.first_load",
+    "atlas.iphone13.repeat_visit",
+    "atlas.pixel7.first_load",
+    "atlas.pixel7.repeat_visit",
+    "atlas.landscape.first_load",
+    "atlas.landscape.repeat_visit",
+    "atlas.desktop.first_load",
+    "atlas.desktop.repeat_visit",
+    "atlas.desktop2x.first_load",
+    "atlas.desktop2x.repeat_visit",
+    "sim.iphone13.first_load",
+    "sim.iphone13.repeat_visit",
+    "sim.iphone13.net_total",
+    "sim.pixel7.first_load",
+    "sim.pixel7.repeat_visit",
+    "sim.pixel7.net_total",
+    "sim.landscape.first_load",
+    "sim.landscape.repeat_visit",
+    "sim.landscape.net_total",
+    "sim.desktop.first_load",
+    "sim.desktop.repeat_visit",
+    "sim.desktop.net_total",
+    "sim.desktop2x.first_load",
+    "sim.desktop2x.repeat_visit",
+    "sim.desktop2x.net_total"
+  ],
+  "mask": [],
+  "strings": [],
+  "checks": [
+    {
+      "key": "atlas.iphone13.first_load.by_cat.html_other.bytes",
+      "op": "<=",
+      "value": 70000,
+      "was": 211860
+    },
+    {
+      "key": "atlas.pixel7.first_load.by_cat.html_other.bytes",
+      "op": "<=",
+      "value": 70000,
+      "was": 211860
+    },
+    {
+      "key": "atlas.iphone13.first_load.by_cat.data.bytes",
+      "op": "<=",
+      "value": 75000,
+      "was": 228129
+    },
+    {
+      "key": "atlas.pixel7.first_load.by_cat.data.bytes",
+      "op": "<=",
+      "value": 75000,
+      "was": 228129
+    },
+    {
+      "key": "sim.iphone13.first_load.by_cat.html_other.bytes",
+      "op": "<=",
+      "value": 760000,
+      "was": 1203845
+    },
+    {
+      "key": "sim.iphone13.first_load.bytes",
+      "op": "<=",
+      "value": 760000,
+      "was": 1203845
+    },
+    {
+      "key": "atlas.iphone13.first_load.bytes",
+      "op": "<=",
+      "value": 450000,
+      "was": 729636
+    },
+    {
+      "key": "atlas.iphone13.repeat_visit.bytes",
+      "op": "<=",
+      "value": 45000,
+      "was": 729636
+    },
+    {
+      "key": "atlas.iphone13.repeat_visit.cache_hits",
+      "op": ">=",
+      "value": 30,
+      "was": 0
+    }
+  ],
+  "unscored": [
+    "curl -sI -H \"Accept-Encoding: gzip\" matrix: .json .geojson .jpg .png .webp .svg .woff2 .webmanifest carry correct types (were octet-stream); html/js/css/json/svg gzip with Vary: Accept-Encoding; If-None-Match -> 304 with empty body",
+    "Cache-Control: no-cache for *.html, sw.js, sw-kill.js, data/*.json, offline-manifest.json; public, max-age=31536000, immutable for vendor/** and any URL with ?t=; public, max-age=2592000 for other rasters",
+    "iphone13 repeat visit (a second page.goto of the same URL in the same context, not reload, not a new context): transferred <= 10% of the first load and >= 90% of requests 304 or cache hits (the checks bound this by absolute figures: repeat bytes <= 45,000 and cache_hits >= 30; the exact ratios are read by the review)",
+    "a data JSON edited in a temp copy of the tree, served by `PORT=<free> node server.js` run from that copy (needs D1 PORT env) while tools/mobile-capture.js is pointed at it with --port, shows on a plain reload (closes POLISH \"Data fetch cache-busting\" by revalidation)",
+    "`node server.js` with no PORT still listens on 8544; the 403 path guard and the \"/\" -> index.html mapping are unchanged"
+  ]
+}
