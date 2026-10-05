@@ -896,8 +896,8 @@
    "tap_fixture": {
     "n": 85,
     "complete": true,
-    "wrong_card": 18,
-    "wrong_taps": 18,
+    "wrong_card": 15,
+    "wrong_taps": 15,
     "no_open": 0,
     "chooser": 0,
     "chooser_without_glyph": 0,
@@ -908,7 +908,7 @@
       "untappable": 140,
       "unnamed": 0,
       "tapped": 47,
-      "wrong_card": 7
+      "wrong_card": 5
      },
      "leponnia_z3.5": {
       "zoom": 3.5,
@@ -916,7 +916,7 @@
       "untappable": 172,
       "unnamed": 0,
       "tapped": 15,
-      "wrong_card": 7
+      "wrong_card": 6
      },
      "epeshu_z4.55": {
       "zoom": 4.55,
@@ -975,18 +975,6 @@
       "opened": "Road that Walks with the Sun"
      },
      {
-      "view": "whole",
-      "name": "The South Lane",
-      "outcome": "other",
-      "opened": "#view=2195,1094,1.95"
-     },
-     {
-      "view": "whole",
-      "name": "The Strait Run",
-      "outcome": "other",
-      "opened": "The Strait Run✶"
-     },
-     {
       "view": "leponnia_z3.5",
       "name": "Epēshu",
       "outcome": "other",
@@ -1003,12 +991,6 @@
       "name": "The Eshbrīn",
       "outcome": "other",
       "opened": "Epēshu"
-     },
-     {
-      "view": "leponnia_z3.5",
-      "name": "The Gulf Crossing",
-      "outcome": "other",
-      "opened": "The Gulf Crossing✶"
      },
      {
       "view": "leponnia_z3.5",
@@ -2118,8 +2100,8 @@
    "tap_fixture": {
     "n": 92,
     "complete": true,
-    "wrong_card": 15,
-    "wrong_taps": 15,
+    "wrong_card": 12,
+    "wrong_taps": 12,
     "no_open": 0,
     "chooser": 0,
     "chooser_without_glyph": 0,
@@ -2130,7 +2112,7 @@
       "untappable": 142,
       "unnamed": 0,
       "tapped": 45,
-      "wrong_card": 3
+      "wrong_card": 2
      },
      "leponnia_z3.5": {
       "zoom": 3.5,
@@ -2138,7 +2120,7 @@
       "untappable": 167,
       "unnamed": 0,
       "tapped": 20,
-      "wrong_card": 8
+      "wrong_card": 6
      },
      "epeshu_z4.55": {
       "zoom": 4.55,
@@ -2179,12 +2161,6 @@
       "opened": "#company=Frösted Flækes"
      },
      {
-      "view": "whole",
-      "name": "The Strait Run",
-      "outcome": "other",
-      "opened": "The Strait Run✶"
-     },
-     {
       "view": "leponnia_z3.5",
       "name": "Epēshu",
       "outcome": "other",
@@ -2204,21 +2180,9 @@
      },
      {
       "view": "leponnia_z3.5",
-      "name": "The Gulf Crossing",
-      "outcome": "other",
-      "opened": "The Gulf Crossing✶"
-     },
-     {
-      "view": "leponnia_z3.5",
       "name": "The Lektān Priesthood",
       "outcome": "other",
       "opened": "Epēshu"
-     },
-     {
-      "view": "leponnia_z3.5",
-      "name": "The North Coast Packet",
-      "outcome": "other",
-      "opened": "#view=1242,1416,3.50"
      },
      {
       "view": "leponnia_z3.5",
@@ -3362,8 +3326,8 @@
    "tap_fixture": {
     "n": 170,
     "complete": true,
-    "wrong_card": 70,
-    "wrong_taps": 70,
+    "wrong_card": 68,
+    "wrong_taps": 68,
     "no_open": 0,
     "chooser": 0,
     "chooser_without_glyph": 0,
@@ -3382,7 +3346,7 @@
       "untappable": 179,
       "unnamed": 0,
       "tapped": 8,
-      "wrong_card": 3
+      "wrong_card": 2
      },
      "epeshu_z4.55": {
       "zoom": 4.55,
@@ -3390,7 +3354,7 @@
       "untappable": 183,
       "unnamed": 0,
       "tapped": 6,
-      "wrong_card": 3
+      "wrong_card": 2
      },
      "epeshu_z4.95": {
       "zoom": 4.95,
@@ -3468,7 +3432,7 @@
       "view": "whole",
       "name": "Feldspar",
       "outcome": "other",
-      "opened": "#view=2196,1074,0.70"
+      "opened": "Watchwater"
      },
      {
       "view": "whole",
@@ -3618,7 +3582,7 @@
       "view": "whole",
       "name": "Māmīth Māgrīn (Kingly Mickleburg)",
       "outcome": "other",
-      "opened": "#view=2196,1083,0.70"
+      "opened": "Fell Mountains"
      },
      {
       "view": "whole",
@@ -3720,7 +3684,7 @@
       "view": "whole",
       "name": "Stony Ford",
       "outcome": "other",
-      "opened": "#view=2195,1094,0.70"
+      "opened": "East-West Road"
      },
      {
       "view": "whole",
@@ -5080,8 +5044,8 @@
    "tap_fixture": {
     "n": 273,
     "complete": true,
-    "wrong_card": 35,
-    "wrong_taps": 35,
+    "wrong_card": 23,
+    "wrong_taps": 23,
     "no_open": 0,
     "chooser": 0,
     "chooser_without_glyph": 0,
@@ -5092,7 +5056,7 @@
       "untappable": 5,
       "unnamed": 0,
       "tapped": 182,
-      "wrong_card": 16
+      "wrong_card": 13
      },
      "leponnia_z3.5": {
       "zoom": 3.5,
@@ -5100,7 +5064,7 @@
       "untappable": 140,
       "unnamed": 0,
       "tapped": 47,
-      "wrong_card": 10
+      "wrong_card": 6
      },
      "epeshu_z4.55": {
       "zoom": 4.55,
@@ -5108,7 +5072,7 @@
       "untappable": 165,
       "unnamed": 0,
       "tapped": 22,
-      "wrong_card": 5
+      "wrong_card": 2
      },
      "epeshu_z4.95": {
       "zoom": 4.95,
@@ -5116,7 +5080,7 @@
       "untappable": 176,
       "unnamed": 0,
       "tapped": 13,
-      "wrong_card": 3
+      "wrong_card": 1
      },
      "city_z6.15": {
       "zoom": 6.15,
@@ -5184,12 +5148,6 @@
      },
      {
       "view": "whole",
-      "name": "The Gulf Crossing",
-      "outcome": "other",
-      "opened": "The Gulf Crossing✶"
-     },
-     {
-      "view": "whole",
       "name": "The Lektān Priesthood",
       "outcome": "other",
       "opened": "Epēshu"
@@ -5213,18 +5171,6 @@
       "opened": "Epēshu"
      },
      {
-      "view": "whole",
-      "name": "The South Lane",
-      "outcome": "other",
-      "opened": "The South Lane✶"
-     },
-     {
-      "view": "whole",
-      "name": "The Strait Run",
-      "outcome": "other",
-      "opened": "The Strait Run✶"
-     },
-     {
       "view": "leponnia_z3.5",
       "name": "Epēshu",
       "outcome": "other",
@@ -5244,21 +5190,9 @@
      },
      {
       "view": "leponnia_z3.5",
-      "name": "The Gulf Crossing",
-      "outcome": "other",
-      "opened": "The Gulf Crossing✶"
-     },
-     {
-      "view": "leponnia_z3.5",
       "name": "The Lektān Priesthood",
       "outcome": "other",
       "opened": "Epēshu"
-     },
-     {
-      "view": "leponnia_z3.5",
-      "name": "The North Coast Packet",
-      "outcome": "other",
-      "opened": "The North Coast Packet✶"
      },
      {
       "view": "leponnia_z3.5",
@@ -5273,18 +5207,6 @@
       "opened": "Epēshu"
      },
      {
-      "view": "leponnia_z3.5",
-      "name": "The South Lane",
-      "outcome": "other",
-      "opened": "The South Lane✶"
-     },
-     {
-      "view": "leponnia_z3.5",
-      "name": "The Strait Run",
-      "outcome": "other",
-      "opened": "The Strait Run✶"
-     },
-     {
       "view": "epeshu_z4.55",
       "name": "Epēshu",
       "outcome": "other",
@@ -5297,40 +5219,10 @@
       "opened": "Epēshu"
      },
      {
-      "view": "epeshu_z4.55",
-      "name": "The Gulf Crossing",
-      "outcome": "other",
-      "opened": "The Gulf Crossing✶"
-     },
-     {
-      "view": "epeshu_z4.55",
-      "name": "The North Coast Packet",
-      "outcome": "other",
-      "opened": "The North Coast Packet✶"
-     },
-     {
-      "view": "epeshu_z4.55",
-      "name": "The Strait Run",
-      "outcome": "other",
-      "opened": "The Strait Run✶"
-     },
-     {
       "view": "epeshu_z4.95",
       "name": "The Eshbrīn",
       "outcome": "other",
       "opened": "Epēshu"
-     },
-     {
-      "view": "epeshu_z4.95",
-      "name": "The Gulf Crossing",
-      "outcome": "other",
-      "opened": "The Gulf Crossing✶"
-     },
-     {
-      "view": "epeshu_z4.95",
-      "name": "The North Coast Packet",
-      "outcome": "other",
-      "opened": "The North Coast Packet✶"
      },
      {
       "view": "city_z6.15",
@@ -7610,8 +7502,8 @@
    "tap_fixture": {
     "n": 294,
     "complete": true,
-    "wrong_card": 33,
-    "wrong_taps": 33,
+    "wrong_card": 20,
+    "wrong_taps": 20,
     "no_open": 0,
     "chooser": 0,
     "chooser_without_glyph": 0,
@@ -7622,7 +7514,7 @@
       "untappable": 5,
       "unnamed": 0,
       "tapped": 182,
-      "wrong_card": 14
+      "wrong_card": 10
      },
      "leponnia_z3.5": {
       "zoom": 3.5,
@@ -7630,7 +7522,7 @@
       "untappable": 128,
       "unnamed": 0,
       "tapped": 59,
-      "wrong_card": 10
+      "wrong_card": 6
      },
      "epeshu_z4.55": {
       "zoom": 4.55,
@@ -7638,7 +7530,7 @@
       "untappable": 164,
       "unnamed": 0,
       "tapped": 25,
-      "wrong_card": 5
+      "wrong_card": 2
      },
      "epeshu_z4.95": {
       "zoom": 4.95,
@@ -7646,7 +7538,7 @@
       "untappable": 172,
       "unnamed": 0,
       "tapped": 17,
-      "wrong_card": 3
+      "wrong_card": 1
      },
      "city_z6.15": {
       "zoom": 6.15,
@@ -7702,21 +7594,9 @@
      },
      {
       "view": "whole",
-      "name": "The Gulf Crossing",
-      "outcome": "other",
-      "opened": "The Gulf Crossing✶"
-     },
-     {
-      "view": "whole",
       "name": "The Lektān Priesthood",
       "outcome": "other",
       "opened": "Epēshu"
-     },
-     {
-      "view": "whole",
-      "name": "The North Coast Packet",
-      "outcome": "other",
-      "opened": "The North Coast Packet✶"
      },
      {
       "view": "whole",
@@ -7729,18 +7609,6 @@
       "name": "The Senate of Epēshu",
       "outcome": "other",
       "opened": "Epēshu"
-     },
-     {
-      "view": "whole",
-      "name": "The South Lane",
-      "outcome": "other",
-      "opened": "The South Lane✶"
-     },
-     {
-      "view": "whole",
-      "name": "The Strait Run",
-      "outcome": "other",
-      "opened": "The Strait Run✶"
      },
      {
       "view": "leponnia_z3.5",
@@ -7762,21 +7630,9 @@
      },
      {
       "view": "leponnia_z3.5",
-      "name": "The Gulf Crossing",
-      "outcome": "other",
-      "opened": "The Gulf Crossing✶"
-     },
-     {
-      "view": "leponnia_z3.5",
       "name": "The Lektān Priesthood",
       "outcome": "other",
       "opened": "Epēshu"
-     },
-     {
-      "view": "leponnia_z3.5",
-      "name": "The North Coast Packet",
-      "outcome": "other",
-      "opened": "The North Coast Packet✶"
      },
      {
       "view": "leponnia_z3.5",
@@ -7791,18 +7647,6 @@
       "opened": "Epēshu"
      },
      {
-      "view": "leponnia_z3.5",
-      "name": "The South Lane",
-      "outcome": "other",
-      "opened": "The South Lane✶"
-     },
-     {
-      "view": "leponnia_z3.5",
-      "name": "The Strait Run",
-      "outcome": "other",
-      "opened": "The Strait Run✶"
-     },
-     {
       "view": "epeshu_z4.55",
       "name": "Epēshu",
       "outcome": "other",
@@ -7815,40 +7659,10 @@
       "opened": "Epēshu"
      },
      {
-      "view": "epeshu_z4.55",
-      "name": "The Gulf Crossing",
-      "outcome": "other",
-      "opened": "The Gulf Crossing✶"
-     },
-     {
-      "view": "epeshu_z4.55",
-      "name": "The North Coast Packet",
-      "outcome": "other",
-      "opened": "The North Coast Packet✶"
-     },
-     {
-      "view": "epeshu_z4.55",
-      "name": "The Strait Run",
-      "outcome": "other",
-      "opened": "The Strait Run✶"
-     },
-     {
       "view": "epeshu_z4.95",
       "name": "The Eshbrīn",
       "outcome": "other",
       "opened": "Epēshu"
-     },
-     {
-      "view": "epeshu_z4.95",
-      "name": "The Gulf Crossing",
-      "outcome": "other",
-      "opened": "The Gulf Crossing✶"
-     },
-     {
-      "view": "epeshu_z4.95",
-      "name": "The North Coast Packet",
-      "outcome": "other",
-      "opened": "The North Coast Packet✶"
      },
      {
       "view": "city_z6.15",
@@ -14106,7 +13920,8 @@
   "pinned": {
    "hardwareConcurrency": 8,
    "deviceMemory": 8
-  }
+  },
+  "tap_rescored": "2026-10-05: atlas.<profile>.tap_fixture re-taken after the provenance-mark fix (card titles read without <sup>/.prov-star and cleanName-d; a row records the card hash, else the title, else any other hash). Two full captures of the same tree (index/atlas sha equal to B0) agreed exactly; only tap_fixture was replaced. wrong_card was: iphone13 18 -> 15, pixel7 15 -> 12, landscape 70 -> 68, desktop 35 -> 23, desktop2x 33 -> 20 (the starred sea-lane cards The Strait Run, The Gulf Crossing, The South Lane and The North Coast Packet are own)"
  },
  "a19": {
   "owner_answer": "q1=a (docs/mobile/owner-answers.json): tiers B/C pin to the desktop2x values as measured",

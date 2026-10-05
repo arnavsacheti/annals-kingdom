@@ -445,9 +445,10 @@ async function takeShot(P, env, o, surface, key, view, regionless) {
 
 // ---------------------------------------------------------------- sheet stops (metrics.md section 4: chrome_cover.peek and .half)
 // A sheet exists when the surface exposes the hook window[ns].sheet.stop or a shown handle ([data-sheet-handle], .sheet-handle, #sheetHandle) inside
-// its root (#panel on the atlas, #drawer on the sim). A stop is driven by the hook, else by tapping the handle until the sheet reports it through
-// data-sheet-stop / data-stop on the [data-sheet] element (or the root), or a class peek|half|full, sheet-<stop>, is-<stop>.
-// Values: a number; 'no-sheet' while none exists (B0); 'unmeasured: ...' when a sheet exists but the stop was not reached. Never null.
+// its root (#panel on the atlas, #drawer on the sim). A stop is driven by the hook, else by tapping the handle; either way it is measured only once the
+// sheet reports that stop through data-sheet-stop / data-stop on the [data-sheet] element (or the root), or a class peek|half|full, sheet-<stop>, is-<stop>,
+// and half only when the sheet's rect differs from its rect at peek. Values: a number; 'no-sheet' while none exists (B0);
+// 'unmeasured: stop not reached (...)' when a sheet exists but did not report the stop (a no-op hook included). Never null.
 const SHEET_HANDLE = '[data-sheet-handle], .sheet-handle, #sheetHandle'
 function sheetProbe(arg) {   // page side
   const [ns, rootSel, handleSel] = arg, root = document.querySelector(rootSel), mc = window.__mc
@@ -459,19 +460,22 @@ function sheetProbe(arg) {   // page side
     stop = el.getAttribute('data-sheet-stop') || el.getAttribute('data-stop') || null
     if (!stop) for (const k of ['peek', 'half', 'full']) if (el.classList.contains(k) || el.classList.contains('sheet-' + k) || el.classList.contains('is-' + k)) stop = k
   }
-  const r = h && h.getBoundingClientRect()
-  return {hook, handle: r ? {x: r.left + r.width / 2, y: r.top + r.height / 2} : null, stop}
+  const r = h && h.getBoundingClientRect(), er = el && el !== root ? el.getBoundingClientRect() : (root ? root.getBoundingClientRect() : null)
+  return {hook, handle: r ? {x: r.left + r.width / 2, y: r.top + r.height / 2} : null, stop, rect: er ? [Math.round(er.left), Math.round(er.top), Math.round(er.width), Math.round(er.height)] : null}
 }
-async function sheetStops(P, ns, rootSel, prof, extraPump) {
-  const out = {}, page = P.page, probe = () => page.evaluate(sheetProbe, [ns, rootSel, SHEET_HANDLE]).catch(() => ({hook: false, handle: null, stop: null}))
+async function sheetStops(P, ns, rootSel, prof, extraPump) {   // a stop is measured only after the sheet itself reports it, whether the hook or the handle drove it
+  const out = {}, page = P.page, probe = () => page.evaluate(sheetProbe, [ns, rootSel, SHEET_HANDLE]).catch(() => ({hook: false, handle: null, stop: null, rect: null}))
   const s0 = await probe()
   if (!s0.hook && !s0.handle) return {peek: 'no-sheet', half: 'no-sheet'}
+  const at = {}
   for (const st of ['peek', 'half']) {
     try {
-      let s = await probe()
-      if (s.hook) { await page.evaluate(([n, k]) => window[n].sheet.stop(k), [ns, st]); if (extraPump) await pump(P, 2); await sleep(400); s = await probe(); if (s.stop && s.stop !== st) { out[st] = 'unmeasured: hook left the sheet at ' + s.stop; continue } }
+      let s = await probe(); const via = s.hook ? 'hook' : 'handle'
+      if (s.hook) { await page.evaluate(([n, k]) => window[n].sheet.stop(k), [ns, st]); if (extraPump) await pump(P, 2); await sleep(400); s = await probe() }
       else for (let i = 0; i < 4 && s.stop !== st && s.handle; i++) { await tapAt(P, prof, s.handle.x, s.handle.y); if (extraPump) await pump(P, 2); await sleep(400); s = await probe() }
-      if (!s.hook && s.stop !== st) { out[st] = 'unmeasured: the sheet never reported ' + st + (s.stop ? ' (at ' + s.stop + ')' : ''); continue }
+      if (s.stop !== st) { out[st] = 'unmeasured: stop not reached (' + via + ' asked ' + st + ', sheet reports ' + (s.stop || 'none') + ')'; continue }
+      at[st] = s.rect
+      if (st === 'half' && at.peek && s.rect && at.peek.join() === s.rect.join()) { out[st] = 'unmeasured: stop not reached (the sheet rect did not move from peek)'; continue }
       const v = rnd(await page.evaluate(() => window.__mc.chromeCover()), 4)
       out[st] = v == null ? 'unmeasured: chromeCover failed' : v
     } catch (e) { out[st] = 'unmeasured: ' + String(e.message || e).slice(0, 60) }
@@ -519,7 +523,11 @@ async function reachProbe(P, prof, surface, restore, depthMax = 2) {
 }
 
 // ---------------------------------------------------------------- atlas capture
-function foldName(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim().toLowerCase() }
+// A card <h2> may carry provenance marks after the name (provStar's <sup class="prov-star">✶</sup> on sea lanes and invented chart POIs):
+// the page drops <sup>/.prov-star before reading the title, and cleanName drops any ✶ and a trailing run of marker glyphs, so 'The Strait Run✶' is the name 'The Strait Run'.
+const MARK_TAIL_RE = /[\s\p{So}\p{Sk}*†‡§¶⁂※•·°]+$/u
+function cleanName(s) { return String(s || '').normalize('NFC').replace(/✶/g, '').replace(/\s+/g, ' ').trim().replace(MARK_TAIL_RE, '').trim() }
+function foldName(s) { return cleanName(s).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim().toLowerCase() }
 // A tap is "own" only on a whole-name match: Lepon must not own '#place=Leponnia' nor '#place=Lepon the Old'.
 // The origin flags ('Hometown of X', 'Haunt of X') open the company card '#company=X'; that is the one alias.
 const CARD_HASH_RE = /^#?(?:place|faction|company)=(.*)$/
@@ -538,6 +546,44 @@ function tapOutcome(glyphName, res, before) {
   const listed = !!res.chooser && res.chooser.rows.some(t => has(nameSegs(t)))
   const own = opened && (hashNames.length ? has(hashNames) : has(titleSegs(res.title)))   // the card hash, when there is one, decides
   return res.chooser ? (listed ? 'chooser' : 'chooser_without_glyph') : opened ? (own ? 'own' : 'other') : 'none'
+}
+// A recorded capture (B0 above all) must agree with the scorer, or the unchanged rule fails every unit on a fixture the tree never changed:
+// each recorded 'other' row whose `opened` is a card title re-scores 'other', the title is stored as the page now reads it, and the counts add up.
+// `opened` is the card hash, else the card title, else any other hash ('#view=' with no card open), else the chooser rows; so a row that is not a card hash re-scores from the record.
+const TAP_KEEP = 60
+const reScore = r => r.opened.startsWith('#') ? tapOutcome(r.name, {hash: r.opened, open: false, title: '', chooser: null}, '') : tapOutcome(r.name, {hash: '', open: true, title: cleanName(r.opened), chooser: null}, '')
+function tapFixtureDisagreements(cap) {
+  const out = [], bad = t => t.outcome === 'other' || t.outcome === 'chooser_without_glyph'
+  for (const [p, a] of Object.entries((cap && cap.atlas) || {})) {
+    const tf = a && a.tap_fixture; if (!tf || !Array.isArray(tf.taps)) continue
+    const at = (i, r) => p + '.taps[' + i + '] ' + r.name + ' -> ' + r.opened
+    tf.taps.forEach((r, i) => {
+      if (r.outcome === 'own') out.push(at(i, r) + ': an own row is recorded')
+      if (r.outcome !== 'other' || typeof r.opened !== 'string' || CARD_HASH_RE.test(r.opened)) return
+      if (!r.opened.startsWith('#') && r.opened !== cleanName(r.opened)) out.push(at(i, r) + ': title not stored as read (provenance marks)')
+      const re = reScore(r)
+      if (re !== 'other') out.push(at(i, r) + ': recorded other, re-scores ' + re)
+    })
+    const nb = tf.taps.filter(bad).length, vs = Object.values(tf.views || {}).reduce((s, v) => s + (v.wrong_card || 0), 0)
+    if (tf.wrong_card !== tf.wrong_taps) out.push(p + ': wrong_card ' + tf.wrong_card + ' != wrong_taps ' + tf.wrong_taps)
+    if (vs !== tf.wrong_card) out.push(p + ': views wrong_card sum ' + vs + ' != wrong_card ' + tf.wrong_card)
+    if (tf.taps.length < TAP_KEEP ? nb !== tf.wrong_card : nb > tf.wrong_card) out.push(p + ': ' + nb + ' wrong rows recorded vs wrong_card ' + tf.wrong_card)
+    const ncw = tf.taps.filter(t => t.outcome === 'chooser_without_glyph').length
+    if (tf.taps.length < TAP_KEEP ? ncw !== tf.chooser_without_glyph : ncw > tf.chooser_without_glyph) out.push(p + ': chooser_without_glyph ' + tf.chooser_without_glyph + ' vs ' + ncw + ' recorded')
+  }
+  return out
+}
+// Re-scores a recorded fixture's non-card-hash rows with the current scorer. A full list (fewer than TAP_KEEP rows) re-scores exactly;
+// a cut list cannot recover the rows past the cut, and a pre-fix '#view=' row lost its title, so those need a recapture (as B0's tap_fixture had).
+function rescoreTapFixture(tf) {
+  const views = JSON.parse(JSON.stringify(tf.views || {})), keep = []
+  let drop = 0
+  for (const r of tf.taps) {
+    if (r.outcome !== 'other' || typeof r.opened !== 'string' || CARD_HASH_RE.test(r.opened)) { keep.push(r); continue }
+    const opened = r.opened.startsWith('#') ? r.opened : cleanName(r.opened), outcome = reScore({...r, opened})
+    if (outcome === 'own') { drop++; if (views[r.view]) views[r.view].wrong_card-- } else keep.push({...r, opened, outcome})
+  }
+  return {tf: {...tf, wrong_card: tf.wrong_card - drop, wrong_taps: tf.wrong_taps - drop, views, taps: keep}, dropped: drop, cut: tf.taps.length >= TAP_KEEP}
 }
 async function captureAtlas(env, key, o) {
   const prof = o.profile = o.profiles[key], url = env.server.origin + '/maps-site/' + VERSION_HINT
@@ -650,10 +696,10 @@ async function captureAtlas(env, key, o) {
           const p = document.getElementById('panel'), vis = e => window.__mc.shown(e) && e.getAttribute('aria-hidden') !== 'true' && e.getBoundingClientRect().width > 0 && e.getBoundingClientRect().height > 0
           const ch = [...document.querySelectorAll('[class*=chooser]')].find(vis)
           const rows = ch ? [...ch.querySelectorAll('li,button,a,[role=option],[role=menuitem],[class*=row],[class*=item]')].filter(vis).map(e => e.textContent.replace(/\s+/g, ' ').trim()) : []
-          return {hash: decodeURIComponent(location.hash), open: p.getAttribute('aria-hidden') === 'false', title: ((p.querySelector('h2,h3') || {}).textContent || '').trim(), chooser: ch ? {rows: rows.length ? rows : [ch.textContent.replace(/\s+/g, ' ').trim()]} : null}
+          return {hash: decodeURIComponent(location.hash), open: p.getAttribute('aria-hidden') === 'false', title: (h => { if (!h) return ''; const c = h.cloneNode(true); c.querySelectorAll('sup, .prov-star').forEach(e => e.remove()); return c.textContent.replace(/\s+/g, ' ').trim() })(p.querySelector('h2,h3')), chooser: ch ? {rows: rows.length ? rows : [ch.textContent.replace(/\s+/g, ' ').trim()]} : null}
         })
         const outcome = tapOutcome(g.name, res, before)
-        taps.push({view: vid, name: g.name, outcome, opened: res.hash || res.title || (res.chooser ? res.chooser.rows.slice(0, 4).join(' | ') : null)})
+        taps.push({view: vid, name: g.name, outcome, opened: (CARD_HASH_RE.test(res.hash || '') ? res.hash : cleanName(res.title) || res.hash) || (res.chooser ? res.chooser.rows.slice(0, 4).join(' | ') : null)})
         v.tapped++; if (outcome === 'other' || outcome === 'chooser_without_glyph') v.wrong_card++
         if (res.chooser) await page.keyboard.press('Escape').catch(() => {})
         await closeCard()
@@ -663,7 +709,7 @@ async function captureAtlas(env, key, o) {
     }
     const bad = t => t.outcome === 'other' || t.outcome === 'chooser_without_glyph'
     R.tap_fixture = {n: taps.length, complete: o.tapN <= 0, wrong_card: taps.filter(bad).length, wrong_taps: taps.filter(bad).length, no_open: taps.filter(t => t.outcome === 'none').length, chooser: taps.filter(t => t.outcome === 'chooser').length,
-      chooser_without_glyph: taps.filter(t => t.outcome === 'chooser_without_glyph').length, views: tapViews, taps: taps.filter(t => t.outcome !== 'own').slice(0, 60)}
+      chooser_without_glyph: taps.filter(t => t.outcome === 'chooser_without_glyph').length, views: tapViews, taps: taps.filter(t => t.outcome !== 'own').slice(0, TAP_KEEP)}
     // long press: a touch held 600 ms on a glyph shows its name (A-U5) or opens nothing
     await setTapView(null, null); await sleep(600); await settle(P, 600)
     const lp = prof.touch ? (await page.evaluate(() => window.__mc.glyphs())).find(g => g.name && g.tappable) : null
@@ -998,6 +1044,7 @@ function repoChecks() {
 // ---------------------------------------------------------------- the accept file (metrics.md section 8)
 const OPS = ['==', '!=', '<', '<=', '>', '>=', 'between', 'within', 'deep-equals', 'absent']
 const GATE_PROFILES = {UG2: ['iphone13', 'pixel7', 'desktop', 'desktop2x'], UG3: ['iphone13', 'pixel7', 'landscape', 'desktop', 'desktop2x']}   // README/plan: UG3 on all five profiles; UG2 on the four gated ones
+const REQUIRED_SEEDS = ['epeshu', 'tamar1374']   // UG3 fingerprints both canon seeds on every profile; no declaration or --seeds override removes one
 const ALL_GATES = ['UG1', 'UG2', 'UG3', 'UG4', 'UG5', 'UG6', 'UG7', 'UG8', 'UG9', 'UG10', 'UG11']
 function lintAccept(a) {
   const e = []
@@ -1028,6 +1075,7 @@ function lintAccept(a) {
       const pr = PROFILES[m.profile]; if (pr && m.rect[2] * m.rect[3] > 0.35 * pr.w * pr.h) e.push('mask[' + i + ']: covers more than 35% of the viewport')
     })
   }
+  if (a.shot_views !== undefined && (!Array.isArray(a.shot_views) || a.shot_views.some(v => typeof v !== 'string' || !v))) e.push('shot_views: array of view names (UG8 diffs these beside every view the baseline holds)')
   if (a.strings !== undefined && (!Array.isArray(a.strings) || a.strings.some(s => typeof s !== 'string'))) e.push('strings: array of strings')
   if (!Array.isArray(a.checks)) e.push('checks: array required')
   else a.checks.forEach((c, i) => {
@@ -1076,13 +1124,14 @@ function resolveRefs(accept, opts) {
   for (const r of opts.refs || []) { const i = r.indexOf('='); refs[r.slice(0, i)] = r.slice(i + 1) }
   return n => { const p = refs[n] || (dir + '/captures/' + n + '.json'); if (!ex(p)) return null; return JSON.parse(rd(p)) }
 }
-function shotDiffFor(cap, ref, surface, profile, masks, view) {
+function shotDiffFor(cap, ref, surface, profile, masks, view, required) {   // every view the reference holds, the caller requires or the capture holds is diffed; a view absent on either side fails
   const a = getPath(cap, surface + '.' + profile + '.shots'), b = getPath(ref, surface + '.' + profile + '.shots')
   if (!a || !b) return {error: 'no shots for ' + surface + '.' + profile}
   let worst = 0; const per = {}
-  for (const v of Object.keys(a)) {
-    if (view && v !== view) continue
-    if (!a[v] || !b[v]) { per[v] = 'missing'; worst = Math.max(worst, 1); continue }
+  const views = view ? [view] : [...new Set([...Object.keys(b), ...(required || []), ...Object.keys(a)])]
+  for (const v of views) {
+    if (!a[v]) { per[v] = 'missing from the capture (required by the ' + (b[v] ? 'reference' : v in b ? 'reference, which holds no shot either: recapture both' : 'accept file') + ')'; worst = Math.max(worst, 1); continue }
+    if (!b[v]) { per[v] = 'missing from the reference'; worst = Math.max(worst, 1); continue }
     try {
       const full = s => s.scale === undefined || s.scale === 1 ? s.path : s.full_path   // never diff a reduced copy: averaging blocks hides hairline changes
       const fa = full(a[v]), fb = full(b[v])
@@ -1158,8 +1207,10 @@ function gateResults(accept, cap, refOf, notes) {
     if (g === 'UG3') {
       if (!B) add('UG3.baseline', 'B0 present', 'missing')
       else {
-        for (const p of profs('sim')) for (const seed of Object.keys(cap.sim[p].seeds || {})) {
-          const a = cap.sim[p].seeds[seed], b = getPath(B, 'sim.' + p + '.seeds.' + seed)
+        const simProfs = cap.sim ? [...new Set([...GATE_PROFILES.UG3, ...profs('sim')])].filter(p => isObj(cap.sim[p])) : []   // a missing profile already failed above
+        for (const p of simProfs) for (const seed of [...new Set([...REQUIRED_SEEDS, ...Object.keys(getPath(B, 'sim.' + p + '.seeds') || {}), ...Object.keys(cap.sim[p].seeds || {})])]) {   // both canon seeds always, whatever is declared
+          const a = (cap.sim[p].seeds || {})[seed], b = getPath(B, 'sim.' + p + '.seeds.' + seed)
+          if (!isObj(a) || !a.fingerprint) { add('UG3.sim.' + p + '.' + seed, 'captured (UG3 always needs ' + REQUIRED_SEEDS.join(' and ') + ')', a && a.error ? 'error ' + String(a.error).slice(0, 60) : 'missing'); continue }
           if (!b) { add('UG3.sim.' + p + '.' + seed + '.fingerprint', 'present in B0', 'B0 has none'); continue }
           if (a.fingerprint !== b.fingerprint) add('UG3.sim.' + p + '.' + seed + '.fingerprint', b.fingerprint, a.fingerprint)
           if (!deepEq(a.rng_next, b.rng_next)) add('UG3.sim.' + p + '.' + seed + '.rng_next', b.rng_next, a.rng_next)
@@ -1236,7 +1287,8 @@ function gateResults(accept, cap, refOf, notes) {
         if (!b) { add('UG8.' + s + '.' + p + '.metrics', 'B0 has ' + p, 'missing'); continue }
         const d = flatDiff(a, b, '', [])
         if (d.length) add('UG8.' + s + '.' + p + '.metrics', 'equal to B0 except declared', d.slice(0, 4).map(x => x.key + ' ' + JSON.stringify(x.a) + ' vs ' + JSON.stringify(x.b)).join('; '))
-        const sd = shotDiffFor(cap, B, s, p, accept.mask || [], null)
+        const reqViews = (accept.checks || []).map(c => (c.key || '').match(new RegExp('^' + s + '\\.' + p + '\\.shot_diff\\.(.+)$'))).filter(Boolean).map(m => m[1]).concat(accept.shot_views || [])
+        const sd = shotDiffFor(cap, B, s, p, accept.mask || [], null, reqViews)
         if (sd.error) add('UG8.' + s + '.' + p + '.shot_diff', '<= 0.005', sd.error); else if (sd.diff > 0.005) add('UG8.' + s + '.' + p + '.shot_diff', '<= 0.005', sd.diff + ' ' + JSON.stringify(sd.per))
       }
     }
@@ -1458,6 +1510,39 @@ async function selfTest() {
     ok('tap: the card hash decides over a title that names the glyph', t('Lepon', '#place=Leponnia', 'Lepon') === 'other')
     ok('tap: a glyph named by the part after a title dash is not own', t('The Marble City', '', 'Epēshu — The Marble City') === 'other')
     ok('tap: Epēshu chooser row "The Senate of Epēshu" alone does not list it', t('Epēshu', '', '', '', {rows: ['The Senate of Epēshu']}) === 'chooser_without_glyph')
+    // provenance marks: a starred title is still the glyph's own card; a starred card with a longer name is still another card
+    ok('tap: a starred correct card is own (The Strait Run✶)', t('The Strait Run', '', 'The Strait Run✶') === 'own', t('The Strait Run', '', 'The Strait Run✶'))
+    ok('tap: a starred correct card with spacing is own (The Gulf Crossing ✶ )', t('The Gulf Crossing', '', '  The Gulf  Crossing ✶ ') === 'own')
+    ok('tap: a starred title with a kind after a dash is own', t('The Strait Run', '', 'The Strait Run✶ — sea lane') === 'own')
+    ok('tap: a trailing marker glyph other than ✶ is stripped (★)', t('Hollow Rock', '', 'Hollow Rock ★') === 'own')
+    ok('tap: a decomposed (NFD) title matches the composed glyph name', t('Epēshu', '', 'Epēshu✶'.normalize('NFD')) === 'own')
+    ok('tap: a starred substring-named wrong card is other (Strait Run -> The Strait Runway✶)', t('The Strait Run', '', 'The Strait Runway✶') === 'other')
+    ok('tap: a starred card that merely contains the glyph name is other (Lepon -> Leponnia✶)', t('Lepon', '', 'Leponnia✶') === 'other')
+    ok('tap: a starred chooser row naming the glyph is listed', t('The Strait Run', '', '', '', {rows: ['The Strait Run✶ — sea lane']}) === 'chooser')
+    ok('tap: a starred chooser row with a longer name does not list it', t('The Strait Run', '', '', '', {rows: ['The Strait Runway✶']}) === 'chooser_without_glyph')
+  }
+  // B0 agrees with the scorer: every recorded title-only 'other' row re-scores 'other', so a capture of the unchanged tree reproduces B0's tap_fixture
+  {
+    const bp = path.join(REPO, 'docs/mobile/baseline.json'), B = fs.existsSync(bp) ? JSON.parse(fs.readFileSync(bp, 'utf8')) : null
+    const dis = B ? tapFixtureDisagreements(B) : ['docs/mobile/baseline.json missing']
+    ok('B0: every recorded tap row agrees with the scorer and the counts add up', dis.length === 0, dis.slice(0, 4).join('; '))
+    const rows = B ? Object.values(B.atlas || {}).reduce((n, a) => n + ((a.tap_fixture && a.tap_fixture.taps) || []).filter(r => r.outcome === 'other' && !String(r.opened).startsWith('#')).length, 0) : 0
+    ok('B0: title-only other rows are present to check', rows > 0, String(rows))
+    ok('B0: re-scoring B0 again changes nothing', !!B && Object.values(B.atlas || {}).every(a => !a.tap_fixture || rescoreTapFixture(a.tap_fixture).dropped === 0 && deepEq(rescoreTapFixture(a.tap_fixture).tf, a.tap_fixture)))
+    const tf = () => ({n: 3, complete: true, wrong_card: 2, wrong_taps: 2, no_open: 0, chooser: 0, chooser_without_glyph: 0, views: {whole: {tapped: 3, wrong_card: 2}}, taps: [{view: 'whole', name: 'The Eshbrīn', outcome: 'other', opened: 'Epēshu'}, {view: 'whole', name: 'The Strait Run', outcome: 'other', opened: 'The Strait Run✶'}]})
+    const inj = (f, re) => { const x = tf(); f(x); const d = tapFixtureDisagreements({atlas: {desktop: {tap_fixture: x}}}); return d.some(s => re.test(s)) }
+    ok('B0 check: a starred own card recorded as other is caught (The Strait Run✶)', inj(() => {}, /re-scores own/) && inj(() => {}, /provenance marks/))
+    ok('B0 check: an unstarred own title recorded as other is caught', inj(x => { x.taps[1].opened = 'The Strait Run' }, /re-scores own/))
+    ok('B0 check: a wrong title stays other and is clean', tapFixtureDisagreements({atlas: {desktop: {tap_fixture: rescoreTapFixture(tf()).tf}}}).length === 0, tapFixtureDisagreements({atlas: {desktop: {tap_fixture: rescoreTapFixture(tf()).tf}}}).join('; '))
+    ok('B0 check: an own row in the recorded list is caught', inj(x => { x.taps[0].outcome = 'own' }, /an own row is recorded/))
+    ok('B0 check: a non-card hash row (#view=) with no card open re-scores other', !inj(x => { x.taps[1].opened = '#view=2195,1094,1.95' }, /re-scores/))
+    ok('B0 check: counts that disagree with the rows are caught', inj(x => { x.taps[1] = {view: 'whole', name: 'X', outcome: 'other', opened: '#place=Y'}; x.wrong_card = 3; x.wrong_taps = 3 }, /views wrong_card sum|wrong rows recorded/))
+    const rs = rescoreTapFixture(tf())
+    ok('rescore: the starred own row is dropped and every count follows', rs.dropped === 1 && rs.tf.wrong_card === 1 && rs.tf.wrong_taps === 1 && rs.tf.views.whole.wrong_card === 1 && rs.tf.taps.length === 1 && rs.tf.taps[0].name === 'The Eshbrīn', JSON.stringify(rs.tf))
+    // the unchanged rule: a fresh capture (scored by the current tool) of the unchanged tree equals a re-scored B0 and passes; the stale B0 fails
+    const capT = t => ({atlas: {desktop: {tap_fixture: t}}}), accU = {unit: 'FX', profiles: ['desktop'], clock: 'virtual', gates: [], waive: WV, declared_change_keys: [], checks: []}
+    ok('unchanged rule: a fresh capture against the re-scored B0 passes', acceptScore(accU, capT(rs.tf), () => capT(rescoreTapFixture(tf()).tf), {allowStale: true}).pass)
+    ok('unchanged rule: a fresh capture against an un-re-scored B0 fails on tap_fixture', !acceptScore(accU, capT(rs.tf), () => capT(tf()), {allowStale: true}).pass)
   }
   // the image diff runs at full resolution: hairlines that a 3x box average hides still count
   {
@@ -1522,6 +1607,25 @@ async function selfTest() {
       ok('UG3: three pasted copies of a declared B0 line (P 40) fail', rc.clock_tokens.index.P.occurrences === 40 && rr([line]).some(x => /clock_tokens\.index\.P$/.test(x.key) || /declared_clock_lines\.P/.test(x.key)), JSON.stringify(rr([line])))
       ok('UG3: the same with nothing declared fails', rr([]).some(x => x.key === 'UG3.clock_tokens.index.P'))
     }
+    {   // both canon seeds on every UG3 profile: a capture holding only epeshu fails even when sim.<p>.seeds is declared
+      const P5 = GATE_PROFILES.UG3, fpOf = (p, sd) => ({fingerprint: 'fp-' + sd, rng_next: {gen: 0.5}, errors: {unexplained: 0, messages: []}})
+      const simOf = sds => Object.fromEntries(P5.map(p => [p, {seeds: Object.fromEntries(sds.map(sd => [sd, fpOf(p, sd)]))}]))
+      const B3 = {repo: mkRepo(b0t), sim: simOf(REQUIRED_SEEDS)}, both = {repo: mkRepo(b0t), sim: simOf(REQUIRED_SEEDS)}, onlyE = {repo: mkRepo(b0t), sim: simOf(['epeshu'])}
+      const seedFails = (c, acc) => gateResults({gates: ['UG3'], profiles: P5, ...(acc || {})}, c, () => B3, {}).filter(x => /^UG3\.sim\./.test(x.key))
+      ok('UG3 seeds: both seeds captured and equal pass', seedFails(both).length === 0, JSON.stringify(seedFails(both)))
+      ok('UG3 seeds: a capture without tamar1374 fails on every profile', P5.every(p => seedFails(onlyE).some(x => x.key === 'UG3.sim.' + p + '.tamar1374')), JSON.stringify(seedFails(onlyE).map(x => x.key)))
+      const decl = {declared_change_keys: P5.map(p => 'sim.' + p + '.seeds')}
+      ok('UG3 seeds: declaring sim.<p>.seeds does not excuse a missing seed', P5.every(p => seedFails(onlyE, decl).some(x => x.key === 'UG3.sim.' + p + '.tamar1374')))
+      const accS = {unit: 'FX', profiles: P5, gates: ['UG3'], waive: Object.fromEntries(ALL_GATES.filter(g => g !== 'UG3').map(g => [g, 'fixture without a tree'])), checks: [], ...decl}
+      const scS = acceptScore(accS, onlyE, () => B3, {allowStale: true})
+      ok('UG3 seeds: acceptScore with declared seed keys still fails the missing seed', !scS.pass && scS.failing.some(x => /^UG3\.sim\.iphone13\.tamar1374$/.test(x.key)), JSON.stringify(scS.failing.map(x => x.key)))
+      const B1 = {repo: mkRepo(b0t), sim: simOf(['epeshu'])}
+      ok('UG3 seeds: a baseline without tamar1374 does not excuse the capture lacking it', gateResults({gates: ['UG3'], profiles: P5}, onlyE, () => B1, {}).some(x => x.key === 'UG3.sim.desktop.tamar1374'))
+      const errd = {repo: mkRepo(b0t), sim: Object.fromEntries(P5.map(p => [p, {seeds: {}, error: 'boom'}]))}
+      ok('UG3 seeds: errored sim profiles with no seeds fail in gateResults alone', seedFails(errd).some(x => x.key === 'UG3.sim.desktop.epeshu'))
+      const cliS = cp.spawnSync(process.execPath, [__filename, '--accept', f, '--seeds', 'epeshu'], {encoding: 'utf8'})
+      ok('UG3 seeds: --accept refuses a --seeds override without both canon seeds', cliS.status === 1 && /capture\.seeds/.test(cliS.stdout), 'status ' + cliS.status + ' ' + cliS.stdout.slice(0, 160))
+    }
     ok('UG3: an undeclared new token beside declared lines fails the occurrence count', run(['function ladderTick(){ return performance.now() }', 'const seedJitter = Math.random()*Date.now()'], {repo: mkRepo(cpt + 'x = performance.now()\n'), sim: {desktop: {seeds}}}).some(x => /clock_tokens\.index\.P$/.test(x.key)))
   }
   // UG8 through the gate: a full-resolution hairline change behind reduced copies fails desktop identity
@@ -1537,6 +1641,17 @@ async function selfTest() {
     const u8 = c => gateResults({gates: ['UG8'], profiles: ['desktop', 'desktop2x']}, c, () => B, {}).filter(x => /shot_diff/.test(x.key))
     ok('UG8: identical full-resolution shots pass', u8(same).length === 0, JSON.stringify(u8(same)))
     ok('UG8: a hairline change that the 1/3 copies hide fails at full resolution', u8(changed).some(x => x.key === 'UG8.atlas.desktop.shot_diff'), JSON.stringify(u8(changed)))
+    // a conditional view (3-layers, 2-ledger) missing from the capture fails; the baseline's views, not the capture's, set the list
+    const Bw = {atlas: {desktop: prof({...shot(base, 'bv'), w: shot(base, 'bw').v}), desktop2x: prof({...shot(base, 'bv2'), w: shot(base, 'bw2').v})}}
+    const noW = {atlas: {desktop: prof(shot(base, 'nv')), desktop2x: prof({...shot(base, 'nv2'), w: shot(base, 'nw2').v})}}
+    const u8w = (c, acc) => gateResults({gates: ['UG8'], profiles: ['desktop', 'desktop2x'], ...(acc || {})}, c, () => Bw, {}).filter(x => /shot_diff/.test(x.key))
+    ok('UG8: a view the baseline holds and the capture lacks fails with a reason', u8w(noW).some(x => x.key === 'UG8.atlas.desktop.shot_diff' && /missing from the capture/.test(x.got)) && !u8w(noW).some(x => x.key === 'UG8.atlas.desktop2x.shot_diff'), JSON.stringify(u8w(noW)))
+    const pdw = shotDiffFor(noW, Bw, 'atlas', 'desktop', [], null)
+    ok('UG8: shotDiffFor over an empty capture shot set is 1, not 0', shotDiffFor({atlas: {desktop: {shots: {}}}}, Bw, 'atlas', 'desktop', [], null).diff === 1 && pdw.diff === 1 && /missing from the capture/.test(pdw.per.w), JSON.stringify(pdw))
+    ok('UG8: a check on a named view the capture lacks fails', shotDiffFor(noW, Bw, 'atlas', 'desktop', [], 'w').diff === 1)
+    ok('UG8: a view the accept file requires and neither side holds fails', u8w(same, {shot_views: ['3-layers']}).some(x => x.key === 'UG8.atlas.desktop.shot_diff' && /3-layers/.test(x.got)), JSON.stringify(u8w(same, {shot_views: ['3-layers']})))
+    ok('UG8: a view named by an accept shot_diff check is required', u8w(same, {checks: [{key: 'atlas.desktop2x.shot_diff.2-ledger', op: '<=', value: 0.005}]}).some(x => x.key === 'UG8.atlas.desktop2x.shot_diff' && /2-ledger/.test(x.got)))
+    ok('lint: shot_views must be an array of names', lintAccept({...a1, shot_views: 'x'}).some(x => /shot_views/.test(x)) && !lintAccept({...a1, shot_views: ['3-layers']}).some(x => /shot_views/.test(x)))
     ok('UG8: the reduced copies alone diff 0 (the reason for full_path)', imageDiff(fs.readFileSync(path.join(dir, 'h1.png')), fs.readFileSync(path.join(dir, 'b1.png'))).diff === 0)
   }
   // chrome_cover.peek / .half: a check never passes on null, 'no-sheet' or 'unmeasured'
@@ -1550,7 +1665,36 @@ async function selfTest() {
     ok('peek: null fails even == null', !sc(acc('==', null), null))
     ok('peek: no-sheet fails != 0', !sc(acc('!=', 0), 'no-sheet'))
     ok('peek: unmeasured fails', !sc(acc('<=', 0.35), 'unmeasured: x'))
+    ok('peek: "unmeasured: stop not reached" fails a peek check', !sc(acc('<=', 0.35), 'unmeasured: stop not reached (hook asked peek, sheet reports none)'))
     ok('peek: an undeclared null against B0 no-sheet fails the unchanged rule', !acceptScore({...acc('<=', 1), declared_change_keys: [], checks: []}, capOf(null), () => capOf('no-sheet'), {allowStale: true}).pass)
+  }
+  // sheet stops via the hook: the sheet must report the stop it was driven to, and half must move from peek
+  {
+    const fakeP = hookImpl => {
+      const st = {stop: null, rect: [0, 400, 390, 264]}
+      const page = {evaluate: async (fn, arg) => {
+        if (fn === sheetProbe) return {hook: true, handle: null, stop: st.stop, rect: st.rect.slice()}
+        const src = String(fn)
+        if (/sheet\.stop/.test(src)) { hookImpl(st, arg[1]); return }
+        if (/chromeCover/.test(src)) return 0.2 + (st.rect[1] < 300 ? 0.3 : 0)
+        throw new Error('unexpected evaluate')
+      }}
+      return {page}
+    }
+    const run = h => sheetStops(fakeP(h), 'ATLAS', '#panel', PROFILES.iphone13, false)
+    const noop = await run(() => {})
+    ok('sheet: a no-op hook leaves peek and half unmeasured (stop not reached)', /^unmeasured: stop not reached/.test(noop.peek) && /^unmeasured: stop not reached/.test(noop.half), JSON.stringify(noop))
+    const good = await run((s, k) => { s.stop = k; s.rect = k === 'peek' ? [0, 500, 390, 164] : [0, 250, 390, 414] })
+    ok('sheet: a hook that reaches and reports each stop is measured', good.peek === 0.2 && good.half === 0.5, JSON.stringify(good))
+    const stuck = await run(s => { s.stop = 'peek'; s.rect = [0, 500, 390, 164] })
+    ok('sheet: a hook stuck at peek leaves half unmeasured', stuck.peek === 0.2 && /^unmeasured: stop not reached/.test(stuck.half), JSON.stringify(stuck))
+    const liar = await run((s, k) => { s.stop = k })
+    ok('sheet: a hook that reports half without moving the sheet leaves half unmeasured', typeof liar.peek === 'number' && /^unmeasured: stop not reached/.test(liar.half), JSON.stringify(liar))
+    const WV3 = Object.fromEntries(ALL_GATES.map(g => [g, 'fixture without a tree']))
+    const accN = {unit: 'FX', profiles: ['iphone13'], gates: [], waive: WV3, declared_change_keys: ['atlas.iphone13.chrome_cover.peek', 'atlas.iphone13.chrome_cover.half'], checks: [{key: 'atlas.iphone13.chrome_cover.peek', op: '<=', value: 0.35}, {key: 'atlas.iphone13.chrome_cover.half', op: '<=', value: 0.6}]}
+    const capN = v => ({atlas: {iphone13: {chrome_cover: v}}})
+    ok('sheet: a no-op hook capture fails the peek/half checks', !acceptScore(accN, capN(noop), () => capN({peek: 'no-sheet', half: 'no-sheet'}), {allowStale: true}).pass)
+    ok('sheet: a working hook capture passes the peek/half checks', acceptScore(accN, capN(good), () => capN({peek: 'no-sheet', half: 'no-sheet'}), {allowStale: true}).pass)
   }
   // clock tokens by occurrence, brace range
   const ct = clockTokens('a = Math.random() + Math.random()\nb = Date.now()\nc = 1\n'); ok('clock tokens count occurrences', ct.P.occurrences === 3 && ct.P.lines === 2)
@@ -1577,6 +1721,7 @@ async function main() {
   if (a.accept) {
     const acc = JSON.parse(rd(a.accept)), errs = lintAccept(acc)
     if (errs.length) { console.log(JSON.stringify({unit: acc.unit, pass: false, failing: errs.map(e => ({key: 'lint', op: 'lint', expected: 'valid accept file', got: e}))}, null, 1)); process.exit(1) }
+    if (a.seeds && REQUIRED_SEEDS.some(x => !a.seeds.split(',').includes(x))) { console.log(JSON.stringify({unit: acc.unit, pass: false, failing: [{key: 'capture.seeds', op: 'gate', expected: 'every capture scored by --accept includes ' + REQUIRED_SEEDS.join(','), got: a.seeds}]}, null, 1)); process.exit(1) }
     const refOf = resolveRefs(acc, a)
     let cap, capPath = a.capture || acc.capture
     if (capPath) cap = JSON.parse(rd(capPath))
@@ -1606,4 +1751,4 @@ async function main() {
   if (!outp) process.stdout.write(text)
 }
 if (require.main === module) main().catch(e => { console.error(e.stack || e); process.exit(2) })
-module.exports = {tapOutcome, shotDiffFor, shotsDirName, gateResults, controlsFile, openPage, simStart, simViews, loadPlaywright, launch, resolveCdn, pump, PROFILES, startServer, repoChecks, clockTokens, braceRange, pngDecode, pngEncode, imageDiff, lintAccept, acceptScore, compareCaptures, runCapture, planOptions}
+module.exports = {tapOutcome, tapFixtureDisagreements, rescoreTapFixture, shotDiffFor, shotsDirName, gateResults, controlsFile, openPage, simStart, simViews, loadPlaywright, launch, resolveCdn, pump, PROFILES, startServer, repoChecks, clockTokens, braceRange, pngDecode, pngEncode, imageDiff, lintAccept, acceptScore, compareCaptures, runCapture, planOptions}
