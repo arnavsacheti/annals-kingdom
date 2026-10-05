@@ -1,0 +1,87 @@
+{
+  "unit": "D6",
+  "profiles": [
+    "iphone13",
+    "pixel7",
+    "landscape",
+    "desktop",
+    "desktop2x"
+  ],
+  "clock": "virtual",
+  "files_touched": [
+    "tools/build-offline-manifest.js"
+  ],
+  "gates": [
+    "UG1",
+    "UG2",
+    "UG3",
+    "UG4",
+    "UG5",
+    "UG6",
+    "UG7",
+    "UG8",
+    "UG9",
+    "UG10",
+    "UG11"
+  ],
+  "baseline": "after-D2",
+  "declared_change_keys": [],
+  "mask": [],
+  "strings": [],
+  "checks": [
+    {
+      "key": "atlas.iphone13.errors.unexplained",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.iphone13.errors.page",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.pixel7.errors.unexplained",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.pixel7.errors.page",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop.errors.unexplained",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop.errors.page",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop2x.errors.unexplained",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop2x.errors.page",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    }
+  ],
+  "unscored": [
+    "run twice -> byte-identical output; sorted keys; no clock in output",
+    "per-file byte sums equal `du -b` of the listed files",
+    "--check exits 1 on a temp copy where a listed raster changed and TILES_V did not; exits 0 when TILES_V was bumped",
+    "works before D3/D4/D5 land (absent TILES_V -> tileset null; absent vendor/ -> omitted); writes only maps-site/data/offline-manifest.json (--atlas) or offline-manifest.json (--sim); `--check` is also run as the last step of A-U7 and S-U10 (the last app-file edit of each lane) because later unit edits change the file set"
+  ]
+}
