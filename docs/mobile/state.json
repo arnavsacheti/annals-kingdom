@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "item": "Mobile 3",
+  "item": "Mobile 4",
   "app_sha": {
     "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
     "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
@@ -44,6 +44,378 @@
       },
       "failing": [],
       "ref_before": "after-D2"
+    },
+    "D3": {
+      "status": "failed",
+      "attempts": 3,
+      "capture": "docs/mobile/captures/D3.json",
+      "files_sha": {
+        "docs/mobile/accept/D3.json": "360ac81d469bcd566f6403d71cc6c757ba105b5c166e42d4d4ca58b187174138",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "failing": [
+        {
+          "key": "UG8.atlas.desktop.metrics",
+          "op": "gate",
+          "expected": "equal to B0 except declared",
+          "got": "first_load.by_cat.html_other.requests 13 vs 1; first_load.by_cat.html_other.bytes 344618 vs 67676; first_load.routed [] vs [{\"host\":\"unpkg.com\",\"path\":\"dist/leaflet.css\",\"length\":14806},{\"host\":\"unpkg.com\",\"path\":\"dist/leaflet.js\",\"length\":147552},{\"host\":\"unpkg.com\",\"path\":\"images/layers.png\",\"length\":696}]; first_load.aborted [] vs [\"fonts.googleapis.com\"]"
+        },
+        {
+          "key": "UG8.atlas.desktop.shot_diff",
+          "op": "gate",
+          "expected": "<= 0.005",
+          "got": "0.2006218734748658 {\"1-contents\":0.05477,\"2-whole-chart\":0.09922,\"3-layers\":0.10625,\"4-place-card\":0.20062}"
+        },
+        {
+          "key": "UG8.atlas.desktop2x.metrics",
+          "op": "gate",
+          "expected": "equal to B0 except declared",
+          "got": "first_load.by_cat.html_other.requests 13 vs 1; first_load.by_cat.html_other.bytes 345182 vs 67676; first_load.routed [] vs [{\"host\":\"unpkg.com\",\"path\":\"dist/leaflet.css\",\"length\":14806},{\"host\":\"unpkg.com\",\"path\":\"dist/leaflet.js\",\"length\":147552},{\"host\":\"unpkg.com\",\"path\":\"images/layers-2x.png\",\"length\":1259}]; first_load.aborted [] vs [\"fonts.googleapis.com\"]"
+        },
+        {
+          "key": "UG8.atlas.desktop2x.shot_diff",
+          "op": "gate",
+          "expected": "<= 0.005",
+          "got": "0.18951543209876542 {\"1-contents\":0.04556,\"2-whole-chart\":0.08729,\"3-layers\":0.09572,\"4-place-card\":0.18952}"
+        },
+        {
+          "key": "atlas.iphone13.first_load.by_cat.html_other.requests",
+          "op": "unchanged",
+          "expected": 1,
+          "got": 9
+        },
+        {
+          "key": "atlas.iphone13.first_load.by_cat.html_other.bytes",
+          "op": "unchanged",
+          "expected": 67676,
+          "got": 297718
+        },
+        {
+          "key": "atlas.iphone13.first_load.routed",
+          "op": "unchanged",
+          "expected": [
+            {
+              "host": "unpkg.com",
+              "path": "dist/leaflet.css",
+              "length": 14806
+            },
+            {
+              "host": "unpkg.com",
+              "path": "dist/leaflet.js",
+              "length": 147552
+            },
+            {
+              "host": "unpkg.com",
+              "path": "images/layers-2x.png",
+              "length": 1259
+            }
+          ],
+          "got": []
+        },
+        {
+          "key": "atlas.iphone13.first_load.aborted",
+          "op": "unchanged",
+          "expected": [
+            "fonts.googleapis.com"
+          ],
+          "got": []
+        },
+        {
+          "key": "atlas.iphone13.contents.kickerTop",
+          "op": "unchanged",
+          "expected": -26,
+          "got": -60
+        },
+        {
+          "key": "atlas.iphone13.contents.titleTop",
+          "op": "unchanged",
+          "expected": -8,
+          "got": -42
+        },
+        {
+          "key": "atlas.iphone13.contents.footBottom",
+          "op": "unchanged",
+          "expected": 690,
+          "got": 724
+        },
+        {
+          "key": "atlas.iphone13.contents.cardTops",
+          "op": "unchanged",
+          "expected": [
+            80,
+            193,
+            326,
+            439,
+            551
+          ],
+          "got": [
+            52,
+            185,
+            318,
+            451,
+            564
+          ]
+        },
+        {
+          "key": "atlas.iphone13.repeat_visit.cache_hits",
+          "op": "unchanged",
+          "expected": 37,
+          "got": 45
+        },
+        {
+          "key": "atlas.iphone13.doc_scroll",
+          "op": "unchanged",
+          "expected": 974,
+          "got": 970
+        },
+        {
+          "key": "atlas.iphone13.share_visible",
+          "op": "unchanged",
+          "expected": 0.3602,
+          "got": 0.3567
+        },
+        {
+          "key": "atlas.iphone13.targets_under_44.count",
+          "op": "unchanged",
+          "expected": 71,
+          "got": 74
+        },
+        {
+          "key": "atlas.iphone13",
+          "op": "unchanged",
+          "expected": "equal to after-D6",
+          "got": "30 more keys differ"
+        },
+        {
+          "key": "atlas.pixel7.first_load.by_cat.html_other.requests",
+          "op": "unchanged",
+          "expected": 1,
+          "got": 9
+        },
+        {
+          "key": "atlas.pixel7.first_load.by_cat.html_other.bytes",
+          "op": "unchanged",
+          "expected": 67676,
+          "got": 297718
+        },
+        {
+          "key": "atlas.pixel7.first_load.routed",
+          "op": "unchanged",
+          "expected": [
+            {
+              "host": "unpkg.com",
+              "path": "dist/leaflet.css",
+              "length": 14806
+            },
+            {
+              "host": "unpkg.com",
+              "path": "dist/leaflet.js",
+              "length": 147552
+            },
+            {
+              "host": "unpkg.com",
+              "path": "images/layers-2x.png",
+              "length": 1259
+            }
+          ],
+          "got": []
+        },
+        {
+          "key": "atlas.pixel7.first_load.aborted",
+          "op": "unchanged",
+          "expected": [
+            "fonts.googleapis.com"
+          ],
+          "got": []
+        },
+        {
+          "key": "atlas.pixel7.contents.kickerTop",
+          "op": "unchanged",
+          "expected": 72,
+          "got": 38
+        },
+        {
+          "key": "atlas.pixel7.contents.titleTop",
+          "op": "unchanged",
+          "expected": 90,
+          "got": 56
+        },
+        {
+          "key": "atlas.pixel7.contents.footBottom",
+          "op": "unchanged",
+          "expected": 767,
+          "got": 801
+        },
+        {
+          "key": "atlas.pixel7.contents.cardTops",
+          "op": "unchanged",
+          "expected": [
+            178,
+            290,
+            403,
+            516,
+            629
+          ],
+          "got": [
+            150,
+            262,
+            395,
+            529,
+            641
+          ]
+        },
+        {
+          "key": "atlas.pixel7.repeat_visit.cache_hits",
+          "op": "unchanged",
+          "expected": 32,
+          "got": 40
+        },
+        {
+          "key": "atlas.pixel7.doc_scroll",
+          "op": "unchanged",
+          "expected": 1265,
+          "got": 1262
+        },
+        {
+          "key": "atlas.pixel7.share_visible",
+          "op": "unchanged",
+          "expected": 0.2924,
+          "got": 0.2907
+        },
+        {
+          "key": "atlas.pixel7.targets_under_44.count",
+          "op": "unchanged",
+          "expected": 77,
+          "got": 76
+        },
+        {
+          "key": "atlas.pixel7",
+          "op": "unchanged",
+          "expected": "equal to after-D6",
+          "got": "33 more keys differ"
+        },
+        {
+          "key": "atlas.landscape.first_load.by_cat.html_other.requests",
+          "op": "unchanged",
+          "expected": 1,
+          "got": 9
+        },
+        {
+          "key": "atlas.landscape.first_load.by_cat.html_other.bytes",
+          "op": "unchanged",
+          "expected": 67676,
+          "got": 297718
+        },
+        {
+          "key": "atlas.landscape.first_load.routed",
+          "op": "unchanged",
+          "expected": [
+            {
+              "host": "unpkg.com",
+              "path": "dist/leaflet.css",
+              "length": 14806
+            },
+            {
+              "host": "unpkg.com",
+              "path": "dist/leaflet.js",
+              "length": 147552
+            },
+            {
+              "host": "unpkg.com",
+              "path": "images/layers-2x.png",
+              "length": 1259
+            }
+          ],
+          "got": []
+        },
+        {
+          "key": "atlas.landscape.first_load.aborted",
+          "op": "unchanged",
+          "expected": [
+            "fonts.googleapis.com"
+          ],
+          "got": []
+        },
+        {
+          "key": "atlas.landscape.contents.kickerTop",
+          "op": "unchanged",
+          "expected": -57,
+          "got": -71
+        },
+        {
+          "key": "atlas.landscape.contents.titleTop",
+          "op": "unchanged",
+          "expected": -39,
+          "got": -53
+        },
+        {
+          "key": "atlas.landscape.contents.footBottom",
+          "op": "unchanged",
+          "expected": 397,
+          "got": 411
+        },
+        {
+          "key": "atlas.landscape.contents.cardTops",
+          "op": "unchanged",
+          "expected": [
+            64,
+            64,
+            64,
+            217,
+            217
+          ],
+          "got": [
+            57,
+            57,
+            57,
+            210,
+            210
+          ]
+        },
+        {
+          "key": "atlas.landscape.repeat_visit.cache_hits",
+          "op": "unchanged",
+          "expected": 32,
+          "got": 40
+        },
+        {
+          "key": "failing.more",
+          "op": "loop",
+          "expected": "at most 40 recorded",
+          "got": "21 more (see the run result)"
+        }
+      ],
+      "ref_before": "after-D6"
+    },
+    "D5": {
+      "status": "skipped",
+      "attempts": 0,
+      "capture": null,
+      "files_sha": {},
+      "failing": [
+        {
+          "key": "skipped",
+          "op": "loop",
+          "expected": "a run",
+          "got": "dependency not satisfied: D3 is failed"
+        }
+      ],
+      "ref_before": null
+    },
+    "A-U1": {
+      "status": "skipped",
+      "attempts": 0,
+      "capture": null,
+      "files_sha": {},
+      "failing": [
+        {
+          "key": "skipped",
+          "op": "loop",
+          "expected": "a run",
+          "got": "dependency not satisfied: D5 is skipped"
+        }
+      ],
+      "ref_before": null
     }
   },
   "rebase": [

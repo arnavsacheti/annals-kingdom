@@ -1,0 +1,175 @@
+{
+  "unit": "D3",
+  "profiles": [
+    "iphone13",
+    "pixel7",
+    "landscape",
+    "desktop",
+    "desktop2x"
+  ],
+  "clock": "virtual",
+  "files_touched": [
+    "maps-site/index.html",
+    "maps-site/vendor/",
+    "docs/mobile/accept/D3.json",
+    "maps-site/vendor/fonts/"
+  ],
+  "gates": [
+    "UG1",
+    "UG2",
+    "UG3",
+    "UG4",
+    "UG5",
+    "UG6",
+    "UG7",
+    "UG8",
+    "UG9",
+    "UG10",
+    "UG11"
+  ],
+  "baseline": "after-D6",
+  "declared_change_keys": [
+    "atlas.iphone13.first_load.foreign_origins",
+    "atlas.iphone13.first_load.bytes",
+    "atlas.iphone13.first_load.requests",
+    "atlas.iphone13.first_load.max_asset.bytes",
+    "atlas.iphone13.first_load.max_asset.path",
+    "atlas.iphone13.repeat_visit.bytes",
+    "atlas.iphone13.repeat_visit.requests",
+    "atlas.pixel7.first_load.foreign_origins",
+    "atlas.pixel7.first_load.bytes",
+    "atlas.pixel7.first_load.requests",
+    "atlas.pixel7.first_load.max_asset.bytes",
+    "atlas.pixel7.first_load.max_asset.path",
+    "atlas.pixel7.repeat_visit.bytes",
+    "atlas.pixel7.repeat_visit.requests",
+    "atlas.landscape.first_load.foreign_origins",
+    "atlas.landscape.first_load.bytes",
+    "atlas.landscape.first_load.requests",
+    "atlas.landscape.first_load.max_asset.bytes",
+    "atlas.landscape.first_load.max_asset.path",
+    "atlas.landscape.repeat_visit.bytes",
+    "atlas.landscape.repeat_visit.requests",
+    "atlas.desktop.first_load.foreign_origins",
+    "atlas.desktop.first_load.bytes",
+    "atlas.desktop.first_load.requests",
+    "atlas.desktop.first_load.max_asset.bytes",
+    "atlas.desktop.first_load.max_asset.path",
+    "atlas.desktop.repeat_visit.bytes",
+    "atlas.desktop.repeat_visit.requests",
+    "atlas.desktop2x.first_load.foreign_origins",
+    "atlas.desktop2x.first_load.bytes",
+    "atlas.desktop2x.first_load.requests",
+    "atlas.desktop2x.first_load.max_asset.bytes",
+    "atlas.desktop2x.first_load.max_asset.path",
+    "atlas.desktop2x.repeat_visit.bytes",
+    "atlas.desktop2x.repeat_visit.requests"
+  ],
+  "declared_first_view_growth": {
+    "bytes": 370000,
+    "requests": 14
+  },
+  "mask": [],
+  "strings": [],
+  "checks": [
+    {
+      "key": "atlas.iphone13.errors.unexplained",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.iphone13.errors.page",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.pixel7.errors.unexplained",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.pixel7.errors.page",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop.errors.unexplained",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop.errors.page",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop2x.errors.unexplained",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop2x.errors.page",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.iphone13.first_load.foreign_origins",
+      "op": "deep-equals",
+      "value": [],
+      "was": [
+        "https://fonts.googleapis.com",
+        "https://unpkg.com"
+      ]
+    },
+    {
+      "key": "atlas.pixel7.first_load.foreign_origins",
+      "op": "deep-equals",
+      "value": [],
+      "was": [
+        "https://fonts.googleapis.com",
+        "https://unpkg.com"
+      ]
+    },
+    {
+      "key": "atlas.landscape.first_load.foreign_origins",
+      "op": "deep-equals",
+      "value": [],
+      "was": [
+        "https://fonts.googleapis.com",
+        "https://unpkg.com"
+      ]
+    },
+    {
+      "key": "atlas.desktop.first_load.foreign_origins",
+      "op": "deep-equals",
+      "value": [],
+      "was": [
+        "https://fonts.googleapis.com",
+        "https://unpkg.com"
+      ]
+    },
+    {
+      "key": "atlas.desktop2x.first_load.foreign_origins",
+      "op": "deep-equals",
+      "value": [],
+      "was": [
+        "https://fonts.googleapis.com",
+        "https://unpkg.com"
+      ]
+    }
+  ],
+  "unscored": [
+    "sources (npm, run in a scratch dir): `npm pack leaflet@1.9.4` -> package/dist/{leaflet.css,leaflet.js,images/*}; `npm pack @fontsource/eb-garamond@5.3.0 @fontsource/lora@5.3.0 @fontsource/ibm-plex-mono@5.3.0` -> package/files/<family>-{latin,latin-ext}-<weight>-<style>.woff2 for exactly EB Garamond 400 normal, 400 italic, 600 normal; Lora 400 normal, 400 italic, 600 normal; IBM Plex Mono 400 normal, 600 normal, plus each package's LICENSE (OFL) beside the files and hand-written @font-face rules with the fontsource unicode-range. sha256 of leaflet.css = a7837102824184820dfa198d1ebcd109ff6d0ff9a2672a074b9a1b4d147d04c6 and of leaflet.js = db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a, equal to the existing SRI hashes (integrity attributes kept); the font shas are listed in docs/mobile/inputs/vendor-shas.txt and recorded in maps-site/vendor/SHA256SUMS; a Playwright route on **/leaflet@1.9.4/dist/* fires for the vendored URL (the filigree sandbox recipe still applies)",
+    "document.fonts.check true for EB Garamond 400/600/400i, Lora 400/600/400i, IBM Plex Mono 400/600; the latin-ext woff2 is requested when Epēshu or Nīmlad is on screen; font-display:swap; OFL texts beside the files",
+    "font bytes on iphone13 first load <= 200 KB transferred",
+    "desktop reference re-taken as R1 after this unit (declared change: fonts now render)"
+  ]
+}
