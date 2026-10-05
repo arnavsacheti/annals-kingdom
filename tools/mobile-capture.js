@@ -13,6 +13,11 @@
 //   node tools/mobile-capture.js --compare A.json B.json
 //   node tools/mobile-capture.js --mutate-only --mutate-html maps-site/index.html   (D7/D8 fixture)
 //   node tools/mobile-capture.js --self-test
+// One capture at a time: a run that launches a browser (capture, or --accept without --capture) first takes
+// <os.tmpdir()>/annals-mobile-capture.lock {pid, boot, started, argv}; while a live pid holds it the run waits (15 s polls,
+// up to 3 h, then exit 2); a dead pid's lock, or one from another boot (a pid reused after a container restart), is
+// taken over; released on exit, error, SIGINT, SIGTERM.
+// --lint-accept, --compare, --accept with --capture, --mutate-only and --self-test take no lock.
 'use strict'
 const fs = require('fs'), path = require('path'), http = require('http'), crypto = require('crypto'), zlib = require('zlib')
 const cp = require('child_process'), os = require('os')
@@ -1701,9 +1706,58 @@ async function selfTest() {
   ok('keydown range braces matched', braceRange("x\nwindow.addEventListener('keydown', e => {\n  if(a){b}\n});\nrest", "window.addEventListener('keydown'").endsWith('});'))
   const rep = repoChecks()
   ok('repo: index clock tokens 37 on P', rep.clock_tokens.index.P.occurrences === 37, String(rep.clock_tokens.index.P.occurrences))
+  {   // the one-capture lock, on a private lock file
+    const lf = path.join(tmp, 'lock'), held = {pid: process.ppid, started: '2020-01-01T00:00:00.000Z', argv: []}
+    fs.writeFileSync(lf, JSON.stringify(held))
+    const busy = await acquireLock({file: lf, maxWaitMs: 0, pollMs: 10})
+    ok('lock: held by a live pid (the parent) -> running verdict', !busy.held && busy.verdict === 'running' && busy.pid === process.ppid && busy.started === held.started && JSON.parse(fs.readFileSync(lf, 'utf8')).pid === process.ppid, JSON.stringify(busy))
+    fs.writeFileSync(lf, JSON.stringify({...held, pid: 4194305}))
+    const take = await acquireLock({file: lf, maxWaitMs: 0, pollMs: 10})
+    ok('lock: a dead pid\'s lock is taken over', take.held && JSON.parse(fs.readFileSync(lf, 'utf8')).pid === process.pid)
+    releaseLock(); ok('lock: released on exit (file removed)', !fs.existsSync(lf))
+    fs.writeFileSync(lf, JSON.stringify({...held, boot: 'another-boot'}))
+    const reboot = await acquireLock({file: lf, maxWaitMs: 0, pollMs: 10})
+    ok('lock: a live pid from another boot is taken over', !BOOT_ID || (reboot.held && JSON.parse(fs.readFileSync(lf, 'utf8')).pid === process.pid))
+    releaseLock()
+  }
   fs.rmSync(tmp, {recursive: true, force: true})
   const bad2 = out.filter(x => !x.ok)
   return {pass: bad2.length === 0, checks: out.length, failing: bad2}
+}
+
+// ---------------------------------------------------------------- one capture at a time
+const LOCK_FILE = path.join(os.tmpdir(), 'annals-mobile-capture.lock')
+const LOCK_POLL_MS = 15000, LOCK_MAX_WAIT_MS = 3 * 3600 * 1000
+const pidAlive = pid => { try { process.kill(pid, 0); return true } catch (e) { return e.code === 'EPERM' } }
+const BOOT_ID = (() => { try { return fs.readFileSync('/proc/sys/kernel/random/boot_id', 'utf8').trim() } catch (e) { return '' } })()
+let heldLock = null
+function releaseLock() {   // only a lock that still names this process; sync so the exit handler can run it
+  if (!heldLock) return
+  const f = heldLock; heldLock = null
+  try { if (JSON.parse(fs.readFileSync(f, 'utf8')).pid === process.pid) fs.unlinkSync(f) } catch (e) { /* already gone */ }
+}
+async function acquireLock(opts) {   // {file, maxWaitMs, pollMs} are internal (the self-test); resolves {held: true} or {held: false, verdict: 'running', pid, started}
+  const o = {file: LOCK_FILE, maxWaitMs: LOCK_MAX_WAIT_MS, pollMs: LOCK_POLL_MS, ...opts}, t0 = Date.now(); let told = false
+  for (;;) {
+    try {
+      fs.writeFileSync(o.file, JSON.stringify({pid: process.pid, boot: BOOT_ID, started: new Date().toISOString(), argv: process.argv.slice(2)}), {flag: 'wx'})
+      if (!heldLock) { process.on('exit', releaseLock); for (const [s, c] of [['SIGINT', 130], ['SIGTERM', 143]]) process.on(s, () => process.exit(c)) }
+      heldLock = o.file; return {held: true}
+    } catch (e) { if (e.code !== 'EEXIST') throw e }
+    let raw = null, cur = null; try { raw = fs.readFileSync(o.file, 'utf8'); cur = JSON.parse(raw) } catch (e) { /* unreadable: stale unless it is being written right now */ }
+    if (raw !== null && !cur && Date.now() - t0 < 1000) { await sleep(50); continue }
+    if (!cur || !Number.isInteger(cur.pid) || cur.pid === process.pid || !pidAlive(cur.pid) || (cur.boot && BOOT_ID && cur.boot !== BOOT_ID)) {   // stale: take it over, once more checking nobody replaced it meanwhile
+      try { if (fs.readFileSync(o.file, 'utf8') === raw) fs.unlinkSync(o.file) } catch (e) { /* lost the race: loop and look again */ }
+      continue
+    }
+    if (Date.now() - t0 >= o.maxWaitMs) return {held: false, verdict: 'running', pid: cur.pid, started: cur.started}
+    if (!told) { log('another capture is running (pid ' + cur.pid + ', since ' + cur.started + ')'); told = true }
+    await sleep(Math.min(o.pollMs, Math.max(0, o.maxWaitMs - (Date.now() - t0))))
+  }
+}
+async function withLock(opts) {
+  const r = await acquireLock(opts)
+  if (!r.held) { log('another capture is running (pid ' + r.pid + ', since ' + r.started + '): gave up waiting'); process.exit(2) }
 }
 
 // ---------------------------------------------------------------- main
@@ -1730,6 +1784,7 @@ async function main() {
       o.atlas = acc.checks.some(c => /^atlas\./.test(c.key)) || acc.gates.some(g => ['UG3', 'UG7', 'UG8', 'UG10'].includes(g)) && !acc.checks.every(c => /^sim\./.test(c.key))
       o.sim = acc.checks.some(c => /^sim\./.test(c.key)) || acc.gates.some(g => ['UG3', 'UG5', 'UG8', 'UG10'].includes(g)) && !acc.checks.every(c => /^atlas\./.test(c.key))
       if (!o.atlas && !o.sim) o.atlas = o.sim = true
+      await withLock()
       cap = await runCapture(o); fs.mkdirSync(path.join(REPO, 'docs/mobile/captures'), {recursive: true}); fs.writeFileSync(path.join(REPO, 'docs/mobile/captures', acc.unit + '.json'), JSON.stringify(cap, null, 1) + '\n')
     }
     addReachVsControls(cap)
@@ -1743,6 +1798,7 @@ async function main() {
     env.browser = await launch(pw)
     try { const key = o.want[0]; const r = await extraMutate(env, key, {...o, profile: o.profiles[key]}, file === 'index.html' ? '/' : '/' + file.replace(/index\.html$/, ''), file); console.log(JSON.stringify(r)); process.exit(r.served_has_v2 && !r.first_visit_has_v2 ? 0 : 1) } finally { await env.browser.close(); await env.server.close() }
   }
+  await withLock()
   const cap = await runCapture(o)
   const text = JSON.stringify(cap, null, 1) + '\n'
   const outp = a.out || (o.unit ? 'docs/mobile/captures/' + o.unit + '.json' : null)

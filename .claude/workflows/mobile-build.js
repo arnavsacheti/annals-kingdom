@@ -7,13 +7,13 @@ export const meta = {
     {title: 'Hold', detail: 'per unit: the Filigree 1 hold flag (app-file units) and the rebase trigger read'},
     {title: 'Rebase', detail: 'app files or pipeline scripts changed outside the loop: re-take the reference capture, record it in state.json. A passed unit\'s own capture becomes the reference for the next unit (after-<id>)'},
     {title: 'Accept', detail: 'accept-author writes docs/mobile/accept/<id>.json from the acceptance bullets only; --lint-accept; checked in code'},
-    {title: 'Snapshot', detail: 'copy the unit files, the accept file, the owner answers and the whole tree (index.html, maps-site/, tools/, .claude/, server.js, vendor/) with sha manifests, pipeline shas, the scope marker'},
+    {title: 'Snapshot', detail: 'tools/mobile-tree.js (deterministic; the agent only relays its one-line JSON, length-checked in code) copies the unit files, the accept file, the owner answers and the whole tree (index.html, maps-site/, tools/, .claude/, server.js, vendor/) with sha manifests, pipeline shas and a content manifest of the repo'},
     {title: 'Implement', detail: 'the unit model and effort; writable set = the unit files minus the accept file; then UG1, UG11 and scope scored in code'},
-    {title: 'Measure', detail: 'haiku/low runs tools/mobile-capture.js --accept; the script scores exit code, pass and failing'},
+    {title: 'Measure', detail: 'sonnet/low runs tools/mobile-capture.js --accept (one capture at a time; --server spawn decided in code); the script scores exit code, pass and failing'},
     {title: 'Fix', detail: '<=2 fix rounds fed the failing keys; review fixes fed the surviving findings'},
     {title: 'Review', detail: 'lenses (desktop identity, delay-not-drop parity, determinism, voice, acceptance) -> refute each blocker/major -> fix -> fresh re-review (<=2 cycles)'},
-    {title: 'Restore', detail: 'on failure: restore the unit files, the accept file, the owner answers and every tree path that moved from the snapshot, verify every manifest in code; any .claude/ or tools/street-drift.js change halts the whole item (UG11); a write outside every snapshotted path halts it too'},
-    {title: 'Record', detail: 'docs/mobile/state.json written verbatim and length-checked after every unit and every rebase'}
+    {title: 'Restore', detail: 'on failure: tools/mobile-tree.js (deterministic; the agent only relays its one-line JSON, length-checked in code) restores the unit files, the accept file, the owner answers and every tree path that moved from the snapshot; every manifest verified in code; any .claude/ or tools/street-drift.js change halts the whole item (UG11); a write outside every snapshotted path halts it too'},
+    {title: 'Record', detail: 'docs/mobile/state.json written by tools/mobile-tree.js write-state (deterministic; the agent only relays its one-line JSON, length-checked in code) after every unit and every rebase'}
   ]
 }
 const JOB = 'mobile-build'
@@ -56,7 +56,7 @@ const intArg = (k, d, lo, hi) => { const v = A[k] ?? d; if (!Number.isInteger(v)
 const MAXFIX = intArg('maxFix', 2, 0, 2), CYCLES = intArg('reviewCycles', 2, 0, 2), JOBS = intArg('jobs', 1, 1, 8)
 if (A.cdnDir != null && (typeof A.cdnDir !== 'string' || !A.cdnDir.startsWith('/') || !PATH_OK.test(A.cdnDir) || !segsOk(A.cdnDir))) die('args.cdnDir must be an absolute path')
 const SERVER = A.server || 'static'
-if (!['static', 'spawn'].includes(SERVER)) die('args.server must be static|spawn (spawn once D1 has landed; the reference and every measurement use the same server)')
+if (!['static', 'spawn'].includes(SERVER)) die('args.server must be static|spawn (default: spawn once a unit touching server.js has passed, and for that unit\'s own measurements; static before)')
 
 // ---- constants ----
 const APP = ['index.html', 'maps-site/index.html']
@@ -71,17 +71,20 @@ const OWNER_FILE = 'docs/mobile/owner-answers.json'
 const TREE = ['index.html', 'maps-site/', 'tools/', '.claude/', 'server.js', 'vendor/']   // whole-tree snapshot: every served or pipeline path a unit could reach outside its own files
 const isPipe = p => /^\.claude(\/|$)/.test(p) || p === 'tools/street-drift.js'   // any change here halts the whole item (UG11)
 const NODE_TOOL = 'NODE_PATH=/opt/node22/lib/node_modules node tools/mobile-capture.js'
+const TREE_TOOL = 'node tools/mobile-tree.js'
 const MECH = {model: 'haiku', effort: 'low'}
 const RULE_PIPE = `Never write, move or delete anything under ${REPO}/.claude/ or ${REPO}/tools/street-drift.js.`
-const RULE_HEAD = `Repo root: ${REPO} (cd there before any command; use absolute paths). Never run git, not even read-only commands.`
+const RULE_HEAD = `Repo root: ${REPO} (cd there before any command; use absolute paths). Never run git, not even read-only commands. Never schedule reminders, triggers or wake-ups.`
 const RULE = `${RULE_HEAD} ${RULE_PIPE} Write ONLY the files this prompt names; throwaway scripts and temp files go in a mktemp -d directory outside the repo. Never start, stop or reuse a server on port 8544. Return only the requested JSON.`
 const P = body => RULE + '\n' + body
 const P_RESTORE = body => RULE.replace(RULE_PIPE, `Under ${REPO}/.claude/ and to ${REPO}/tools/street-drift.js you may only copy snapshot bytes back or delete a file the snapshot lacks, exactly as ordered below; nothing else there.`) + '\n' + body
 const CDN_STEP = A.cdnDir ? `Use --cdn-dir ${A.cdnDir}.` : 'In a mktemp -d directory T run "npm pack leaflet@1.9.4 three@0.128.0" (quiet) and pass --cdn-dir T (the tool accepts the two .tgz files; it routes the CDN globs to disk and is harmless once vendoring has landed).'
-const LONG_RUN = 'A full capture can take 30 minutes or more: start it in the background (run_in_background, or nohup ... &) with stdout and stderr redirected to files in T and its exit code written to T/code, then poll about once a minute until T/code exists. Never kill it early and never start a second capture while one runs.'
-const SERVER_FLAG = SERVER === 'spawn' ? ' --server spawn' : ''
+const BUSY = 'Before starting, if `pgrep -f \'tools/mobile-capture[.]js\'` finds a capture already running (an earlier attempt), wait for it to exit (poll every 30 s): never start a second one, never kill it.'   // the [.] keeps pgrep from matching a shell that carries the pattern itself
+const POLL = 'While the capture runs, keep polling with commands of at most 9 minutes each (e.g. `timeout 540 bash -c \'until [ -f T/code ]; do sleep 15; done\'`), as many times as needed (up to 2 hours). Never report infra_error because the capture is still running or slow; infra_error is only for a tool that could not start.'
+const LONG_RUN = BUSY + ' A full capture can take 30 minutes or more: start it in the background (run_in_background, or nohup ... &) with stdout and stderr redirected to files in T and its exit code written to T/code, then poll until T/code exists. ' + POLL + ' Never kill it early and never start a second capture while one runs.'
+const serverLanded = () => Object.entries(ST.units).some(([id, r]) => r && r.status === 'passed' && byId[id] && (byId[id].files || []).includes('server.js'))
+const serverFlag = u => (SERVER === 'spawn' || serverLanded() || (u && Array.isArray(u.files) && u.files.includes('server.js'))) ? ' --server spawn' : ''   // a unit that edits server.js is measured on the server it wrote
 const shaMapRule = 'sha256 (hex, of the file bytes) keyed by repo-relative path'
-const TREE_WALK = `the whole-tree manifest: ${shaMapRule} of every regular file under ${REPO}/<e> for each e of ${JSON.stringify(TREE)} (a file entry is that file when present; a directory entry recursively; skip every node_modules directory; do not follow symlinks)`
 const PIPE_RULE = `pipeline_sha = ${shaMapRule} of every ${REPO}/.claude/workflows/*.js and of ${REPO}/tools/street-drift.js (read only).`
 const APP_RULE = `app_sha = ${shaMapRule} of ${REPO}/index.html and ${REPO}/maps-site/index.html ({"index.html": ..., "maps-site/index.html": ...}).`
 const FIL1_RULE = `fil1 = from ${REPO}/docs/filigree/gates/1-research.json: {exists (present and parses), pass: parsed.pass === true, rulings_used: {R2, R7, R12, R14, R18: each parsed.rulings_used[id] as a string, or "missing"}} (exists false -> pass false and every ruling "missing").`
@@ -103,19 +106,20 @@ const REB = OBJ({exit_code: I, path: S, sha256: S, index_sha: S, atlas_sha: S, p
 const ACC = OBJ({path: S, authored: B, lint_ok: B, lint_errors: SA, accept: LOOSE, sha256: S})
 const MAN = OBJ({dirs: SA, files: NSHAS})
 const NS = {type: ['string', 'null']}
-const SNAPR = OBJ({manifest: MAN, pipeline_sha: SHAS, accept_sha: NS, owner_sha: NS, app_sha: SHAS, tree_n: I, tree_sha256: S})
+const SNAPR = OBJ({ok: B, len: I, error: S, manifest: MAN, pipeline_sha: SHAS, accept_sha: NS, owner_sha: NS, app_sha: SHAS, tree_n: I, tree_sha256: S, repo_n: I}, ['ok', 'len', 'manifest', 'pipeline_sha', 'accept_sha', 'owner_sha', 'app_sha', 'tree_n', 'tree_sha256', 'repo_n'])
 const IMPL = OBJ({summary: S, files_changed: SA, strings_added: SA, notes: S})
-const CHECK = OBJ({pipeline_sha: SHAS, accept_sha: NS, owner_sha: NS, changed: SA, tree_changed: SA, tree_base_sha256: S, ug1: OBJ({index: S, atlas: S}), files_sha: NSHAS, app_sha: SHAS})
-const RESTR = OBJ({dirs: SA, files: NSHAS, accept_sha: NS, owner_sha: NS, tree_changed: SA, tree_base_sha256: S, reverted: SA})
+const CHECK = OBJ({ok: B, len: I, pipeline_sha: SHAS, accept_sha: NS, owner_sha: NS, changed: SA, tree_changed: SA, tree_base_sha256: S, ug1: OBJ({index: S, atlas: S}), files_sha: NSHAS, app_sha: SHAS})
+const RESTR = OBJ({ok: B, len: I, dirs: SA, files: NSHAS, accept_sha: NS, owner_sha: NS, tree_changed: SA, tree_base_sha256: S, reverted: SA})
 const MEAS = OBJ({exit_code: I, result: {type: ['object', 'null']}, failing_n: I, infra_error: S, stderr_tail: S})
 const FIND = OBJ({findings: {type: 'array', items: OBJ({severity: {type: 'string', enum: ['blocker', 'major', 'minor', 'nit']}, title: S, evidence: S, where: S})}})
 const REFUTE = OBJ({refuted: B, reason: S})
 const ADV = OBJ({path: S, sha256: S, orig_sha256: S, index_sha: S, atlas_sha: S, pipeline_sha: SHAS})
-const REC = OBJ({path: S, sha256: S, canon_len: I, units_n: I, rebase_n: I})
+const REC = OBJ({ok: B, len: I, path: S, sha256: S, canon_len: I, units_n: I, rebase_n: I})
 
 // ---- helpers ----
 const canonJ = v => Array.isArray(v) ? v.map(canonJ) : v && typeof v === 'object' ? Object.fromEntries(Object.keys(v).sort().map(k => [k, canonJ(v[k])])) : v
 const same = (a, b) => JSON.stringify(canonJ(a ?? null)) === JSON.stringify(canonJ(b ?? null))
+const lenOk = r => r && Number.isInteger(r.len) && JSON.stringify(canonJ(Object.fromEntries(Object.entries(r).filter(([k]) => k !== 'ok' && k !== 'len')))).length === r.len && r.ok === true   // tools/mobile-tree.js prints len over every other field: a relay that dropped or altered anything fails here
 const diffKeys = (a, b) => [...new Set([...Object.keys(a || {}), ...Object.keys(b || {})])].filter(k => (a || {})[k] !== (b || {})[k])
 async function crit(p, o) { return (await agent(p, o)) ?? (await agent(p, {...o, label: o.label + ' (retry)'})) }
 const F = (key, expected, got) => ({key, op: 'loop', expected, got: typeof got === 'string' ? got.slice(0, 300) : got})
@@ -279,14 +283,22 @@ if (MODE === 'plan') {
 const results = [], newRebase = [], polishInserts = []
 const live = {}
 async function recordState(label) {
-  const r = await crit(P(`Write the JSON below VERBATIM (2-space indent, trailing newline) to ${STATE_ABS}, creating parent directories (this path only). Re-read the file, JSON.parse it and return {path, sha256 (of the file), canon_len: JSON.stringify(parsed).length, units_n: Object.keys(parsed.units).length, rebase_n: parsed.rebase.length}.\n\n${JSON.stringify(ST, null, 2)}`),
-    {label: label || 'record state', phase: 'Record', schema: REC, ...MECH})
-  if (!r || r.canon_len !== JSON.stringify(ST).length || r.units_n !== Object.keys(ST.units).length || r.rebase_n !== ST.rebase.length) die('state.json write did not read back equal (' + (label || 'record') + '); stop: the record is unreliable')
+  const L = label || 'record state', want = JSON.stringify(ST).length
+  const ask = l => crit(P(`Record the loop state. In a mktemp -d directory T (outside the repo) write the JSON below VERBATIM to T/state.json with a quoted heredoc (cat > T/state.json <<'EOF_STATE', then the JSON, then a line EOF_STATE); add, drop or retype nothing. Then from ${REPO} run:
+${TREE_TOOL} write-state --from T/state.json --to ${STATE_ABS} --expect-len ${want}
+The tool writes ${STATE_ABS} itself (write nothing else in the repo) and prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits). If it exits non-zero, return {ok: false, len: -1, path: "", sha256: "", canon_len: -1, units_n: -1, rebase_n: -1}.
+
+${JSON.stringify(ST, null, 2)}`), {label: l, phase: 'Record', schema: REC, ...MECH})
+  const good = r => lenOk(r) && r.canon_len === want && r.units_n === Object.keys(ST.units).length && r.rebase_n === ST.rebase.length
+  let r = await ask(L)
+  if (!good(r)) { log(L + ': state.json write not confirmed (' + (r ? 'len ' + r.len + ', canon_len ' + r.canon_len : 'died') + '); one retry'); r = await ask(L + ' (retry)') }
+  if (!good(r)) die('state.json write did not read back equal (' + L + '); stop: the record is unreliable')
   return r
 }
 function setUnit(u, status, extra) {
   const prev = ST.units[u.id] || {}
-  const failing = (extra.failing || []).length ? extra.failing : status === 'passed' ? [] : [F(status, status === 'deferred-5b' ? 'an owner answer' : 'a run', extra.why || status)]   // state.json keeps the M1.3 schema: the reason travels in failing
+  const all = (extra.failing || []).length ? extra.failing : status === 'passed' ? [] : [F(status, status === 'deferred-5b' ? 'an owner answer' : 'a run', extra.why || status)]   // state.json keeps the M1.3 schema: the reason travels in failing
+  const failing = all.length > 40 ? [...all.slice(0, 39), F('failing.more', 'at most 40 recorded', (all.length - 39) + ' more (see the run result)')] : all   // the record agent relays state.json verbatim: keep it small
   ST.units[u.id] = {status, attempts: extra.attempts ?? prev.attempts ?? 0, capture: extra.capture ?? prev.capture ?? null, files_sha: extra.files_sha ?? prev.files_sha ?? {}, failing,
     ref_before: (prev.status === 'passed' && prev.ref_before) ? prev.ref_before : (extra.ref_before ?? prev.ref_before ?? null)}   // ref_before: the reference in force when the unit began; mobile-review scores a scope against its first unit's
   live[u.id] = status
@@ -318,7 +330,7 @@ async function rebase(u, h, why) {
   const name = 'rebase-' + (ST.rebase.length + 1)
   W_OK('docs/mobile/captures/' + name + '.json')
   log(u.id + ': rebase (' + why + '): re-taking the reference as docs/mobile/captures/' + name + '.json')
-  const r = await crit(P(`Re-take the mobile reference capture (it replaces the old reference for every later unit; do not interpret results). ${CDN_STEP} From ${REPO} run: ${NODE_TOOL} --unit ${name} --out docs/mobile/captures/${name}.json --jobs ${JOBS}${SERVER_FLAG} --cdn-dir <T or the dir above> (both surfaces, all five profiles, the default extras, exactly as B0 was taken). ${LONG_RUN} Write nothing else. Then read docs/mobile/captures/${name}.json with a node script and return {exit_code, path: "docs/mobile/captures/${name}.json", sha256 (of the file), index_sha: meta.index_sha, atlas_sha: meta.atlas_sha, pipeline_sha: repo.pipeline_sha, profile_errors: one "<surface>.<profile>: <error>" string for every atlas.<p> or sim.<p> object that carries an error field, infra_error: "" or a short reason when the tool could not start (browser, port, CDN)}.`),
+  const r = await crit(P(`Re-take the mobile reference capture (it replaces the old reference for every later unit; do not interpret results). ${CDN_STEP} From ${REPO} run: ${NODE_TOOL} --unit ${name} --out docs/mobile/captures/${name}.json --jobs ${JOBS}${(SERVER === 'spawn' || serverLanded()) ? ' --server spawn' : ''} --cdn-dir <T or the dir above> (both surfaces, all five profiles, the default extras, exactly as B0 was taken). ${LONG_RUN} Write nothing else. Then read docs/mobile/captures/${name}.json with a node script and return {exit_code, path: "docs/mobile/captures/${name}.json", sha256 (of the file), index_sha: meta.index_sha, atlas_sha: meta.atlas_sha, pipeline_sha: repo.pipeline_sha, profile_errors: one "<surface>.<profile>: <error>" string for every atlas.<p> or sim.<p> object that carries an error field, infra_error: "" or a short reason when the tool could not start (browser, port, CDN)}.`),
     {label: 'rebase ' + name + ' before ' + u.id, phase: 'Rebase', schema: REB, model: 'sonnet', effort: 'medium'})
   const ok = r && r.exit_code === 0 && !r.infra_error && /^[0-9a-f]{64}$/.test(r.sha256 || '') && r.index_sha === h.app_sha['index.html'] && r.atlas_sha === h.app_sha['maps-site/index.html'] && same(r.pipeline_sha, h.pipeline_sha) && !(r.profile_errors || []).length
   if (!ok) return {ok: false, why: !r ? 'rebase capture died' : r.infra_error || (r.profile_errors || []).join('; ') || 'rebase capture does not match the tree (exit ' + r.exit_code + ')'}
@@ -378,16 +390,21 @@ function acceptWhy(u, a) {
 const GUARD = u => [docsAccept(u.id), OWNER_FILE]   // never in a unit's writable set; snapshotted and restored with it
 async function snapshot(u) {
   const prune = Object.keys(ST.units).filter(id => id !== u.id && ID_OK.test(id) && ST.units[id].status === 'passed')   // a passed unit's tree copy is no longer needed (a failed one's stays for the central session)
-  return crit(P(`Snapshot unit ${u.id} before any edit (write only under ${SNAP}). 1. rm -rf ${SNAPDIR(u.id)}; mkdir -p ${SNAPDIR(u.id)}/files ${SNAPDIR(u.id)}/guard ${SNAPDIR(u.id)}/tree${prune.length ? '; then rm -rf ' + prune.map(id => SNAPDIR(id) + '/tree').join(' ') : ''}. 2. For each entry of ${JSON.stringify(u.files)}: an entry ending in "/" is a directory: add it to dirs and copy every regular file under ${REPO}/<entry> (recursively, when it exists) to ${SNAPDIR(u.id)}/files/<same relative path>; any other entry is a file: copy it there when it exists. 3. manifest = {dirs, files: {<repo-relative path of every file copied>: sha256, <every non-directory entry that does not exist>: null}}; write it to ${SNAPDIR(u.id)}/manifest.json. 4. ${PIPE_RULE} 5. accept_sha = sha256 of ${REPO}/${docsAccept(u.id)}, owner_sha = sha256 of ${REPO}/${OWNER_FILE} (each null when absent); copy each one that exists byte for byte to ${SNAPDIR(u.id)}/guard/<its repo-relative path>. 6. ${APP_RULE} 7. Compute ${TREE_WALK}; copy every file it lists byte for byte (cp -p) to ${SNAPDIR(u.id)}/tree/<its repo-relative path>; write the manifest as JSON with its keys sorted to ${SNAPDIR(u.id)}/tree.json; tree_n = its number of keys, tree_sha256 = sha256 of ${SNAPDIR(u.id)}/tree.json (the file as written). 8. touch ${SNAPDIR(u.id)}/marker, then sleep 2 (so later writes are strictly newer). Return {manifest, pipeline_sha, accept_sha, owner_sha, app_sha, tree_n, tree_sha256}.`),
+  return crit(P(`Snapshot unit ${u.id} before any edit. From ${REPO} run exactly this one command (the tool does every copy and writes only under ${SNAP}; do not copy, move or delete anything yourself):
+${TREE_TOOL} snapshot --unit ${u.id} --snap ${SNAP} --files '${JSON.stringify(u.files)}'${prune.length ? ' --prune ' + prune.join(',') : ''}
+It prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits, no re-ordering needed). If it exits non-zero, return {ok: false, len: -1, error: <the "error" string it printed, verbatim>, manifest: {dirs: [], files: {}}, pipeline_sha: {}, accept_sha: null, owner_sha: null, app_sha: {}, tree_n: 0, tree_sha256: "", repo_n: 0}.`),
     {label: 'snapshot ' + u.id, phase: 'Snapshot', schema: SNAPR, ...MECH})
 }
-const TREE_DIFF = u => `tree_base_sha256 = sha256 of ${SNAPDIR(u.id)}/tree.json as it is now; compute ${TREE_WALK} again; tree_changed = sorted repo-relative paths whose sha differs from ${SNAPDIR(u.id)}/tree.json, that are listed now but not there, or listed there but now absent.`
 async function postCheck(u, tag) {
-  return crit(P(`Post-${tag} check for unit ${u.id} (write nothing). 1. ${PIPE_RULE} 2. accept_sha = sha256 of ${REPO}/${docsAccept(u.id)}, owner_sha = sha256 of ${REPO}/${OWNER_FILE} (each null when absent). 3. changed = sorted repo-relative paths of every regular file under ${REPO} newer than ${SNAPDIR(u.id)}/marker (find ${REPO} -newer ${SNAPDIR(u.id)}/marker -type f), excluding ${REPO}/.git/, every node_modules/ directory${SNAP_REL ? ' and ' + REPO + '/' + SNAP_REL + '/' : ''}; then add every key of ${SNAPDIR(u.id)}/manifest.json "files" whose file is now absent though it had a sha, and every path under a manifest dir that has no manifest entry. 4. ug1: run the inline-script syntax one-liner from CLAUDE.md "Verification" exactly as written there, from ${REPO}, once as is (index.html) and once with "index.html" replaced by "maps-site/index.html"; ug1 = {index: its first output line, atlas: its first output line} (they read "OK <n>" on success). 5. files_sha = current sha256 (null when absent) of every manifest "files" key plus every file now under a manifest dir. 6. ${APP_RULE} 7. ${TREE_DIFF(u)} Return {pipeline_sha, accept_sha, owner_sha, changed, tree_changed, tree_base_sha256, ug1, files_sha, app_sha}.`),
-    {label: tag + ' check ' + u.id, phase: tag === 'pre-restore' ? 'Restore' : 'Implement', schema: CHECK, ...MECH})
+  const ask = l => crit(P(`Post-${tag} check for unit ${u.id} (write nothing). From ${REPO} run exactly this one command (it reads the repo and the snapshot ${SNAPDIR(u.id)} and writes nothing):
+${TREE_TOOL} check --unit ${u.id} --snap ${SNAP}
+It prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits). If it exits non-zero, return {ok: false, len: -1, pipeline_sha: {}, accept_sha: null, owner_sha: null, changed: [], tree_changed: [], tree_base_sha256: "", ug1: {index: "", atlas: ""}, files_sha: {}, app_sha: {}}.`),
+    {label: l, phase: tag === 'pre-restore' ? 'Restore' : 'Implement', schema: CHECK, ...MECH})
+  const c = await ask(tag + ' check ' + u.id)
+  return !c || lenOk(c) ? c : (await ask(tag + ' check ' + u.id + ' (relay retry)')) || c   // a relay that altered the tool's line gets one fresh agent; checkWhy scores what comes back
 }
 function checkWhy(u, snap, c) {   // UG1, UG11 hash gate, accept read-only, write scope: all scored here
-  if (!c) return [F('check.died', 'a post-run check', 'died twice')]
+  if (!c || !lenOk(c)) return [F('check.digest', 'the tool output relayed intact', c ? 'len mismatch' : 'died twice')]   // a relay error, not an integrity breach: the key stays outside /^(UG11|scope|accept)/
   const ap = docsAccept(u.id), writable = writableOf(u)
   const allowed = p => holdsPath(writable, p) || p === 'docs/mobile/captures/' + u.id + '.json' || p.startsWith('docs/mobile/shots/') || (STATE_REL && p === STATE_REL)
   const out = []
@@ -403,8 +420,8 @@ function checkWhy(u, snap, c) {   // UG1, UG11 hash gate, accept read-only, writ
   return out
 }
 async function measure(u, round) {
-  const m = await crit(P(`Measure unit ${u.id} (round ${round}): run the tool and report; do not interpret, do not edit anything. ${CDN_STEP} From ${REPO} run: ${NODE_TOOL} --accept ${docsAccept(u.id)} --jobs ${JOBS}${SERVER_FLAG} --cdn-dir <T or the dir above>, stdout to T/out.json, stderr to T/err.txt. ${LONG_RUN} (The tool writes docs/mobile/captures/${u.id}.json itself; write nothing else.) Then return {exit_code (the integer in T/code), result: T/out.json parsed (null when it does not parse), failing_n: the length of result.failing computed by node (-1 when absent), infra_error: "" or a short reason when the tool could not start (browser, port, CDN, Playwright), stderr_tail: the last 1500 characters of T/err.txt}.`),
-    {label: 'measure ' + u.id + ' r' + round, phase: 'Measure', schema: MEAS, ...MECH})
+  const m = await crit(P(`Measure unit ${u.id} (round ${round}): run the tool and report; do not interpret, do not edit anything. ${CDN_STEP} From ${REPO} run: ${NODE_TOOL} --accept ${docsAccept(u.id)} --jobs ${JOBS}${serverFlag(u)} --cdn-dir <T or the dir above>, stdout to T/out.json, stderr to T/err.txt. ${LONG_RUN} (The tool writes docs/mobile/captures/${u.id}.json itself; write nothing else.) Then return {exit_code (the integer in T/code), result: T/out.json parsed (null when it does not parse), failing_n: the length of result.failing computed by node (-1 when absent), infra_error: "" or a short reason when the tool could not start (browser, port, CDN, Playwright), stderr_tail: the last 1500 characters of T/err.txt}.`),
+    {label: 'measure ' + u.id + ' r' + round, phase: 'Measure', schema: MEAS, model: 'sonnet', effort: 'low'})
   if (!m) return {pass: false, infra: true, failing: [F('measure.died', 'a measurement', 'died twice')]}
   const r = m.result
   if (m.infra_error || m.exit_code === 2 || !r || typeof r !== 'object') return {pass: false, infra: true, failing: [F('measure.infra', 'the tool ran', m.infra_error || ('exit ' + m.exit_code + ' ' + (m.stderr_tail || '').slice(-200)))]}
@@ -419,7 +436,7 @@ async function implement(u, og) {
 Writable paths (nothing else; directories end in "/"): ${JSON.stringify(writable)}. ${appOf(u.files).length ? 'Your only app file is ' + appOf(u.files)[0] + '.' : 'You edit no app file.'}
 Read-only for you: ${ap} (the accept file the measurer scores you with: read it, never edit it), ${OWNER_FILE} (the owner's recorded answers: read, never edit; any change fails the unit), every reference capture, POLISH.md unless listed above, CHANGELOG.md, VERSION, docs/filigree/**, docs/street/**.
 ${og ? og + '\n' : ''}${HARD}
-You may self-check with ${NODE_TOOL} (a capture with --out in your temp dir, or --accept ${ap}), with --cdn-dir as in the sandbox (npm pack leaflet@1.9.4 three@0.128.0 into a temp dir); never commit, never touch git.
+You may self-check with ${NODE_TOOL} (a capture with --out in your temp dir, or --accept ${ap}), with --cdn-dir as in the sandbox (npm pack leaflet@1.9.4 three@0.128.0 into a temp dir)${serverFlag(u) ? '; pass --server spawn' : ''}; never commit, never touch git.
 Acceptance (the accept file scores the measurable part in code; reviewers read the rest):
 ${u.acceptance.map((b, i) => (i + 1) + '. ' + b).join('\n')}
 Return {summary, files_changed (repo-relative), strings_added (every new player-visible string, verbatim), notes}.`), {label: 'implement ' + u.id, phase: 'Implement', schema: IMPL, model: u.model, effort: u.effort})
@@ -427,7 +444,7 @@ Return {summary, files_changed (repo-relative), strings_added (every new player-
 async function fixer(u, og, what, failing, round) {
   const ap = docsAccept(u.id), writable = writableOf(u)
   return agent(P(`Fix mobile unit ${u.id}: "${u.title || ''}" (${what}, round ${round}). ${diffHow(u.id)}
-Writable paths (nothing else): ${JSON.stringify(writable)}. ${ap} and ${OWNER_FILE} are read-only (never edit the accept file to make a check pass; any change to either fails the unit). Change only what the failures below need; keep everything that already passes.
+Writable paths (nothing else): ${JSON.stringify(writable)}. ${ap} and ${OWNER_FILE} are read-only (never edit the accept file to make a check pass; any change to either fails the unit). Change only what the failures below need; keep everything that already passes.${serverFlag(u) ? ' When you self-check with ' + NODE_TOOL + ', pass --server spawn.' : ''}
 ${og ? og + '\n' : ''}${HARD}
 Failures to fix:
 ${JSON.stringify(failing.slice(0, 40), null, 1)}
@@ -438,10 +455,13 @@ Return {summary, files_changed, strings_added, notes}.`), {label: 'fix ' + u.id 
 async function restore(u, snap) {   // puts back the unit files, the accept file, the owner answers and every tree path that moved; verified in code against the snapshot
   const reverted = new Set()
   for (let k = 0; k < 2; k++) {
-    const r = await crit(P_RESTORE(`Restore unit ${u.id} from its snapshot ${SNAPDIR(u.id)} (write only the paths named here). a. Unit files: from ${SNAPDIR(u.id)}/manifest.json, for each "files" entry with a sha copy ${SNAPDIR(u.id)}/files/<path> back to ${REPO}/<path> (mkdir -p its parent); for each entry that is null delete ${REPO}/<path> when present; for each dir in "dirs" delete every regular file under ${REPO}/<dir> that has no "files" entry. b. Guarded files ${JSON.stringify(GUARD(u))}: when ${SNAPDIR(u.id)}/guard/<path> exists copy it back byte for byte to ${REPO}/<path>; otherwise delete ${REPO}/<path> when present. c. Tree: compute ${TREE_WALK}; for every path whose sha differs from ${SNAPDIR(u.id)}/tree.json or that is absent now, copy ${SNAPDIR(u.id)}/tree/<path> back to ${REPO}/<path> (mkdir -p its parent; cp -p); for every path present now but not listed there, delete ${REPO}/<path>. Never touch any other path. reverted = sorted repo-relative paths you copied back or deleted in a, b and c. Then verify by recomputing: dirs and files (the manifest the same way: the listed non-directory entries plus every file now under each dir: sha256, or null when absent), accept_sha = sha256 of ${REPO}/${docsAccept(u.id)}, owner_sha = sha256 of ${REPO}/${OWNER_FILE} (each null when absent), and ${TREE_DIFF(u)} Return {dirs, files, accept_sha, owner_sha, tree_changed, tree_base_sha256, reverted}.`),
+    const r = await crit(P_RESTORE(`Restore unit ${u.id} from its snapshot ${SNAPDIR(u.id)}. From ${REPO} run exactly this one command (it puts back the unit files, the guarded files ${JSON.stringify(GUARD(u))} and every moved tree path, and verifies the result):
+${TREE_TOOL} restore --unit ${u.id} --snap ${SNAP}
+The tool does every copy and delete; do not copy, move or delete anything yourself. It prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits). If it exits non-zero, return {ok: false, len: -1, dirs: [], files: {}, accept_sha: null, owner_sha: null, tree_changed: [], tree_base_sha256: "", reverted: []}.`),
       {label: 'restore ' + u.id + (k ? ' (again)' : ''), phase: 'Restore', schema: RESTR, ...MECH})
     for (const p of (r && r.reverted) || []) reverted.add(p)
     const bad = !r ? ['restore died'] : [
+      !lenOk(r) ? 'restore output not relayed intact' : '',
       same(r.files, snap.manifest.files) ? '' : 'unit files ' + diffKeys(snap.manifest.files, r.files).slice(0, 5).join(', '),
       (r.accept_sha ?? null) === (snap.accept_sha ?? null) ? '' : 'accept file ' + docsAccept(u.id),
       (r.owner_sha ?? null) === (snap.owner_sha ?? null) ? '' : OWNER_FILE,
@@ -551,7 +571,7 @@ for (const u of UNITS) {
   if (aw.length) { setUnit(u, 'failed', {why: 'accept file not valid', ref_before: refBefore, failing: aw.map(x => F('accept', 'a valid accept file', x))}); await recordState('record ' + u.id + ' failed'); continue }
   phase('Snapshot')
   const snap = await snapshot(u)
-  if (!snap || !snap.manifest || (snap.accept_sha ?? null) !== acc.sha256 || !same(snap.app_sha, h.app_sha) || !/^[0-9a-f]{64}$/.test(snap.tree_sha256 || '') || !(snap.tree_n >= APP.length) || !same(snap.pipeline_sha, h.pipeline_sha)) { setUnit(u, 'failed', {why: 'snapshot failed or the tree moved after the hold read', ref_before: refBefore, failing: [F('snapshot', 'a snapshot of the held tree', snap ? 'mismatch' : 'died')]}); await recordState('record ' + u.id + ' failed'); continue }
+  if (!snap || !lenOk(snap) || !snap.manifest || (snap.accept_sha ?? null) !== acc.sha256 || !same(snap.app_sha, h.app_sha) || !/^[0-9a-f]{64}$/.test(snap.tree_sha256 || '') || !(snap.tree_n >= APP.length) || !same(snap.pipeline_sha, h.pipeline_sha)) { setUnit(u, 'failed', {why: 'snapshot failed or the tree moved after the hold read', ref_before: refBefore, failing: [F('snapshot', 'a snapshot of the held tree', snap ? (snap.ok === false && snap.error ? 'tool refused: ' + snap.error : 'mismatch') : 'died')]}); await recordState('record ' + u.id + ' failed'); continue }
   SNAPS[u.id] = snap; ATT[u.id] = 0
   phase('Implement')
   const im = await implement(u, d.owner)
@@ -583,7 +603,7 @@ for (const u of UNITS) {
   const breaches = [...new Set([...(outcome.failing || []), ...dw].filter(f => hardRe.test(f.key)).map(f => f.key))]
   const pipeHit = [...new Set([...breaches.filter(k => /^UG11\./.test(k)).map(k => k === 'UG11.pipeline_sha' ? 'the pipeline scripts (.claude/workflows/*.js or tools/street-drift.js)' : k.slice(5)), ...back.reverted.filter(isPipe)])]   // .claude/ or tools/street-drift.js moved: the whole item halts (UG11)
   const LOOP_OUT = p => p === 'docs/mobile/captures/' + u.id + '.json' || p.startsWith('docs/mobile/shots/') || (STATE_REL && p === STATE_REL)
-  const lost = dmg ? (dmg.changed || []).filter(p => !holdsPath(u.files, p) && !GUARD(u).includes(p) && !holdsPath(TREE, p) && !LOOP_OUT(p)) : ['(the pre-restore read died: writes outside the snapshotted paths are unknown)']   // no snapshot copy exists for these
+  const lost = dmg && lenOk(dmg) ? (dmg.changed || []).filter(p => !holdsPath(u.files, p) && !GUARD(u).includes(p) && !holdsPath(TREE, p) && !LOOP_OUT(p)) : ['(the pre-restore read died or was not relayed intact: writes outside the snapshotted paths are unknown)']   // no snapshot copy exists for these
   setUnit(u, 'failed', {attempts: ATT[u.id], capture: docsOnly(u) ? refPath() : 'docs/mobile/captures/' + u.id + '.json', files_sha: back.ok ? snap.manifest.files : {}, ref_before: refBefore, failing: outcome.failing || [], why: back.ok ? 'restored from the snapshot' + (back.reverted.length ? ' (' + back.reverted.length + ' path(s) put back)' : '') : 'RESTORE FAILED: ' + back.why})
   const hb = back.ok ? await holdRead(u) : null   // the restored tree must equal the held tree; nothing a unit wrote is ever adopted as a baseline
   const stray = !back.ok ? [] : hb ? [...diffKeys(h.app_sha, hb.app_sha).filter(k => APP.includes(k)), ...diffKeys(h.pipeline_sha, hb.pipeline_sha)] : ['(the tree read died)']
