@@ -14,6 +14,9 @@
 //   node tools/mobile-capture.js --compare A.json B.json
 //   node tools/mobile-capture.js --mutate-only --mutate-html maps-site/index.html   (D7/D8 fixture)
 //   node tools/mobile-capture.js --self-test
+// --cdn-dir D holds leaflet@1.9.4 and three@0.128.0 (unpacked, or their `npm pack` tarballs) and may also hold
+// @fontsource/{eb-garamond,lora,ibm-plex-mono,im-fell-english}@5.3.0 the same way: when present the Google Fonts hosts are
+// served from them (meta.fonts 'routed'), so references render the production fonts; otherwise those hosts are aborted.
 // One capture at a time: a run that launches a browser (capture, or --accept without --capture) first takes
 // <os.tmpdir()>/annals-mobile-capture.lock {pid, boot, started, argv}; while a live pid holds it the run waits (15 s polls,
 // up to 3 h, then exit 2); a dead pid's lock, or one from another boot (a pid reused after a container restart), is
@@ -329,19 +332,31 @@ function loadPlaywright() {
   for (const m of ['playwright', '/opt/node22/lib/node_modules/playwright']) { try { return require(m) } catch (e) { /* next */ } }
   throw new Error('playwright not found: set NODE_PATH=/opt/node22/lib/node_modules')
 }
-function resolveCdn(dir) {   // <dir>/leaflet/dist + <dir>/three/build, or the two npm tarballs (extracted next to them once)
+const FONTSOURCE = {'eb-garamond': 'EB Garamond', lora: 'Lora', 'ibm-plex-mono': 'IBM Plex Mono', 'im-fell-english': 'IM Fell English'}   // @fontsource/<slug>@5.3.0 -> the Google family the apps request
+function resolveCdn(dir) {   // <dir>/leaflet/dist + <dir>/three/build, or the two npm tarballs (extracted next to them once); fonts: each <dir>/@fontsource/<slug> or its tarball
   if (!dir) return null
   dir = path.resolve(dir)
-  const L = path.join(dir, 'leaflet/dist'), T = path.join(dir, 'three/build/three.min.js')
-  if (fs.existsSync(L) && fs.existsSync(T)) return {leaflet: L, three: T}
-  const x = path.join(dir, '_x'); fs.mkdirSync(x, {recursive: true})
-  for (const [tgz, sub] of [['leaflet-1.9.4.tgz', 'leaflet'], ['three-0.128.0.tgz', 'three']]) {
-    if (!fs.existsSync(path.join(dir, tgz))) continue
+  const x = path.join(dir, '_x'), unpack = (tgz, sub) => {
+    if (!fs.existsSync(path.join(dir, tgz))) return
     fs.mkdirSync(path.join(x, sub), {recursive: true})
     if (!fs.existsSync(path.join(x, sub, 'package.json'))) cp.execFileSync('tar', ['xzf', path.join(dir, tgz), '-C', path.join(x, sub), '--strip-components=1'])
   }
-  if (fs.existsSync(path.join(x, 'leaflet/dist')) && fs.existsSync(path.join(x, 'three/build/three.min.js'))) return {leaflet: path.join(x, 'leaflet/dist'), three: path.join(x, 'three/build/three.min.js')}
-  throw new Error('--cdn-dir ' + dir + ' has no leaflet/three')
+  let L = path.join(dir, 'leaflet/dist'), T = path.join(dir, 'three/build/three.min.js')
+  if (!fs.existsSync(L) || !fs.existsSync(T)) {
+    fs.mkdirSync(x, {recursive: true}); unpack('leaflet-1.9.4.tgz', 'leaflet'); unpack('three-0.128.0.tgz', 'three')
+    L = path.join(x, 'leaflet/dist'); T = path.join(x, 'three/build/three.min.js')
+    if (!fs.existsSync(L) || !fs.existsSync(T)) throw new Error('--cdn-dir ' + dir + ' has no leaflet/three')
+  }
+  const fonts = {}
+  for (const slug of Object.keys(FONTSOURCE)) {
+    let p = path.join(dir, '@fontsource', slug)
+    if (!fs.existsSync(path.join(p, 'files'))) { unpack('fontsource-' + slug + '-5.3.0.tgz', '@fontsource/' + slug); p = path.join(x, '@fontsource', slug) }
+    if (!fs.existsSync(path.join(p, 'files'))) continue
+    const meta = path.join(p, 'metadata.json'), fam = fs.existsSync(meta) ? JSON.parse(fs.readFileSync(meta, 'utf8')).family : FONTSOURCE[slug]
+    if (fam !== FONTSOURCE[slug]) throw new Error('--cdn-dir @fontsource/' + slug + ' is family "' + fam + '", not the Google name "' + FONTSOURCE[slug] + '"')
+    fonts[slug] = p
+  }
+  return {leaflet: L, three: T, fonts}
 }
 async function launch(pw) {
   const args = ['--enable-unsafe-swiftshader']
@@ -390,7 +405,47 @@ function cdnRoute(cdn, kind, url) {   // the one decision for a foreign request,
     if (fs.existsSync(f)) return {body: fs.readFileSync(f), contentType: f.endsWith('.css') ? 'text/css' : f.endsWith('.js') ? 'text/javascript' : f.endsWith('.png') ? 'image/png' : 'application/octet-stream'}
   }
   if (cdn && /three\.js\/r128\/three\.min\.js/.test(url)) return {body: fs.readFileSync(cdn.three, 'utf8') + (kind === 'sim' ? SIM_RENDERER_HOOK : ''), contentType: 'text/javascript'}
+  if (cdn && cdn.fonts && u.origin === 'https://fonts.googleapis.com' && u.pathname === '/css2') { const css = fontsCss(cdn.fonts, u); if (css) return {body: css, contentType: 'text/css; charset=utf-8'} }
+  if (cdn && cdn.fonts && u.origin === 'https://fonts.gstatic.com') {
+    const m = u.pathname.match(/^\/fs\/([a-z0-9-]+)\/([\w.-]+\.woff2)$/), f = m && cdn.fonts[m[1]] && path.join(cdn.fonts[m[1]], 'files', m[2])
+    if (f && fs.existsSync(f)) return {body: fs.readFileSync(f), contentType: 'font/woff2'}
+  }
   return null
+}
+const FONT_SUBSETS = ['latin-ext', 'latin']
+function fontsCss(fonts, u) {   // css2?family=Name[:axes@tuples]&...&display=D as Google answers it, from the fontsource packages; null (abort) unless every family and tuple is held
+  const display = u.searchParams.get('display') || 'swap', fams = u.searchParams.getAll('family')
+  if (!fams.length || [...u.searchParams.keys()].some(k => k !== 'family' && k !== 'display') || !/^(auto|block|swap|fallback|optional)$/.test(display)) return null
+  let css = ''
+  for (const fam of fams) {
+    const m = fam.match(/^([^:]+)(?::([a-z,]+)@([\d,;]+))?$/)
+    if (!m) return null
+    const name = m[1], slug = name.toLowerCase().replace(/ /g, '-'), dir = fonts[slug]
+    if (!dir || FONTSOURCE[slug] !== name) return null
+    const axes = m[2] ? m[2].split(',') : [], tuples = m[3] ? m[3].split(';').map(t => t.split(',').map(Number)) : [[]]
+    if (axes.some(a => a !== 'ital' && a !== 'wght') || tuples.some(t => t.length !== axes.length)) return null
+    let ranges = {}; try { ranges = JSON.parse(fs.readFileSync(path.join(dir, 'unicode.json'), 'utf8')) } catch (e) { /* none */ }
+    for (const t of tuples) {
+      const ital = axes.includes('ital') ? t[axes.indexOf('ital')] : 0, wght = axes.includes('wght') ? t[axes.indexOf('wght')] : 400
+      if ((ital !== 0 && ital !== 1) || !Number.isInteger(wght)) return null
+      let n = 0
+      for (const sub of FONT_SUBSETS) {
+        const f = path.join(dir, sub + '-' + wght + (ital ? '-italic' : '') + '.css')
+        if (!fs.existsSync(f)) continue
+        for (const b of fs.readFileSync(f, 'utf8').match(/@font-face\s*\{[^}]*\}/g) || []) {
+          if ((b.match(/font-family:\s*'([^']*)'/) || [])[1] !== name) throw new Error('fontsource ' + slug + ' ' + path.basename(f) + ' does not declare font-family \'' + name + '\'')
+          const src = (b.match(/src:\s*([^;]*);/) || [])[1] || '', woff2 = src.split(/,\s*(?=url\()/).filter(s => /^url\(\.\/files\/[\w.-]+\.woff2\)/.test(s.trim()))
+          if (!woff2.length) return null
+          let o = b.replace(/src:\s*[^;]*;/, 'src: ' + woff2.map(s => s.trim().replace(/^url\(\.\/files\//, 'url(https://fonts.gstatic.com/fs/' + slug + '/')).join(', ') + ';')
+          o = /font-display:/.test(o) ? o.replace(/font-display:\s*[^;]*;/, 'font-display: ' + display + ';') : o.replace(/\}$/, '  font-display: ' + display + ';\n}')
+          if (ranges[sub] && !/unicode-range:/.test(o)) o = o.replace(/\}$/, '  unicode-range: ' + ranges[sub] + ';\n}')   // the per-subset fontsource files omit it; Google's blocks carry it
+          css += '/* ' + sub + ' */\n' + o + '\n'; n++
+        }
+      }
+      if (!n) return null
+    }
+  }
+  return css
 }
 function fulfilHeaders(r, req) {   // the headers route.fulfill sends (Playwright 1.56): without the CORS trio a crossorigin <script>/<link> rejects the body
   const h = [{name: 'Content-Type', value: r.contentType}, {name: 'Content-Length', value: String(Buffer.byteLength(r.body))}]
@@ -412,7 +467,10 @@ async function openPage(env, key, kind, opts) {   // a fresh context + page with
   if (opts.cpu > 1) await cdp.send('Emulation.setCPUThrottlingRate', {rate: opts.cpu})
   if (opts.throttle === 'slow4g') await cdp.send('Network.emulateNetworkConditions', SLOW4G)
   const routed = [], aborted = []
-  const decide = url => { const r = cdnRoute(env.cdn, kind, url); if (r) routed.push({url, length: Buffer.byteLength(r.body)}); else aborted.push({url: url.slice(0, 120)}); return r }
+  const decide = url => {
+    let r = null
+    try { r = cdnRoute(env.cdn, kind, url); if (r) routed.push({url, length: Buffer.byteLength(r.body)}); else aborted.push({url: url.slice(0, 120)}); return r } finally { if (env.fontHosts && FONT_HOSTS.test(new URL(url).host)) env.fontHosts[r ? 'routed' : 'aborted']++ }   // meta.fonts
+  }
   if (opts.cdpRoute) {   // never Network.setCacheDisabled here: the cache staying on is the point
     cdp.on('Fetch.requestPaused', e => {
       let r = null; try { r = decide(e.request.url) } catch (x) { /* unreadable cdn file: abort */ }
@@ -420,7 +478,7 @@ async function openPage(env, key, kind, opts) {   // a fresh context + page with
       send.catch(() => {})
     })
     await cdp.send('Fetch.enable', {patterns: CDP_FETCH_PATTERNS})
-  } else await page.route(url => new URL(url).origin !== env.server.origin, async route => { const r = decide(route.request().url()); return r ? route.fulfill(r) : route.abort() })
+  } else await page.route(url => new URL(url).origin !== env.server.origin, async route => { let r = null; try { r = decide(route.request().url()) } catch (x) { /* unreadable cdn file or a family mismatch: abort */ } return r ? route.fulfill(r) : route.abort() })
   await page.addInitScript(`(${pinInstall.toString()})(${JSON.stringify({hw: opts.hw, mem: opts.mem, saveData: !!opts.saveData})})`)
   await page.addInitScript(`(${pageLib.toString()})()`)
   if (opts.vclock) await page.addInitScript(`(${vclockInstall.toString()})(${JSON.stringify({auto: opts.vclock === 'auto'})})`)
@@ -1414,12 +1472,12 @@ function shotsDirName(o, meta) {   // a unit owns its dir; any other run (B0, R1
 async function runCapture(o) {
   const t0 = Date.now()
   VERSION_HINT = '?v=mc' + (o.sw === 'allow' ? '&sw=1' : '')
-  const pw = loadPlaywright(), env = {pw, cdn: resolveCdn(o.cdnDir)}
+  const pw = loadPlaywright(), env = {pw, cdn: resolveCdn(o.cdnDir), fontHosts: {routed: 0, aborted: 0}}
   env.server = o.url ? {origin: o.url.replace(/\/$/, ''), state: {}, close: async () => {}} : o.server === 'spawn' ? await spawnServer(o.root) : await startServer(o.root, o.port)
   env.browser = await launch(pw)
   const cap = {meta: {tool: 'mobile-capture', tool_version: TOOL_VERSION, tool_sha: sha(fs.readFileSync(__filename)), index_sha: sha(rd('index.html')), atlas_sha: sha(rd('maps-site/index.html')),
     unit: o.unit, profiles: o.want, clock: o.clock, pinned: {hardwareConcurrency: o.hw, deviceMemory: o.mem}, cpu: o.cpu, throttle: o.throttle, service_workers: o.sw === 'allow' ? 'allow (?sw=1)' : 'block',
-    save_data: o.saveData, query: o.query || null, seeds: o.seeds, extras: o.extras, cdn_routed: !!env.cdn, server: o.url ? 'external' : o.server, browser: env.browser.version()}, repo: null}
+    save_data: o.saveData, query: o.query || null, seeds: o.seeds, extras: o.extras, cdn_routed: !!env.cdn, fonts: 'aborted', server: o.url ? 'external' : o.server, browser: env.browser.version()}, repo: null}
   const oo = {...o, profiles: o.profiles, shotsDir: path.resolve(REPO, o.shotsDir || path.join('docs/mobile/shots', shotsDirName(o, cap.meta)))}
   try {
     cap.repo = repoChecks()
@@ -1439,6 +1497,7 @@ async function runCapture(o) {
     }
     await Promise.all(Array.from({length: Math.max(1, o.jobs)}, worker))
     for (const s of ['atlas', 'sim']) if (cap[s]) cap[s] = Object.fromEntries(Object.keys(cap[s]).sort((a, b) => o.want.indexOf(a) - o.want.indexOf(b)).map(k => [k, cap[s][k]]))
+    cap.meta.fonts = env.fontHosts.routed && !env.fontHosts.aborted ? 'routed' : 'aborted'   // routed: every font-host request this run was served from the fontsource packages
     cap.meta.timing = {wall_ms: Date.now() - t0}
   } finally { await env.browser.close(); await env.server.close() }
   return cap
@@ -1743,6 +1802,36 @@ async function selfTest() {
     ok('cdp fetch: https://* pauses foreign https, never the http app origin', fetchPaused(U + 'leaflet.js') && fetchPaused('https://fonts.googleapis.com/css2?family=X') && !fetchPaused('http://localhost:8544/maps-site/?v=mc') && !fetchPaused('http://127.0.0.1:20001/'))
     const hc = fulfilHeaders(lj, {url: U + 'leaflet.js', headers: {Origin: 'http://localhost:1'}}), hn = fulfilHeaders(lj, {url: U + 'leaflet.js', headers: {}}), hv = (h, n) => (h.find(x => x.name === n) || {}).value
     ok('cdp fetch: the fulfil headers are route.fulfill\'s (type, length, CORS only for an Origin)', hv(hc, 'Content-Type') === 'text/javascript' && hv(hc, 'Content-Length') === '3' && hv(hc, 'Access-Control-Allow-Origin') === 'http://localhost:1' && hv(hc, 'Access-Control-Allow-Credentials') === 'true' && hn.length === 2, JSON.stringify([hc, hn]))
+    // the Google Fonts hosts from fake fontsource packages: <subset>-<wght>[-italic].css with woff2 + woff sources, files/, unicode.json, metadata.json
+    const face = (slug, fam, sub, wt, it) => { const f = slug + '-' + sub + '-' + wt + '-' + (it ? 'italic' : 'normal'); w('@fontsource/' + slug + '/files/' + f + '.woff2', 'wOF2:' + f); return '/* ' + f + ' */\n@font-face {\n  font-family: \'' + fam + '\';\n  font-style: ' + (it ? 'italic' : 'normal') + ';\n  font-display: swap;\n  font-weight: ' + wt + ';\n  src: url(./files/' + f + '.woff2) format(\'woff2\'), url(./files/' + f + '.woff) format(\'woff\');\n}' }
+    const pkg = (slug, fam, subs, tuples) => { w('@fontsource/' + slug + '/metadata.json', JSON.stringify({id: slug, family: fam})); w('@fontsource/' + slug + '/unicode.json', JSON.stringify({'latin-ext': 'U+0100-02BA', latin: 'U+0000-00FF', greek: 'U+0370-03FF'})); for (const sub of subs.concat('greek')) for (const [it, wt] of tuples) w('@fontsource/' + slug + '/' + sub + '-' + wt + (it ? '-italic' : '') + '.css', face(slug, fam, sub, wt, it)) }
+    pkg('eb-garamond', 'EB Garamond', ['latin', 'latin-ext'], [[0, 400], [0, 600], [1, 400]]); pkg('lora', 'Lora', ['latin', 'latin-ext'], [[0, 400], [0, 600], [1, 400]]); pkg('ibm-plex-mono', 'IBM Plex Mono', ['latin', 'latin-ext'], [[0, 400], [0, 600]]); pkg('im-fell-english', 'IM Fell English', ['latin'], [[0, 400], [1, 400]])
+    const fc = resolveCdn(cd), G = 'https://fonts.googleapis.com/css2?', FS = 'https://fonts.gstatic.com/fs/'
+    const AQ = G + 'family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap', SQ = G + 'family=IM+Fell+English:ital@0;1&display=swap'
+    const blocks = css => [...String(css).matchAll(/\/\* ([\w-]+) \*\/\n@font-face \{([^}]*)\}/g)].map(([, sub, b]) => { const g = re => (b.match(re) || [])[1]; return {sub, fam: g(/font-family: '([^']*)'/), style: g(/font-style: (\w+)/), wt: +g(/font-weight: (\d+)/), src: g(/src: ([^;]*);/), display: g(/font-display: (\w+)/), range: g(/unicode-range: ([^;]*);/)} })
+    const want = (slug, fam, tuples, subs) => tuples.flatMap(([it, wt]) => subs.map(sub => ({sub, fam, style: it ? 'italic' : 'normal', wt, src: 'url(' + FS + slug + '/' + slug + '-' + sub + '-' + wt + '-' + (it ? 'italic' : 'normal') + '.woff2) format(\'woff2\')'})))
+    const ac = cdnRoute(fc, 'atlas', AQ), ab = blocks(ac && ac.body), aw = want('eb-garamond', 'EB Garamond', [[0, 400], [0, 600], [1, 400]], FONT_SUBSETS).concat(want('lora', 'Lora', [[0, 400], [0, 600], [1, 400]], FONT_SUBSETS), want('ibm-plex-mono', 'IBM Plex Mono', [[0, 400], [0, 600]], FONT_SUBSETS))
+    ok('fonts: resolveCdn records the four fontsource packages', JSON.stringify(Object.keys(fc.fonts).sort()) === JSON.stringify(Object.keys(FONTSOURCE).sort()) && fc.fonts.lora === path.join(cd, '@fontsource/lora'), JSON.stringify(fc.fonts))
+    ok('fonts css2: the atlas query gives every family, tuple and subset in order (latin-ext, latin) under the Google names', ac && ac.contentType === 'text/css; charset=utf-8' && ab.length === 16 && ab.every((b, i) => ['sub', 'fam', 'style', 'wt', 'src'].every(k => b[k] === aw[i][k])), JSON.stringify(ab.map(b => [b.sub, b.fam, b.style, b.wt])))
+    ok('fonts css2: woff2 rewritten to fonts.gstatic.com/fs, no .woff source, display from the query, unicode-range from the package', ab.length && ab.every(b => b.display === 'swap' && b.range === (b.sub === 'latin' ? 'U+0000-00FF' : 'U+0100-02BA')) && !/\.woff\)|format\('woff'\)|\.\/files/.test(ac.body) && (ac.body.match(/font-display/g) || []).length === 16, ac && ac.body.slice(0, 400))
+    const sc = cdnRoute(fc, 'sim', SQ), sb = blocks(sc && sc.body)
+    ok('fonts css2: the sim query gives IM Fell English latin 400 normal then italic', sc && sb.length === 2 && sb.every((b, i) => ['sub', 'fam', 'style', 'wt', 'src'].every(k => b[k] === want('im-fell-english', 'IM Fell English', [[0, 400], [1, 400]], ['latin'])[i][k]) && b.display === 'swap'), JSON.stringify(sb))
+    const nd = cdnRoute(fc, 'atlas', G + 'family=Lora'), fb = cdnRoute(fc, 'atlas', G + 'family=Lora&display=fallback')
+    ok('fonts css2: no axes is 400 normal, display defaults to swap and follows display=, same query same bytes', blocks(nd && nd.body).map(b => b.style + b.wt + b.display).join() === 'normal400swap,normal400swap' && blocks(fb && fb.body).every(b => b.display === 'fallback') && !!ac && cdnRoute(fc, 'atlas', AQ).body === ac.body, nd && nd.body)
+    const wf = cdnRoute(fc, 'atlas', FS + 'lora/lora-latin-400-italic.woff2')
+    ok('fonts gstatic: a /fs/<slug>/<file>.woff2 fulfils from files/ as font/woff2', wf && wf.contentType === 'font/woff2' && Buffer.isBuffer(wf.body) && String(wf.body) === 'wOF2:lora-latin-400-italic', JSON.stringify(wf && wf.contentType))
+    const noLora = {...fc, fonts: {...fc.fonts}}; delete noLora.fonts.lora
+    ok('fonts css2: a family missing from cdn.fonts aborts the whole query', cdnRoute(noLora, 'atlas', AQ) === null && cdnRoute(fc, 'atlas', G + 'family=Roboto') === null && cdnRoute(fc, 'atlas', G + 'family=Lora:wght@900') === null && cdnRoute(fc, 'atlas', G + 'family=Lora&text=Ab') === null && cdnRoute({...fc, fonts: {}}, 'sim', SQ) === null && cdnRoute(null, 'sim', SQ) === null)
+    ok('fonts gstatic: a non-/fs/ URL, a missing file or an unheld slug aborts', cdnRoute(fc, 'atlas', 'https://fonts.gstatic.com/s/lora/v32/lora-latin-400-italic.woff2') === null && cdnRoute(fc, 'atlas', FS + 'lora/lora-latin-900-normal.woff2') === null && cdnRoute(noLora, 'atlas', FS + 'lora/lora-latin-400-italic.woff2') === null && cdnRoute(fc, 'atlas', FS + 'lora/../lora/files/x.woff2') === null)
+    w('@fontsource/lora/metadata.json', JSON.stringify({family: 'Lora Cyrillic'})); let thrown = ''; try { resolveCdn(cd) } catch (e) { thrown = e.message }
+    ok('fonts: a package that is not the Google family is refused', /not the Google name "Lora"/.test(thrown), thrown)
+    fs.unlinkSync(path.join(cd, '@fontsource/lora/metadata.json')); w('@fontsource/lora/latin-400.css', face('lora', 'Lora Italic', 'latin', 400, 0)); thrown = ''; try { cdnRoute(resolveCdn(cd), 'atlas', G + 'family=Lora') } catch (e) { thrown = e.message }
+    ok('fonts css2: a block whose font-family is not the requested Google name is an assertion', /does not declare font-family 'Lora'/.test(thrown), thrown)
+    const tz = path.join(tmp, 'cdn-tgz'); fs.mkdirSync(path.join(tz, 'p/package/files'), {recursive: true}); fs.writeFileSync(path.join(tz, 'p/package/latin-400.css'), face('lora', 'Lora', 'latin', 400, 0)); fs.writeFileSync(path.join(tz, 'p/package/files/lora-latin-400-normal.woff2'), 'wOF2'); fs.writeFileSync(path.join(tz, 'p/package/package.json'), '{}')
+    for (const p of ['leaflet/dist/leaflet.js', 'three/build/three.min.js']) { fs.mkdirSync(path.dirname(path.join(tz, p)), {recursive: true}); fs.writeFileSync(path.join(tz, p), '1') }
+    cp.execFileSync('tar', ['czf', path.join(tz, 'fontsource-lora-5.3.0.tgz'), '-C', path.join(tz, 'p'), 'package'])
+    const tc = resolveCdn(tz)
+    ok('fonts: a fontsource tarball is extracted once under _x/@fontsource/<slug>', tc.fonts.lora === path.join(tz, '_x/@fontsource/lora') && Object.keys(tc.fonts).length === 1 && blocks(cdnRoute(tc, 'atlas', G + 'family=Lora').body).length === 1, JSON.stringify(tc.fonts))
   }
   // Net: on a cache-on page each cached or revalidated local response counts once, in the event orders Chromium 141 emits; the main page keeps B0's rule
   {
