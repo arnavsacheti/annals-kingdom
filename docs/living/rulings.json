@@ -1,0 +1,161 @@
+{
+  "date": "2026-10-05",
+  "about": "Owner rulings of the living chart LC1..LC17. rulings[].text mirrors LC_RULINGS in the living config region of the four living scripts byte for byte (tools/living-drift.js L5). To rule, put an id under overrides with a text that starts with that ruling's text and appends the decision (append-only); LC2, LC3, LC10, LC12 and LC13 are fixed and refused; LC4, LC7 and LC17 are owner-gated additions, never defaults. List the ids the owner has signed off under confirmed. Filigree R and street ST texts are cited by id, never restated here; their overrides live in docs/filigree/rulings.json and docs/street/rulings.json.",
+  "rulings": [
+    {
+      "id": "LC1",
+      "text": "Default off: the living chart ships behind the hash param living=1; once it is set, setHash keeps it (one declared hook line). With it absent the atlas creates no living node, canvas, listener, rAF callback, request or layers row, so desktop identity (UG8) holds with no declared region. The layers row \"The living chart\" and the still-chart control render only under living=1. The owner flips the default only after Living 4 passes and an owner-run real-device pass.",
+      "default": "off (living=1 only; row and control only under living=1)",
+      "fixed": false,
+      "gated": false,
+      "why": "UG8 desktop identity and UG10 first-view bytes hold only if nothing living exists with the param absent; R18 and ST7 set the default-off precedent; the research found default-off alone does not keep desktop identity unless the row and control render only under living=1 (docs/mobile/README.md:29).",
+      "owner_question": "Default off until Living 4 passes and you have looked at it on a real phone at the table, then you flip it? (default: yes, off)"
+    },
+    {
+      "id": "LC2",
+      "text": "One control, one state: one visible still-chart control stops every motion on the atlas at once (the living layer, journey playback and the playing route line). It writes the atlas's one reduced-motion state, jrn.forceReduced read through jReduced(), which already follows prefers-reduced-motion through jReduceMq and its change event; the #jbar-reduce box shows the same state. No second matchMedia and no second motion flag (WCAG 2.2.2).",
+      "default": "one control writing jrn.forceReduced; no second matchMedia",
+      "fixed": true,
+      "gated": false,
+      "why": "WCAG 2.2.2 (Level A) needs a visible mechanism for motion that starts automatically, lasts over 5 s and runs beside other content; prefers-reduced-motion alone covers only 2.3.3. The atlas already has one source (jReduceMq, jReduced(), jrn.forceReduced, #jbar-reduce at maps-site/index.html ~3088-3305), so one control writing it keeps one mechanism for journey playback, the route dash and the living layer.",
+      "owner_question": "None: fixed. You may rename the control within LC16."
+    },
+    {
+      "id": "LC3",
+      "text": "Still frame: under the still chart, reduced motion or the capture's frozen virtual clock, the chart freezes on one fixed frame and keeps every piece of information: footprints as stamps along the walked route, caravan strings halted at their nearest halt, ships moored at their lane's nearer port, water and the dark-hour dim frozen outside the dark hour, creatures at rest, zoom effects instant. Every class and glyph of the moving chart stays.",
+      "default": "one fixed frame, every class kept",
+      "fixed": true,
+      "gated": false,
+      "why": "Reduce means calmer, not emptier; the capture already shoots under reduced motion with a frozen virtual clock (tools/mobile-capture.js), so the still frame is also the frame every desktop-identity shot sees.",
+      "owner_question": "None: fixed."
+    },
+    {
+      "id": "LC4",
+      "text": "Creatures: only canon-backed kinds move. Whales of the Loon Sea move only where Living 1 resolves a canon placement for that sea on the sheet (the atlas data holds none); coastal birds (inferred; the lexicon words leph, arbezeph, aurael) may move along coasts. Lugal is one still mark at the Fell Mountains stop of party-route.json, never flying and never named for the sim's dragon. Hoarwyrms and Witch-Birds are not shown; the Ponbar beasts are never shown. Dragon flocks and any other creature or behaviour canon does not give are absent unless an override names the creature, its place and its behaviour; such a creature carries a rumour mark (prov invented).",
+      "default": "canon-backed movers only; whales only with a resolved Loon Sea placement; Lugal a still mark; invented creatures absent",
+      "fixed": false,
+      "gated": true,
+      "why": "Canon only as canon: the wiki extract holds one dragon (Lugal), names hoarwyrms and Witch-Birds once, withholds the Ponbar beasts, and gives the Loon Sea no atlas coordinates; the dragon film the owner recalled (named only under Provenance in docs/living/README.md) is a mood, not a source.",
+      "owner_question": "Which creatures may move, where, and doing what? Name any invented creature (dragon flocks, hoarwyrm snow-ripples, Witch-Bird wheels) with its place and behaviour to rule it in; it will carry a rumour mark. Does Lugal ever fly? (default: no) Coastal birds are inferred, not backed (the lexicon has the words, the extract shows none): may they move by default unmarked, or only with the rumour mark \"told, not seen\"? (default: they move, unmarked, as inferred)"
+    },
+    {
+      "id": "LC5",
+      "text": "Footprints: they follow the party route (party-route.json) only, in session order, as alternating stamps along the arc length with one head and a fading tail on the presentation clock. A leg the atlas journey treats as a teleport is a gap, never a walk or an invented voyage; a sea leg is drawn only where party-route.json names a ship. No per-member tints. The head rests at Epēshu, where the party is.",
+      "default": "party route only; teleport legs a gap; no member tints",
+      "fixed": false,
+      "gated": false,
+      "why": "party-route.json is canon-approximate and ordered by session but not dated by day; the members' own roads (buildTrails) are conjectural; walking a teleport leg would invent a journey.",
+      "owner_question": "Footprints for the whole Company only, or each member in their colour? Teleport legs as a gap, or as a sea leg? (default: Company only, gap)"
+    },
+    {
+      "id": "LC6",
+      "text": "Traffic: caravan strings on the named ways and ships on the sea lanes come from one seeded atlas function everywhere (inputs: a constant seed literal, class, id and the presentation clock; prov inferred, schedules and volumes invented), and inside the Epēshu window from the living traffic snapshot maps-site/living/traffic.json, exported once from the sim at seed epeshu and a fixed day by tools/living-measure.js --export-traffic and stamped with the index.html sha. Never wall-clock time; never the herald's tidings snapshot (R12): notices= is only read, for shut ways. Visible nouns come from a display map: the sim's ship kind reads mūskar (merchantman) on every lane; galley only where an LC6 override rules it.",
+      "default": "one seeded atlas function everywhere; the sim snapshot inside the Epēshu window; never notices=",
+      "fixed": false,
+      "gated": false,
+      "why": "The atlas has no sim day, so an unstated day invites wall-clock time (UG3, R12); R12 notices= is filigree-owned and Filigree 2 freezes it, so the living track ships its own snapshot file; the sim names its ships with a medieval type word that must not reach visible text.",
+      "owner_question": "Caravans and ships everywhere from a seeded function (invented schedules), with the real sim traffic inside the Epēshu window? Every ship reads mūskar (merchantman): may some lanes read galley instead? (default: yes; mūskar everywhere)"
+    },
+    {
+      "id": "LC7",
+      "text": "Detail in 3D: the sim is the only 3D. The atlas reaches it by the zoom-through: inside the Epēshu window, zooming past the city band crossfades the city overlay into a Street frozen-view poster by the R6 threshold rule (instant under the still chart), then offers the step into the street (the sim's URL from the atlas #simLink href plus #s=epeshu&goto=<place>&street=1; never a relative index.html and never forwarding living=1). A landmark exhibit opens the same poster in its card, then the same step. No WebGL in maps-site; the three.js overlay (H1) exists only as an owner-gated spike page under docs/living/spike/ that is never served.",
+      "default": "H3 canvas motion + H2z zoom-through into the Street poster, then the H2 step into street=1; H1 only as a never-served spike",
+      "fixed": false,
+      "gated": true,
+      "why": "The research found no Leaflet + three.js plugin, a second GL context on phones, 3D-on-raster drift and heights only inside the Epēshu window; the sim already owns street life (Street ST1), so the zoom-through gives the \"transitive layer\" without WebGL in the atlas.",
+      "owner_question": "Is a page change into the sim acceptable as the \"transitive layer\" when you zoom in, or must the zoom stay inside the atlas (the H1 spike)? Which landmark is the first exhibit? (defaults: yes; the Epēshīn Forum)"
+    },
+    {
+      "id": "LC8",
+      "text": "Frames: ambient motion draws at most 20 times per second on fine pointers and 15 on coarse pointers; one-shot motion (a route drawing itself, the crossfade) at most 30 on phones. Progress comes from the rAF timestamp with dt clamped to 100 ms. Zero living rAF callbacks while the page is hidden or the layer is off-screen, below its band, off, under a card or still.",
+      "default": "20 draws/s fine pointers, 15 coarse; 30 one-shot on phones; dt clamped 100 ms; zero rAF when hidden, off-band, off, covered or still",
+      "fixed": false,
+      "gated": false,
+      "why": "Battery and heat at the table over a three-hour session; iOS Low Power Mode clamps rAF to 30 anyway (WebKit 215745); the atlas has no visibilitychange handler today.",
+      "owner_question": "Are 20 and 15 draws a second smooth enough for ambient motion? (default: yes)"
+    },
+    {
+      "id": "LC9",
+      "text": "Craft: motion stays slow (at most 24 css px per second on screen), low in contrast, under every name pane and out of every label box plus a 4 px halo; no region flips luminance more than 3 times a second and nothing alerts.",
+      "default": "slow, low-contrast, under the names, never flashing",
+      "fixed": false,
+      "gated": false,
+      "why": "The names are what the table reads; peripheral-motion research (low confidence) and the owner's wish both say keep motion away from names.",
+      "owner_question": "Is 24 css px a second the right top speed for a caravan string at the table? (default: yes)"
+    },
+    {
+      "id": "LC10",
+      "text": "No rise: structures and glyphs appear by the R6 threshold rule (present at their threshold, any ease at most 0.25 zoom or 250 ms); no scale-pop and nothing fades in from nothing over more than 250 ms.",
+      "default": "no rise or scale-pop",
+      "fixed": true,
+      "gated": false,
+      "why": "Filigree R6 and the density-bible appear clause: presence is a threshold, ink eases at most 0.25 zoom or 250 ms, nothing fades in from nothing; a Game-of-Thrones rise would break the table map's own rule.",
+      "owner_question": "None: fixed (R6 binds)."
+    },
+    {
+      "id": "LC11",
+      "text": "Dark hour: Tamar's dark hour is one whole-sheet dim of the base (at most 12% luminance, under every name pane) from the sim's closed form on the presentation day (one presentation day = 300 s, as the sim's renderTod); the still frame lies outside the dark hour. A travelling sweep is invented and absent unless overridden.",
+      "default": "one whole-sheet dim, eased, outside the still frame; no sweep",
+      "fixed": false,
+      "gated": false,
+      "why": "Canon: Tamar's dark hour is one global dimming from the sim's closed form (index.html const darkHour); a moving band would be invented.",
+      "owner_question": "A whole-sheet dim (canon) or a travelling shadow sweep (invented)? (default: the dim)"
+    },
+    {
+      "id": "LC12",
+      "text": "Determinism: motion is presentation only. Every glyph position is a pure function of (seed literal, class, id, snapshot day, presentation time); presentation time accumulates the rAF timestamp argument with dt clamped, so it freezes under the capture's virtual clock. Randomness comes only from keyed streams on the key lc:<class>:<id>:<k> (an xmur3 to mulberry32 copy inside maps-site/living.js). maps-site gains zero clock tokens (pattern W of docs/mobile/metrics.md §6), nothing names W.rng, and the atlas's xmur3, mulberry32, genCityCanvas, washMake and sampleCityMask are never called or changed.",
+      "default": "pure functions of seed, class, id, day and presentation time; keyed streams; zero clock tokens",
+      "fixed": true,
+      "gated": false,
+      "why": "Determinism is a project hard rule; UG3 counts clock tokens in maps-site/index.html only, so the living files get their own count of zero; the capture's virtual clock must freeze every frame.",
+      "owner_question": "None: fixed."
+    },
+    {
+      "id": "LC13",
+      "text": "Host: the living layer is one canvas inside an existing pane (pJTrail unless Living 2 proves it unfit, then another existing pane), kept in step by the Leaflet renderer scheme (a CSS transform during zoomanim, an exact redraw on zoomend); no createPane, no pane z change, no WebGL. Living code and data are lazy: maps-site/living.js and maps-site/living/**, hand-written with no build step, fetched only under living=1, versioned by ?v=; a failed fetch logs no console error and leaves the still chart.",
+      "default": "one canvas in pJTrail; lazy living.js and living/**; no createPane, no WebGL",
+      "fixed": true,
+      "gated": false,
+      "why": "UG7 freezes the pane list and Filigree 2 freezes pre_filigree_panes; pJTrail (z 416) already hosts the journey trail, above the lanes and below every name pane; the Leaflet Renderer.js scheme keeps an overlay canvas in step during animated zoom.",
+      "owner_question": "None: fixed."
+    },
+    {
+      "id": "LC14",
+      "text": "Bytes: the first view gains +0 requests and at most 200 raw bytes of declared hook lines in maps-site/index.html (its size minus that of restore(maps-site/index.html)), declared under UG10; a literal +0 bytes would leave no way to read living=1. Lazy caps: living code at most 40 KB gzipped, the traffic snapshot 60 KB gzipped, the sea mask 32 KB, each poster 150 KB.",
+      "default": "+0 requests and at most 200 raw bytes of declared hook lines in the first view; lazy caps 40/60/32/150 KB",
+      "fixed": false,
+      "gated": false,
+      "why": "A literal +0 bytes is unreachable: some inline code must read living=1 before the lazy script can load; the hook lines (the loader and the setHash keep) are declared under UG10 instead of waived.",
+      "owner_question": "Accept up to 200 raw bytes of hook lines in the first view, or insist on +0 bytes (then the living chart has no way to load)? (default: accept)"
+    },
+    {
+      "id": "LC15",
+      "text": "Select: a moving glyph is selectable: a pointer hit on the current or still frame opens a card (a caravan string: its way and the places it runs between; a ship: its lane and port; the footprints: the session stop), and a keyboard-reachable list names every glyph in view. Cards never assert canon the extract lacks; inferred traffic reads \"seen on the way\".",
+      "default": "moving glyphs selectable, with a keyboard list",
+      "fixed": false,
+      "gated": false,
+      "why": "The owner asked for an interactive chart, not only a moving one; Mini Tokyo 3D's selectable moving vehicles are the verified precedent; WCAG needs a keyboard path.",
+      "owner_question": "May a moving caravan or ship be selected to open its card? (default: yes)"
+    },
+    {
+      "id": "LC16",
+      "text": "Words: the bronze-age Nīmlad voice (caravan string, halt, waystation, khophesh, mūskar, galley, the herald's tidings, still the chart, stir the chart). VOCAB_LC and the UG9 table-words list never appear in visible text. The player-visible strings are listed in docs/living/README.md §13, and only that list is voice-read.",
+      "default": "bronze-age Nīmlad voice; VOCAB_LC and the UG9 words banned in visible text",
+      "fixed": false,
+      "gated": false,
+      "why": "Project hard rule on voice; the sim's own ship kind and the mobile jargon list must not leak into the chart's words.",
+      "owner_question": "Are \"Still the chart\" and \"Stir the chart\" the words you want on the control? (default: yes)"
+    },
+    {
+      "id": "LC17",
+      "text": "The sim's dragon: in #s=epeshu the sim wakes a seeded dragon (a name drawn from six, lair W.peak, Myth on by default) while canon has one dragon, Lugal, gone into the Fell Mountains. It stays as it is until the owner rules (a) Myth off by default in the canon realm, (b) the canon realm shows no dragon (Myth off or the dragon dead) and the chronicle names Lugal as gone north to the Fell Mountains (atlas 782, 8, outside the sim's window), or (c) a chronicle line says this wyrm is not Lugal. The atlas never names the sim's dragon Lugal.",
+      "default": "the sim dragon left as it is; atlas never calls it Lugal",
+      "fixed": false,
+      "gated": true,
+      "why": "A world-generation change to #s=epeshu re-baselines every frozen fingerprint (mobile, street, living), so it is never a default; it edits index.html, so it waits for Street 4 and the street hold; any build keeps the pick(dR, …) draw so the W.rng.hist cursor, and so the rest of the realm, is unchanged.",
+      "owner_question": "In the canon realm, should the sim's dragon be (a) switched off by default, (b) no dragon in the canon realm (Myth off or the dragon dead), the chronicle naming Lugal as gone north to the Fell Mountains (atlas 782, 8; outside the sim's window, so he cannot lair there), or (c) left with a chronicle line that it is not Lugal? (default: none of these until you rule)"
+    }
+  ],
+  "overrides": {},
+  "confirmed": []
+}

@@ -1,0 +1,994 @@
+{
+ "_meta": {
+  "date": "2026-10-05",
+  "digest": "digest.md (Deep dive: the living chart)",
+  "tasks": "13 (7 web, 6 code); web via source+refute lenses, code via anchor check",
+  "corpus_caveat": "canon from maps-site/data/wiki-places.json (51-page extract); contentIndex.json absent; x.com and most press hosts blocked"
+ },
+ "input": {
+  "confirmed": [
+   "The Collison post (2026-09-29) is about map density / 'cartographic filigree' and Bay Atlas (repo dossier; post text and replies unread)",
+   "Mini Tokyo 3D is a real shipped example of three.js over a Mapbox/MapLibre map with live moving trains and aircraft, an underground toggle and playback (stack per its docs; zoom LOD detail unconfirmed); not shown to be in the threads",
+   "The owner's asks: a zoom-in detail ('transitive') layer, footprints on travel routes, traffic (caravans, ships), moving creatures, animated water, landmark exhibits"
+  ],
+  "recollection_only": [
+   "A three.js / 3D Lombard Street interactive exhibit (four searches, zero hits)",
+   "A traffic-pattern interactive zoom demo inside the Collison/Azlen threads",
+   "three.js zoom-transition examples inside either thread (Azlen post content unread)",
+   "How to Train Your Dragon moving dragons / water patterns as a map precedent (no source found; a mood wish)",
+   "Bay Atlas using three.js or MapLibre (stack unknown)"
+  ]
+ },
+ "devices": [
+  {
+   "id": "LC-footprints",
+   "device": "Footprints along the party route, head plus fading tail",
+   "precedent": "Marauder's Map (VFX footprints over a captured map; Cinesite; ~11 min credits); deck.gl TripsLayer",
+   "technique": "seeded stamps every N px along JPATH arc length, alternating L/R, alpha = 1-(t-ts)/trail; one canvas, one clock t from rAF timestamp, 15-20 fps; pause when hidden/off-screen/below band; RM = static stamps along the walked route",
+   "atlas_data": [
+    "maps-site/data/party-route.json (12 stops, via[])",
+    "maps-site/index.html:1019 JPATH, 3090 JPPS",
+    "maps-site/index.html:3120-3138 jTrailUpTo/jTrail, 818 pJTrail pane",
+    "maps-site/index.html:3092 jReduced",
+    "#journey=t hash (3497-3526)"
+   ],
+   "canon": "inferred",
+   "cost": "~5-10 KB code; one canvas; no new bytes in first view",
+   "size": "M"
+  },
+  {
+   "id": "LC-member-roads",
+   "device": "Per-member tinted footprints and a travelling name label",
+   "precedent": "Marauder's Map name labels",
+   "technique": "tint from party.json colour; label rides the lead print; RM static",
+   "atlas_data": [
+    "maps-site/data/party.json road[] and color",
+    "maps-site/index.html:1631 buildTrails (conjectural)"
+   ],
+   "canon": "invented",
+   "cost": "small on top of LC-footprints",
+   "size": "S"
+  },
+  {
+   "id": "LC-caravans",
+   "device": "Donkey strings moving on named ways, stage ticks at high zoom",
+   "precedent": "Mini Tokyo 3D; TripsLayer; Peutinger Table daily-stop segments; Old Assyrian caravans (low)",
+   "technique": "sprite pool, position = routePos(route,(day-depart)*speed); seeded per-screen budget; Peutinger ticks past a band; RM = strings halted at caravan halts; display noun map: sim kind:'cog' (index.html:3616) never shown, use mūskar/galley in visible text",
+   "atlas_data": [
+    "maps-site/data/named-ways.json (Sun Road 28 pts, East-West Road)",
+    "index.html:3617 W.agents push (init 3442) {route,departDay,speed} via snapshot",
+    "index.html:3621 routePos",
+    "docs/filigree/density-bible.json:323 B-18 caravan_halt",
+    "maps-site/data/traced-roads.json (46 polylines, not loaded by the atlas; candidate path source for the printed road; verify against the print)"
+   ],
+   "canon": "inferred",
+   "cost": "sprite atlas <=30 KB; snapshot file per notices",
+   "size": "M",
+   "note": "Until Traced road network lands, caravans drift off the printed road unless traced-roads.json verifies against the print."
+  },
+  {
+   "id": "LC-ships",
+   "device": "Ships on sea lanes, hopping the coast and dwelling at ports",
+   "precedent": "Total War ambient ships (low); Uluburun coastal hopping (low)",
+   "technique": "sail glyph along existing lane spline latlngs, dwell at harbour ends, storm-season detours; RM moored; display-noun map: sim kind:'cog' (index.html:3616) is a medieval ship type, map to mūskar or galley before any visible text",
+   "atlas_data": [
+    "maps-site/data/sea-lanes.json (4 lanes, prov invented)",
+    "maps-site/index.html:1385 buildSeaLanes, 942 crSpline",
+    "maps-site/data/city-anchors.json (11 harbor:true, sea{side,distPx})"
+   ],
+   "canon": "inferred",
+   "cost": "small; reuses computed latlngs",
+   "size": "S"
+  },
+  {
+   "id": "LC-barges",
+   "device": "River barges with direction-dependent pace",
+   "precedent": "Lagash-Nippur: upstream towing ~4x downstream",
+   "technique": "slow upstream, fast downstream glyphs; RM static",
+   "atlas_data": [
+    "none: no river geometry in maps-site/data",
+    "needs traced solid-line rivers"
+   ],
+   "canon": "inferred",
+   "cost": "blocked on river data",
+   "size": "M"
+  },
+  {
+   "id": "LC-traffic-weight",
+   "device": "Static route width by traffic volume, two inks for direction",
+   "precedent": "Minard (low); deck.gl PathLayer width clamps",
+   "technique": "Leaflet weight from volume with min/max px clamps; no motion (also the RM fallback)",
+   "atlas_data": [
+    "index.html:3735-3736 W.routeVolume / W.pairLoads via snapshot"
+   ],
+   "canon": "inferred",
+   "cost": "negligible",
+   "size": "S"
+  },
+  {
+   "id": "LC-water",
+   "device": "Animated sea shimmer (river flow split out, blocked)",
+   "precedent": "earth.nullschool; windy.js particles; the sim's water shader",
+   "technique": "canvas: masked low-contrast noise drift on the (to-be-built) sea mask, precomputed field, 12-15 fps, seeded particle phases (no Math.random); RM frozen frame",
+   "atlas_data": [
+    "PatrinorModern tiles",
+    "NO sheet-wide land/water mask exists: washMake (maps-site/index.html:1938) and sampleCityMask (2955) are per-city masks around anchors, read-only reference only",
+    "index.html:2280-2355 WATER_VS/WATER_FS (GLSL reference; atlas has no GL)"
+   ],
+   "canon": "canon",
+   "cost": "~10-20 KB code; the costliest per-frame device",
+   "size": "L",
+   "canon_note": "sea shimmer is canon; river flow is blocked (no river data)",
+   "prerequisites": [
+    "An offline tool that generates a low-resolution sea mask, lazy-loaded with declared bytes, OR a mask derived from coast polygons (does not exist yet)"
+   ]
+  },
+  {
+   "id": "LC-river-flow",
+   "device": "River flow shimmer",
+   "precedent": "earth.nullschool",
+   "technique": "flow along traced river polylines; RM frozen frame",
+   "atlas_data": [
+    "none: no river data in maps-site/data"
+   ],
+   "canon": "canon",
+   "blocked": true,
+   "prerequisites": [
+    "Trace the rivers (solid black lines) as a sibling of \"Traced road network\" (POLISH.md:13)"
+   ],
+   "cost": "blocked on river data",
+   "size": "M"
+  },
+  {
+   "id": "LC-weather",
+   "device": "Storm tracks and stormclouds, cloud shadows",
+   "precedent": "Total War weather (low); GoT",
+   "technique": "slow soft blobs; storm tracks from Ponbar north in late summer/autumn; RM one still wash",
+   "atlas_data": [
+    "index.html:5002-5017 (sim) tickWeather (realm-global)",
+    "R13 fog function",
+    "density-bible B-37 fog_wash",
+    "maps-site/data/realms.geojson, minor-regions.geojson as zones"
+   ],
+   "canon": "canon",
+   "cost": "small",
+   "size": "M",
+   "canon_note": "storm tracks (Ponbar north, late summer/autumn) and Epēshu stormclouds are canon; cloud shadows are cosmetic"
+  },
+  {
+   "id": "LC-hearth-smoke",
+   "device": "Hearth smoke over settlements",
+   "precedent": "none",
+   "technique": "slow thin plumes; RM one still frame",
+   "atlas_data": [
+    "maps-site/data/city-anchors.json"
+   ],
+   "canon": "invented",
+   "cost": "small",
+   "size": "S"
+  },
+  {
+   "id": "LC-dark-hour",
+   "device": "Tamar's dark hour as whole-sheet dimming",
+   "precedent": "none (canon device)",
+   "technique": "the sim's dark hour is one global dimming value from the sun's direction (index.html:6197), not a moving band: render a whole-sheet dim; a travelling sweep is invented and an owner question. Clock = the rAF-timestamp presentation clock, frozen in captures, never Date (UG3, atlas W=2 cap); RM static dim",
+   "atlas_data": [
+    "index.html:6164 _tamarDir",
+    "index.html:6195-6197 darkHour"
+   ],
+   "canon": "canon",
+   "cost": "tiny",
+   "size": "S",
+   "sweep_canon": "invented"
+  },
+  {
+   "id": "LC-birds",
+   "device": "Ambient birds on coasts",
+   "precedent": "CK3 birds (low)",
+   "technique": "sprite pool on seeded curves, pos = getPointAt(frac(t/period+phase)); RM perched or absent",
+   "atlas_data": [
+    "index.html:4384-4440 buildAmbient (W.rng.amb layout; motion on Math.random: re-author)",
+    "coasts via maps_markers.json"
+   ],
+   "canon": "inferred",
+   "cost": "small",
+   "size": "S",
+   "canon_note": "lexicon has the words (leph, arbezeph, aurael); no canon placement"
+  },
+  {
+   "id": "LC-whales",
+   "device": "Whales in the Loon Sea",
+   "precedent": "CK3 (low)",
+   "technique": "sprite on a seeded slow curve; RM perched/absent",
+   "atlas_data": [
+    "Loon Sea via maps_markers.json"
+   ],
+   "canon": "canon",
+   "canon_note": "Loon Sea whales and seals; hudnus/dornus",
+   "cost": "small",
+   "size": "S"
+  },
+  {
+   "id": "LC-lugal",
+   "device": "Lugal as a static glyph at the Fell Mountains (no flight)",
+   "precedent": "GoT clockwork staging",
+   "technique": "one static glyph from canon data (Fell Mountains marker); no flight path, no notices-driven motion; RM same glyph",
+   "atlas_data": [
+    "maps_markers.json Fell Mountains marker (canon data, not the sim)"
+   ],
+   "canon": "canon",
+   "cost": "tiny",
+   "size": "S",
+   "note": "The sim dragon is NOT Lugal: W.dragon.name is a seeded pick of six names (index.html:3474), its lair is W.peak, Myth defaults to Low = on (index.html:350-351) and tickDragon (index.html:5371) wakes it in #s=epeshu. Sim-vs-canon mismatch is an owner-gated sim item after Street 4."
+  },
+  {
+   "id": "LC-dragon-flocks",
+   "device": "HTTYD-style dragons wheeling over the map",
+   "precedent": "none sourced",
+   "technique": "same pool as birds",
+   "atlas_data": [],
+   "canon": "invented",
+   "cost": "small",
+   "size": "S"
+  },
+  {
+   "id": "LC-north-south-beasts",
+   "device": "Hoarwyrms and Witch-Birds as still named glyphs (Far North); Ponbar beasts not shown",
+   "precedent": "none",
+   "technique": "still, named glyphs only, or owner-gated; the snow-ripple and wheel behaviours are invented; Ponbar beasts are unresolved in canon (\"not even the Trogmunders can say\") and are not shown",
+   "atlas_data": [
+    "maps-site/data/realms.geojson / minor-regions.geojson",
+    "wiki-places Far North (names appear once only)"
+   ],
+   "canon": "invented-behaviour",
+   "cost": "small",
+   "size": "S"
+  },
+  {
+   "id": "LC-route-draw",
+   "device": "A selected route draws itself",
+   "precedent": "Leaflet.Polyline.SnakeAnim; ant-path",
+   "technique": "one-shot arc-length timed reveal under 5 s (exempt from WCAG 2.2.2); RM instant",
+   "atlas_data": [
+    "any route polyline (party route, ways, lanes)"
+   ],
+   "canon": "inferred",
+   "cost": "tiny",
+   "size": "S"
+  },
+  {
+   "id": "LC-select",
+   "device": "Select a moving glyph: it opens a card",
+   "precedent": "Mini Tokyo 3D (select train)",
+   "technique": "hit-test the glyph under the pointer on the overlay canvas; card shows a caravan's origin, destination and goods from the snapshot, a ship's lane and port, a footprint's session stop from party-route.json; under reduced motion/still chart hit-testing uses the frozen frame; keyboard reachable via the card list",
+   "atlas_data": [
+    "maps-site/data/party-route.json",
+    "maps-site/data/sea-lanes.json",
+    "maps-site/data/named-ways.json",
+    "snapshot (living= or notices=)"
+   ],
+   "canon": "inferred",
+   "cost": "small on top of the sprite pools",
+   "size": "M"
+  },
+  {
+   "id": "LC-rise",
+   "device": "Structures rise from the map when the city band arrives",
+   "precedent": "Game of Thrones titles (clockwork buildings unfold)",
+   "technique": "sprite scale-up at Z_TIER_D; RM instant",
+   "atlas_data": [
+    "maps-site/index.html:782 Z_TIER_D 7.5"
+   ],
+   "canon": "inferred",
+   "cost": "small; conflicts R6",
+   "size": "S"
+  },
+  {
+   "id": "LC-detail-3d",
+   "device": "Zoom-in 3D detail layer",
+   "precedent": "Mini Tokyo 3D; Threebox CameraSync; Google js-three anchor",
+   "technique": "see handoff (H2z crossfade into the Street poster then H2 step; H1 spike owner-gated)",
+   "atlas_data": [
+    "maps-site/index.html:782 Z_OPEN_MAX 8, Z_STREET 11.5",
+    "maps-site/index.html:2083 registerCityOverlay",
+    "index.html EPESHU_HF window [1060,1240]..[1860,2040]"
+   ],
+   "canon": "canon",
+   "cost": "H2: 0 B atlas; H1: ~150 KB gz unmeasured",
+   "size": "L"
+  },
+  {
+   "id": "LC-exhibits",
+   "device": "Landmark exhibits: poster in the card, then step into the scene",
+   "precedent": "model-viewer poster/reveal=manual/lazy ladder; Mapbox storytelling chapters; three r128 tilt-shift",
+   "technique": "poster still (Street frozen view) <=150 KB, chapter = Leaflet center+zoom + layer rows, live scene only on request; RM poster only",
+   "atlas_data": [
+    "maps-site/data/chart-pois.json (Epeshu 19, Summarch 9)",
+    "maps-site/index.html:3029 Epeshu canon overlay"
+   ],
+   "canon": "canon",
+   "cost": "per poster <=150 KB",
+   "size": "L"
+  }
+ ],
+ "handoff": {
+  "options": [
+   {
+    "id": "H1",
+    "summary": "Lazy three.js r128 overlay canvas past Z_OPEN_MAX on zoomend, registered by the Leaflet Renderer.js scheme, per-site origin, ortho camera, DPR<=1.5-2",
+    "pros": [
+     "true 3D in the atlas",
+     "matches the owner's transitive-layer image"
+    ],
+    "cons": [
+     "first WebGL in maps-site",
+     "second GL context on phones",
+     "needs a declared pane (UG7, Filigree 2 freeze)",
+     "custom sync code, no plugin found",
+     "3D on 2D imagery drifts",
+     "heights only inside the Epeshu window"
+    ],
+    "bytes": "~600 KB raw / ~150 KB gz (unmeasured) lazily; 0 first view"
+   },
+   {
+    "id": "H2",
+    "summary": "Step into the sim's street view: card action deep-links sim #s=epeshu&goto=<place>&street=1 with a Street frozen-view poster",
+    "pros": [
+     "one 3D engine",
+     "reuses Street caravans, crowds, weather",
+     "determinism already guarded",
+     "0 atlas bytes"
+    ],
+    "cons": [
+     "a page change, not a zoom",
+     "needs Sim-atlas continuity (POLISH:458) and Street 3/4",
+     "Epeshu window only"
+    ],
+    "bytes": "0 atlas; poster <=150 KB per sheet entry"
+   },
+   {
+    "id": "H2z",
+    "summary": "Inside the Epēshu window, zooming from Z_OPEN_MAX toward Z_STREET (maps-site/index.html:782) crossfades the city overlay into the Street frozen-view poster, and only then offers the step into the sim (H2 link). Reduced motion: instant swap",
+    "pros": [
+     "delivers the owner's zoom transition without WebGL in the atlas",
+     "H2 stays the destination"
+    ],
+    "cons": [
+     "still ends in a page change",
+     "needs Street 3/4 and street=1",
+     "Epēshu window only"
+    ],
+    "bytes": "poster <=150 KB per sheet entry",
+    "owner_question": "Is a page change acceptable as the \"transitive layer\"?"
+   },
+   {
+    "id": "H3",
+    "summary": "Canvas-only 2.5D: one overlay canvas for stamps, ships, water, shadows, sprite rise",
+    "pros": [
+     "no new dependency",
+     "every sheet, not just the window",
+     "easy to freeze for UG8"
+    ],
+    "cons": [
+     "no true 3D",
+     "per-vector canvas cost"
+    ],
+    "bytes": "~10-30 KB code (est.)"
+   },
+   {
+    "id": "H4",
+    "summary": "Move the atlas to MapLibre GL custom layers",
+    "pros": [
+     "native three.js layers"
+    ],
+    "cons": [
+     "rewrites the atlas under Filigree",
+     "CRS.Simple is not Mercator"
+    ],
+    "bytes": "large"
+   }
+  ],
+  "recommended": "H3 for every motion device + H2z (crossfade into the Street poster) leading to H2 for 3D detail and exhibits; H1 only as an owner-gated spike after Filigree 4, Mobile 15 and Street 4; H4 rejected"
+ },
+ "canon": {
+  "backed": [
+   "Tamar's dark hour (closed form in the sim)",
+   "named seas and rivers (Tungril widest)",
+   "White Sea hurricanes from Ponbar north in late summer/autumn",
+   "Epeshu stormclouds, last days of 1374 A.B.",
+   "Sun Road (Dramuz-Cyrikon via Lepon, Epeshu, Tamaron, Bolkhar; only near-city stretches kept); East-West Road ends at Summarch; Dale Road",
+   "Green Sea trade hub; Trogmunders as White Sea carriers (catamaran)",
+   "Loon Sea whales and seals; 'Leviathan Sea' as Patrin hearsay",
+   "Lugal: one named dragon, vanished into the Fell Mountains; party brokered his neutrality (maps-site/data/party-route.json, reviews.json; party.json has no Lugal text)",
+   "hoarwyrms and Witch-Birds named once in the Far North (names only; behaviour is invented-behaviour)",
+   "Ponbar beasts exist but are unresolved in canon (\"not even the Trogmunders can say\"): not shown",
+   "party route (approximate, session-ordered; summer 1374 to last days of 1374)",
+   "Pebros's army outside the Lepon ruins",
+   "lexicon: leph, arbezeph, aurael, hegon, khophesh, muskar, hudnus, dornus, hagar, postanus"
+  ],
+  "invented": [
+   "dragon flocks of any kind (HTTYD)",
+   "Lugal flying over Leponnia",
+   "a kraken or serpent at a fixed place",
+   "per-day footprints",
+   "sea-lane schedules, cargo and volumes (lanes already prov invented)",
+   "hearth smoke",
+   "griffons, wyverns, rocs",
+   "Dagon as an ambient creature (a one-off session-6 attack, party.json only)",
+   "a travelling dark-hour sweep (canon is a global dimming)",
+   "hoarwyrm snow-ripples and Witch-Bird wheels (invented-behaviour)",
+   "the sim dragon as Lugal (random name, lair W.peak)"
+  ],
+  "owner_questions": [
+   "Which creatures may move on the chart, and are invented ones allowed under a 'rumour' watermark?",
+   "Does Lugal ever fly, given his brokered neutrality, and should the sim's W.dragon raid Epeshu in #s=epeshu?",
+   "Footprints: party route only, or each member? Teleport legs as a sea leg or a gap?",
+   "Is the sim the only 3D (H2), or may the atlas carry WebGL (H1)?",
+   "Which landmark is the first exhibit (Epeshu Forum, Blue Temple of Thobrauk, Lepon ruins, Paerandas)?",
+   "Which HTTYD scene was meant?",
+   "Can the owner share the thread replies showing the Lombard Street exhibit and traffic demo?",
+   "Is a page change acceptable as the \"transitive layer\" (H2z) or must the zoom stay in the atlas (H1)?",
+   "May moving glyphs be selectable (LC-select)?",
+   "Snapshot ownership: reserve a versioned field in R12's snapshot or ship a separate living= file?",
+   "Dark hour: whole-sheet dim (canon) or a travelling sweep (invented)?",
+   "Fix the sim dragon vs canon Lugal after Street 4?",
+   "Show hoarwyrms/Witch-Birds as still named glyphs, or not at all?"
+  ]
+ },
+ "track_links": {
+  "connects": [
+   "journey mode single-rAF owner + jReduced (maps-site/index.html:3211 jFrame, 3092 jReduced, 3227 jReducedStep)",
+   "B-18 caravan_halt (docs/filigree/density-bible.json:323)",
+   "B-41 muster_day (no dragon flights), B-42 shut_way (docs/filigree/density-bible.json:677)",
+   "B-37 fog_wash and R13 fog function",
+   "R12 notices= snapshot, never wall-clock",
+   "R18 default-off toggle pattern (docs/filigree/rulings.json)",
+   "Street routePos/updateAgents (docs/street/README.md:554)",
+   "Street street=1 as the 3D detail layer (H2)",
+   "Sim-atlas continuity (POLISH.md:458)",
+   "Region-chart zoom-through (POLISH.md:447)",
+   "Traced road network (POLISH.md:13; docs/filigree/README.md:677)",
+   "absolute bands Z_TIER_D/Z_OPEN_MAX/Z_STREET (maps-site/index.html:782), phone delay <=0.5 zoom",
+   "one reduced-motion source: reuse jReduceMq/jReduced() (maps-site/index.html:3091-3092), no second matchMedia",
+   "LC2 still-chart control also governs journey playback and .route-line.playing (one mechanism for all motion, WCAG 2.2.2)",
+   "Detail density is Filigree 3 reveal tiers (tier D, city band), Region-chart zoom-through (POLISH.md:447) and Census second pass; the living track adds motion only"
+  ],
+  "conflicts": [
+   "Filigree 3 holds BOTH maps-site/index.html and index.html (POLISH.md ~519 \"job holds both\"; docs/mobile/README.md:77): sim-side living work cannot overlap it",
+   "Street ST1 sim-only (docs/street/README.md:618); ST3 render-only",
+   "Street ST7 rows only, no new keys (docs/street/README.md:624)",
+   "ST10 party presence out of scope in the sim (docs/street/README.md:627)",
+   "Street owns caravans and weather (docs/street/README.md:4): risk of two engines",
+   "UG7 / Filigree 2 pane freeze (docs/mobile/README.md:28)",
+   "UG3 clock tokens (atlas P=1 W=2; sim 37/37)",
+   "UG8 desktop identity; UG10 first-view bytes",
+   "R6 / density-bible appear clause (docs/filigree/density-bible.json:2374) vs a rise effect",
+   "Mobile rebase rule (docs/mobile/README.md:81)",
+   "Mobile lanes hold app files until Mobile 9 / Mobile 14 (docs/mobile/README.md:77)",
+   "R12 notices= snapshot is Filigree-owned and Filigree 2 will freeze it: caravan/ship tracks need a reserved versioned field (Option C input) or a separate living= snapshot file",
+   "UG8 (docs/mobile/README.md:29): the layers-panel row and still-chart control add desktop pixels unless rendered only under living=1 or declared as a panel region per unit",
+   "dashmove/copulse reduced-motion CSS (maps-site/index.html:215-216, 420-421) edits existing atlas animation: its own item after Mobile 9 or an owner-nodded Mobile atlas lane hand-off (rebase rule, docs/mobile/README.md:81)",
+   "street=1 does not exist yet (grep: no street= in index.html; only goto= at index.html:5923)"
+  ]
+ },
+ "budgets": [
+  "First view +0 B / +0 requests on iphone13 (UG10; today 427,384 B / 37 req)",
+  "Lazy chunks gzipped, versioned-immutable; no asset >500 KB without a low-res step",
+  "Poster / sheet entry <=150 KB; pan/zoom step <=100 KB",
+  "rAF work <=6-8 ms phone, <=10 ms desktop; tasks >50 ms sliced",
+  "Ambient 15-20 fps; phones capped at 30 fps; progress from rAF timestamp; dt clamped (e.g. 0.1 s)",
+  "One overlay canvas; <=10 draw calls if H1 (InstancedMesh)",
+  "0 rAF when hidden, off-screen, below band, layer off, card covering, or reduced motion",
+  "No new Math.random/Date.now/performance.now tokens (UG3)",
+  "Gates count structure under a virtual clock; SwiftShader fps informational only"
+ ],
+ "rulings_candidates": [
+  {
+   "id": "LC1",
+   "text": "The living chart ships default-off behind hash param living=1 and a layers-panel row, like R18 and ST7. The layers-panel row and the \"still chart\" control render only when living=1, or each unit declares the panel region under UG8 (docs/mobile/README.md:29) as R18 did; default-off alone does not keep desktop identity.",
+   "default": "off",
+   "why": "UG10 bytes stay untouched; UG8 holds only if the panel row and control are living=1-only or declared"
+  },
+  {
+   "id": "LC2",
+   "text": "One visible 'still chart' control stops every ambient motion at once; it initialises from prefers-reduced-motion and follows its change event. It also governs journey playback and .route-line.playing, and reads the existing jReduceMq/jReduced() (maps-site/index.html:3091-3092), not a second matchMedia.",
+   "default": "still when the OS asks for reduced motion, else moving once living=1",
+   "why": "WCAG 2.2.2 needs a visible mechanism; the media query alone only covers 2.3.3"
+  },
+  {
+   "id": "LC3",
+   "text": "Under reduced motion or 'still', the chart freezes on one fixed frame: footprints as static stamps, ships moored, water frozen, creatures perched or absent, zoom effects instant.",
+   "default": "frozen frame, information kept",
+   "why": "reduce means calmer, not emptier; matches the capture posture (frozen clock)"
+  },
+  {
+   "id": "LC4",
+   "text": "Moving creatures are limited to canon-backed kinds: Loon Sea whales (canon) and birds (inferred). Lugal is a static glyph at the Fell Mountains drawn from canon data. Hoarwyrms and Witch-Birds are still, named glyphs or owner-gated (their behaviours are invented-behaviour); Ponbar beasts are not shown (unresolved in canon). Dragon flocks are out unless the owner rules them in.",
+   "default": "canon-backed only",
+   "why": "canon withholds the Ponbar beasts and gives the Far North creatures a name only; the extract holds one dragon, Lugal"
+  },
+  {
+   "id": "LC5",
+   "text": "Footprints follow the party route only, in session order; teleport legs are drawn as a sea leg or a gap, never a walk; per-member tints only where road[] resolves to a route stop.",
+   "default": "party route only",
+   "why": "the route is canon-approximate and not dated by day; the member trails are conjectural"
+  },
+  {
+   "id": "LC6",
+   "text": "Caravans and ships on the atlas come from a fixed-seed sim snapshot; outside the Epēshu window they come from a seeded atlas function watermarked prov invented. Seeded atlas function inputs: a constant seed literal, and day = the snapshot's day plus the rAF-timestamp presentation clock (never wall-clock). Dragon flights are dropped (Lugal is a static canon glyph; B-41 muster_day is not reused for flights). The snapshot extends R12 (Filigree-owned, frozen by Filigree 2): reserve a versioned field for it in the Option C Filigree 2 input now, or ship a separate living= snapshot file instead of notices=. Visible text uses a display-noun map (sim kind:'cog' -> mūskar or galley).",
+   "default": "snapshot inside the window, invented outside",
+   "why": "the atlas has no sim day; an unstated day invites wall-clock time, which breaks determinism and R12; the snapshot format is a real file-ownership collision"
+  },
+  {
+   "id": "LC7",
+   "text": "The sim is the only 3D: the atlas hands off to the street view (H2) by deep link; no WebGL in maps-site unless an owner-gated H1 spike is approved. The hand-off is H2z: a crossfade into the Street frozen-view poster, then the H2 link (owner question: is a page change acceptable?).",
+   "default": "H2",
+   "why": "one engine, zero atlas bytes, Street already owns street life"
+  },
+  {
+   "id": "LC8",
+   "text": "Ambient motion runs at 15-20 fps (30 max on phones), only while visible, on band and with the layer on.",
+   "default": "15-20 fps",
+   "why": "battery at the table; iOS Low Power Mode clamps to 30 anyway"
+  },
+  {
+   "id": "LC9",
+   "text": "Motion stays slow, low-contrast and out of label boxes; nothing alerts.",
+   "default": "on",
+   "why": "ambient-display literature (hypothesis) and the owner's 'not distracting from names'"
+  },
+  {
+   "id": "LC10",
+   "text": "Structures appear at the city band by the R6 threshold rule; no GoT-style rise or scale-pop.",
+   "default": "no rise",
+   "why": "R6 / the density-bible appear clause forbid fade-in from nothing"
+  }
+ ],
+ "shape_options": [
+  {
+   "id": "A",
+   "summary": "Fold the living chart into the existing jobs: atlas devices as extra inputs to Filigree 3/4, sim-side pieces as extra inputs to Street 3/4",
+   "pros": [
+    "no new workflows",
+    "one owner per file per track",
+    "reuses gates (UG3, UG8, R6, ST3)"
+   ],
+   "cons": [
+    "swells jobs whose specs are frozen or near frozen",
+    "Filigree 2 must plan motion it was never briefed on",
+    "Street ST1/ST7 forbid atlas edits and new keys",
+    "motion would hold up the table-map release"
+   ]
+  },
+  {
+   "id": "B",
+   "summary": "A separate four-job 'living chart' track (.claude/workflows/living-{1-research,2-plan,3-build,4-review}.js, docs/living/) queued after Filigree 4, Mobile 9 and the Mobile later atlas items; sim-side items after Street 4",
+   "pros": [
+    "clean scope and gates (still-chart test, frozen-frame shots)",
+    "builds on a finished table map and phone baselines",
+    "own rulings file LC1-LC10"
+   ],
+   "cons": [
+    "four more workflows to maintain",
+    "long wait",
+    "a late pane or param may collide with frozen Filigree/Street specs"
+   ],
+   "split": "Split units: (a) atlas devices (footprints, caravans, ships, select, water, weather) queue after Filigree 4 / Mobile 9 / Mobile later atlas items; (b) the H2/H2z link unit, exhibits, any sim-side snapshot exporter and the dragon-vs-canon item need street=1 (not yet existing) and queue after Street 3 and Street 4, never with the atlas items."
+  },
+  {
+   "id": "C",
+   "summary": "Hybrid: now, add small inputs to Filigree 2 (reserve a living pane/z-slot, the clock rule, B-18/B-41 reuse) and to Sim-atlas continuity (the street handoff link); later, a separate living-chart track built after Filigree 4 / Mobile 9, using H3 + H2 The Filigree 2 input must also reserve a versioned snapshot field for caravan/ship tracks (or name a separate living= file).",
+   "pros": [
+    "cheap now while Filigree 2 is unrun",
+    "avoids a later pane-freeze collision",
+    "keeps the table-map release unblocked",
+    "3D detail comes free from Street"
+   ],
+   "cons": [
+    "two touch points to keep in sync",
+    "the track still waits for Filigree 4",
+    "the Filigree 2 input needs an owner nod"
+   ],
+   "split": "Split units: (a) atlas devices (footprints, caravans, ships, select, water, weather) queue after Filigree 4 / Mobile 9 / Mobile later atlas items; (b) the H2/H2z link unit, exhibits, any sim-side snapshot exporter and the dragon-vs-canon item need street=1 (not yet existing) and queue after Street 3 and Street 4, never with the atlas items."
+  }
+ ],
+ "constraints": [
+  "Determinism: positions are pure functions of (seed, route, day) plus a presentation clock from the rAF timestamp; never Math.random/Date.now/performance.now in gen/sim or FILIGREE/STREET blocks",
+  "Do not call or alter xmur3, mulberry32, genCityCanvas, washMake or sampleCityMask; cityCanvasSha must not change",
+  "No createPane outside a declared pane table (UG7)",
+  "Atlas data files are top-origin (px = map.unproject([x,y],4)); wiki markers are bottom-origin",
+  "Only #s=epeshu has an atlas footprint (window [1060,1240]..[1860,2040])",
+  "Delay, never drop: a phone may delay or thin motion but keeps every class the desktop shows",
+  "Bronze-age Nimlad voice; UG9 bans toggle/tap/swipe/download in visible text",
+  "Filigree 3 holds both maps-site/index.html and index.html; Street 3 holds index.html; agents run no git"
+ ],
+ "risks": [
+  "Two engines for caravans and weather (atlas and Street) diverging",
+  "A canvas overlay drifting from the raster during animated zoom (no Renderer.js-style transform)",
+  "Phone battery and heat from continuous rAF (no real-device data until Mobile 15)",
+  "Invented creatures read as canon by players",
+  "Caravans drifting off the printed road until Traced road network lands",
+  "A lazily loaded three.js blocked or failing and logging an unexplained error (UG2)",
+  "WCAG 2.2.2 breach if motion is default-on without a visible still control",
+  "Owner examples (Lombard Street, traffic demo, HTTYD) never located, leaving the brief to taste"
+ ],
+ "polish_entries": [
+  {
+   "id": "PE-1",
+   "where": "Directly above \"Filigree 2 · Planning → sheet spec\" (POLISH.md:299), as an input note",
+   "kind": "input-note",
+   "draft": "Filigree 2 input note (living chart): reserve a versioned snapshot field (or name a separate living= file) for caravan/ship tracks beside R12 notices=; reserve a living pane/z-slot in the pane table under UG7; state the presentation-clock rule (rAF timestamp, frozen in captures, never Date). Owner nod needed. See docs/living/research-dossier.md."
+  },
+  {
+   "id": "PE-2",
+   "where": "After \"Mobile later · WebP rasters\" (POLISH.md:565) and before \"Mobile · Street 3…\" (POLISH.md:592)",
+   "kind": "atlas-items",
+   "draft": [
+    "Living chart · atlas motion devices (footprints, caravans, ships, LC-select, sea shimmer, storm tracks, birds/whales, Lugal glyph, dark-hour dim) — default-off living=1; one still-chart control; blocked on Filigree 4, Mobile 9",
+    "Living chart · sea mask tool (offline low-res sea mask, lazy, declared bytes) — prerequisite of sea shimmer",
+    "Living chart · trace the rivers (solid lines) — sibling of \"Traced road network\" (POLISH.md:13)",
+    "Living chart · reduced-motion CSS for dashmove/copulse (maps-site/index.html:215-216, 420-421) — own item after Mobile 9 or an owner-nodded Mobile atlas lane hand-off"
+   ]
+  },
+  {
+   "id": "PE-3",
+   "where": "After \"Street 4 · Review → punch list\" (POLISH.md:656), alongside the sim \"Mobile later\" items (POLISH.md:695-704)",
+   "kind": "sim-side-items",
+   "draft": [
+    "Living chart · H2z/H2 link unit and landmark exhibits (poster then step into the street; needs street=1)",
+    "Living chart · sim-side snapshot exporter (caravans, ships, traffic weight) — needs the snapshot-ownership ruling",
+    "Living chart · sim dragon vs canon Lugal mismatch (W.dragon.name seeded pick, lair W.peak, Myth default on in #s=epeshu) — OWNER-GATED"
+   ]
+  }
+ ],
+ "_living": {
+  "date": "2026-10-05",
+  "read_by": "The Living 1 integrator and question researchers (docs/living/README.md §4). Living 2 reads the living bible, not this file, so these inputs reach the spec only through the bible.",
+  "research_keys": "Every key above _living is the verified research file, unchanged (deep-equal): _meta, input, devices, handoff, canon, track_links, budgets, rulings_candidates, shape_options, constraints, risks, polish_entries.",
+  "superseded": {
+   "rulings_candidates": "docs/living/rulings.json: LC1-LC10 keep their ids and meanings (LC5 and LC6 sharpened: teleport legs are a gap; traffic uses a separate snapshot file and never notices=); LC11-LC17 are new.",
+   "polish_entries": "POLISH.md: the living block above \"## Done\" and the standalone items named in standalone_items below. PE-1 (a Filigree 2 input note) is dropped: Filigree 2 never reads todo-inputs (corrections C1).",
+   "shape_options": "B, see chosen_shape."
+  }
+ },
+ "chosen_shape": {
+  "id": "B",
+  "summary": "A separate four-job track: .claude/workflows/living-{1-research,2-plan,3-build,4-review}.js with docs in docs/living/. The zoom-through and exhibits are scope \"zoom\" of the same build and review scripts (POLISH items Living 3z and Living 4z, after Street 4 and \"Sim ↔ atlas continuity\"). The scripts are staged under docs/living/design/workflows/ and installed into .claude/workflows/ by the central item \"Living 0 · Install the living workflows\" when the UG11 install window is open.",
+  "filigree_input": "none (corrections C1; docs/living/design/filigree-input.md)",
+  "recommendation": "H3 canvas motion for every device; H2z zoom-through into the Street frozen-view poster, then the H2 step into the sim (street=1); H1 only as an owner-gated, never-served spike page under docs/living/spike/; H4 rejected.",
+  "owns": "the atlas glyph layer (maps-site/living.js, maps-site/living/**, declared /*LC-HOOK*/ lines in maps-site/index.html), tools/living-*.js, docs/living/**",
+  "never_edits": "index.html, docs/filigree/**, docs/street/**, docs/mobile/**, .claude/** (agents), tools/filigree-*, tools/street-*, tools/mobile-*, tools/build-offline-manifest.js, server.js, vendor/**"
+ },
+ "corrections": [
+  {
+   "id": "C1",
+   "research": "Shape C: add small inputs to Filigree 2 now (a pane slot, the clock rule, a versioned notices field).",
+   "correction": "Filigree 2 never reads docs/filigree/todo-inputs.json; none of the three inputs is needed. No Filigree input.",
+   "evidence": "filigree-2-plan.js:34 (the only \"todo-inputs\" occurrence, a comment); its inputs DOSSIER :203, REUSE :204, the density bible, rulings.json overrides :535; the mobile block's own _meta.read_by"
+  },
+  {
+   "id": "C2",
+   "research": "Filigree 3 builds the water mask and rivers, so the sea mask and river trace are contingencies (planning angle); or: no sheet-wide mask exists (research).",
+   "correction": "Filigree 3's land/water mask and rivers.json are DEM-window-only. A sheet-wide sea mask is a real prerequisite of the sea shimmer outside the window (item \"Living · the sheet-wide sea mask (tool)\"), and a sheet-wide river trace of river flow (\"Living later · trace the rivers\"); both cross-check Filigree's in-window outputs and never replace them.",
+   "evidence": "docs/filigree/density-bible.json B-03 (\"The sheets cover the window only: no relief, contour, height, river, cover, ridge or knoll is derived or invented there\"), B-04 (open sea \"inside the window\"), B-13, B-15; the window [1060,1240]..[1860,2040]"
+  },
+  {
+   "id": "C3",
+   "research": "Land the package before the Mobile 4 R1 reference.",
+   "correction": "R1 already exists. New .claude/workflows/living-*.js may land only while each Mobile lane has no passed unit or its review (Mobile 9 / Mobile 14) is checked; otherwise that lane review fails UG11 mechanically. The scripts are staged under docs/living/design/workflows/ and installed by Living 0 once Mobile 9 and Mobile 14 are checked (node tools/living-drift.js --install-window): pgrep cannot see a mobile-build run in its agent phases, so an earlier install needs --idle-confirmed from the central session.",
+   "evidence": "tools/mobile-capture.js:1406-1408 (UG11 over the union of pipeline_sha keys); mobile-review.js:108, 225 (START_REF, no rebase); mobile-build.js:310 (ref_before frozen once passed)"
+  },
+  {
+   "id": "C4",
+   "research": "Living builds after the street jobs, so no overlap.",
+   "correction": "Street 3 digests maps-site/** and docs/filigree/** at the start and end of every run (GS.8). Living 3 and every maps-site/ writer of this track never run beside a Street 3, Street 4 or Street punch run, in either direction.",
+   "evidence": "street-3-build.js:910, 1106-1112"
+  },
+  {
+   "id": "C5",
+   "research": "Reuse jReduceMq/jReduced(); one reduced-motion source.",
+   "correction": "The atlas also has jrn.forceReduced and the visible #jbar-reduce box; the still-chart control writes jrn.forceReduced (LC2), so no second state is added.",
+   "evidence": "maps-site/index.html:673, 3088-3092, 3270, 3305"
+  },
+  {
+   "id": "C6",
+   "research": "dashmove and copulse lack reduced-motion CSS.",
+   "correction": "dashmove loops infinitely (2.2.2 scope); copulse runs a finite pulse. Both get the @media rule in the standalone item \"Atlas reduced motion for its own animations (dashmove, copulse)\", outside the living track.",
+   "evidence": "maps-site/index.html:215-216, 420-421"
+  },
+  {
+   "id": "C7",
+   "research": "(not covered)",
+   "correction": "setHash replaces the whole hash, so living=1 is lost on the first card open unless one declared hook line keeps it (Living 2 probe P-hash-keep).",
+   "evidence": "maps-site/index.html:1058 function setHash(h){history.replaceState(...)}"
+  },
+  {
+   "id": "C8",
+   "research": "Reuse mobile-capture --accept for desktop identity.",
+   "correction": "UG4 hard-fails once a /* FILIGREE */ or /* STREET */ marker exists, so every living accept file waives UG4 with a fixed reason and living-3-build re-scores its anchor, drift and tithe halves from the capture (GL.2). UG5 is waived (atlas-only capture); UG9 is waived (living strings are listed in docs/living/README.md §13, never in docs/mobile/README.md).",
+   "evidence": "tools/mobile-capture.js:1352 (UG4.markers), :1387-1393 (UG9 reads docs/mobile/README.md)"
+  },
+  {
+   "id": "C9",
+   "research": "(not covered)",
+   "correction": "mobile-capture --accept without --capture writes docs/mobile/captures/<unit>.json, and a capture without --shots-dir writes docs/mobile/shots/. The living track always captures with --out and --shots-dir under docs/living/ and scores with --accept ... --capture ... --ref <name>=<file>.",
+   "evidence": "tools/mobile-capture.js:1935, 1481, 1952, 1213-1217"
+  },
+  {
+   "id": "C10",
+   "research": "(not covered)",
+   "correction": "tools/build-offline-manifest.js walks every file under maps-site/ (the atlas lane has no roots list), so any new or changed maps-site/ file makes --check report a stale manifest. Every maps-site/ writer of this track regenerates maps-site/data/offline-manifest.json when it exists and requires --atlas --check exit 0, and never writes maps-site/ while a Mobile lane is open (mobile-review fails a stale manifest).",
+   "evidence": "tools/build-offline-manifest.js LANES.atlas roots null; mobile-review.js:244, 280"
+  },
+  {
+   "id": "C11",
+   "research": "Whales: Loon Sea via maps_markers.json.",
+   "correction": "The Loon Sea has no atlas coordinates: maps_markers.json has no entry and wiki-places.json holds only its page (\"the most northerly region known\"). Whales move only where Living 1 resolves a canon placement on the sheet (LC4); otherwise they stay off and it is an owner question.",
+   "evidence": "maps-site/data/maps_markers.json (159 entries, none named Loon); wiki-places.json Locations/Bodies-of-Water/Loon-Sea"
+  },
+  {
+   "id": "C12",
+   "research": "Lugal: the Fell Mountains marker in maps_markers.json.",
+   "correction": "That marker sits at y = -93, above the sheet's top edge (atlas data is top-origin); party-route.json index 4 (0-based; \"Fell Mountains\", 782,8, \"Found the dragon Lugal's lair, brokered his neutrality\") is the placement of Lugal's still mark.",
+   "evidence": "maps-site/data/maps_markers.json Fell Mountains x 782 y -93; party-route.json[4]"
+  },
+  {
+   "id": "C13",
+   "research": "Hold living jobs while a mobile-build run is live.",
+   "correction": "mobile-build snapshots the whole tree (index.html, maps-site/, tools/, .claude/, server.js, vendor/) and halts on any .claude/ change, .claude/CLAUDE.md included. No living job and no delivery step writes the repo while a mobile run is live; the hold reads POLISH state (open Mobile items) and live tool processes, never a state.json sha (which stays different after any legitimate app edit).",
+   "evidence": "mobile-build.js:71-72 (TREE, isPipe)"
+  },
+  {
+   "id": "C14",
+   "research": "Build items after Filigree 4 and Mobile 9.",
+   "correction": "Living 1 itself waits for a Filigree 4 pass (and Mobile 9, Mobile 14, the reduced-motion item), so its frozen views, stills and the living-off reference L0 stand on the finished table map.",
+   "evidence": "POLISH.md Filigree 3 holds both app files; Filigree 4 is its review"
+  },
+  {
+   "id": "C15",
+   "research": "First view +0 B / +0 requests.",
+   "correction": "A literal +0 bytes is unreachable: inline code must read living=1 before the lazy script loads. LC14 declares at most 200 raw bytes of hook lines and +0 requests under UG10, as an owner ruling.",
+   "evidence": "docs/mobile/gates.md UG10; the atlas has no hash dispatcher that could absorb the param"
+  },
+  {
+   "id": "C16",
+   "research": "ST18 param grammar: living passes.",
+   "correction": "Confirmed against every param the apps read: the atlas journey, chart, poi, company, faction, place, view (handleHash) plus filigree and notices (planned); the sim s, goto, street. \"living\" collides with none.",
+   "evidence": "maps-site/index.html function handleHash(); street-1-research.js ST18"
+  }
+ ],
+ "views": [
+  {
+   "id": "LV1",
+   "name": "The Whole Chart",
+   "rule": "the atlas's whole-chart fit",
+   "scored": true
+  },
+  {
+   "id": "LV2",
+   "name": "The Pēshunor north coast (filigree sheet one)",
+   "rule": "docs/filigree/gates/views.json V1 centre and zoom",
+   "scored": true
+  },
+  {
+   "id": "LV3",
+   "name": "Sepos to the White Sea",
+   "rule": "party-route.json indices 7-8 (0-based: Sepos, White Sea), midpoint, the country band midpoint",
+   "scored": true
+  },
+  {
+   "id": "LV4",
+   "name": "The far north",
+   "rule": "party-route.json indices 2-4 (0-based: Watchwater, Far North, Fell Mountains), bbox centre, the country band midpoint",
+   "scored": true
+  },
+  {
+   "id": "LV5",
+   "name": "Epēshu at the city band",
+   "rule": "city-anchors.json Epēshu, the midpoint of Z_TIER_D and Z_OPEN_MAX",
+   "scored": true
+  },
+  {
+   "id": "LV6",
+   "name": "Epēshu at the zoom-through threshold",
+   "rule": "city-anchors.json Epēshu, Z_OPEN_MAX + 0.5",
+   "scored": true
+  },
+  {
+   "id": "LV7",
+   "name": "The Fell Mountains",
+   "rule": "party-route.json index 4 (0-based: Fell Mountains), the region band midpoint",
+   "scored": true
+  },
+  {
+   "id": "LV8",
+   "name": "The White Sea in storm season",
+   "rule": "maps_markers.json White Sea, the country band midpoint, the snapshot's late-1374 day",
+   "scored": true
+  },
+  {
+   "id": "LV9",
+   "name": "Open sea (control)",
+   "rule": "the centre of docs/filigree/gates/hexes.json F08, z7",
+   "scored": false
+  }
+ ],
+ "instants": {
+  "t0_ms": 0,
+  "t1_ms": 4000,
+  "tDark": "the first presentation instant inside the dark hour, from tools/living-measure.js --dark-scan",
+  "still": "t0 (outside the dark hour; LC3, LC11)",
+  "presentation_day_s": 300,
+  "profiles_on": [
+   "desktop",
+   "iphone13"
+  ],
+  "profiles_off": [
+   "iphone13",
+   "pixel7",
+   "landscape",
+   "desktop",
+   "desktop2x"
+  ]
+ },
+ "caps": {
+  "ambient_draws_per_s": {
+   "fine": 20,
+   "coarse": 15
+  },
+  "oneshot_draws_per_s_phone": 30,
+  "dt_clamp_ms": 100,
+  "speed_css_px_s": 24,
+  "flips_per_s": 3,
+  "label_halo_px": 4,
+  "dark_dim_max": 0.12,
+  "first_view": {
+   "requests": 0,
+   "hook_raw_bytes": 200
+  },
+  "lazy_gz_kb": {
+   "code": 40,
+   "traffic": 60
+  },
+  "sea_mask_kb": 32,
+  "poster_kb": 150,
+  "phone_delay_zoom": 0.5,
+  "ease_ms": 250,
+  "zoom_drift_px": 1
+ },
+ "strings": [
+  {
+   "surface": "layers row",
+   "text": "The living chart"
+  },
+  {
+   "surface": "control, moving",
+   "text": "Still the chart"
+  },
+  {
+   "surface": "control, still",
+   "text": "Stir the chart"
+  },
+  {
+   "surface": "control title",
+   "text": "Still or stir every motion on the chart"
+  },
+  {
+   "surface": "footprints card",
+   "text": "The Company's road: <stop>"
+  },
+  {
+   "surface": "caravan card",
+   "text": "A caravan string on the <way>, between <place> and <place>, seen on the way"
+  },
+  {
+   "surface": "ship card",
+   "text": "A mūskar (merchantman) on the <lane>, bound for <port>, seen on the way"
+  },
+  {
+   "surface": "snapshot card line",
+   "text": "as last seen, in the year <n> A.B.",
+   "note": "<n> is the snapshot year, 1374 only; never a sim day count"
+  },
+  {
+   "surface": "dark hour",
+   "text": "Tamar's dark hour"
+  },
+  {
+   "surface": "Lugal",
+   "text": "Lugal's still mark"
+  },
+  {
+   "surface": "glyph list",
+   "text": "Moving on the chart"
+  },
+  {
+   "surface": "exhibit action",
+   "text": "Go down into the street"
+  },
+  {
+   "surface": "poster caption",
+   "text": "<place>, as the street shows it"
+  },
+  {
+   "surface": "rumour mark",
+   "text": "told, not seen"
+  }
+ ],
+ "standalone_items": [
+  {
+   "title": "Atlas reduced motion for its own animations (dashmove, copulse)",
+   "placement": "directly above the heading \"### Filigree for the Table (cont.) and the street research: the sheet spec, then the street bible\"",
+   "why": "edits existing atlas animation (not the living track, LC1); blocked by Mobile 9 and Mobile 14 so no lane review breaks"
+  },
+  {
+   "title": "Living · the sheet-wide sea mask (tool)",
+   "placement": "the living block, below Living 0 and above Living 1",
+   "why": "corrections C2"
+  },
+  {
+   "title": "Living later · trace the rivers (data, tool)",
+   "placement": "the living block, among the Living later items after Living 4z",
+   "why": "corrections C2; feeds \"Living later · river flow and barges\""
+  },
+  {
+   "title": "Living later · the sim dragon is not Lugal (OWNER-GATED, LC17)",
+   "placement": "directly below \"Mobile later · one-finger pan at altitude (OWNER-GATED)\", above \"Street battle sheet (OWNER-GATED, ST10)\"",
+   "why": "edits index.html: after Street 4 and the street hold"
+  }
+ ],
+ "owner_questions": [
+  {
+   "id": "LC1",
+   "q": "Default off until Living 4 passes and you have looked at it on a real phone at the table, then you flip it? (default: yes, off)"
+  },
+  {
+   "id": "LC4",
+   "q": "Which creatures may move, where, and doing what? Name any invented creature (dragon flocks, hoarwyrm snow-ripples, Witch-Bird wheels) with its place and behaviour to rule it in; it will carry a rumour mark. Does Lugal ever fly? (default: no) Coastal birds are inferred, not backed (the lexicon has the words, the extract shows none): may they move by default unmarked, or only with the rumour mark \"told, not seen\"? (default: they move, unmarked, as inferred)"
+  },
+  {
+   "id": "LC5",
+   "q": "Footprints for the whole Company only, or each member in their colour? Teleport legs as a gap, or as a sea leg? (default: Company only, gap)"
+  },
+  {
+   "id": "LC6",
+   "q": "Caravans and ships everywhere from a seeded function (invented schedules), with the real sim traffic inside the Epēshu window? Every ship reads mūskar (merchantman): may some lanes read galley instead? (default: yes; mūskar everywhere)"
+  },
+  {
+   "id": "LC7",
+   "q": "Is a page change into the sim acceptable as the \"transitive layer\" when you zoom in, or must the zoom stay inside the atlas (the H1 spike)? Which landmark is the first exhibit? (defaults: yes; the Epēshīn Forum)"
+  },
+  {
+   "id": "LC8",
+   "q": "Are 20 and 15 draws a second smooth enough for ambient motion? (default: yes)"
+  },
+  {
+   "id": "LC9",
+   "q": "Is 24 css px a second the right top speed for a caravan string at the table? (default: yes)"
+  },
+  {
+   "id": "LC11",
+   "q": "A whole-sheet dim (canon) or a travelling shadow sweep (invented)? (default: the dim)"
+  },
+  {
+   "id": "LC14",
+   "q": "Accept up to 200 raw bytes of hook lines in the first view, or insist on +0 bytes (then the living chart has no way to load)? (default: accept)"
+  },
+  {
+   "id": "LC15",
+   "q": "May a moving caravan or ship be selected to open its card? (default: yes)"
+  },
+  {
+   "id": "LC16",
+   "q": "Are \"Still the chart\" and \"Stir the chart\" the words you want on the control? (default: yes)"
+  },
+  {
+   "id": "LC17",
+   "q": "In the canon realm, should the sim's dragon be (a) switched off by default, (b) no dragon in the canon realm (Myth off or the dragon dead), the chronicle naming Lugal as gone north to the Fell Mountains (atlas 782, 8; outside the sim's window, so he cannot lair there), or (c) left with a chronicle line that it is not Lugal? (default: none of these until you rule)"
+  },
+  {
+   "id": "provenance",
+   "q": "Can you paste the thread replies or screenshots that showed the Lombard Street exhibit and the traffic demo, and say which How to Train Your Dragon scene you meant (the film's map or the series)?"
+  }
+ ]
+}

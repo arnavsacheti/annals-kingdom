@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-05",
+  "prelude_sha256": "4a2644bc0c897f38d4baa0f16c9b00e44701e0ae36a173b111724496e59eb912",
+  "files": {
+    "tools/living-drift.js": "631c21873099aec117f92f06ad94ee41022e0a167104d31f61ece4f19bcb831f",
+    "docs/living/design/workflows/living-1-research.js": "9768a4b3ec5b61577c7e0fe241704aeb661324734071437de7f96b35a4b4a8fc",
+    "docs/living/design/workflows/living-2-plan.js": "d3421f5e72590cf4891a3c529ac4096fc26bdc8f061fd5f2c9b7bb9fbe666b79",
+    "docs/living/design/workflows/living-3-build.js": "52668ffc78a251c4b0ce473d6fc76f721e1d911d47af66e07eb32c8b5cb07bf0",
+    "docs/living/design/workflows/living-4-review.js": "f53553e5cea338de9ae71f506b1dd363f39b09b7330ceb59623b98ebc8e5cc61",
+    "docs/living/README.md": "582e1c6b652a0e4ad78551756b862ce186a64b1ee13aac57e6a9011aaf0e9ce0",
+    "docs/living/rulings.json": "7596262ddb58a7dddcd6db81af8ed09439ec868b4c117ba525b6eecaed06de01",
+    "docs/living/todo-inputs.json": "3d841993a666d276a0bde2da65d5f158613b35c05b947a06bd7852bfb8dfc448",
+    "docs/living/research-dossier.md": "3919f99425583356bb39c4ee2e14e24d4619941d056036a80cc6c75c77c4482b",
+    "docs/research/living-chart.md": "5f7f3ac060494b737481db20af28ca8a78340741eaabf51a9b35c94e954a1472",
+    "docs/research/README.md": "bb1a5bf2bb803c7b9db314a903a5f37529aa072318c25479cab556655efad71b",
+    ".claude/CLAUDE.md": "ad819a21a24e45fd020d6a6fa7984c8130d3d6596e7ff53e70454715e12e48f2",
+    ".gitignore": "2138479ce19de50080a78fb50c62a30ccab015df6132c01c805ee3b39dacdd77",
+    "docs/living/design/polish-entries.md": "37db9d9aa80b445c4863085ba7a9fd7e91f667edebf8103c666522ed23596609",
+    "docs/living/design/workflow-1-research.md": "56ed013d154db99f1fef392365280738518c2d966b42935e39156f343d46b32a",
+    "docs/living/design/workflow-2-plan.md": "f091575620c1b3029a6eb20370763ea4cd1dc30d0b069791d366340aaf67be14",
+    "docs/living/design/workflow-3-build.md": "ae758c8b98eeb17d8d9bdc46d6f05fc36d45a25e3a1523f29b4bfeceb6bb44ca",
+    "docs/living/design/workflow-4-review.md": "ce6b87ebe192f935c78013efc372d3312dcd2c5473e1c805f9c8e822ffa25df8",
+    "docs/living/design/drift-tool.md": "f81a28865b301b3b5c7962c23ef6caf0709450f403b4a5ff5077a0a9e0fe8661",
+    "docs/living/design/filigree-input.md": "e56785d72005011b9604befbdbed2be736836df8d564196ac19108fbc47df053",
+    "docs/living/design/build/living-config.js": "268388cef139c92186cebd144a8233b078ee4e2cad53e29fc424af87255356ab",
+    "docs/living/design/build/gen-prelude.js": "79fafdd9912a97c52c58d79fad9011564fd2e88ed3475e402d114b7e9edbbd0a",
+    "docs/living/design/build/proto-check.js": "65cdb6308934ac66e433c74dafc6fe117f0f32bebdf924c7c186802bf9c6396f"
+  }
+}

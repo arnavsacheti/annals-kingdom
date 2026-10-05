@@ -75,6 +75,9 @@ three.js r128 via CDN, no build step). Themed to the owner's D&D campaign
 - Street-view work runs as four saved workflows
   `.claude/workflows/street-{1-research,2-plan,3-build,4-review}.js` (queued after the
   filigree jobs; Street 3 waits for the filigree hold); guide in `docs/street/README.md`.
+- Living-chart (atlas motion) work runs as four saved workflows
+  `.claude/workflows/living-{1-research,2-plan,3-build,4-review}.js` (staged in `docs/living/design/workflows/`
+  until "Living 0" installs them; queued after the street jobs); guide in `docs/living/README.md`.
 
 ## Deployment targets (planned)
 - `sim.princexizor.ddns.net` — this sim as the campaign's living-world window

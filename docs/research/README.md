@@ -33,3 +33,8 @@ those counts.
   mobile practice (label placement, touch targets, sheets, caching, storage), eleven principles, the atlas/sim defect
   summary and the ruling overrides (R2 R7 R12 R14 R18 ST8 overridden; R6 ST7 ST9 ST19 kept); verified 2026-10-04 by
   verification lenses, outside the counts above; full brief in `../mobile/README.md`, data in `../mobile/inputs.json`
+- `living-chart.md` — the owner's "living chart" ask (footprints on the party's road, caravans and ships, creatures,
+  water, Tamar's dark hour, exhibits, a zoom-in detail layer) decoded: one rAF owner, keyed streams and one
+  still-chart control (WCAG 2.2.2), canon backed vs invented, and the 3D detail layer as a zoom-through into the
+  sim's street view (H3 + H2z; WebGL in the atlas an owner-gated spike); verified 2026-10-05 by two lenses per claim,
+  outside the counts above; full dossier in `../living/research-dossier.md`, feeds `docs/living/`
