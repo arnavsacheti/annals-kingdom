@@ -11,6 +11,7 @@
 //   node tools/mobile-tree.js restore --unit ID --snap DIR [--repo R]
 //   node tools/mobile-tree.js write-state --from TMP --to PATH --expect-len N
 //   node tools/mobile-tree.js hold [--repo R]   (fil1 gate, app_sha, pipeline_sha; writes nothing)
+//   node tools/mobile-tree.js accept --file REL [--repo R]   (an accept file read and linted; writes nothing)
 //   node tools/mobile-tree.js --self-test
 'use strict'
 const fs = require('fs'), path = require('path'), crypto = require('crypto'), os = require('os'), cp = require('child_process')
@@ -235,6 +236,24 @@ function hold(a) {   // the hold read: Filigree 1 gate flags plus the app and pi
   const fil1 = {exists: !!g, pass: !!g && g.pass === true, rulings_used: Object.fromEntries(['R2', 'R7', 'R12', 'R14', 'R18'].map(r => [r, g && typeof ru[r] === 'string' ? ru[r] : 'missing']))}
   return {fil1, app_sha: appSha(c), pipeline_sha: pipeSha(c)}
 }
+function accept(a) {   // what the loop scores an accept file by, read from disk (an author's own retelling of it is never trusted)
+  const repo = path.resolve(a.repo || path.resolve(__dirname, '..'))
+  if (!isDir(repo)) fail('--repo is not a directory: ' + repo)
+  const rel = String(a.file || '')
+  if (!/^docs\/mobile\/accept\/[A-Za-z0-9][A-Za-z0-9._-]{0,31}\.json$/.test(rel)) fail('--file must be docs/mobile/accept/<id>.json')
+  const f = path.join(repo, rel)
+  if (!isFile(f)) return {path: rel, exists: false, sha256: null, lint_ok: false, lint_errors: ['missing'], accept: null}
+  const buf = fs.readFileSync(f)
+  let j = null
+  try { j = JSON.parse(buf.toString('utf8')) } catch (e) { return {path: rel, exists: true, sha256: sha(buf), lint_ok: false, lint_errors: ['does not parse: ' + e.message], accept: null} }
+  const r = cp.spawnSync(process.execPath, [path.join(__dirname, 'mobile-capture.js'), '--lint-accept', f], {encoding: 'utf8'})
+  let lint = null
+  try { lint = JSON.parse(r.stdout) } catch {}
+  const pick = k => j && Object.prototype.hasOwnProperty.call(j, k) ? j[k] : null
+  return {path: rel, exists: true, sha256: sha(buf), lint_ok: r.status === 0 && !!lint && lint.ok === true, lint_errors: lint && Array.isArray(lint.errors) ? lint.errors.map(String) : ['lint did not run: exit ' + r.status],
+    accept: {unit: pick('unit'), profiles: pick('profiles'), gates: pick('gates'), waive: pick('waive'), baseline: pick('baseline'), capture: pick('capture'), files_touched: pick('files_touched'),
+      checks_n: Array.isArray(pick('checks')) ? j.checks.length : -1, declared_n: Array.isArray(pick('declared_change_keys')) ? j.declared_change_keys.length : -1}}
+}
 function writeState(a) {
   if (!a.from || !a.to) fail('write-state needs --from and --to')
   if (!/^\d+$/.test(a['expect-len'] || '')) fail('--expect-len must be a non-negative integer')
@@ -371,6 +390,12 @@ function selfTest() {
     W('docs/filigree/gates/1-research.json', JSON.stringify({pass: true, rulings_used: {R2: 'rulings.json', R7: 'default', R12: 'rulings.json', R14: 'rulings.json'}}))
     const h2 = good(run(['hold']), 'hold with a gate')
     ok(h2.fil1.exists && h2.fil1.pass === true && h2.fil1.rulings_used.R7 === 'default' && h2.fil1.rulings_used.R18 === 'missing' && h2.fil1.rulings_used.R2 === 'rulings.json', 'hold: gate flags read')
+    W('docs/mobile/accept/T9.json', JSON.stringify({unit: 'T9', checks: [1, 2], declared_change_keys: []}))
+    const ac = good(run(['accept', '--file', 'docs/mobile/accept/T9.json']), 'accept read')
+    ok(ac.exists && ac.sha256 === S('docs/mobile/accept/T9.json') && ac.accept.unit === 'T9' && ac.accept.checks_n === 2 && ac.accept.declared_n === 0 && ac.accept.baseline === null && typeof ac.lint_ok === 'boolean' && Array.isArray(ac.lint_errors), 'accept: read from disk (unit, sha, counts, absent keys null)')
+    const am = good(run(['accept', '--file', 'docs/mobile/accept/NOPE.json']), 'accept missing')
+    ok(am.exists === false && am.accept === null && am.lint_ok === false, 'accept: a missing file is reported, not invented')
+    bad(run(['accept', '--file', '../x.json']), 'accept outside docs/mobile/accept')
     const tam = {...h2, sum: h2.sum, pipeline_sha: {...h2.pipeline_sha, 'tools/street-drift.js': h2.pipeline_sha['tools/street-drift.js'].replace(/^./, ch => ch === 'a' ? 'b' : 'a')}}
     ok(!lenOk(tam) && tam.len === h2.len, 'sum: one altered hex digit keeps len but fails the sum')
     const r5 = good(run(['restore', '--unit', 'T4', '--snap', SNAP]), 'restore T4')
@@ -385,8 +410,8 @@ function main() {
   try {
     const a = parseArgs(argv)
     if (a.selfTest) { process.stdout.write(JSON.stringify({ok: true, self_test: selfTest()}) + '\n'); return }
-    const cmd = a._[0], fn = {snapshot, check, restore, 'write-state': writeState, hold}[cmd]
-    if (!fn || a._.length !== 1) fail('usage: mobile-tree.js snapshot|check|restore|write-state|hold ... | --self-test')
+    const cmd = a._[0], fn = {snapshot, check, restore, 'write-state': writeState, hold, accept}[cmd]
+    if (!fn || a._.length !== 1) fail('usage: mobile-tree.js snapshot|check|restore|write-state|hold|accept ... | --self-test')
     const f = canon(fn(a)), t = JSON.stringify(f)
     process.stdout.write(JSON.stringify({ok: true, ...f, len: t.length, sum: fnv(t)}) + '\n')
   } catch (e) {

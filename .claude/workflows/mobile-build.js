@@ -105,6 +105,7 @@ const FULL = OBJ({units: {type: 'array', items: UNIT}, canon_len: I, ref: OBJ({n
 const HOLDR = OBJ({ok: B, len: I, sum: S, fil1: FIL1, app_sha: SHAS, pipeline_sha: SHAS})
 const REB = OBJ({exit_code: I, path: S, sha256: S, index_sha: S, atlas_sha: S, pipeline_sha: SHAS, profile_errors: SA, infra_error: S})
 const ACC = OBJ({path: S, authored: B, lint_ok: B, lint_errors: SA, accept: LOOSE, sha256: S})
+const ACCR = OBJ({ok: B, len: I, sum: S, path: S, exists: B, sha256: {type: ['string', 'null']}, lint_ok: B, lint_errors: SA, accept: {type: ['object', 'null']}})   // tools/mobile-tree.js accept: the file as it is on disk
 const MAN = OBJ({dirs: SA, files: NSHAS})
 const NS = {type: ['string', 'null']}
 const SNAPR = OBJ({ok: B, len: I, sum: S, error: S, manifest: MAN, pipeline_sha: SHAS, accept_sha: NS, owner_sha: NS, app_sha: SHAS, tree_n: I, tree_sha256: S, repo_n: I}, ['ok', 'len', 'sum', 'manifest', 'pipeline_sha', 'accept_sha', 'owner_sha', 'app_sha', 'tree_n', 'tree_sha256', 'repo_n'])
@@ -383,8 +384,17 @@ Then run: cd ${REPO} && ${NODE_TOOL} --lint-accept ${ap}. Return {path: "${ap}",
 Unit acceptance bullets:
 ${u.acceptance.map((b, i) => (i + 1) + '. ' + b).join('\n')}`), {label: 'accept ' + u.id, phase: 'Accept', schema: ACC, model: 'sonnet', effort: 'medium'})
 }
+async function acceptRead(u) {   // the loop scores the accept file as the tool reads it from disk, never as its author retells it (an author relayed a summary without its checks, 2026-10-05)
+  const ask = l => crit(P(`Read the accept file of mobile unit ${u.id} (write nothing). From ${REPO} run exactly this one command:
+${TREE_TOOL} accept --file ${docsAccept(u.id)}
+It prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits). If it exits non-zero, return {ok: false, len: -1, sum: "", path: "", exists: false, sha256: null, lint_ok: false, lint_errors: [], accept: null}.`), {label: l, phase: 'Accept', schema: ACCR, ...MECH})
+  let r = await ask('accept read ' + u.id)
+  if (r && !lenOk(r)) r = await ask('accept read ' + u.id + ' (relay retry)')
+  return r && lenOk(r) ? r : null
+}
 function acceptWhy(u, a) {
-  if (!a) return ['accept-author died']
+  if (!a) return ['the accept read died or was not relayed intact twice']
+  if (!a.exists || !a.accept) return ['accept file ' + docsAccept(u.id) + (a.exists ? ' does not parse: ' + (a.lint_errors || []).join('; ') : ' was not written')]
   const acc = a.accept || {}, strict = servesFiles(u), gates = Array.isArray(acc.gates) ? acc.gates : [], waive = acc.waive && typeof acc.waive === 'object' ? acc.waive : {}
   return [
     a.lint_ok === true && !(a.lint_errors || []).length ? '' : 'lint failed: ' + (a.lint_errors || []).join('; '),
@@ -396,7 +406,7 @@ function acceptWhy(u, a) {
     (acc.baseline ?? null) === (REF ?? null) ? '' : 'baseline must be ' + JSON.stringify(REF) + ', is ' + JSON.stringify(acc.baseline),
     same(acc.files_touched, u.files) ? '' : 'files_touched must equal the unit files',
     (acc.capture ?? null) === (docsOnly(u) ? refPath() : null) ? '' : 'capture must be ' + JSON.stringify(docsOnly(u) ? refPath() : null) + ', is ' + JSON.stringify(acc.capture),
-    Array.isArray(acc.checks) ? '' : 'checks missing'].filter(Boolean)
+    Number.isInteger(acc.checks_n) && acc.checks_n >= 0 ? '' : 'checks missing'].filter(Boolean)
 }
 
 const GUARD = u => [docsAccept(u.id), OWNER_FILE]   // never in a unit's writable set; snapshotted and restored with it
@@ -581,9 +591,11 @@ for (const u of UNITS) {
   }
   const refBefore = REF || full.ref.name
   phase('Accept')
-  let acc = await authorAccept(u, '')
+  const au = await authorAccept(u, '')
+  if (au) log(u.id + ': accept file ' + (au.authored ? 'written' : 'kept'))
+  let acc = await acceptRead(u)
   let aw = acceptWhy(u, acc)
-  if (aw.length) { log(u.id + ': accept file rejected: ' + aw.join('; ')); acc = await authorAccept(u, aw.join('; ')); aw = acceptWhy(u, acc) }
+  if (aw.length) { log(u.id + ': accept file rejected: ' + aw.join('; ')); await authorAccept(u, aw.join('; ')); acc = await acceptRead(u); aw = acceptWhy(u, acc) }
   if (aw.length) { setUnit(u, 'failed', {why: 'accept file not valid', ref_before: refBefore, failing: aw.map(x => F('accept', 'a valid accept file', x))}); await recordState('record ' + u.id + ' failed'); continue }
   phase('Snapshot')
   const snap = await snapshot(u)
