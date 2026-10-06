@@ -761,7 +761,6 @@
 <script>
 "use strict";
 var TILES_V=1;function tv(u){return u+(u.indexOf('?')<0?'?t=':'&t=')+TILES_V;}
-(function(){var d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(!d||!d.set)return;Object.defineProperty(HTMLImageElement.prototype,'src',{configurable:true,enumerable:d.enumerable,get:d.get,set:function(v){d.set.call(this,/^tiles\/\d+\/\d+\/\d+\.jpg$/.test(v)?tv(v):v);}});})();
 (function(){
   var NZ=4, IMG_W=4390, IMG_H=2188, TILE_W=4608, TILE_H=2304;
   var WIKI_BASE='https://princexizor.ddns.net/';
@@ -3004,7 +3003,7 @@ var TILES_V=1;function tv(u){return u+(u.indexOf('?')<0?'?t=':'&t=')+TILES_V;}
       var im=new Image();
       im.onload=function(){c.drawImage(im,tx*256-ox,ty*256-oy);one();};
       im.onerror=one;
-      im.src='tiles/5/'+tx+'/'+ty+'.jpg';
+      im.src=tv('tiles/5/'+tx+'/'+ty+'.jpg');
     })(tx,ty);
   }
 
