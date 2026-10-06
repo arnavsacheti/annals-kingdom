@@ -888,6 +888,14 @@ async function repeatVisitProbe(env, key, o, url, sink = {}) {   // metrics.md s
     return {bytes: rv.bytes, requests: rv.requests, cache_hits: rv.cache_hits}
   } catch (e) { return {error: String(e.message || e).slice(0, 120)} } finally { sink.repeat_visit = errorsOf(P); await P.close() }
 }
+// A style rule counts by its own declarations: since CSS nesting shipped, every CSSStyleRule has a (usually empty)
+// cssRules list, so walking only rules without one never reads a declaration. Self-contained: it is evaluated in the page from its source.
+function safeAreaRules(sheets) {
+  let n = 0
+  const walk = rr => { for (const x of rr) { const own = x.style ? x.style.cssText : (x.cssRules ? '' : x.cssText); if (/safe-area-inset/.test(own)) n++; if (x.cssRules) walk(x.cssRules) } }
+  for (const s of sheets) { let rs; try { rs = s.cssRules } catch (e) { continue } if (rs) walk(rs) }
+  return n
+}
 async function extraSafeArea(env, key, o, surface, url, sink = {}) {
   const P = await openPage(env, key, surface, {...o, vclock: surface === 'sim' ? 'manual' : null})
   try {
@@ -897,12 +905,12 @@ async function extraSafeArea(env, key, o, surface, url, sink = {}) {
     if (surface === 'atlas') { await P.page.waitForFunction(() => window.ATLAS && window.ATLAS.ready); await settle(P, 400, 60000, true); await P.page.locator('.tcard[data-theme=whole]').tap(); await sleep(600); await settle(P, 600) }
     else { await simReady(P); await pump(P, 3) }
     const prof = o.profile
-    const r = await P.page.evaluate(([ins, vw, vh]) => {
+    const rules = await P.page.evaluate('(' + safeAreaRules + ')(document.styleSheets)')
+    const r = await P.page.evaluate(([ins, vw, vh, rules]) => {
       const inv = window.__mc.inventory(), band = c => c.y < ins.top || c.y + c.h > vh - ins.bottom
       const env = (() => { const d = document.createElement('div'); d.style.cssText = 'position:fixed;top:env(safe-area-inset-top);visibility:hidden'; document.body.appendChild(d); const t = parseFloat(getComputedStyle(d).top); d.remove(); return t })()
-      let rules = 0; for (const s of document.styleSheets) { let rs; try { rs = s.cssRules } catch (e) { continue } const walk = rr => { for (const x of rr) { if (x.cssRules) walk(x.cssRules); else if (/safe-area-inset/.test(x.cssText)) rules++ } }; walk(rs) }
       return {env_top_px: env, viewport_fit_cover: /viewport-fit=cover/.test((document.querySelector('meta[name=viewport]') || {}).content || ''), env_rules: rules, intersecting: inv.filter(c => !c.marker && band(c)).map(c => c.id).slice(0, 20), intersecting_n: inv.filter(c => !c.marker && band(c)).length}
-    }, [INSETS, prof.w, prof.h])
+    }, [INSETS, prof.w, prof.h, rules])
     return {command: cmd, ...r, safe_area: cmd === 'unavailable' ? 'unavailable' : 'applied'}
   } finally { sink.safe_area = errorsOf(P); await P.close() }
 }
@@ -1557,6 +1565,9 @@ function compareCaptures(a, b) {
 async function selfTest() {
   const out = []; const ok = (n, v, d) => { out.push({n, ok: !!v, d: d || ''}); log((v ? 'ok   ' : 'FAIL ') + n + (d && !v ? ' :: ' + d : '')) }
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'mc-'))
+  const sr = d => ({style: {cssText: d}, cssRules: []}), unreadable = {get cssRules() { throw new Error('cross-origin') }}
+  ok('safe-area rules: nested, @media and plain rules count by their own declarations', safeAreaRules([{cssRules: [sr('padding-top: max(8px, env(safe-area-inset-top));'), sr('color: red;'), {cssRules: [sr('bottom: env(safe-area-inset-bottom);')]}, {style: {cssText: 'color: red;'}, cssRules: [sr('left: env(safe-area-inset-left);')]}]}, unreadable]) === 3)
+  ok('safe-area rules: a rule without style or cssRules counts by its text', safeAreaRules([{cssRules: [{cssText: '.a { top: env(safe-area-inset-top) }'}, {cssText: '.b { top: 0 }'}]}]) === 1)
   // PNG round trip and the one image diff
   const img = {w: 40, h: 30, data: Buffer.alloc(40 * 30 * 4)}; for (let i = 0; i < img.w * img.h; i++) { img.data[i * 4] = (i * 7) & 255; img.data[i * 4 + 1] = (i * 3) & 255; img.data[i * 4 + 2] = 90; img.data[i * 4 + 3] = 255 }
   const pa = pngEncode(img), back = pngDecode(pa); ok('png round trip', back.w === 40 && back.h === 30 && back.data.equals(img.data))
