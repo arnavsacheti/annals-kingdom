@@ -1,0 +1,456 @@
+{
+  "unit": "D3",
+  "profiles": [
+    "iphone13",
+    "pixel7",
+    "landscape",
+    "desktop",
+    "desktop2x"
+  ],
+  "clock": "virtual",
+  "files_touched": [
+    "maps-site/index.html",
+    "maps-site/vendor/",
+    "docs/mobile/accept/D3.json",
+    "maps-site/vendor/fonts/"
+  ],
+  "gates": [
+    "UG1",
+    "UG2",
+    "UG3",
+    "UG4",
+    "UG5",
+    "UG6",
+    "UG7",
+    "UG8",
+    "UG9",
+    "UG10",
+    "UG11"
+  ],
+  "baseline": "R1",
+  "declared_change_keys": [
+    "atlas.iphone13.first_load.bytes",
+    "atlas.iphone13.first_load.requests",
+    "atlas.iphone13.first_load.foreign_origins",
+    "atlas.iphone13.first_load.routed",
+    "atlas.iphone13.first_load.aborted",
+    "atlas.iphone13.first_load.max_asset.bytes",
+    "atlas.iphone13.first_load.max_asset.path",
+    "atlas.iphone13.first_load.by_cat.html_other.requests",
+    "atlas.iphone13.first_load.by_cat.html_other.bytes",
+    "atlas.iphone13.repeat_visit.bytes",
+    "atlas.iphone13.repeat_visit.requests",
+    "atlas.iphone13.repeat_visit.cache_hits",
+    "atlas.iphone13.hover_ungated",
+    "atlas.pixel7.first_load.bytes",
+    "atlas.pixel7.first_load.requests",
+    "atlas.pixel7.first_load.foreign_origins",
+    "atlas.pixel7.first_load.routed",
+    "atlas.pixel7.first_load.aborted",
+    "atlas.pixel7.first_load.max_asset.bytes",
+    "atlas.pixel7.first_load.max_asset.path",
+    "atlas.pixel7.first_load.by_cat.html_other.requests",
+    "atlas.pixel7.first_load.by_cat.html_other.bytes",
+    "atlas.pixel7.repeat_visit.bytes",
+    "atlas.pixel7.repeat_visit.requests",
+    "atlas.pixel7.repeat_visit.cache_hits",
+    "atlas.pixel7.hover_ungated",
+    "atlas.landscape.first_load.bytes",
+    "atlas.landscape.first_load.requests",
+    "atlas.landscape.first_load.foreign_origins",
+    "atlas.landscape.first_load.routed",
+    "atlas.landscape.first_load.aborted",
+    "atlas.landscape.first_load.max_asset.bytes",
+    "atlas.landscape.first_load.max_asset.path",
+    "atlas.landscape.first_load.by_cat.html_other.requests",
+    "atlas.landscape.first_load.by_cat.html_other.bytes",
+    "atlas.landscape.repeat_visit.bytes",
+    "atlas.landscape.repeat_visit.requests",
+    "atlas.landscape.repeat_visit.cache_hits",
+    "atlas.landscape.hover_ungated",
+    "atlas.desktop.first_load.bytes",
+    "atlas.desktop.first_load.requests",
+    "atlas.desktop.first_load.foreign_origins",
+    "atlas.desktop.first_load.routed",
+    "atlas.desktop.first_load.aborted",
+    "atlas.desktop.first_load.max_asset.bytes",
+    "atlas.desktop.first_load.max_asset.path",
+    "atlas.desktop.first_load.by_cat.html_other.requests",
+    "atlas.desktop.first_load.by_cat.html_other.bytes",
+    "atlas.desktop.repeat_visit.bytes",
+    "atlas.desktop.repeat_visit.requests",
+    "atlas.desktop.repeat_visit.cache_hits",
+    "atlas.desktop.hover_ungated",
+    "atlas.desktop2x.first_load.bytes",
+    "atlas.desktop2x.first_load.requests",
+    "atlas.desktop2x.first_load.foreign_origins",
+    "atlas.desktop2x.first_load.routed",
+    "atlas.desktop2x.first_load.aborted",
+    "atlas.desktop2x.first_load.max_asset.bytes",
+    "atlas.desktop2x.first_load.max_asset.path",
+    "atlas.desktop2x.first_load.by_cat.html_other.requests",
+    "atlas.desktop2x.first_load.by_cat.html_other.bytes",
+    "atlas.desktop2x.repeat_visit.bytes",
+    "atlas.desktop2x.repeat_visit.requests",
+    "atlas.desktop2x.repeat_visit.cache_hits",
+    "atlas.desktop2x.hover_ungated"
+  ],
+  "declared_first_view_growth": {
+    "bytes": 400000,
+    "requests": 13
+  },
+  "mask": [],
+  "strings": [],
+  "checks": [
+    {
+      "key": "atlas.iphone13.first_load.foreign_origins",
+      "op": "deep-equals",
+      "value": [],
+      "was": [
+        "https://fonts.googleapis.com",
+        "https://fonts.gstatic.com",
+        "https://unpkg.com"
+      ]
+    },
+    {
+      "key": "atlas.iphone13.hover_ungated",
+      "op": "==",
+      "value": 32,
+      "was": 29
+    },
+    {
+      "key": "atlas.iphone13.first_load.requests",
+      "op": "between",
+      "value": [
+        54,
+        55
+      ],
+      "was": 42
+    },
+    {
+      "key": "atlas.iphone13.first_load.by_cat.html_other.requests",
+      "op": "between",
+      "value": [
+        13,
+        14
+      ],
+      "was": 1
+    },
+    {
+      "key": "atlas.iphone13.repeat_visit.requests",
+      "op": "between",
+      "value": [
+        54,
+        55
+      ],
+      "was": 42
+    },
+    {
+      "key": "atlas.iphone13.repeat_visit.cache_hits",
+      "op": ">=",
+      "value": 54,
+      "was": 42
+    },
+    {
+      "key": "atlas.iphone13.metrics",
+      "op": "deep-equals",
+      "ref": "R1",
+      "except": [
+        "declared_change_keys"
+      ]
+    },
+    {
+      "key": "atlas.pixel7.first_load.foreign_origins",
+      "op": "deep-equals",
+      "value": [],
+      "was": [
+        "https://fonts.googleapis.com",
+        "https://fonts.gstatic.com",
+        "https://unpkg.com"
+      ]
+    },
+    {
+      "key": "atlas.pixel7.hover_ungated",
+      "op": "==",
+      "value": 32,
+      "was": 29
+    },
+    {
+      "key": "atlas.pixel7.first_load.requests",
+      "op": "between",
+      "value": [
+        44,
+        45
+      ],
+      "was": 32
+    },
+    {
+      "key": "atlas.pixel7.first_load.by_cat.html_other.requests",
+      "op": "between",
+      "value": [
+        13,
+        14
+      ],
+      "was": 1
+    },
+    {
+      "key": "atlas.pixel7.repeat_visit.requests",
+      "op": "between",
+      "value": [
+        44,
+        45
+      ],
+      "was": 32
+    },
+    {
+      "key": "atlas.pixel7.repeat_visit.cache_hits",
+      "op": ">=",
+      "value": 44,
+      "was": 32
+    },
+    {
+      "key": "atlas.pixel7.metrics",
+      "op": "deep-equals",
+      "ref": "R1",
+      "except": [
+        "declared_change_keys"
+      ]
+    },
+    {
+      "key": "atlas.landscape.first_load.foreign_origins",
+      "op": "deep-equals",
+      "value": [],
+      "was": [
+        "https://fonts.googleapis.com",
+        "https://fonts.gstatic.com",
+        "https://unpkg.com"
+      ]
+    },
+    {
+      "key": "atlas.landscape.hover_ungated",
+      "op": "==",
+      "value": 32,
+      "was": 29
+    },
+    {
+      "key": "atlas.landscape.first_load.requests",
+      "op": "between",
+      "value": [
+        44,
+        45
+      ],
+      "was": 32
+    },
+    {
+      "key": "atlas.landscape.first_load.by_cat.html_other.requests",
+      "op": "between",
+      "value": [
+        13,
+        14
+      ],
+      "was": 1
+    },
+    {
+      "key": "atlas.landscape.repeat_visit.requests",
+      "op": "between",
+      "value": [
+        44,
+        45
+      ],
+      "was": 32
+    },
+    {
+      "key": "atlas.landscape.repeat_visit.cache_hits",
+      "op": ">=",
+      "value": 44,
+      "was": 32
+    },
+    {
+      "key": "atlas.landscape.metrics",
+      "op": "deep-equals",
+      "ref": "R1",
+      "except": [
+        "declared_change_keys"
+      ]
+    },
+    {
+      "key": "atlas.desktop.first_load.foreign_origins",
+      "op": "deep-equals",
+      "value": [],
+      "was": [
+        "https://fonts.googleapis.com",
+        "https://fonts.gstatic.com",
+        "https://unpkg.com"
+      ]
+    },
+    {
+      "key": "atlas.desktop.hover_ungated",
+      "op": "==",
+      "value": 32,
+      "was": 29
+    },
+    {
+      "key": "atlas.desktop.first_load.requests",
+      "op": "between",
+      "value": [
+        44,
+        45
+      ],
+      "was": 32
+    },
+    {
+      "key": "atlas.desktop.first_load.by_cat.html_other.requests",
+      "op": "between",
+      "value": [
+        13,
+        14
+      ],
+      "was": 1
+    },
+    {
+      "key": "atlas.desktop.repeat_visit.requests",
+      "op": "between",
+      "value": [
+        44,
+        45
+      ],
+      "was": 32
+    },
+    {
+      "key": "atlas.desktop.repeat_visit.cache_hits",
+      "op": ">=",
+      "value": 44,
+      "was": 32
+    },
+    {
+      "key": "atlas.desktop.metrics",
+      "op": "deep-equals",
+      "ref": "R1",
+      "except": [
+        "declared_change_keys"
+      ]
+    },
+    {
+      "key": "atlas.desktop2x.first_load.foreign_origins",
+      "op": "deep-equals",
+      "value": [],
+      "was": [
+        "https://fonts.googleapis.com",
+        "https://fonts.gstatic.com",
+        "https://unpkg.com"
+      ]
+    },
+    {
+      "key": "atlas.desktop2x.hover_ungated",
+      "op": "==",
+      "value": 32,
+      "was": 29
+    },
+    {
+      "key": "atlas.desktop2x.first_load.requests",
+      "op": "between",
+      "value": [
+        164,
+        165
+      ],
+      "was": 152
+    },
+    {
+      "key": "atlas.desktop2x.first_load.by_cat.html_other.requests",
+      "op": "between",
+      "value": [
+        13,
+        14
+      ],
+      "was": 1
+    },
+    {
+      "key": "atlas.desktop2x.repeat_visit.requests",
+      "op": "between",
+      "value": [
+        164,
+        165
+      ],
+      "was": 152
+    },
+    {
+      "key": "atlas.desktop2x.repeat_visit.cache_hits",
+      "op": ">=",
+      "value": 164,
+      "was": 152
+    },
+    {
+      "key": "atlas.desktop2x.metrics",
+      "op": "deep-equals",
+      "ref": "R1",
+      "except": [
+        "declared_change_keys"
+      ]
+    },
+    {
+      "key": "atlas.desktop.shot_diff.1-contents",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "R1"
+    },
+    {
+      "key": "atlas.desktop.shot_diff.2-whole-chart",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "R1"
+    },
+    {
+      "key": "atlas.desktop.shot_diff.3-layers",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "R1"
+    },
+    {
+      "key": "atlas.desktop.shot_diff.4-place-card",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "R1"
+    },
+    {
+      "key": "atlas.desktop2x.shot_diff.1-contents",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "R1"
+    },
+    {
+      "key": "atlas.desktop2x.shot_diff.2-whole-chart",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "R1"
+    },
+    {
+      "key": "atlas.desktop2x.shot_diff.3-layers",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "R1"
+    },
+    {
+      "key": "atlas.desktop2x.shot_diff.4-place-card",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "R1"
+    }
+  ],
+  "unscored": [
+    "UG1-UG11 pass on iphone13, pixel7, desktop and desktop2x (scored by the gates in --accept; the accept file is authored before the implementer runs and handed over read-only)",
+    "sources (npm, run in a scratch dir): npm pack leaflet@1.9.4 -> package/dist/{leaflet.css,leaflet.js,images/*}; npm pack @fontsource/eb-garamond@5.3.0 @fontsource/lora@5.3.0 @fontsource/ibm-plex-mono@5.3.0 -> package/files/<family>-{latin,latin-ext}-<weight>-<style>.woff2 for exactly EB Garamond 400 normal, 400 italic, 600 normal; Lora 400 normal, 400 italic, 600 normal; IBM Plex Mono 400 normal, 600 normal, plus each package's LICENSE (OFL) beside the files and hand-written @font-face rules with the fontsource unicode-range",
+    "sha256 of leaflet.css = a7837102824184820dfa198d1ebcd109ff6d0ff9a2672a074b9a1b4d147d04c6 and of leaflet.js = db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a, equal to the existing SRI hashes (integrity attributes kept)",
+    "the font shas are listed in docs/mobile/inputs/vendor-shas.txt and recorded in maps-site/vendor/SHA256SUMS",
+    "a Playwright route on **/leaflet@1.9.4/dist/* fires for the vendored URL (the filigree sandbox recipe still applies)",
+    "document.fonts.check true for EB Garamond 400/600/400i, Lora 400/600/400i, IBM Plex Mono 400/600",
+    "the latin-ext woff2 is requested when Epēshu or Nīmlad is on screen",
+    "font-display:swap; OFL texts beside the files",
+    "font bytes on iphone13 first load <= 200 KB transferred (declared first-view growth: the vendored fonts and Leaflet now count as app-origin bytes)",
+    "desktop identity (UG8) is scored against the reference in force (the capture after A-U0, itself scored against R1, the font-faithful reference): desktop and desktop2x shots <= 0.5% from that reference, and on every profile the metrics equal it except the declared network keys",
+    "leaflet.css stays a <link rel=stylesheet> with its integrity and crossorigin attributes (never an @import or inline copy)",
+    "hover_ungated rises by exactly 3 on every profile because Leaflet's own three ungated :hover rules become same-origin, never hidden",
+    "repeat_visit.bytes <= 10% of first_load.bytes on every profile",
+    "the repeat visit is all cache hits up to the one-file variance (EB Garamond latin-ext italic segment fetched only when still matching faces as the Contents first lays out)",
+    "never delay, drop, preload or hold back a font file or the layers icon to change a count"
+  ]
+}
