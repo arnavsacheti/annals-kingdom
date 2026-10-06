@@ -46,7 +46,7 @@
       "ref_before": "after-D2"
     },
     "D3": {
-      "status": "failed",
+      "status": "skipped",
       "attempts": 3,
       "capture": "docs/mobile/captures/D3.json",
       "files_sha": {
@@ -55,10 +55,10 @@
       },
       "failing": [
         {
-          "key": "atlas.iphone13.repeat_visit.requests",
-          "op": "<=",
-          "expected": 54,
-          "got": 55
+          "key": "skipped",
+          "op": "loop",
+          "expected": "a run",
+          "got": "dependency not satisfied: A-U0 is failed"
         }
       ],
       "ref_before": "R1"
@@ -73,7 +73,7 @@
           "key": "skipped",
           "op": "loop",
           "expected": "a run",
-          "got": "dependency not satisfied: D3 is failed"
+          "got": "dependency not satisfied: D3 is skipped"
         }
       ],
       "ref_before": null
@@ -92,6 +92,24 @@
         }
       ],
       "ref_before": null
+    },
+    "A-U0": {
+      "status": "failed",
+      "attempts": 3,
+      "capture": "docs/mobile/captures/A-U0.json",
+      "files_sha": {
+        "docs/mobile/accept/A-U0.json": "c983770cf12beac0d007fcbba41a02a4a0acd09b28831a2f4814a60825749f63",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "failing": [
+        {
+          "key": "measure.digest",
+          "op": "loop",
+          "expected": "failing list intact (68)",
+          "got": 6
+        }
+      ],
+      "ref_before": "rebase-9"
     }
   },
   "rebase": [
@@ -201,6 +219,19 @@
       },
       "reason": "R1 re-taken with the deterministic capture tool (routed font files answered after the startup layout); supersedes rebase-7, whose iPhone 13 first load caught the font race",
       "ref": "R1"
+    },
+    {
+      "before_unit": "A-U0",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "reason": "pipeline scripts changed since the reference (UG11 compares against it): .claude/workflows/mobile-review.js",
+      "ref": "rebase-9"
     }
   ]
 }
