@@ -310,7 +310,8 @@
       "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/D5.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
       "`var TILES_V=1` present; every request under tiles/, tiles-war/, tiles-imperial/, charts/, art/ carries ?t=1; data JSON URLs unchanged",
       "tile request count per view equal to R1; 0 404s; desktop and desktop2x shots identical to R1",
-      "tile directory names unchanged (Filigree 1 preflight INPUTS and the hex crops still resolve)"
+      "tile directory names unchanged (Filigree 1 preflight INPUTS and the hex crops still resolve)",
+      "byte keys this unit moves, declared per profile: atlas.<profile>.first_load.{bytes, max_asset.bytes, by_cat.html_other.bytes} and the by_cat bytes of every raster class requested (tiles, charts, art), plus repeat_visit.bytes: the TILES_V code adds about 250 B of HTML, and every ?t= raster response carries D1's longer immutable Cache-Control header (about 12 B per response, measured: iphone13 +548 B first view, desktop2x +1,868 B with its 135 tiles); declared_first_view_growth covers exactly that (at most 1 KB on phones, 2.5 KB on desktop2x); every request count unchanged"
     ],
     "run": "Mobile 4"
   },
