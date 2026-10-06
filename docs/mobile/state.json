@@ -299,6 +299,19 @@
       },
       "reason": "app file(s) changed outside the loop: maps-site/index.html",
       "ref": "rebase-13"
+    },
+    {
+      "before_unit": "A-U1",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "566f1cead36db41512fe72fc8ff220dc429c870cbeadd1405ac8e51f79c4c22a"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "566f1cead36db41512fe72fc8ff220dc429c870cbeadd1405ac8e51f79c4c22a"
+      },
+      "reason": "pipeline scripts changed since the reference (UG11 compares against it): .claude/workflows/mobile-build.js",
+      "ref": "rebase-14"
     }
   ]
 }
