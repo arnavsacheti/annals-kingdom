@@ -3,11 +3,11 @@
   "item": "Mobile 4",
   "app_sha": {
     "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-    "maps-site/index.html": "d5eb3e61077c4f0bec796d2fc043bee3732b9119592334747380894bbc0f410c"
+    "maps-site/index.html": "1d510114032f6ff5c88cf1912abd870af90a26ea76b61bccbd09de20e34b9e23"
   },
   "baselines": {
     "B0": "7dbac85b923ea59d8c93248a4f57fa9e6ba1a40977125f8dedde2ff43453cfd3",
-    "R1": "80892371ae2a8e29b524403b1c92f2a0b85a014d0d6e66b125504c70ba6e02ea",
+    "R1": "d72bab98bbefada659c2cf6707644e424c590afc44e650393c9ea87af1e6fac1",
     "final": null
   },
   "owner_answers": "docs/mobile/owner-answers.json",
@@ -46,37 +46,193 @@
       "ref_before": "after-D2"
     },
     "D3": {
-      "status": "skipped",
-      "attempts": 3,
+      "status": "passed",
+      "attempts": 1,
       "capture": "docs/mobile/captures/D3.json",
       "files_sha": {
-        "docs/mobile/accept/D3.json": "a7e0e58409b51a8c370ce0145ae4bacab722a6d45d02913d5dca01bee2bff1bf",
-        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+        "docs/mobile/accept/D3.json": "52439b7ad6af84bc478209b2cbe950f7d57e8f5e0b84de103a43731f902afb5f",
+        "maps-site/index.html": "1d510114032f6ff5c88cf1912abd870af90a26ea76b61bccbd09de20e34b9e23",
+        "maps-site/vendor/SHA256SUMS": "febfe29611850fe21cae4758a35e0e6d4796e2695afb54ce5296a6edafa097d6",
+        "maps-site/vendor/fonts/eb-garamond-LICENSE.txt": "f03c8eda63076cd52317dcd40aa04db8472d4cb592dfaafa385129dfdafc7f9c",
+        "maps-site/vendor/fonts/eb-garamond-latin-400-italic.woff2": "fc5851c4466e73bec048bb62d65f8abadf70d602816687e6d364214e35fa8abb",
+        "maps-site/vendor/fonts/eb-garamond-latin-400-normal.woff2": "912929dba0faab5e151849ea5e988adba3080ad6d2bcc4dbff27aa427896498d",
+        "maps-site/vendor/fonts/eb-garamond-latin-600-normal.woff2": "6a195b7e4f518d53813581f415d7956e02049dd2762b4b9a3af80d56b4257e28",
+        "maps-site/vendor/fonts/eb-garamond-latin-ext-400-italic.woff2": "a7aad7b598be80caf14221e4b3066676537a2010bb51c1609e6b68973adb01d7",
+        "maps-site/vendor/fonts/eb-garamond-latin-ext-400-normal.woff2": "9a1335bd850842fd21a977a8e8a1249e20b3ed7cd405f18ba1d2177044e9a8ea",
+        "maps-site/vendor/fonts/eb-garamond-latin-ext-600-normal.woff2": "2ab87132f87c2b40c1d071bbfa987071f0fc7444c980d8b59fd76dd7d44492bf",
+        "maps-site/vendor/fonts/ibm-plex-mono-LICENSE.txt": "23b0a9d0c6d3f140a0b77e483c5cfa6bba574325ef5cb189ed9f2fec4884533f",
+        "maps-site/vendor/fonts/ibm-plex-mono-latin-400-normal.woff2": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+        "maps-site/vendor/fonts/ibm-plex-mono-latin-600-normal.woff2": "0d1f0b8d0722224e32e9f28261bdc86c79115be73444ae5eceb73976a1bcdf83",
+        "maps-site/vendor/fonts/ibm-plex-mono-latin-ext-400-normal.woff2": "6bc0f226a5b7884a8170e3f62c63d7675609d4631bdc5931b5cdab81821f00eb",
+        "maps-site/vendor/fonts/ibm-plex-mono-latin-ext-600-normal.woff2": "32057cf50dd14bdb21a2c93766c4a2c43e4abe688ea3922df3203cac7751a98b",
+        "maps-site/vendor/fonts/lora-LICENSE.txt": "948aed765160f7b974105606c21994715a171f89fca48e57bf1e0a23aca0bef1",
+        "maps-site/vendor/fonts/lora-latin-400-italic.woff2": "723cc14fe86bc9fadb2f5f34efb421d246edb240a18d2a7828d2edc041d79996",
+        "maps-site/vendor/fonts/lora-latin-400-normal.woff2": "ac079950fd9885261c0f73d9e87233f31b5427333ce0eb20e26c119458493c40",
+        "maps-site/vendor/fonts/lora-latin-600-normal.woff2": "7bbfe9f3c9e9d6d07e17da4d5229a42b042cc2e16024993cb687dc08cc762557",
+        "maps-site/vendor/fonts/lora-latin-ext-400-italic.woff2": "3bb65e234cd07a69127592cafd08ce4242a1a4ace24dcc4c466881693fc74867",
+        "maps-site/vendor/fonts/lora-latin-ext-400-normal.woff2": "525551030c504c0eb42d71b48ce10027e4431bd405d6cd04c468a535ce8d961b",
+        "maps-site/vendor/fonts/lora-latin-ext-600-normal.woff2": "1af859efe22ded676752168b656fd5d5814a62717f4f9fcebc0475754caca27d",
+        "maps-site/vendor/leaflet@1.9.4/LICENSE": "53e8dc25862014e4324741ca18fbe3611e11d42ef69f59f86ea8c5389647d4cb",
+        "maps-site/vendor/leaflet@1.9.4/dist/images/layers-2x.png": "066daca850d8ffbef007af00b06eac0015728dee279c51f3cb6c716df7c42edf",
+        "maps-site/vendor/leaflet@1.9.4/dist/images/layers.png": "1dbbe9d028e292f36fcba8f8b3a28d5e8932754fc2215b9ac69e4cdecf5107c6",
+        "maps-site/vendor/leaflet@1.9.4/dist/images/marker-icon-2x.png": "00179c4c1ee830d3a108412ae0d294f55776cfeb085c60129a39aa6fc4ae2528",
+        "maps-site/vendor/leaflet@1.9.4/dist/images/marker-icon.png": "574c3a5cca85f4114085b6841596d62f00d7c892c7b03f28cbfa301deb1dc437",
+        "maps-site/vendor/leaflet@1.9.4/dist/images/marker-shadow.png": "264f5c640339f042dd729062cfc04c17f8ea0f29882b538e3848ed8f10edb4da",
+        "maps-site/vendor/leaflet@1.9.4/dist/leaflet.css": "a7837102824184820dfa198d1ebcd109ff6d0ff9a2672a074b9a1b4d147d04c6",
+        "maps-site/vendor/leaflet@1.9.4/dist/leaflet.js": "db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a"
       },
-      "failing": [
-        {
-          "key": "skipped",
-          "op": "loop",
-          "expected": "a run",
-          "got": "dependency not satisfied: A-U0 is failed"
-        }
-      ],
+      "failing": [],
       "ref_before": "R1"
     },
     "D5": {
-      "status": "skipped",
-      "attempts": 0,
-      "capture": null,
-      "files_sha": {},
+      "status": "failed",
+      "attempts": 3,
+      "capture": "docs/mobile/captures/D5.json",
+      "files_sha": {
+        "docs/mobile/accept/D5.json": "016fa6b436e70664b196047e292a576aa29484db1516e427c127b1769c017ca1",
+        "maps-site/index.html": "1d510114032f6ff5c88cf1912abd870af90a26ea76b61bccbd09de20e34b9e23"
+      },
       "failing": [
         {
-          "key": "skipped",
-          "op": "loop",
-          "expected": "a run",
-          "got": "dependency not satisfied: D3 is skipped"
+          "key": "UG8.atlas.desktop.metrics",
+          "op": "gate",
+          "expected": "equal to B0 except declared",
+          "got": "first_load.bytes 572288 vs 571860; first_load.max_asset.bytes 68892 vs 68644; first_load.by_cat.html_other.bytes 345339 vs 345091; first_load.by_cat.tiles.bytes 158522 vs 158342"
+        },
+        {
+          "key": "UG8.atlas.desktop2x.metrics",
+          "op": "gate",
+          "expected": "equal to B0 except declared",
+          "got": "first_load.bytes 1898365 vs 1896497; first_load.max_asset.bytes 68892 vs 68644; first_load.by_cat.html_other.bytes 345903 vs 345655; first_load.by_cat.tiles.bytes 1484035 vs 1482415"
+        },
+        {
+          "key": "UG10.atlas.iphone13.bytes",
+          "op": "gate",
+          "expected": "<= 761798",
+          "got": 762346
+        },
+        {
+          "key": "atlas.iphone13.first_load.bytes",
+          "op": "unchanged",
+          "expected": 761798,
+          "got": 762346
+        },
+        {
+          "key": "atlas.iphone13.first_load.max_asset.bytes",
+          "op": "unchanged",
+          "expected": 68644,
+          "got": 68892
+        },
+        {
+          "key": "atlas.iphone13.first_load.by_cat.html_other.bytes",
+          "op": "unchanged",
+          "expected": 345655,
+          "got": 345903
+        },
+        {
+          "key": "atlas.iphone13.first_load.by_cat.tiles.bytes",
+          "op": "unchanged",
+          "expected": 347716,
+          "got": 348016
+        },
+        {
+          "key": "atlas.pixel7.first_load.bytes",
+          "op": "unchanged",
+          "expected": 636518,
+          "got": 636946
+        },
+        {
+          "key": "atlas.pixel7.first_load.max_asset.bytes",
+          "op": "unchanged",
+          "expected": 68644,
+          "got": 68892
+        },
+        {
+          "key": "atlas.pixel7.first_load.by_cat.html_other.bytes",
+          "op": "unchanged",
+          "expected": 345655,
+          "got": 345903
+        },
+        {
+          "key": "atlas.pixel7.first_load.by_cat.tiles.bytes",
+          "op": "unchanged",
+          "expected": 222436,
+          "got": 222616
+        },
+        {
+          "key": "atlas.landscape.first_load.bytes",
+          "op": "unchanged",
+          "expected": 572424,
+          "got": 572852
+        },
+        {
+          "key": "atlas.landscape.first_load.max_asset.bytes",
+          "op": "unchanged",
+          "expected": 68644,
+          "got": 68892
+        },
+        {
+          "key": "atlas.landscape.first_load.by_cat.html_other.bytes",
+          "op": "unchanged",
+          "expected": 345655,
+          "got": 345903
+        },
+        {
+          "key": "atlas.landscape.first_load.by_cat.tiles.bytes",
+          "op": "unchanged",
+          "expected": 158342,
+          "got": 158522
+        },
+        {
+          "key": "atlas.desktop.first_load.bytes",
+          "op": "unchanged",
+          "expected": 571860,
+          "got": 572288
+        },
+        {
+          "key": "atlas.desktop.first_load.max_asset.bytes",
+          "op": "unchanged",
+          "expected": 68644,
+          "got": 68892
+        },
+        {
+          "key": "atlas.desktop.first_load.by_cat.html_other.bytes",
+          "op": "unchanged",
+          "expected": 345091,
+          "got": 345339
+        },
+        {
+          "key": "atlas.desktop.first_load.by_cat.tiles.bytes",
+          "op": "unchanged",
+          "expected": 158342,
+          "got": 158522
+        },
+        {
+          "key": "atlas.desktop2x.first_load.bytes",
+          "op": "unchanged",
+          "expected": 1896497,
+          "got": 1898365
+        },
+        {
+          "key": "atlas.desktop2x.first_load.max_asset.bytes",
+          "op": "unchanged",
+          "expected": 68644,
+          "got": 68892
+        },
+        {
+          "key": "atlas.desktop2x.first_load.by_cat.html_other.bytes",
+          "op": "unchanged",
+          "expected": 345655,
+          "got": 345903
+        },
+        {
+          "key": "atlas.desktop2x.first_load.by_cat.tiles.bytes",
+          "op": "unchanged",
+          "expected": 1482415,
+          "got": 1484035
         }
       ],
-      "ref_before": null
+      "ref_before": "after-D3"
     },
     "A-U1": {
       "status": "skipped",
@@ -88,7 +244,7 @@
           "key": "skipped",
           "op": "loop",
           "expected": "a run",
-          "got": "dependency not satisfied: D5 is skipped"
+          "got": "dependency not satisfied: D5 is failed"
         }
       ],
       "ref_before": null
@@ -238,6 +394,20 @@
       },
       "reason": "R1 re-taken after A-U0 (central): the map is sized the same before and after the font swap, so desktop identity for D3 onward is scored against the corrected atlas",
       "ref": "R1"
+    },
+    {
+      "before_unit": null,
+      "after_unit": "D3",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "1d510114032f6ff5c88cf1912abd870af90a26ea76b61bccbd09de20e34b9e23"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "1d510114032f6ff5c88cf1912abd870af90a26ea76b61bccbd09de20e34b9e23"
+      },
+      "reason": "unit passed",
+      "ref": "after-D3"
     }
   ]
 }
