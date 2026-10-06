@@ -3,7 +3,7 @@
   "item": "Mobile 4",
   "app_sha": {
     "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-    "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+    "maps-site/index.html": "d5eb3e61077c4f0bec796d2fc043bee3732b9119592334747380894bbc0f410c"
   },
   "baselines": {
     "B0": "7dbac85b923ea59d8c93248a4f57fa9e6ba1a40977125f8dedde2ff43453cfd3",
@@ -225,6 +225,19 @@
       },
       "reason": "pipeline scripts changed since the reference (UG11 compares against it): .claude/workflows/mobile-review.js",
       "ref": "rebase-9"
+    },
+    {
+      "before_unit": "D3",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "d5eb3e61077c4f0bec796d2fc043bee3732b9119592334747380894bbc0f410c"
+      },
+      "reason": "R1 re-taken after A-U0 (central): the map is sized the same before and after the font swap, so desktop identity for D3 onward is scored against the corrected atlas",
+      "ref": "R1"
     }
   ]
 }

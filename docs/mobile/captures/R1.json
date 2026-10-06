@@ -4,7 +4,7 @@
   "tool_version": 1,
   "tool_sha": "128863844e650e2c47d35bdc73e4d7a0409034ab49d1ad433a25eb0b6dd8c4d9",
   "index_sha": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-  "atlas_sha": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc",
+  "atlas_sha": "d5eb3e61077c4f0bec796d2fc043bee3732b9119592334747380894bbc0f410c",
   "unit": "R1",
   "profiles": [
    "iphone13",
@@ -38,13 +38,13 @@
   "server": "spawn",
   "browser": "141.0.7390.37",
   "timing": {
-   "wall_ms": 1766732
+   "wall_ms": 1758685
   }
  },
  "repo": {
   "sha": {
    "index": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-   "atlas": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc",
+   "atlas": "d5eb3e61077c4f0bec796d2fc043bee3732b9119592334747380894bbc0f410c",
    "server": "f093d3423e3d78c47a2405a79cfb3212c5273577bab9fe598e610a741c1eb233"
   },
   "syntax": {
@@ -686,7 +686,7 @@
    ".claude/workflows/filigree-3-build.js": "0164d2a71818c6026747809d3b271d1784696c670194f3f5b8f0627813644b38",
    ".claude/workflows/filigree-4-review.js": "afdf9eefd6806e814e1171da00c2718cc6e6696bb6c7b0ce867f956e68e1e210",
    ".claude/workflows/mobile-build.js": "b47fc19720b54d01055dbff0a550cc585b8e82c8aca9f05b7b5060c25b17400b",
-   ".claude/workflows/mobile-review.js": "15f526b77b075ff09891c7f272666d4ce3026467c5d82035b488e8c9156ff6ab",
+   ".claude/workflows/mobile-review.js": "c91940d44a535592103784a5f5cdc06d4b7c1a0decc2a90e2b9c2dd69181a460",
    ".claude/workflows/street-1-research.js": "0afadd970a560ce94be05baf90b345696e00577394375170250e9e6feee4b5b2",
    ".claude/workflows/street-2-plan.js": "d6ed1a1d1af3d92a5312b3d8b65e80c0e498a5498f9659e3cdac883b0518ab31",
    ".claude/workflows/street-3-build.js": "544f9ea5c96c361e2be4fb4b5f341ba043231600c10d847eeb830e68ac16b73c",
@@ -721,47 +721,47 @@
      "path": "docs/mobile/shots/R1/atlas-iphone13-2-whole-chart.png",
      "w": 390,
      "h": 664,
-     "bytes": 273748,
+     "bytes": 277286,
      "scale": 1,
-     "sha": "3ebdf0de3be6fb4ed90dff661530d937691cac38a8c57e8951b1a41b9bab1cd0"
+     "sha": "32077cc3bc5d620d24b0575787004673cfea275b6ae54791fc57ce3e99292aac"
     },
     "3-layers": {
      "path": "docs/mobile/shots/R1/atlas-iphone13-3-layers.png",
      "w": 390,
      "h": 664,
-     "bytes": 111250,
+     "bytes": 113345,
      "scale": 1,
-     "sha": "0171881ace711bff946a000ea178f2df222bcefe13ef876b900718c486f8ef40"
+     "sha": "5ff7d960035c47b7ade84b43598eb0390092cbf9a7e59de494639ca2d4da0f49"
     },
     "4-place-card": {
      "path": "docs/mobile/shots/R1/atlas-iphone13-4-place-card.png",
      "w": 390,
      "h": 664,
-     "bytes": 116469,
+     "bytes": 115993,
      "scale": 1,
-     "sha": "9b21feb92e5cd0ba847f729c200ddae482eb00ca8f3f0e2bcd04035e71010fd0"
+     "sha": "c3283fef231ee0e5e392cc5338a07f6dabb5e0fc2d401634e7986ea56c5b7c71"
     }
    },
    "first_load": {
-    "bytes": 427384,
-    "requests": 37,
+    "bytes": 484535,
+    "requests": 42,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67676
+     "bytes": 68392
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 67676
+      "bytes": 68392
      },
      "data": {
       "requests": 16,
       "bytes": 68427
      },
      "tiles": {
-      "requests": 20,
-      "bytes": 291281
+      "requests": 25,
+      "bytes": 347716
      }
     },
     "foreign_origins": [
@@ -858,8 +858,8 @@
    },
    "repeat_visit": {
     "bytes": 4843,
-    "requests": 37,
-    "cache_hits": 37
+    "requests": 42,
+    "cache_hits": 42
    },
    "doc_scroll": 964,
    "inner_height": 664,
@@ -869,13 +869,13 @@
     "aria_hidden": "true",
     "leak_px": 26
    },
-   "share_visible": 0.3602,
+   "share_visible": 0.3794,
    "targets_under_44": {
-    "count": 71,
-    "total": 75,
-    "ratio": 0.9467,
-    "markers": 59,
-    "markers_under44": 59
+    "count": 81,
+    "total": 85,
+    "ratio": 0.9529,
+    "markers": 69,
+    "markers_under44": 69
    },
    "min_font_px": {
     "px": 9.5,
@@ -913,22 +913,22 @@
    ],
    "tiers": null,
    "tiers_derived": {
-    "fit": 1.95,
+    "fit": 1.9,
     "ceil": 5,
-    "B": 2.9667,
-    "C": 3.9833
+    "B": 2.9333,
+    "C": 3.9667
    },
    "zoom": {
-    "current": 1.95,
-    "min": 1.95,
+    "current": 1.9,
+    "min": 1.9,
     "max": 8
    },
    "header_h": 116,
    "doc_scroll_w": 390,
    "sw_registrations": 0,
    "chrome_cover": {
-    "whole": 0.2608,
-    "layers": 0.7099,
+    "whole": 0.2604,
+    "layers": 0.6995,
     "card": 0.553,
     "peek": "no-sheet",
     "half": "no-sheet"
@@ -939,7 +939,7 @@
      4,
      183,
      372,
-     405
+     396
     ],
     "fits_viewport": true,
     "rows": 16,
@@ -948,10 +948,10 @@
    },
    "tap_epeshu": {
     "found": true,
-    "zoom": 4.55,
+    "zoom": 4.5,
     "glyph_center": [
      195,
-     375
+     371
     ],
     "stack": [
      "DIV.fac-badge",
@@ -980,21 +980,21 @@
     ]
    },
    "tap_fixture": {
-    "n": 83,
+    "n": 86,
     "complete": true,
-    "wrong_card": 15,
-    "wrong_taps": 15,
+    "wrong_card": 17,
+    "wrong_taps": 17,
     "no_open": 0,
     "chooser": 0,
     "chooser_without_glyph": 0,
     "views": {
      "whole": {
-      "zoom": 1.95,
+      "zoom": 1.9,
       "glyphs": 187,
-      "untappable": 141,
+      "untappable": 138,
       "unnamed": 0,
-      "tapped": 46,
-      "wrong_card": 5
+      "tapped": 49,
+      "wrong_card": 7
      },
      "leponnia_z3.5": {
       "zoom": 3.5,
@@ -1044,9 +1044,21 @@
      },
      {
       "view": "whole",
+      "name": "Hoarland",
+      "outcome": "other",
+      "opened": "#company=Frösted Flækes"
+     },
+     {
+      "view": "whole",
       "name": "Malagnon",
       "outcome": "other",
       "opened": "#place=Bībūnor"
+     },
+     {
+      "view": "whole",
+      "name": "Pandikaba",
+      "outcome": "other",
+      "opened": "#place=Netho"
      },
      {
       "view": "whole",
@@ -1199,16 +1211,16 @@
      "bottom25": false
     },
     {
-     "id": "button:The South Lane",
-     "w": 18,
-     "h": 18,
+     "id": "button:Green Sea — bodies of wa",
+     "w": 22,
+     "h": 22,
      "marker": true,
      "primary": false,
      "reach": 0,
-     "bottom25": true
+     "bottom25": false
     },
     {
-     "id": "button:Green Sea — bodies of wa",
+     "id": "button:Great Chasmous Sea — bod",
      "w": 22,
      "h": 22,
      "marker": true,
@@ -1233,15 +1245,6 @@
      "primary": false,
      "reach": 0,
      "bottom25": false
-    },
-    {
-     "id": "button:Leponnia — major regions",
-     "w": 24,
-     "h": 24,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": true
     },
     {
      "id": "button:Bash Phaug — lesser sett",
@@ -1361,15 +1364,6 @@
      "bottom25": false
     },
     {
-     "id": "button:Pandikaba — lesser settl",
-     "w": 16,
-     "h": 16,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": false
-    },
-    {
      "id": "button:Bash Nena — lesser settl",
      "w": 16,
      "h": 16,
@@ -1451,6 +1445,24 @@
      "bottom25": false
     },
     {
+     "id": "button:Haedi — lesser settlemen",
+     "w": 16,
+     "h": 16,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Urip — lesser settlement",
+     "w": 16,
+     "h": 16,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
      "id": "button:Daeskhon — lesser settle",
      "w": 16,
      "h": 16,
@@ -1466,16 +1478,7 @@
      "marker": true,
      "primary": false,
      "reach": 0,
-     "bottom25": true
-    },
-    {
-     "id": "button:Nagash — lesser settleme",
-     "w": 16,
-     "h": 16,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": true
+     "bottom25": false
     },
     {
      "id": "button:Netho — lesser settlemen",
@@ -1580,6 +1583,24 @@
      "id": "button:Hometown of Guantanamo M",
      "w": 22,
      "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Far North",
+     "w": 20,
+     "h": 20,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Paerāndas",
+     "w": 20,
+     "h": 20,
      "marker": true,
      "primary": false,
      "reach": 0,
@@ -1803,11 +1824,10 @@
     "link:Sim ↗": 0,
     "region:Map of the Wide World — ": 0,
     "button:The Strait Run": 0,
-    "button:The South Lane": 0,
     "button:Green Sea — bodies of wa": 0,
+    "button:Great Chasmous Sea — bod": 0,
     "button:Empheros — major regions": 0,
     "button:Khōrgos — major regions": 0,
-    "button:Leponnia — major regions": 0,
     "button:Bash Phaug — lesser sett": 0,
     "button:Aldrakhar — lesser settl": 0,
     "button:Hemdok Laego — lesser se": 0,
@@ -1821,7 +1841,6 @@
     "button:Karaphon — lesser settle": 0,
     "button:Mishimbril — lesser sett": 0,
     "button:Taemon — lesser settleme": 0,
-    "button:Pandikaba — lesser settl": 0,
     "button:Bash Nena — lesser settl": 0,
     "button:Hazad — lesser settlemen": 0,
     "button:Īngomes — lesser settlem": 0,
@@ -1831,9 +1850,10 @@
     "button:Tamaron Mopher — lesser ": 0,
     "button:Leshes — lesser settleme": 0,
     "button:Nūmeron — lesser settlem": 0,
+    "button:Haedi — lesser settlemen": 0,
+    "button:Urip — lesser settlement": 0,
     "button:Daeskhon — lesser settle": 0,
     "button:Malau — lesser settlemen": 0,
-    "button:Nagash — lesser settleme": 0,
     "button:Netho — lesser settlemen": 0,
     "button:Gizalīs — lesser settlem": 0,
     "button:Penthelon — settlements": 0,
@@ -1846,6 +1866,8 @@
     "button:Phagal — minor regions": 0,
     "button:Hometown of Frösted Flæk": 0,
     "button:Hometown of Guantanamo M": 0,
+    "button:Far North": 0,
+    "button:Paerāndas": 0,
     "button:Zoom in": 0,
     "button:Zoom out": 0,
     "button:The Atlas Through the Ag": 0,
@@ -1922,7 +1944,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 137233
+    "wall_ms": 135686
    },
    "extras": {
     "safe_area": {
@@ -1996,41 +2018,41 @@
      "path": "docs/mobile/shots/R1/atlas-pixel7-2-whole-chart.png",
      "w": 206,
      "h": 419,
-     "bytes": 115238,
+     "bytes": 115465,
      "scale": 0.5,
-     "sha": "40e4a7c9c53fe849218ea7e961726483d8c16573b55bbfc4504ec61490b402f3",
+     "sha": "6ac8e2132e5ef5a3a0add351f007022674a413d5215dbbea5ae82fd3d5bae025",
      "full_path": "docs/mobile/shots/R1/atlas-pixel7-2-whole-chart.full.png",
-     "full_sha": "bafaeb5510abce878a8f0f7ff12f006cfff8a93e3047d36d4f67a37e3fab6272"
+     "full_sha": "853473cdda981bb2640f03a24be76bd6d4040ce00f8664c63342c30646de333b"
     },
     "3-layers": {
      "path": "docs/mobile/shots/R1/atlas-pixel7-3-layers.png",
      "w": 412,
      "h": 839,
-     "bytes": 178173,
+     "bytes": 180485,
      "scale": 1,
-     "sha": "f38532e691c96c3264237cca120f4485ab3836340076a4b5efd00815007c798a"
+     "sha": "326bd8513a336d14037f90cdbd7cb28d7aaf0ed752e716c6953b8fe2690d2b8c"
     },
     "4-place-card": {
      "path": "docs/mobile/shots/R1/atlas-pixel7-4-place-card.png",
      "w": 412,
      "h": 839,
-     "bytes": 223946,
+     "bytes": 222421,
      "scale": 1,
-     "sha": "30bec152127f4f65ddd4619aa23cda7d59f812d748b757fa3ab2569842380d00"
+     "sha": "595a194965bd55d04cb1650bd95c6ef23c8364b2476b158ebc28dd5734342da0"
     }
    },
    "first_load": {
-    "bytes": 358539,
+    "bytes": 359255,
     "requests": 32,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67676
+     "bytes": 68392
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 67676
+      "bytes": 68392
      },
      "data": {
       "requests": 16,
@@ -2146,13 +2168,13 @@
     "aria_hidden": "true",
     "leak_px": 7
    },
-   "share_visible": 0.2924,
+   "share_visible": 0.275,
    "targets_under_44": {
-    "count": 77,
-    "total": 81,
-    "ratio": 0.9506,
-    "markers": 66,
-    "markers_under44": 66
+    "count": 73,
+    "total": 77,
+    "ratio": 0.9481,
+    "markers": 62,
+    "markers_under44": 62
    },
    "min_font_px": {
     "px": 9.5,
@@ -2190,22 +2212,22 @@
    ],
    "tiers": null,
    "tiers_derived": {
-    "fit": 2.35,
+    "fit": 2.4,
     "ceil": 5,
-    "B": 3.2333,
-    "C": 4.1167
+    "B": 3.2667,
+    "C": 4.1333
    },
    "zoom": {
-    "current": 2.35,
-    "min": 2.35,
+    "current": 2.4,
+    "min": 2.4,
     "max": 8
    },
    "header_h": 116,
    "doc_scroll_w": 412,
    "sw_registrations": 0,
    "chrome_cover": {
-    "whole": 0.182,
-    "layers": 0.6824,
+    "whole": 0.1823,
+    "layers": 0.6826,
     "card": 0.5792,
     "peek": "no-sheet",
     "half": "no-sheet"
@@ -2225,10 +2247,10 @@
    },
    "tap_epeshu": {
     "found": true,
-    "zoom": 4.95,
+    "zoom": 5,
     "glyph_center": [
      206,
-     462
+     465
     ],
     "stack": [
      "SPAN.glyph",
@@ -2257,28 +2279,28 @@
     ]
    },
    "tap_fixture": {
-    "n": 94,
+    "n": 87,
     "complete": true,
-    "wrong_card": 12,
-    "wrong_taps": 12,
+    "wrong_card": 10,
+    "wrong_taps": 10,
     "no_open": 0,
     "chooser": 0,
     "chooser_without_glyph": 0,
     "views": {
      "whole": {
-      "zoom": 2.35,
+      "zoom": 2.4,
       "glyphs": 187,
-      "untappable": 141,
+      "untappable": 147,
       "unnamed": 0,
-      "tapped": 46,
-      "wrong_card": 2
+      "tapped": 40,
+      "wrong_card": 0
      },
      "leponnia_z3.5": {
       "zoom": 3.5,
       "glyphs": 187,
-      "untappable": 166,
+      "untappable": 167,
       "unnamed": 0,
-      "tapped": 21,
+      "tapped": 20,
       "wrong_card": 6
      },
      "epeshu_z4.55": {
@@ -2307,18 +2329,6 @@
      }
     },
     "taps": [
-     {
-      "view": "whole",
-      "name": "Heron's House",
-      "outcome": "other",
-      "opened": "#company=Guantanamo Michael"
-     },
-     {
-      "view": "whole",
-      "name": "Sjefenhold",
-      "outcome": "other",
-      "opened": "#company=Frösted Flækes"
-     },
      {
       "view": "leponnia_z3.5",
       "name": "Epēshu",
@@ -2449,15 +2459,6 @@
      "bottom25": false
     },
     {
-     "id": "button:The North Coast Packet",
-     "w": 18,
-     "h": 18,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": false
-    },
-    {
      "id": "button:The Strait Run",
      "w": 18,
      "h": 18,
@@ -2494,6 +2495,24 @@
      "bottom25": false
     },
     {
+     "id": "button:Mountain Wall — mountain",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Heron's House — lesser s",
+     "w": 16,
+     "h": 16,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
      "id": "button:Hemdok Laego — lesser se",
      "w": 16,
      "h": 16,
@@ -2504,15 +2523,6 @@
     },
     {
      "id": "button:Bash Dargis — lesser set",
-     "w": 16,
-     "h": 16,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": false
-    },
-    {
-     "id": "button:Palagnon — lesser settle",
      "w": 16,
      "h": 16,
      "marker": true,
@@ -2593,15 +2603,6 @@
      "bottom25": false
     },
     {
-     "id": "button:Gehon Or — lesser settle",
-     "w": 16,
-     "h": 16,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": false
-    },
-    {
      "id": "button:Malagnon — lesser settle",
      "w": 16,
      "h": 16,
@@ -2662,7 +2663,7 @@
      "marker": true,
      "primary": false,
      "reach": 0,
-     "bottom25": false
+     "bottom25": true
     },
     {
      "id": "button:Sāzhram — lesser settlem",
@@ -2671,19 +2672,10 @@
      "marker": true,
      "primary": false,
      "reach": 0,
-     "bottom25": false
-    },
-    {
-     "id": "button:Azrūmil — lesser settlem",
-     "w": 16,
-     "h": 16,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
      "bottom25": true
     },
     {
-     "id": "button:Malau — lesser settlemen",
+     "id": "button:Azrūmil — lesser settlem",
      "w": 16,
      "h": 16,
      "marker": true,
@@ -2719,16 +2711,7 @@
      "bottom25": true
     },
     {
-     "id": "button:Thārban — lesser settlem",
-     "w": 16,
-     "h": 16,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": true
-    },
-    {
-     "id": "button:Sūl — lesser settlement",
+     "id": "button:Nhin — lesser settlement",
      "w": 16,
      "h": 16,
      "marker": true,
@@ -2836,36 +2819,9 @@
      "bottom25": false
     },
     {
-     "id": "button:Hoarland — minor regions",
-     "w": 18,
-     "h": 18,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": false
-    },
-    {
-     "id": "button:Hometown of Frösted Flæk",
-     "w": 22,
-     "h": 22,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": false
-    },
-    {
      "id": "button:Hometown of Guantanamo M",
      "w": 22,
      "h": 22,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": false
-    },
-    {
-     "id": "button:Far North",
-     "w": 20,
-     "h": 20,
      "marker": true,
      "primary": false,
      "reach": 0,
@@ -3115,14 +3071,14 @@
     "link:Wiki ↗": 0,
     "link:Sim ↗": 0,
     "region:Map of the Wide World — ": 0,
-    "button:The North Coast Packet": 0,
     "button:The Strait Run": 0,
     "button:Great Chasmous Sea — bod": 0,
     "button:Empheros — major regions": 0,
     "button:Khōrgos — major regions": 0,
+    "button:Mountain Wall — mountain": 0,
+    "button:Heron's House — lesser s": 0,
     "button:Hemdok Laego — lesser se": 0,
     "button:Bash Dargis — lesser set": 0,
-    "button:Palagnon — lesser settle": 0,
     "button:Paga — lesser settlement": 0,
     "button:Lōt — lesser settlement": 0,
     "button:Karaphon — lesser settle": 0,
@@ -3131,7 +3087,6 @@
     "button:Bash Nena — lesser settl": 0,
     "button:Īngomes — lesser settlem": 0,
     "button:Kezren — lesser settleme": 0,
-    "button:Gehon Or — lesser settle": 0,
     "button:Malagnon — lesser settle": 0,
     "button:Tamaron Mopher — lesser ": 0,
     "button:Leshes — lesser settleme": 0,
@@ -3141,12 +3096,10 @@
     "button:Arbezmara — lesser settl": 0,
     "button:Sāzhram — lesser settlem": 0,
     "button:Azrūmil — lesser settlem": 0,
-    "button:Malau — lesser settlemen": 0,
     "button:Nhagi — lesser settlemen": 0,
     "button:Laem — lesser settlement": 0,
     "button:Cyrikon — lesser settlem": 0,
-    "button:Thārban — lesser settlem": 0,
-    "button:Sūl — lesser settlement": 0,
+    "button:Nhin — lesser settlement": 0,
     "button:Nagash — lesser settleme": 0,
     "button:Nhandar Khezīn — lesser ": 0,
     "button:Tamaron — lesser settlem": 0,
@@ -3158,10 +3111,7 @@
     "button:Nenog — minor regions": 0,
     "button:Bībūnor — minor regions": 0,
     "button:Phagal — minor regions": 0,
-    "button:Hoarland — minor regions": 0,
-    "button:Hometown of Frösted Flæk": 0,
     "button:Hometown of Guantanamo M": 0,
-    "button:Far North": 0,
     "button:Zoom in": 0,
     "button:Zoom out": 0,
     "button:The Atlas Through the Ag": 0,
@@ -3241,7 +3191,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 148002
+    "wall_ms": 138076
    },
    "extras": {
     "safe_area": {
@@ -3316,47 +3266,47 @@
      "path": "docs/mobile/shots/R1/atlas-landscape-2-whole-chart.png",
      "w": 844,
      "h": 340,
-     "bytes": 192494,
+     "bytes": 192090,
      "scale": 1,
-     "sha": "3d0dc9cce9d4130bbc26de65d4846bea965413382ee7d679af73751c6d9b370d"
+     "sha": "5460cbad12b7564407a644eb5221de6ad4cdf5e694d87ba61c12a75e4c0cf942"
     },
     "3-layers": {
      "path": "docs/mobile/shots/R1/atlas-landscape-3-layers.png",
      "w": 844,
      "h": 340,
-     "bytes": 149078,
+     "bytes": 150144,
      "scale": 1,
-     "sha": "05f30adb2bc6caa3b1985b9b285d03bcb0c963bfe699d1161b8ebf13fc24b9f8"
+     "sha": "e03c61050e2c373c4d4735a88930772d916549d05c6f2aa1374233662bc65fd8"
     },
     "4-place-card": {
      "path": "docs/mobile/shots/R1/atlas-landscape-4-place-card.png",
      "w": 844,
      "h": 340,
-     "bytes": 181869,
+     "bytes": 182239,
      "scale": 1,
-     "sha": "f5618e47805e23dc161fe6dd5519a58e680d53eaa8d671422f1712ab3e96b12b"
+     "sha": "cdea3af44519603ddff29a4739f6cc99d8cee68efd910012efbb4ea7ef356488"
     }
    },
    "first_load": {
-    "bytes": 294445,
+    "bytes": 295161,
     "requests": 32,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67676
+     "bytes": 68392
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 67676
-     },
-     "data": {
-      "requests": 16,
-      "bytes": 68427
+      "bytes": 68392
      },
      "tiles": {
       "requests": 15,
       "bytes": 158342
+     },
+     "data": {
+      "requests": 16,
+      "bytes": 68427
      }
     },
     "foreign_origins": [
@@ -3464,13 +3414,13 @@
     "aria_hidden": "true",
     "leak_px": 243
    },
-   "share_visible": 0.9775,
+   "share_visible": 0.964,
    "targets_under_44": {
-    "count": 80,
-    "total": 83,
-    "ratio": 0.9639,
-    "markers": 69,
-    "markers_under44": 69
+    "count": 83,
+    "total": 86,
+    "ratio": 0.9651,
+    "markers": 72,
+    "markers_under44": 72
    },
    "min_font_px": {
     "px": 9.5,
@@ -3523,7 +3473,7 @@
    "sw_registrations": 0,
    "chrome_cover": {
     "whole": 0.1902,
-    "layers": 0.3471,
+    "layers": 0.342,
     "card": 0.4364,
     "peek": "no-sheet",
     "half": "no-sheet"
@@ -3534,7 +3484,7 @@
      356,
      164,
      474,
-     105
+     102
     ],
     "fits_viewport": true,
     "rows": 16,
@@ -3546,7 +3496,7 @@
     "zoom": 3.3,
     "glyph_center": [
      422,
-     206
+     204
     ],
     "stack": [
      "DIV.leaflet-marker-icon leaflet-zoom-ani",
@@ -3575,10 +3525,10 @@
     ]
    },
    "tap_fixture": {
-    "n": 153,
+    "n": 148,
     "complete": true,
-    "wrong_card": 65,
-    "wrong_taps": 65,
+    "wrong_card": 63,
+    "wrong_taps": 63,
     "no_open": 0,
     "chooser": 0,
     "chooser_without_glyph": 0,
@@ -3586,10 +3536,10 @@
      "whole": {
       "zoom": 0.7,
       "glyphs": 187,
-      "untappable": 57,
+      "untappable": 62,
       "unnamed": 0,
-      "tapped": 130,
-      "wrong_card": 60
+      "tapped": 125,
+      "wrong_card": 58
      },
      "leponnia_z3.5": {
       "zoom": 3.5,
@@ -3735,15 +3685,9 @@
      },
      {
       "view": "whole",
-      "name": "Hoarland",
-      "outcome": "other",
-      "opened": "#company=Frösted Flækes"
-     },
-     {
-      "view": "whole",
       "name": "Hometown of Leon Mallister",
       "outcome": "other",
-      "opened": "Sepos"
+      "opened": "East-West Road"
      },
      {
       "view": "whole",
@@ -3761,7 +3705,7 @@
       "view": "whole",
       "name": "Ilongazoro",
       "outcome": "other",
-      "opened": "#place=Ghōdar"
+      "opened": "#place=Pish"
      },
      {
       "view": "whole",
@@ -3773,7 +3717,7 @@
       "view": "whole",
       "name": "Kamīdo",
       "outcome": "other",
-      "opened": "#company=Shiv Mathor"
+      "opened": "#place=Sepos"
      },
      {
       "view": "whole",
@@ -3825,12 +3769,6 @@
      },
      {
       "view": "whole",
-      "name": "Māmīth Māgrīn (Kingly Mickleburg)",
-      "outcome": "other",
-      "opened": "Fell Mountains"
-     },
-     {
-      "view": "whole",
       "name": "Mīthrabash",
       "outcome": "other",
       "opened": "#place=Līm Haub"
@@ -3864,6 +3802,12 @@
       "name": "Pandikaba",
       "outcome": "other",
       "opened": "#place=Netho"
+     },
+     {
+      "view": "whole",
+      "name": "Paril",
+      "outcome": "other",
+      "opened": "#company=Shiv Mathor"
      },
      {
       "view": "whole",
@@ -3906,12 +3850,6 @@
       "name": "Siege of the Seat",
       "outcome": "other",
       "opened": "East-West Road"
-     },
-     {
-      "view": "whole",
-      "name": "Sjefenhold",
-      "outcome": "other",
-      "opened": "#company=Frösted Flækes"
      },
      {
       "view": "whole",
@@ -3984,6 +3922,18 @@
       "name": "Ūmak-nūs-Ion",
       "outcome": "other",
       "opened": "#place=Karkōgael"
+     },
+     {
+      "view": "leponnia_z3.5",
+      "name": "Epēshu",
+      "outcome": "other",
+      "opened": "#faction=The Lektān Priesthood"
+     },
+     {
+      "view": "leponnia_z3.5",
+      "name": "The Lektān Priesthood",
+      "outcome": "other",
+      "opened": "Epēshu"
      }
     ]
    },
@@ -4076,6 +4026,15 @@
      "id": "button:Great Chasmous Sea — bod",
      "w": 22,
      "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Empheros — major regions",
+     "w": 24,
+     "h": 24,
      "marker": true,
      "primary": false,
      "reach": 0,
@@ -4209,6 +4168,15 @@
     },
     {
      "id": "button:Kash Ītor — lesser settl",
+     "w": 16,
+     "h": 16,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Pomos — lesser settlemen",
      "w": 16,
      "h": 16,
      "marker": true,
@@ -4595,15 +4563,6 @@
      "bottom25": false
     },
     {
-     "id": "button:Hometown of Frösted Flæk",
-     "w": 22,
-     "h": 22,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": false
-    },
-    {
      "id": "button:Hometown of Maelys",
      "w": 22,
      "h": 22,
@@ -4632,15 +4591,6 @@
     },
     {
      "id": "button:East-West Road",
-     "w": 20,
-     "h": 20,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": false
-    },
-    {
-     "id": "button:Watchwater",
      "w": 20,
      "h": 20,
      "marker": true,
@@ -4768,6 +4718,7 @@
     "button:Green Sea — bodies of wa": 0,
     "button:Aldronde — bodies of wat": 0,
     "button:Great Chasmous Sea — bod": 0,
+    "button:Empheros — major regions": 0,
     "button:Garnatos — major regions": 0,
     "button:Khōrgos — major regions": 0,
     "button:Mākh Abath — major regio": 0,
@@ -4783,6 +4734,7 @@
     "button:Ītor Hāspira — lesser se": 0,
     "button:Līrider Hana — lesser se": 0,
     "button:Kash Ītor — lesser settl": 0,
+    "button:Pomos — lesser settlemen": 0,
     "button:Iet Ford — lesser settle": 0,
     "button:Bash Dargis — lesser set": 0,
     "button:Tobit — lesser settlemen": 0,
@@ -4825,12 +4777,10 @@
     "button:Nenog — minor regions": 0,
     "button:Drāgīnor — minor regions": 0,
     "button:Phagal — minor regions": 0,
-    "button:Hometown of Frösted Flæk": 0,
     "button:Hometown of Maelys": 0,
     "button:Hometown of Guantanamo M": 0,
     "button:Haunt of Shiv Mathor": 0,
     "button:East-West Road": 0,
-    "button:Watchwater": 0,
     "button:Sepos": 0,
     "button:Zoom in": 0,
     "button:The Atlas Through the Ag": 0,
@@ -4890,7 +4840,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 216141
+    "wall_ms": 206666
    },
    "extras": {
     "safe_area": {
@@ -4965,45 +4915,45 @@
      "path": "docs/mobile/shots/R1/atlas-desktop-2-whole-chart.png",
      "w": 455,
      "h": 256,
-     "bytes": 155487,
+     "bytes": 155379,
      "scale": 0.3333333333333333,
-     "sha": "64b26b6224d57cdec5796a0bf6ace1eb5c9db610a927c74b943e6a290cf6bd62",
+     "sha": "0b8a7e251a6e998eea22322aaf827abdb9bbe43f0c3bf8fe03611645aca6ebc1",
      "full_path": "docs/mobile/shots/R1/atlas-desktop-2-whole-chart.full.png",
-     "full_sha": "7f75b319336761861265dacedf01c07fc8ad5f2d016f7cf0293d49580cdeddb5"
+     "full_sha": "50378f8821f82b3dd950552aa4da7392af17d6b91babcabd4b7c78ee962b9c73"
     },
     "3-layers": {
      "path": "docs/mobile/shots/R1/atlas-desktop-3-layers.png",
      "w": 683,
      "h": 384,
-     "bytes": 276677,
+     "bytes": 276196,
      "scale": 0.5,
-     "sha": "3ffe98a46e6cd8210cec1cd997dd0b95b929f51108de886bab31c2d763b0336d",
+     "sha": "616636d4134b3fbbe2091fd9bc7e20c4130e5cfa98c52c6d424aa92f7ebe0ac7",
      "full_path": "docs/mobile/shots/R1/atlas-desktop-3-layers.full.png",
-     "full_sha": "f1350d506fbc3c28e9c709304a9f16c2c66e7c6684be1e8617950d2af19dcf21"
+     "full_sha": "bee8338cadb3092f36df3a9096093391684c0ca294efa05fb3063e6a2da75918"
     },
     "4-place-card": {
      "path": "docs/mobile/shots/R1/atlas-desktop-4-place-card.png",
      "w": 683,
      "h": 384,
-     "bytes": 290559,
+     "bytes": 290649,
      "scale": 0.5,
-     "sha": "848dc79fef4b0dc40b9cb841c0ef3f10753f77df3f7c61409a9e4cba5b99e610",
+     "sha": "dc133a4fd66b0c9ff5be3b72c5d1a95ab404c9b3fa7627003fbcf3c8fdfa1ba1",
      "full_path": "docs/mobile/shots/R1/atlas-desktop-4-place-card.full.png",
-     "full_sha": "ba5da1dc47454a4760b6e02d3fc1e759954744f4a9ca3b56571519f26051284a"
+     "full_sha": "c625ad796fa308156e909b450b8905abc86e31bf6d6b43ee21ca36102bdb58ca"
     }
    },
    "first_load": {
-    "bytes": 294445,
+    "bytes": 295161,
     "requests": 32,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67676
+     "bytes": 68392
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 67676
+      "bytes": 68392
      },
      "data": {
       "requests": 16,
@@ -5119,7 +5069,7 @@
     "aria_hidden": "true",
     "leak_px": 716
    },
-   "share_visible": 0.9667,
+   "share_visible": 0.9637,
    "targets_under_44": {
     "count": 173,
     "total": 175,
@@ -5201,7 +5151,7 @@
     "zoom": 4.95,
     "glyph_center": [
      683,
-     397
+     396
     ],
     "stack": [
      "SPAN.glyph",
@@ -5230,7 +5180,7 @@
     ]
    },
    "tap_fixture": {
-    "n": 270,
+    "n": 269,
     "complete": true,
     "wrong_card": 23,
     "wrong_taps": 23,
@@ -5241,9 +5191,9 @@
      "whole": {
       "zoom": 2.35,
       "glyphs": 187,
-      "untappable": 8,
+      "untappable": 9,
       "unnamed": 0,
-      "tapped": 179,
+      "tapped": 178,
       "wrong_card": 13
      },
      "leponnia_z3.5": {
@@ -5538,6 +5488,15 @@
      "primary": false,
      "reach": 0,
      "bottom25": false
+    },
+    {
+     "id": "button:Tungril — bodies of wate",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
     },
     {
      "id": "button:Empheros — major regions",
@@ -6863,24 +6822,6 @@
      "bottom25": false
     },
     {
-     "id": "button:Far North",
-     "w": 20,
-     "h": 20,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": false
-    },
-    {
-     "id": "button:Fell Mountains",
-     "w": 20,
-     "h": 20,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": false
-    },
-    {
      "id": "button:Siege of the Seat",
      "w": 20,
      "h": 20,
@@ -7211,6 +7152,7 @@
     "button:Green Sea — bodies of wa": 0,
     "button:Aldronde — bodies of wat": 0,
     "button:Great Chasmous Sea — bod": 0,
+    "button:Tungril — bodies of wate": 0,
     "button:Empheros — major regions": 0,
     "button:Alensis — major regions": 0,
     "button:Garnatos — major regions": 0,
@@ -7358,8 +7300,6 @@
     "button:Pebros's Army": 0,
     "button:East-West Road": 0,
     "button:Watchwater": 0,
-    "button:Far North": 0,
-    "button:Fell Mountains": 0,
     "button:Siege of the Seat": 0,
     "button:Sepos": 0,
     "button:White Sea": 0,
@@ -7448,7 +7388,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 343020
+    "wall_ms": 341267
    },
    "extras": {},
    "extra_errors": {
@@ -7485,45 +7425,45 @@
      "path": "docs/mobile/shots/R1/atlas-desktop2x-2-whole-chart.png",
      "w": 480,
      "h": 300,
-     "bytes": 199415,
+     "bytes": 199325,
      "scale": 0.3333333333333333,
-     "sha": "8946b7226ccecbd05554a1c44c82cdf9acb4ee95ac8ae895a149ad1b486b03fa",
+     "sha": "9c7f41358d491bb12fdf1bf47b46a63f59b383009a4396062c41b31e8faec486",
      "full_path": "docs/mobile/shots/R1/atlas-desktop2x-2-whole-chart.full.png",
-     "full_sha": "5d90085c1e93b55cbacdf60fd81b934d336fb362bb9f7244f61a39af82b0b682"
+     "full_sha": "7b4b632f21922bc6ed757233d65057fa0dd6d883cba1a3c238dc16151e9bddf9"
     },
     "3-layers": {
      "path": "docs/mobile/shots/R1/atlas-desktop2x-3-layers.png",
      "w": 480,
      "h": 300,
-     "bytes": 178587,
+     "bytes": 178570,
      "scale": 0.3333333333333333,
-     "sha": "dc9cb8500de692a49c8cde1949d0d85c99b737de5369a3c6d97b0c9239e35cb5",
+     "sha": "1bfb17f336a700a910458174688da37c99ab13277e711e65e009907e968bcb85",
      "full_path": "docs/mobile/shots/R1/atlas-desktop2x-3-layers.full.png",
-     "full_sha": "6e700575e81d7649607f00f3f0e3f8f4c3f8a7df32416694763d68dfcb34aa66"
+     "full_sha": "a1178e7a92821e2c97b8181e945b248eddfd6d908aaa2947da75c3a6e21ff581"
     },
     "4-place-card": {
      "path": "docs/mobile/shots/R1/atlas-desktop2x-4-place-card.png",
      "w": 480,
      "h": 300,
-     "bytes": 180845,
+     "bytes": 180780,
      "scale": 0.3333333333333333,
-     "sha": "96370d0d566f36500b7dba1880b6cb26ab59da30cde71cc5700b124105fb3e9d",
+     "sha": "e91352f8a3dbcee5cf4ce08521057dc98fc38e42f7f012cd9ff06e83505c42eb",
      "full_path": "docs/mobile/shots/R1/atlas-desktop2x-4-place-card.full.png",
-     "full_sha": "930f78446770380b7c9b169e1cd83cf6715d0cdb16d9fe2e74060602d46244b1"
+     "full_sha": "da2e39f4d2d4f77927c82f2eb63abdc294d7dc582b87dfd0495823ccd31f371a"
     }
    },
    "first_load": {
-    "bytes": 1618518,
+    "bytes": 1619234,
     "requests": 152,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67676
+     "bytes": 68392
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 67676
+      "bytes": 68392
      },
      "data": {
       "requests": 16,
@@ -7639,13 +7579,13 @@
     "aria_hidden": "true",
     "leak_px": 848
    },
-   "share_visible": 0.8583,
+   "share_visible": 0.8552,
    "targets_under_44": {
-    "count": 174,
-    "total": 176,
+    "count": 173,
+    "total": 175,
     "ratio": 0.9886,
-    "markers": 161,
-    "markers_under44": 161
+    "markers": 160,
+    "markers_under44": 160
    },
    "min_font_px": {
     "px": 9.5,
@@ -7721,7 +7661,7 @@
     "zoom": 5.2,
     "glyph_center": [
      720,
-     463
+     462
     ],
     "stack": [
      "SPAN.glyph",
@@ -7750,7 +7690,7 @@
     ]
    },
    "tap_fixture": {
-    "n": 293,
+    "n": 292,
     "complete": true,
     "wrong_card": 20,
     "wrong_taps": 20,
@@ -7761,9 +7701,9 @@
      "whole": {
       "zoom": 2.6,
       "glyphs": 187,
-      "untappable": 6,
+      "untappable": 7,
       "unnamed": 0,
-      "tapped": 181,
+      "tapped": 180,
       "wrong_card": 10
      },
      "leponnia_z3.5": {
@@ -8148,6 +8088,15 @@
      "primary": false,
      "reach": 0,
      "bottom25": false
+    },
+    {
+     "id": "button:Far Mountains — mountain",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
     },
     {
      "id": "button:Māmīth Māgrīn (Kingly Mi",
@@ -8993,7 +8942,7 @@
      "marker": true,
      "primary": false,
      "reach": 0,
-     "bottom25": true
+     "bottom25": false
     },
     {
      "id": "button:Cyrikon — lesser settlem",
@@ -9392,24 +9341,6 @@
      "bottom25": false
     },
     {
-     "id": "button:Far North",
-     "w": 20,
-     "h": 20,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": false
-    },
-    {
-     "id": "button:Fell Mountains",
-     "w": 20,
-     "h": 20,
-     "marker": true,
-     "primary": false,
-     "reach": 0,
-     "bottom25": false
-    },
-    {
      "id": "button:Siege of the Seat",
      "w": 20,
      "h": 20,
@@ -9752,6 +9683,7 @@
     "button:Far South — major region": 0,
     "button:Home Islands — major reg": 0,
     "button:Mountain Wall — mountain": 0,
+    "button:Far Mountains — mountain": 0,
     "button:Māmīth Māgrīn (Kingly Mi": 0,
     "button:Feldspar — lesser settle": 0,
     "button:Stony Ford — lesser sett": 0,
@@ -9890,8 +9822,6 @@
     "button:Pebros's Army": 0,
     "button:East-West Road": 0,
     "button:Watchwater": 0,
-    "button:Far North": 0,
-    "button:Fell Mountains": 0,
     "button:Siege of the Seat": 0,
     "button:Sepos": 0,
     "button:White Sea": 0,
@@ -9980,7 +9910,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 371778
+    "wall_ms": 371245
    },
    "extras": {},
    "extra_errors": {
@@ -10850,7 +10780,7 @@
     "aborted": []
    },
    "timing": {
-    "wall_ms": 96271
+    "wall_ms": 97516
    },
    "extra_errors": {
     "safe_area": {
@@ -11757,7 +11687,7 @@
     "aborted": []
    },
    "timing": {
-    "wall_ms": 94313
+    "wall_ms": 97821
    },
    "extra_errors": {
     "safe_area": {
@@ -12377,7 +12307,7 @@
     "aborted": []
    },
    "timing": {
-    "wall_ms": 114346
+    "wall_ms": 116595
    },
    "extra_errors": {
     "safe_area": {
@@ -13349,7 +13279,7 @@
     "aborted": []
    },
    "timing": {
-    "wall_ms": 109527
+    "wall_ms": 110972
    },
    "extra_errors": {}
   },
@@ -14330,7 +14260,7 @@
     "aborted": []
    },
    "timing": {
-    "wall_ms": 134695
+    "wall_ms": 141563
    },
    "extra_errors": {}
   }
