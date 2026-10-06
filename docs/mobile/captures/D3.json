@@ -4,7 +4,7 @@
   "tool_version": 1,
   "tool_sha": "128863844e650e2c47d35bdc73e4d7a0409034ab49d1ad433a25eb0b6dd8c4d9",
   "index_sha": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-  "atlas_sha": "43d9658c850009fe8c28facee71d6c2b7c1baa0ba9c3061ecb7ca2b620274378",
+  "atlas_sha": "a126c037394b58639f9fcdd12280aca0b1bf4e34437d579f1f1697a00b2e4222",
   "unit": "D3",
   "profiles": [
    "iphone13",
@@ -38,13 +38,13 @@
   "server": "spawn",
   "browser": "141.0.7390.37",
   "timing": {
-   "wall_ms": 1216955
+   "wall_ms": 1221963
   }
  },
  "repo": {
   "sha": {
    "index": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-   "atlas": "43d9658c850009fe8c28facee71d6c2b7c1baa0ba9c3061ecb7ca2b620274378",
+   "atlas": "a126c037394b58639f9fcdd12280aca0b1bf4e34437d579f1f1697a00b2e4222",
    "server": "f093d3423e3d78c47a2405a79cfb3212c5273577bab9fe598e610a741c1eb233"
   },
   "syntax": {
@@ -721,39 +721,39 @@
      "path": "docs/mobile/shots/D3/atlas-iphone13-2-whole-chart.png",
      "w": 390,
      "h": 664,
-     "bytes": 273748,
+     "bytes": 273739,
      "scale": 1,
-     "sha": "3ebdf0de3be6fb4ed90dff661530d937691cac38a8c57e8951b1a41b9bab1cd0"
+     "sha": "c06eddff1065f4bd783d78be5370ab7b049fc0870417915fcf2ac2b6a95599f1"
     },
     "3-layers": {
      "path": "docs/mobile/shots/D3/atlas-iphone13-3-layers.png",
      "w": 390,
      "h": 664,
-     "bytes": 111250,
+     "bytes": 111241,
      "scale": 1,
-     "sha": "0171881ace711bff946a000ea178f2df222bcefe13ef876b900718c486f8ef40"
+     "sha": "41ebc2d816b939ddf04171e99375ac727937f822588bfa275c48537fc6c3e6e1"
     },
     "4-place-card": {
      "path": "docs/mobile/shots/D3/atlas-iphone13-4-place-card.png",
      "w": 390,
      "h": 664,
-     "bytes": 116469,
+     "bytes": 116411,
      "scale": 1,
-     "sha": "9b21feb92e5cd0ba847f729c200ddae482eb00ca8f3f0e2bcd04035e71010fd0"
+     "sha": "638219fc062ae4f0b26a0b65a9fe8e3cf0df280b006d3d15de5e95f515e5e2db"
     }
    },
    "first_load": {
-    "bytes": 704695,
-    "requests": 49,
+    "bytes": 750414,
+    "requests": 50,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67976
+     "bytes": 67949
     },
     "by_cat": {
      "html_other": {
-      "requests": 13,
-      "bytes": 344987
+      "requests": 14,
+      "bytes": 390706
      },
      "data": {
       "requests": 16,
@@ -783,8 +783,8 @@
    },
    "repeat_visit": {
     "bytes": 61278,
-    "requests": 54,
-    "cache_hits": 49
+    "requests": 55,
+    "cache_hits": 50
    },
    "doc_scroll": 964,
    "inner_height": 664,
@@ -1847,7 +1847,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 136787
+    "wall_ms": 137744
    },
    "extras": {
     "safe_area": {
@@ -1913,49 +1913,49 @@
      "path": "docs/mobile/shots/D3/atlas-pixel7-1-contents.png",
      "w": 412,
      "h": 839,
-     "bytes": 131404,
+     "bytes": 131402,
      "scale": 1,
-     "sha": "89545c61ca8748f78acda2fcae9a3e214faedea3568b5ee57383f5dc1027c6c1"
+     "sha": "4deb1ba3bddbb7e28a03cf24d6ab3f30aad28983e8c7f08bc80b7c2ed550373b"
     },
     "2-whole-chart": {
      "path": "docs/mobile/shots/D3/atlas-pixel7-2-whole-chart.png",
      "w": 206,
      "h": 419,
-     "bytes": 115238,
+     "bytes": 115237,
      "scale": 0.5,
-     "sha": "40e4a7c9c53fe849218ea7e961726483d8c16573b55bbfc4504ec61490b402f3",
+     "sha": "f72905f1ee4eb8ec5e02f1c52943970fc828d05cc796e8707718f129065544b3",
      "full_path": "docs/mobile/shots/D3/atlas-pixel7-2-whole-chart.full.png",
-     "full_sha": "bafaeb5510abce878a8f0f7ff12f006cfff8a93e3047d36d4f67a37e3fab6272"
+     "full_sha": "ce31ccbcc199eae8c7361c7ccafa13422acef48a511682beaf39232d080c0d98"
     },
     "3-layers": {
      "path": "docs/mobile/shots/D3/atlas-pixel7-3-layers.png",
      "w": 412,
      "h": 839,
-     "bytes": 178173,
+     "bytes": 178168,
      "scale": 1,
-     "sha": "f38532e691c96c3264237cca120f4485ab3836340076a4b5efd00815007c798a"
+     "sha": "13c152cf338bd8789e81d39176a777f6eb94fcd5ac96cd0ddaa6b438b85206ec"
     },
     "4-place-card": {
      "path": "docs/mobile/shots/D3/atlas-pixel7-4-place-card.png",
      "w": 412,
      "h": 839,
-     "bytes": 223946,
+     "bytes": 223943,
      "scale": 1,
-     "sha": "30bec152127f4f65ddd4619aa23cda7d59f812d748b757fa3ab2569842380d00"
+     "sha": "20113d2eeb17c576cf46ff278b5bd0355dcc35584c7846e54303c1e2008201b4"
     }
    },
    "first_load": {
-    "bytes": 635850,
-    "requests": 44,
+    "bytes": 681569,
+    "requests": 45,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67976
+     "bytes": 67949
     },
     "by_cat": {
      "html_other": {
-      "requests": 13,
-      "bytes": 344987
+      "requests": 14,
+      "bytes": 390706
      },
      "data": {
       "requests": 16,
@@ -1985,8 +1985,8 @@
    },
    "repeat_visit": {
     "bytes": 4843,
-    "requests": 44,
-    "cache_hits": 44
+    "requests": 45,
+    "cache_hits": 45
    },
    "doc_scroll": 1279,
    "inner_height": 839,
@@ -3091,7 +3091,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 147902
+    "wall_ms": 148677
    },
    "extras": {
     "safe_area": {
@@ -3166,39 +3166,39 @@
      "path": "docs/mobile/shots/D3/atlas-landscape-2-whole-chart.png",
      "w": 844,
      "h": 340,
-     "bytes": 192494,
+     "bytes": 192454,
      "scale": 1,
-     "sha": "3d0dc9cce9d4130bbc26de65d4846bea965413382ee7d679af73751c6d9b370d"
+     "sha": "dc6320f10169825a53a5849da31bcc86529e9de9246d7acced6499313b0c480d"
     },
     "3-layers": {
      "path": "docs/mobile/shots/D3/atlas-landscape-3-layers.png",
      "w": 844,
      "h": 340,
-     "bytes": 149078,
+     "bytes": 149034,
      "scale": 1,
-     "sha": "05f30adb2bc6caa3b1985b9b285d03bcb0c963bfe699d1161b8ebf13fc24b9f8"
+     "sha": "613c347b024ec4825fbd373ae61f9ee36916b95ea90cdcbe8955e30969d4334b"
     },
     "4-place-card": {
      "path": "docs/mobile/shots/D3/atlas-landscape-4-place-card.png",
      "w": 844,
      "h": 340,
-     "bytes": 181869,
+     "bytes": 181823,
      "scale": 1,
-     "sha": "f5618e47805e23dc161fe6dd5519a58e680d53eaa8d671422f1712ab3e96b12b"
+     "sha": "d5c367a86224e6fa4ce13071227553883c573a8e5e93acc68030c0593ce3fb5a"
     }
    },
    "first_load": {
-    "bytes": 571756,
-    "requests": 44,
+    "bytes": 617475,
+    "requests": 45,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67976
+     "bytes": 67949
     },
     "by_cat": {
      "html_other": {
-      "requests": 13,
-      "bytes": 344987
+      "requests": 14,
+      "bytes": 390706
      },
      "data": {
       "requests": 16,
@@ -3228,8 +3228,8 @@
    },
    "repeat_visit": {
     "bytes": 4843,
-    "requests": 44,
-    "cache_hits": 44
+    "requests": 45,
+    "cache_hits": 45
    },
    "doc_scroll": 340,
    "inner_height": 340,
@@ -4665,7 +4665,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 216167
+    "wall_ms": 217759
    },
    "extras": {
     "safe_area": {
@@ -4732,53 +4732,53 @@
      "path": "docs/mobile/shots/D3/atlas-desktop-1-contents.png",
      "w": 1366,
      "h": 768,
-     "bytes": 217391,
+     "bytes": 217389,
      "scale": 1,
-     "sha": "3c501d804f6fbf716f2045007c68dceb658f34cb8e744cd41d13c632c84e71ed"
+     "sha": "c96498890d14f17df0516096fd7031db69e21a0d90b9fc6f69dd9623716d310c"
     },
     "2-whole-chart": {
      "path": "docs/mobile/shots/D3/atlas-desktop-2-whole-chart.png",
      "w": 455,
      "h": 256,
-     "bytes": 155487,
+     "bytes": 155483,
      "scale": 0.3333333333333333,
-     "sha": "64b26b6224d57cdec5796a0bf6ace1eb5c9db610a927c74b943e6a290cf6bd62",
+     "sha": "515bc73560f302733f431f9a3dc590d2f5541eea3380462ab5558b314ad6f080",
      "full_path": "docs/mobile/shots/D3/atlas-desktop-2-whole-chart.full.png",
-     "full_sha": "7d7073d64ac7e212065a1d1a0bfc6a75e8e06f9d52f63c47bfe2d55b5b173655"
+     "full_sha": "9c567e32394abe6874574b113496483052a65720f67aaf3cbb557dd613948bbb"
     },
     "3-layers": {
      "path": "docs/mobile/shots/D3/atlas-desktop-3-layers.png",
      "w": 683,
      "h": 384,
-     "bytes": 276677,
+     "bytes": 276680,
      "scale": 0.5,
-     "sha": "3ffe98a46e6cd8210cec1cd997dd0b95b929f51108de886bab31c2d763b0336d",
+     "sha": "aca106523d5a462098626a9947782d45db1b2ab0b028ab3a5c98ce0d92d29cef",
      "full_path": "docs/mobile/shots/D3/atlas-desktop-3-layers.full.png",
-     "full_sha": "f1350d506fbc3c28e9c709304a9f16c2c66e7c6684be1e8617950d2af19dcf21"
+     "full_sha": "c9c7eb831808fb03413e4e3db39616885cc17ca9c6cb1a9ba04219e54c8f5e5b"
     },
     "4-place-card": {
      "path": "docs/mobile/shots/D3/atlas-desktop-4-place-card.png",
      "w": 683,
      "h": 384,
-     "bytes": 290559,
+     "bytes": 290550,
      "scale": 0.5,
-     "sha": "848dc79fef4b0dc40b9cb841c0ef3f10753f77df3f7c61409a9e4cba5b99e610",
+     "sha": "2f314c53203139fdc339d4b65405f1535ae049c3ee550d7cad888f3ee32a0b0f",
      "full_path": "docs/mobile/shots/D3/atlas-desktop-4-place-card.full.png",
-     "full_sha": "ba5da1dc47454a4760b6e02d3fc1e759954744f4a9ca3b56571519f26051284a"
+     "full_sha": "24d9c8260c498db25f0894701d3dbb11b5dded7fbaba611f3222d3003878dabd"
     }
    },
    "first_load": {
-    "bytes": 571192,
-    "requests": 44,
+    "bytes": 616911,
+    "requests": 45,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67976
+     "bytes": 67949
     },
     "by_cat": {
      "html_other": {
-      "requests": 13,
-      "bytes": 344423
+      "requests": 14,
+      "bytes": 390142
      },
      "data": {
       "requests": 16,
@@ -4808,8 +4808,8 @@
    },
    "repeat_visit": {
     "bytes": 4843,
-    "requests": 44,
-    "cache_hits": 44
+    "requests": 45,
+    "cache_hits": 45
    },
    "doc_scroll": 768,
    "inner_height": 768,
@@ -7148,7 +7148,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 342887
+    "wall_ms": 343771
    },
    "extras": {},
    "extra_errors": {
@@ -7177,9 +7177,9 @@
      "path": "docs/mobile/shots/D3/atlas-desktop2x-1-contents.png",
      "w": 1440,
      "h": 900,
-     "bytes": 247116,
+     "bytes": 247111,
      "scale": 1,
-     "sha": "d4ac8c526541319dbf6c478f8a5d9d63f6b96cf5b9a3c9c81e47cb935bf03b75"
+     "sha": "b890affd09d759a39ef35b0c567a80a25b03d2008d902c03bf7558130791fdc6"
     },
     "2-whole-chart": {
      "path": "docs/mobile/shots/D3/atlas-desktop2x-2-whole-chart.png",
@@ -7187,43 +7187,43 @@
      "h": 300,
      "bytes": 199415,
      "scale": 0.3333333333333333,
-     "sha": "8946b7226ccecbd05554a1c44c82cdf9acb4ee95ac8ae895a149ad1b486b03fa",
+     "sha": "51b66150acde7fcc7dc0081b53cdc2631630df5105eebbbf8f6cc347bc6ab050",
      "full_path": "docs/mobile/shots/D3/atlas-desktop2x-2-whole-chart.full.png",
-     "full_sha": "5d90085c1e93b55cbacdf60fd81b934d336fb362bb9f7244f61a39af82b0b682"
+     "full_sha": "ce4fe62ba52bb845173f53db1b013fc36d66f2de2a7a5924ca472eaa9aff75c7"
     },
     "3-layers": {
      "path": "docs/mobile/shots/D3/atlas-desktop2x-3-layers.png",
      "w": 480,
      "h": 300,
-     "bytes": 178587,
+     "bytes": 178586,
      "scale": 0.3333333333333333,
-     "sha": "dc9cb8500de692a49c8cde1949d0d85c99b737de5369a3c6d97b0c9239e35cb5",
+     "sha": "1abd9dc3adda5be87e01b16fbe56118541e90f4b063529a7a841c4d365d20faa",
      "full_path": "docs/mobile/shots/D3/atlas-desktop2x-3-layers.full.png",
-     "full_sha": "6e700575e81d7649607f00f3f0e3f8f4c3f8a7df32416694763d68dfcb34aa66"
+     "full_sha": "d2af27b2f3090c362f4c0b62b1ca607de92ba35e164bebb23940b0d32afe7108"
     },
     "4-place-card": {
      "path": "docs/mobile/shots/D3/atlas-desktop2x-4-place-card.png",
      "w": 480,
      "h": 300,
-     "bytes": 180845,
+     "bytes": 180857,
      "scale": 0.3333333333333333,
-     "sha": "96370d0d566f36500b7dba1880b6cb26ab59da30cde71cc5700b124105fb3e9d",
+     "sha": "a33c68f3e66104ea29e810358c8d6de48f3a9ffd968e1d7c244837efc298c537",
      "full_path": "docs/mobile/shots/D3/atlas-desktop2x-4-place-card.full.png",
-     "full_sha": "930f78446770380b7c9b169e1cd83cf6715d0cdb16d9fe2e74060602d46244b1"
+     "full_sha": "a7de0dd5fc6d19e3c29f7da18ffd203ab3c8c277bc33cdbc8995b5da9c4170de"
     }
    },
    "first_load": {
-    "bytes": 1895829,
-    "requests": 164,
+    "bytes": 1941548,
+    "requests": 165,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67976
+     "bytes": 67949
     },
     "by_cat": {
      "html_other": {
-      "requests": 13,
-      "bytes": 344987
+      "requests": 14,
+      "bytes": 390706
      },
      "data": {
       "requests": 16,
@@ -9605,7 +9605,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 371661
+    "wall_ms": 372283
    },
    "extras": {},
    "extra_errors": {

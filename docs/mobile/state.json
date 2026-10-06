@@ -7,7 +7,7 @@
   },
   "baselines": {
     "B0": "7dbac85b923ea59d8c93248a4f57fa9e6ba1a40977125f8dedde2ff43453cfd3",
-    "R1": "a56f029528071cc05d2a79c01684367b1e3c467a34826a73a0cb3bc376a34e85",
+    "R1": "80892371ae2a8e29b524403b1c92f2a0b85a014d0d6e66b125504c70ba6e02ea",
     "final": null
   },
   "owner_answers": "docs/mobile/owner-answers.json",
@@ -50,18 +50,18 @@
       "attempts": 3,
       "capture": "docs/mobile/captures/D3.json",
       "files_sha": {
-        "docs/mobile/accept/D3.json": "b330aa0d390c4802191d6e6d500488615839ae358eeca72c05ddec3a286b62a3",
+        "docs/mobile/accept/D3.json": "a7e0e58409b51a8c370ce0145ae4bacab722a6d45d02913d5dca01bee2bff1bf",
         "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
       },
       "failing": [
         {
-          "key": "atlas.iphone13.metrics",
-          "op": "deep-equals",
-          "expected": "equal to R1 except declared",
-          "got": "first_load.by_cat.tiles.requests: 25 vs 20; first_load.by_cat.tiles.bytes: 347716 vs 291281"
+          "key": "atlas.iphone13.repeat_visit.requests",
+          "op": "<=",
+          "expected": 54,
+          "got": 55
         }
       ],
-      "ref_before": "rebase-7"
+      "ref_before": "R1"
     },
     "D5": {
       "status": "skipped",

@@ -44,11 +44,11 @@ const UNIT = {
   'S-U6': ['Sim: debounced resize with the class pixel ratio; capped graphs canvas', 'sonnet'], 'S-U7': ['Sim: speed controls in a bottom bar on portrait phones; compact landscape HUD', 'sonnet'],
   'S-U8': ['Sim: the ledger as a three-stop sheet', 'sonnet'], 'S-U9': ['Sim: first-touch hint card and per-pointer hint text', 'sonnet'], 'S-U10': ['Sim: Night ink for the HUD, ledger and sheets', 'sonnet']
 }
-const ATLAS_UNITS = ['D3', 'D5', 'A-U1', 'A-U2', 'A-U3', 'A-U4', 'A-U8', 'A-U10', 'A-U11', 'D7', 'D9', 'A-U9', 'A-U5', 'A-U6', 'A-U7', 'A-U12']
+const ATLAS_UNITS = ['A-U0', 'D3', 'D5', 'A-U1', 'A-U2', 'A-U3', 'A-U4', 'A-U8', 'A-U10', 'A-U11', 'D7', 'D9', 'A-U9', 'A-U5', 'A-U6', 'A-U7', 'A-U12']
 const SIM_UNITS = ['D4', 'S-U1', 'S-U2', 'S-U3', 'S-U4', 'S-U5', 'D8', 'D10', 'S-U6', 'S-U7', 'S-U8', 'S-U9', 'S-U10']
 const ITEMS = {
   '3': {lane: 'shared', units: ['D1', 'D2', 'D6']},
-  '4': {lane: 'atlas', units: ['D3', 'D5', 'A-U1']},
+  '4': {lane: 'atlas', units: ['A-U0', 'D3', 'D5', 'A-U1']},
   '5': {lane: 'atlas', units: ['A-U2', 'A-U3', 'A-U4']},
   '5b': {lane: 'atlas', units: ['A-U2', 'A-U10']},
   '6': {lane: 'atlas', units: ['A-U8', 'A-U10', 'A-U11']},

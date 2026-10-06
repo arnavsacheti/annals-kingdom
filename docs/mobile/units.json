@@ -233,6 +233,31 @@
     "run": "Mobile 3"
   },
   {
+    "id": "A-U0",
+    "title": "Atlas: re-fit the map once the web fonts swap in",
+    "files": [
+      "maps-site/index.html",
+      "docs/mobile/accept/A-U0.json"
+    ],
+    "kind": "logic",
+    "defects": [],
+    "depends_on": [
+      "D1",
+      "F1"
+    ],
+    "model": "sonnet",
+    "effort": "medium",
+    "run": "Mobile 4",
+    "acceptance": [
+      "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/A-U0.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
+      "maps-site/index.html sizes the Leaflet map once at startup (fillZoom() reads map.getSize()) and re-measures only on a window resize, so when the web fonts land the header reflows (iPhone 13: 111 px on the fallback serif, 116 px with EB Garamond and Lora) and Leaflet keeps the pre-swap size (iphone13 #map 390x509 vs Leaflet 390x518; pixel7 698 vs 693; landscape 215 vs 218; desktop 688 vs 691; desktop2x 820 vs 823). Fix: one ResizeObserver on #map (document.fonts.ready may also trigger it) that calls map.invalidateSize() and re-runs the existing fit (fillZoom) when, and only when, the #map box changed; created once, never a loop, no timer",
+      "after load, on all five profiles, Leaflet's getSize() equals the #map box (the capture runs with the production fonts answered after the startup layout, as R1 was, so the swap happens after the first fit and the re-fit is exercised)",
+      "declared changes, per profile, against R1: the zoom keys the fit sets, first_load and repeat_visit tile requests and bytes (iphone13: the post-swap 25-tile grid, a superset of the pre-swap 20), share_visible, the layers list height, the tap fixture rows whose glyph moved, chrome_cover where the map box moved; desktop and desktop2x shots may differ from R1 only by the re-fit (declared, with the shot_diff bound the re-fit actually produces); every other key equals R1",
+      "no new clock token (UG3 counts unchanged), grep -c matchMedia maps-site/index.html unchanged, no new pane, zero console errors; xmur3, mulberry32, genCityCanvas, washMake and sampleCityMask untouched",
+      "unscored, for the reviewers: two captures of the edited tree give identical atlas first_load and repeat_visit keys on iphone13 (the race between the fonts and the first fit no longer changes what is requested)"
+    ]
+  },
+  {
     "id": "D3",
     "title": "Atlas: vendor Leaflet 1.9.4 and the OFL fonts",
     "files": [
@@ -247,7 +272,8 @@
     ],
     "depends_on": [
       "D1",
-      "F1"
+      "F1",
+      "A-U0"
     ],
     "model": "sonnet",
     "effort": "medium",
@@ -256,9 +282,9 @@
       "foreign_origins = 0 on the atlas (was 3: fonts.googleapis.com, fonts.gstatic.com, unpkg.com)",
       "sources (npm, run in a scratch dir): `npm pack leaflet@1.9.4` -> package/dist/{leaflet.css,leaflet.js,images/*}; `npm pack @fontsource/eb-garamond@5.3.0 @fontsource/lora@5.3.0 @fontsource/ibm-plex-mono@5.3.0` -> package/files/<family>-{latin,latin-ext}-<weight>-<style>.woff2 for exactly EB Garamond 400 normal, 400 italic, 600 normal; Lora 400 normal, 400 italic, 600 normal; IBM Plex Mono 400 normal, 600 normal, plus each package's LICENSE (OFL) beside the files and hand-written @font-face rules with the fontsource unicode-range. sha256 of leaflet.css = a7837102824184820dfa198d1ebcd109ff6d0ff9a2672a074b9a1b4d147d04c6 and of leaflet.js = db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a, equal to the existing SRI hashes (integrity attributes kept); the font shas are listed in docs/mobile/inputs/vendor-shas.txt and recorded in maps-site/vendor/SHA256SUMS; a Playwright route on **/leaflet@1.9.4/dist/* fires for the vendored URL (the filigree sandbox recipe still applies)",
       "document.fonts.check true for EB Garamond 400/600/400i, Lora 400/600/400i, IBM Plex Mono 400/600; the latin-ext woff2 is requested when Epēshu or Nīmlad is on screen; font-display:swap; OFL texts beside the files",
-      "font bytes on iphone13 first load <= 200 KB transferred (declared first-view growth: the vendored fonts and Leaflet now count as app-origin bytes); desktop identity (UG8) is scored against R1, the font-faithful reference (docs/mobile/captures/R1.json: the capture tool serves the Google Fonts hosts from these same fontsource files, so R1 already renders the production faces): desktop and desktop2x shots <= 0.5% from R1, and on every profile the metrics equal R1 except the network keys this unit moves, declared per profile: first_load.{bytes, requests, foreign_origins, routed, aborted, max_asset.bytes, max_asset.path, by_cat.html_other.requests, by_cat.html_other.bytes} and repeat_visit.{bytes, requests, cache_hits}",
+      "font bytes on iphone13 first load <= 200 KB transferred (declared first-view growth: the vendored fonts and Leaflet now count as app-origin bytes); desktop identity (UG8) is scored against the reference in force (the capture after A-U0, itself scored against R1, the font-faithful reference (docs/mobile/captures/R1.json: the capture tool serves the Google Fonts hosts from these same fontsource files, so R1 already renders the production faces): desktop and desktop2x shots <= 0.5% from that reference, and on every profile the metrics equal it except the network keys this unit moves, declared per profile: first_load.{bytes, requests, foreign_origins, routed, aborted, max_asset.bytes, max_asset.path, by_cat.html_other.requests, by_cat.html_other.bytes} and repeat_visit.{bytes, requests, cache_hits}",
       "leaflet.css stays a <link rel=stylesheet> with its integrity and crossorigin attributes (never an @import or inline copy); vendoring makes Leaflet's own three ungated :hover rules same-origin, so the capture walker now counts them: hover_ungated rises by exactly 3 on every profile (declared per profile as atlas.<profile>.hover_ungated, value R1 + 3), never hidden",
-      "repeat visit on iphone13: up to 54 requests, all cache hits (R1's 37 + leaflet.css, leaflet.js, the 9 font files the first view uses and layers-2x.png = 49, plus 5 tiles: with the fonts cached the atlas lays out on the real faces and sizes its map at 509 px, the 25-tile grid, a pre-existing atlas behaviour queued as POLISH 'Atlas: re-measure the map after the web fonts swap in'); the other profiles stay within R1 + 16 requests; never delay, drop or hold back a font file or the layers icon to change a count"
+      "request counts on every profile: first_load.requests and repeat_visit.requests within [reference + 12, reference + 13] (leaflet.css, leaflet.js, layers-2x.png and 9 or 10 font files: Chrome fetches the EB Garamond latin-ext italic segment only when it is still matching faces as the Contents first lays out, a font-matching race no page-side change should game); the repeat visit all cache hits up to that one-file variance (repeat_visit.cache_hits >= reference + 12) and repeat_visit.bytes <= 10% of first_load.bytes; never delay, drop, preload or hold back a font file or the layers icon to change a count"
     ],
     "run": "Mobile 4"
   },

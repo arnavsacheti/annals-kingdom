@@ -191,6 +191,7 @@ Agents never run git.
     request carries ?t=1; with the sheet closed the page height equals the viewport (664/839, was
     974/1,265); the Contents kicker's top ≥ 0 (was −26); the desktop reference is re-taken once
     (fonts now render).
+  - Added 2026-10-06: unit A-U0 (the map re-fits once the web fonts swap in) runs before D3.
   - Prerequisites: Mobile 3.
 - [ ] **Mobile 5 · Atlas: absolute bands and the right tap (USER REQUEST)** — reveal tiers pinned to
   absolute zooms at the earlier of the two desktops (A19); one glyph-centre tap resolver with a
@@ -345,7 +346,7 @@ Agents never run git.
     Writes only `maps-site/index.html`, the manifest when present, and `docs/living/{accept,
     captures}/LRM*`.
 
-- [ ] **Atlas: re-measure the map after the web fonts swap in** — the atlas sizes its Leaflet map
+- [x] **Atlas: re-measure the map after the web fonts swap in** — the atlas sizes its Leaflet map
   once at startup (`fillZoom()` reads `map.getSize()`) and re-measures only on a window resize. The
   header reflows when the web fonts land (iPhone 13: 111 px on the fallback serif, 116 px with EB
   Garamond and Lora), so the `#map` box ends up smaller than Leaflet's cached size on every
@@ -366,6 +367,9 @@ Agents never run git.
   - Blocked by: Mobile 9 and Mobile 14 checked (an atlas edit mid-lane breaks the lane review's
     reference). Prerequisites: as "Atlas reduced motion for its own animations" above (no
     mobile-build or mobile-review run live; never beside Filigree 3 or a Street 3/4 run).
+  - Result (2026-10-06): moved into Mobile 4 as unit A-U0, ahead of D3. Once the fonts are
+    vendored the race decides the first view on every load, so every later atlas unit would
+    flake on it; see docs/mobile/units.json A-U0.
 
 ### Filigree for the Table (cont.) and the street research: the sheet spec, then the street bible
 
