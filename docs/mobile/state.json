@@ -3,7 +3,7 @@
   "item": "Mobile 4",
   "app_sha": {
     "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-    "maps-site/index.html": "1d510114032f6ff5c88cf1912abd870af90a26ea76b61bccbd09de20e34b9e23"
+    "maps-site/index.html": "45c02fd41ce698cd50a5a04e21881c2c3dc0a6d0fd5c64fce7cc1a8bc3a1b6fb"
   },
   "baselines": {
     "B0": "7dbac85b923ea59d8c93248a4f57fa9e6ba1a40977125f8dedde2ff43453cfd3",
@@ -85,153 +85,14 @@
       "ref_before": "R1"
     },
     "D5": {
-      "status": "failed",
-      "attempts": 3,
+      "status": "passed",
+      "attempts": 2,
       "capture": "docs/mobile/captures/D5.json",
       "files_sha": {
-        "docs/mobile/accept/D5.json": "016fa6b436e70664b196047e292a576aa29484db1516e427c127b1769c017ca1",
-        "maps-site/index.html": "1d510114032f6ff5c88cf1912abd870af90a26ea76b61bccbd09de20e34b9e23"
+        "docs/mobile/accept/D5.json": "5c433dee5ace498ad89a1a022096996b7c514b5b9c2a5fded1e1ba8d30a5a22f",
+        "maps-site/index.html": "45c02fd41ce698cd50a5a04e21881c2c3dc0a6d0fd5c64fce7cc1a8bc3a1b6fb"
       },
-      "failing": [
-        {
-          "key": "UG8.atlas.desktop.metrics",
-          "op": "gate",
-          "expected": "equal to B0 except declared",
-          "got": "first_load.bytes 572288 vs 571860; first_load.max_asset.bytes 68892 vs 68644; first_load.by_cat.html_other.bytes 345339 vs 345091; first_load.by_cat.tiles.bytes 158522 vs 158342"
-        },
-        {
-          "key": "UG8.atlas.desktop2x.metrics",
-          "op": "gate",
-          "expected": "equal to B0 except declared",
-          "got": "first_load.bytes 1898365 vs 1896497; first_load.max_asset.bytes 68892 vs 68644; first_load.by_cat.html_other.bytes 345903 vs 345655; first_load.by_cat.tiles.bytes 1484035 vs 1482415"
-        },
-        {
-          "key": "UG10.atlas.iphone13.bytes",
-          "op": "gate",
-          "expected": "<= 761798",
-          "got": 762346
-        },
-        {
-          "key": "atlas.iphone13.first_load.bytes",
-          "op": "unchanged",
-          "expected": 761798,
-          "got": 762346
-        },
-        {
-          "key": "atlas.iphone13.first_load.max_asset.bytes",
-          "op": "unchanged",
-          "expected": 68644,
-          "got": 68892
-        },
-        {
-          "key": "atlas.iphone13.first_load.by_cat.html_other.bytes",
-          "op": "unchanged",
-          "expected": 345655,
-          "got": 345903
-        },
-        {
-          "key": "atlas.iphone13.first_load.by_cat.tiles.bytes",
-          "op": "unchanged",
-          "expected": 347716,
-          "got": 348016
-        },
-        {
-          "key": "atlas.pixel7.first_load.bytes",
-          "op": "unchanged",
-          "expected": 636518,
-          "got": 636946
-        },
-        {
-          "key": "atlas.pixel7.first_load.max_asset.bytes",
-          "op": "unchanged",
-          "expected": 68644,
-          "got": 68892
-        },
-        {
-          "key": "atlas.pixel7.first_load.by_cat.html_other.bytes",
-          "op": "unchanged",
-          "expected": 345655,
-          "got": 345903
-        },
-        {
-          "key": "atlas.pixel7.first_load.by_cat.tiles.bytes",
-          "op": "unchanged",
-          "expected": 222436,
-          "got": 222616
-        },
-        {
-          "key": "atlas.landscape.first_load.bytes",
-          "op": "unchanged",
-          "expected": 572424,
-          "got": 572852
-        },
-        {
-          "key": "atlas.landscape.first_load.max_asset.bytes",
-          "op": "unchanged",
-          "expected": 68644,
-          "got": 68892
-        },
-        {
-          "key": "atlas.landscape.first_load.by_cat.html_other.bytes",
-          "op": "unchanged",
-          "expected": 345655,
-          "got": 345903
-        },
-        {
-          "key": "atlas.landscape.first_load.by_cat.tiles.bytes",
-          "op": "unchanged",
-          "expected": 158342,
-          "got": 158522
-        },
-        {
-          "key": "atlas.desktop.first_load.bytes",
-          "op": "unchanged",
-          "expected": 571860,
-          "got": 572288
-        },
-        {
-          "key": "atlas.desktop.first_load.max_asset.bytes",
-          "op": "unchanged",
-          "expected": 68644,
-          "got": 68892
-        },
-        {
-          "key": "atlas.desktop.first_load.by_cat.html_other.bytes",
-          "op": "unchanged",
-          "expected": 345091,
-          "got": 345339
-        },
-        {
-          "key": "atlas.desktop.first_load.by_cat.tiles.bytes",
-          "op": "unchanged",
-          "expected": 158342,
-          "got": 158522
-        },
-        {
-          "key": "atlas.desktop2x.first_load.bytes",
-          "op": "unchanged",
-          "expected": 1896497,
-          "got": 1898365
-        },
-        {
-          "key": "atlas.desktop2x.first_load.max_asset.bytes",
-          "op": "unchanged",
-          "expected": 68644,
-          "got": 68892
-        },
-        {
-          "key": "atlas.desktop2x.first_load.by_cat.html_other.bytes",
-          "op": "unchanged",
-          "expected": 345655,
-          "got": 345903
-        },
-        {
-          "key": "atlas.desktop2x.first_load.by_cat.tiles.bytes",
-          "op": "unchanged",
-          "expected": 1482415,
-          "got": 1484035
-        }
-      ],
+      "failing": [],
       "ref_before": "after-D3"
     },
     "A-U1": {
@@ -408,6 +269,20 @@
       },
       "reason": "unit passed",
       "ref": "after-D3"
+    },
+    {
+      "before_unit": null,
+      "after_unit": "D5",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "45c02fd41ce698cd50a5a04e21881c2c3dc0a6d0fd5c64fce7cc1a8bc3a1b6fb"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "45c02fd41ce698cd50a5a04e21881c2c3dc0a6d0fd5c64fce7cc1a8bc3a1b6fb"
+      },
+      "reason": "unit passed",
+      "ref": "after-D5"
     }
   ]
 }

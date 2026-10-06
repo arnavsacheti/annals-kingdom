@@ -760,6 +760,8 @@
 <script src="vendor/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
 "use strict";
+var TILES_V=1;function tv(u){return u+(u.indexOf('?')<0?'?t=':'&t=')+TILES_V;}
+(function(){var d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(!d||!d.set)return;Object.defineProperty(HTMLImageElement.prototype,'src',{configurable:true,enumerable:d.enumerable,get:d.get,set:function(v){d.set.call(this,/^tiles\/\d+\/\d+\/\d+\.jpg$/.test(v)?tv(v):v);}});})();
 (function(){
   var NZ=4, IMG_W=4390, IMG_H=2188, TILE_W=4608, TILE_H=2304;
   var WIKI_BASE='https://princexizor.ddns.net/';
@@ -851,7 +853,7 @@
   // one below the deepest on-disk zoom on retina to avoid 404 tiles at max zoom.
   var ATTR='Agrakh Nīmilkad Utheg · the Tale of the Allhammers';
   function makeBase(path,deepZoom){
-    return L.tileLayer(path+'{z}/{x}/{y}.jpg',{
+    return L.tileLayer(path+'{z}/{x}/{y}.jpg?t='+TILES_V,{
       minNativeZoom:0,maxNativeZoom:RETINA?deepZoom-1:deepZoom,maxZoom:Z_STREET,
       tileSize:256,noWrap:true,bounds:tileBounds,detectRetina:true,keepBuffer:4,
       attribution:ATTR});
@@ -1056,7 +1058,7 @@
   var CHART={on:false,name:null,def:null,atZoom:0,layer:null,poiLayer:null,
     cb:null,pois:null,cpx:null,titleCtrl:null,backCtrl:null,save:null};
   function detailKey(name){return DETAIL[name]?name:(DETAILFOLD[fold(name)]||null);}
-  function artFor(name){return LOCART[name]||LOCARTFOLD[fold(name)]||null;}
+  function artFor(name){var a=LOCART[name]||LOCARTFOLD[fold(name)]||null;return a&&tv(a);}
 
   function pageFor(name){
     if(WIKI[name])return WIKI[name];
@@ -1774,11 +1776,11 @@
     var cpx=function(x,y){return map.unproject([x,y],atZoom);}; CHART.cpx=cpx;
     var cb=L.latLngBounds(cpx(0,0),cpx(def.w,def.h)); CHART.cb=cb;
     if(def.kind==='tiles'){
-      CHART.layer=L.tileLayer(def.path+'/{z}/{x}/{y}.jpg',{
+      CHART.layer=L.tileLayer(def.path+'/{z}/{x}/{y}.jpg?t='+TILES_V,{
         minNativeZoom:0,maxNativeZoom:RETINA?def.maxz-1:def.maxz,maxZoom:def.maxz+1,
         tileSize:256,noWrap:true,bounds:cb,detectRetina:true,keepBuffer:4,attribution:ATTR});
     }else{
-      CHART.layer=L.imageOverlay(def.path,cb,{attribution:ATTR});
+      CHART.layer=L.imageOverlay(tv(def.path),cb,{attribution:ATTR});
     }
     CHART.layer.addTo(map);
     var minZ=fillZoomAt(def.h,atZoom);
@@ -2112,7 +2114,7 @@
   function registerCityOverlay(name,img,opts){
     opts=opts||{};
     var url,w=opts.w,h=opts.h;
-    if(typeof img==='string')url=img;
+    if(typeof img==='string')url=/^art\//.test(img)?tv(img):img;
     else if(img&&img.toDataURL){url=img.toDataURL('image/webp',0.85);
       // Safari can't encode webp; png also keeps the vignette's alpha
       if(url.indexOf('data:image/webp')!==0)url=img.toDataURL('image/png');
