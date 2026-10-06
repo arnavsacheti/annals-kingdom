@@ -191,7 +191,10 @@ Agents never run git.
     request carries ?t=1; with the sheet closed the page height equals the viewport (664/839, was
     974/1,265); the Contents kicker's top ≥ 0 (was −26); the desktop reference is re-taken once
     (fonts now render).
-  - Added 2026-10-06: unit A-U0 (the map re-fits once the web fonts swap in) runs before D3.
+  - Added 2026-10-06: unit A-U0 runs before D3. It sizes the map the same before and after the
+    web fonts swap in (metric-matched fallback faces; a fonts.ready refit only where a line still
+    wraps differently). Applied centrally: UG8 cannot pass a unit that moves the desktop map, so R1
+    is re-taken after it.
   - Prerequisites: Mobile 3.
 - [ ] **Mobile 5 · Atlas: absolute bands and the right tap (USER REQUEST)** — reveal tiers pinned to
   absolute zooms at the earlier of the two desktops (A19); one glyph-centre tap resolver with a
@@ -294,6 +297,10 @@ Agents never run git.
     closed.
   - Result (2026-10-05): SE1a, SE2a, SE2b landed in job bodies; preludes byte-identical,
     street-drift green; Street 2 plan preview reads the overrides with no baked check loosened.
+  - Also check (A-U0, untestable here): the atlas header and footer wrap and the map fit before
+    the fonts land on Android (no Times New Roman/Liberation/Tinos: Noto Serif fallback) and
+    Safari 16 or older (no size-adjust), and with a large minimum font size; IPA glyphs in the
+    fallback range now render through the matched faces (none in today's place cards).
 - [ ] **Atlas reduced motion for its own animations (dashmove, copulse)** — the atlas's two CSS
   animations ignore reduced motion: `.route-line.playing` loops `dashmove` for as long as a journey
   is on, and `.glyph.copulse` pulses a new origin. Add one `@media (prefers-reduced-motion:

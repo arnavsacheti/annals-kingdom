@@ -4,7 +4,7 @@
   "tool_version": 1,
   "tool_sha": "128863844e650e2c47d35bdc73e4d7a0409034ab49d1ad433a25eb0b6dd8c4d9",
   "index_sha": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-  "atlas_sha": "1bdf5277774f25fbac0b76dff904ccbff309bb6b6a0d86955d4549e577fcb0fb",
+  "atlas_sha": "73a9cd61a21270b8381ce513d5247c5bb1b836fecf149bf3ac14cbac67da539a",
   "unit": "A-U0",
   "profiles": [
    "iphone13",
@@ -38,13 +38,13 @@
   "server": "spawn",
   "browser": "141.0.7390.37",
   "timing": {
-   "wall_ms": 1191921
+   "wall_ms": 1197006
   }
  },
  "repo": {
   "sha": {
    "index": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-   "atlas": "1bdf5277774f25fbac0b76dff904ccbff309bb6b6a0d86955d4549e577fcb0fb",
+   "atlas": "73a9cd61a21270b8381ce513d5247c5bb1b836fecf149bf3ac14cbac67da539a",
    "server": "f093d3423e3d78c47a2405a79cfb3212c5273577bab9fe598e610a741c1eb233"
   },
   "syntax": {
@@ -743,17 +743,17 @@
     }
    },
    "first_load": {
-    "bytes": 484050,
+    "bytes": 484390,
     "requests": 42,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67907
+     "bytes": 68247
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 67907
+      "bytes": 68247
      },
      "data": {
       "requests": 16,
@@ -1944,7 +1944,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 135228
+    "wall_ms": 135859
    },
    "extras": {
     "safe_area": {
@@ -2018,19 +2018,19 @@
      "path": "docs/mobile/shots/A-U0/atlas-pixel7-2-whole-chart.png",
      "w": 206,
      "h": 419,
-     "bytes": 115682,
+     "bytes": 115465,
      "scale": 0.5,
-     "sha": "6507b932dfff2004b35de8033e8d7c87a4210cc79195639d414905a5b0a334c7",
+     "sha": "6ac8e2132e5ef5a3a0add351f007022674a413d5215dbbea5ae82fd3d5bae025",
      "full_path": "docs/mobile/shots/A-U0/atlas-pixel7-2-whole-chart.full.png",
-     "full_sha": "97993e0ce7d9019aa696df728c7739006b975dd7c9153487f5c1b45c19a1e296"
+     "full_sha": "853473cdda981bb2640f03a24be76bd6d4040ce00f8664c63342c30646de333b"
     },
     "3-layers": {
      "path": "docs/mobile/shots/A-U0/atlas-pixel7-3-layers.png",
      "w": 412,
      "h": 839,
-     "bytes": 179603,
+     "bytes": 180485,
      "scale": 1,
-     "sha": "048315df44f7679442ab02c7154075e8a799f2a6d000d6c879c180438246c836"
+     "sha": "326bd8513a336d14037f90cdbd7cb28d7aaf0ed752e716c6953b8fe2690d2b8c"
     },
     "4-place-card": {
      "path": "docs/mobile/shots/A-U0/atlas-pixel7-4-place-card.png",
@@ -2042,25 +2042,25 @@
     }
    },
    "first_load": {
-    "bytes": 581206,
-    "requests": 47,
+    "bytes": 359110,
+    "requests": 32,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67907
+     "bytes": 68247
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 67907
+      "bytes": 68247
      },
      "data": {
       "requests": 16,
       "bytes": 68427
      },
      "tiles": {
-      "requests": 30,
-      "bytes": 444872
+      "requests": 15,
+      "bytes": 222436
      }
     },
     "foreign_origins": [
@@ -2168,13 +2168,13 @@
     "aria_hidden": "true",
     "leak_px": 7
    },
-   "share_visible": 0.2751,
+   "share_visible": 0.275,
    "targets_under_44": {
-    "count": 70,
-    "total": 74,
-    "ratio": 0.9459,
-    "markers": 59,
-    "markers_under44": 59
+    "count": 73,
+    "total": 77,
+    "ratio": 0.9481,
+    "markers": 62,
+    "markers_under44": 62
    },
    "min_font_px": {
     "px": 9.5,
@@ -3191,7 +3191,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 137631
+    "wall_ms": 138441
    },
    "extras": {
     "safe_area": {
@@ -3266,17 +3266,17 @@
      "path": "docs/mobile/shots/A-U0/atlas-landscape-2-whole-chart.png",
      "w": 844,
      "h": 340,
-     "bytes": 191817,
+     "bytes": 192090,
      "scale": 1,
-     "sha": "823dc404003769ff88d12ae0eef315c4255df17512f963fabe387dd9669d0d4b"
+     "sha": "5460cbad12b7564407a644eb5221de6ad4cdf5e694d87ba61c12a75e4c0cf942"
     },
     "3-layers": {
      "path": "docs/mobile/shots/A-U0/atlas-landscape-3-layers.png",
      "w": 844,
      "h": 340,
-     "bytes": 150030,
+     "bytes": 150144,
      "scale": 1,
-     "sha": "83b87c3616da1312bc9c5662ea4fc7f515e821ce380f0c44e69498a7175aee0e"
+     "sha": "e03c61050e2c373c4d4735a88930772d916549d05c6f2aa1374233662bc65fd8"
     },
     "4-place-card": {
      "path": "docs/mobile/shots/A-U0/atlas-landscape-4-place-card.png",
@@ -3288,17 +3288,17 @@
     }
    },
    "first_load": {
-    "bytes": 294676,
+    "bytes": 295016,
     "requests": 32,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67907
+     "bytes": 68247
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 67907
+      "bytes": 68247
      },
      "data": {
       "requests": 16,
@@ -3414,13 +3414,13 @@
     "aria_hidden": "true",
     "leak_px": 243
    },
-   "share_visible": 0.9678,
+   "share_visible": 0.964,
    "targets_under_44": {
-    "count": 82,
-    "total": 85,
-    "ratio": 0.9647,
-    "markers": 71,
-    "markers_under44": 71
+    "count": 83,
+    "total": 86,
+    "ratio": 0.9651,
+    "markers": 72,
+    "markers_under44": 72
    },
    "min_font_px": {
     "px": 9.5,
@@ -4840,7 +4840,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 206022
+    "wall_ms": 207276
    },
    "extras": {
     "safe_area": {
@@ -4915,21 +4915,21 @@
      "path": "docs/mobile/shots/A-U0/atlas-desktop-2-whole-chart.png",
      "w": 455,
      "h": 256,
-     "bytes": 155556,
+     "bytes": 155379,
      "scale": 0.3333333333333333,
-     "sha": "ae533bffcdd896161e3f33a88c0a88f9993e851ee27995a70f3591652f88777e",
+     "sha": "0b8a7e251a6e998eea22322aaf827abdb9bbe43f0c3bf8fe03611645aca6ebc1",
      "full_path": "docs/mobile/shots/A-U0/atlas-desktop-2-whole-chart.full.png",
-     "full_sha": "7384b6243a2a1bae79c4fd3fddb0cf25e05d21f2c8aff8576398e6703459c0cf"
+     "full_sha": "50378f8821f82b3dd950552aa4da7392af17d6b91babcabd4b7c78ee962b9c73"
     },
     "3-layers": {
      "path": "docs/mobile/shots/A-U0/atlas-desktop-3-layers.png",
      "w": 683,
      "h": 384,
-     "bytes": 276380,
+     "bytes": 276196,
      "scale": 0.5,
-     "sha": "4728defff363fa60ee1008d43f6772f0ca593fdad01e8f013181fd512feaa74c",
+     "sha": "616636d4134b3fbbe2091fd9bc7e20c4130e5cfa98c52c6d424aa92f7ebe0ac7",
      "full_path": "docs/mobile/shots/A-U0/atlas-desktop-3-layers.full.png",
-     "full_sha": "3fa30def2abec4ceb237be3b00f71412c4488b5e2aa2db9bd2b8c1379b06fa56"
+     "full_sha": "bee8338cadb3092f36df3a9096093391684c0ca294efa05fb3063e6a2da75918"
     },
     "4-place-card": {
      "path": "docs/mobile/shots/A-U0/atlas-desktop-4-place-card.png",
@@ -4943,17 +4943,17 @@
     }
    },
    "first_load": {
-    "bytes": 294676,
+    "bytes": 295016,
     "requests": 32,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67907
+     "bytes": 68247
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 67907
+      "bytes": 68247
      },
      "data": {
       "requests": 16,
@@ -7388,7 +7388,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 340965
+    "wall_ms": 342140
    },
    "extras": {},
    "extra_errors": {
@@ -7425,21 +7425,21 @@
      "path": "docs/mobile/shots/A-U0/atlas-desktop2x-2-whole-chart.png",
      "w": 480,
      "h": 300,
-     "bytes": 199924,
+     "bytes": 199325,
      "scale": 0.3333333333333333,
-     "sha": "c7d62b3176eebb047b1421f388232fef9198b91ea9e24281c50a8f14f146b64b",
+     "sha": "9c7f41358d491bb12fdf1bf47b46a63f59b383009a4396062c41b31e8faec486",
      "full_path": "docs/mobile/shots/A-U0/atlas-desktop2x-2-whole-chart.full.png",
-     "full_sha": "e0ae3b17e689482dade85c7a98db6a929b9191b04b48c9bbb08d271f4f8eee22"
+     "full_sha": "7b4b632f21922bc6ed757233d65057fa0dd6d883cba1a3c238dc16151e9bddf9"
     },
     "3-layers": {
      "path": "docs/mobile/shots/A-U0/atlas-desktop2x-3-layers.png",
      "w": 480,
      "h": 300,
-     "bytes": 179160,
+     "bytes": 178570,
      "scale": 0.3333333333333333,
-     "sha": "d69e82a9a654cbe268e8db6b2d4ca8dda78bcf86f7ae7369841b1a34fff8f576",
+     "sha": "1bfb17f336a700a910458174688da37c99ab13277e711e65e009907e968bcb85",
      "full_path": "docs/mobile/shots/A-U0/atlas-desktop2x-3-layers.full.png",
-     "full_sha": "73e52bfb7fe13a69b2b53268cca52c1574da444c50e4a40f66c7bbb89b336ff4"
+     "full_sha": "a1178e7a92821e2c97b8181e945b248eddfd6d908aaa2947da75c3a6e21ff581"
     },
     "4-place-card": {
      "path": "docs/mobile/shots/A-U0/atlas-desktop2x-4-place-card.png",
@@ -7453,17 +7453,17 @@
     }
    },
    "first_load": {
-    "bytes": 1618749,
+    "bytes": 1619089,
     "requests": 152,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 67907
+     "bytes": 68247
     },
     "by_cat": {
      "html_other": {
       "requests": 1,
-      "bytes": 67907
+      "bytes": 68247
      },
      "data": {
       "requests": 16,
@@ -7579,7 +7579,7 @@
     "aria_hidden": "true",
     "leak_px": 848
    },
-   "share_visible": 0.8561,
+   "share_visible": 0.8552,
    "targets_under_44": {
     "count": 173,
     "total": 175,
@@ -9910,7 +9910,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 370541
+    "wall_ms": 371437
    },
    "extras": {},
    "extra_errors": {

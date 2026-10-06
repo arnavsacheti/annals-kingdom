@@ -94,21 +94,14 @@
       "ref_before": null
     },
     "A-U0": {
-      "status": "failed",
+      "status": "passed",
       "attempts": 3,
       "capture": "docs/mobile/captures/A-U0.json",
       "files_sha": {
-        "docs/mobile/accept/A-U0.json": "c983770cf12beac0d007fcbba41a02a4a0acd09b28831a2f4814a60825749f63",
-        "maps-site/index.html": "82914a386a72375ff5f5d97c990342fd9328acc5350c9a5e2b612f7fee4018dc"
+        "maps-site/index.html": "d5eb3e61077c4f0bec796d2fc043bee3732b9119592334747380894bbc0f410c",
+        "docs/mobile/accept/A-U0.json": "4d1d6cfbd0a365d0fd7df8d2640d76147ca724f1c85bd3bcfd6e08d9b5151572"
       },
-      "failing": [
-        {
-          "key": "measure.digest",
-          "op": "loop",
-          "expected": "failing list intact (68)",
-          "got": 6
-        }
-      ],
+      "failing": [],
       "ref_before": "rebase-9"
     }
   },

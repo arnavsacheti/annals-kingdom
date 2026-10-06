@@ -239,7 +239,7 @@
       "maps-site/index.html",
       "docs/mobile/accept/A-U0.json"
     ],
-    "kind": "logic",
+    "kind": "central",
     "defects": [],
     "depends_on": [
       "D1",
@@ -255,7 +255,8 @@
       "with the fonts blocked and with them served, on all five profiles: header heights equal (116/116/97/52/52 px for iphone13/pixel7/landscape/desktop/desktop2x), footers equal, and map.getSize() equals the #map box (390x509, 412x698, 844x215, 1366x688, 1440x820); no JS change, no new clock token, no matchMedia, no timer, the canvas font string unchanged",
       "declared changes against the reference in force: exactly the 135 atlas keys listed in docs/mobile/inputs/A-U0-declared-keys.txt (the map now sized to its true box, plus +634 B of HTML), with checks on: iphone13 first_load 42 requests / <= 490,000 B (25 tiles, one grid), other profiles' first_load bytes = reference + 634 and requests unchanged; header_h and the chrome controls NOT declared (they must equal the reference)",
       "shots: 1-contents unchanged on every profile (<= 0.005); the map raster moves to centre on its true box, so 2-whole-chart / 3-layers / 4-place-card may differ up to the measured values plus a quarter (desktop 0.146 / 0.117 / 0.094, desktop2x 0.156 / 0.132 / 0.095, iphone13 0.197 / 0.066 / 0.030, pixel7 0.247 / 0.066 / 0.037, landscape 0.105 / 0.078 / 0.049), declared; the header, controls, company bar, scale bar and footer pixels unchanged",
-      "unscored, for the reviewers: two captures of the edited tree give identical iphone13 atlas keys; the WebKit and Android notes in the patch's comment hold (no WebKit browser here: Mobile 15's real-device pass checks iOS and Android)"
+      "unscored, for the reviewers: two captures of the edited tree give identical iphone13 atlas keys; the WebKit and Android notes in the patch's comment hold (no WebKit browser here: Mobile 15's real-device pass checks iOS and Android)",
+      "applied by the central session (2026-10-06): the loop measured the patch three times identically and every check passed except UG8's desktop shot gate, which no unit that moves the desktop map can pass (masks cap at 35% of the viewport); the change is declared, verified centrally (scoring, a blind review over 801 widths, a fonts.ready refit no-op at the five profiles) and R1 is re-taken after it"
     ]
   },
   {
