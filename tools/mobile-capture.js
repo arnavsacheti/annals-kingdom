@@ -49,6 +49,7 @@ const PROFILES = {
 const DEFAULT_PROFILES = ['iphone13', 'pixel7', 'landscape', 'desktop', 'desktop2x']
 const SLOW4G = {offline: false, downloadThroughput: 1.6 * 1024 * 1024 / 8, uploadThroughput: 750 * 1024 / 8, latency: 150}
 const INSETS = {top: 47, bottom: 34, left: 0, right: 0}
+const INSETS_SIDE = {top: 0, bottom: 21, left: 47, right: 47}   // the same phone turned on its side: the notch sits on a short edge
 const FONT_HOSTS = /fonts\.(googleapis|gstatic)\.com/
 let VERSION_HINT = '?v=mc'   // '&sw=1' is appended under --sw allow (the guard excludes localhost otherwise)
 
@@ -900,17 +901,18 @@ async function extraSafeArea(env, key, o, surface, url, sink = {}) {
   const P = await openPage(env, key, surface, {...o, vclock: surface === 'sim' ? 'manual' : null})
   try {
     let cmd = 'applied'
-    try { await P.cdp.send('Emulation.setSafeAreaInsetsOverride', {insets: INSETS}) } catch (e) { cmd = 'unavailable' }
+    const ins = o.profile.w > o.profile.h ? INSETS_SIDE : INSETS
+    try { await P.cdp.send('Emulation.setSafeAreaInsetsOverride', {insets: ins}) } catch (e) { cmd = 'unavailable' }
     await P.page.goto(url, {waitUntil: 'load'})
     if (surface === 'atlas') { await P.page.waitForFunction(() => window.ATLAS && window.ATLAS.ready); await settle(P, 400, 60000, true); await P.page.locator('.tcard[data-theme=whole]').tap(); await sleep(600); await settle(P, 600) }
     else { await simReady(P); await pump(P, 3) }
     const prof = o.profile
     const rules = await P.page.evaluate('(' + safeAreaRules + ')(document.styleSheets)')
     const r = await P.page.evaluate(([ins, vw, vh, rules]) => {
-      const inv = window.__mc.inventory(), band = c => c.y < ins.top || c.y + c.h > vh - ins.bottom
+      const inv = window.__mc.inventory(), band = c => c.y < ins.top || c.y + c.h > vh - ins.bottom || c.x < ins.left || c.x + c.w > vw - ins.right
       const env = (() => { const d = document.createElement('div'); d.style.cssText = 'position:fixed;top:env(safe-area-inset-top);visibility:hidden'; document.body.appendChild(d); const t = parseFloat(getComputedStyle(d).top); d.remove(); return t })()
       return {env_top_px: env, viewport_fit_cover: /viewport-fit=cover/.test((document.querySelector('meta[name=viewport]') || {}).content || ''), env_rules: rules, intersecting: inv.filter(c => !c.marker && band(c)).map(c => c.id).slice(0, 20), intersecting_n: inv.filter(c => !c.marker && band(c)).length}
-    }, [INSETS, prof.w, prof.h, rules])
+    }, [ins, prof.w, prof.h, rules])
     return {command: cmd, ...r, safe_area: cmd === 'unavailable' ? 'unavailable' : 'applied'}
   } finally { sink.safe_area = errorsOf(P); await P.close() }
 }

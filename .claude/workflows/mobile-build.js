@@ -329,7 +329,7 @@ const HARD = `Hard rules (docs/mobile/README.md sections 1-5, docs/mobile/gates.
 - UG5/UG6/UG7: ANNALS.stats() keys unchanged (device state lives in ANNALS.device()); the keydown handler text unchanged; no createPane.
 - UG9: new player-visible strings use table vocabulary, are listed in docs/mobile/README.md section 3, and avoid menu, drawer, modal, dismiss, toggle, tap, pinch, swipe, download, install, offline mode, dark mode, theme, save; bronze-age Nimlad voice, the Kembar, years A.B.; never saint/abbey/priest/baron or other Christian-medieval words.
 - Desktop identity (UG8) on 1366x768@1 and 1440x900@2: guard phone-only CSS and JS behind (pointer:coarse) / (hover:none) / the device class, exactly as the unit specifies.
-- Never change how a resource is loaded or structured to change what tools/mobile-capture.js counts (no @import or inlining to hide rules from its walker, no dropped integrity or crossorigin attribute, no timing tricks); a metric that moves for a legitimate reason is the central session's call in the accept file: report it in notes and leave it failing.`
+- Never change how a resource is loaded or structured to change what tools/mobile-capture.js counts (no @import or inlining to hide rules from its walker, no dropped integrity or crossorigin attribute, no timing tricks, no trimming, padding or rewording code to land a byte count); a metric that moves for a legitimate reason is the central session's call in the accept file: report it in notes and leave it failing.`
 
 async function holdRead(u, tag) {   // null unless the tool's line arrives intact (one fresh agent on a bad relay)
   const ask = l => crit(P(`Hold read for unit ${u.id} (write nothing). From ${REPO} run exactly this one command (it reads docs/filigree/gates/1-research.json, the app files and the pipeline scripts, and writes nothing):
@@ -423,7 +423,7 @@ It prints exactly one line of JSON. Return that line parsed, every key and value
     {label: 'snapshot ' + u.id + sfx, phase: 'Snapshot', schema: SNAPR, ...MECH})
 }
 async function postCheck(u, tag) {
-  const ask = l => crit(P(`Post-${tag} check for unit ${u.id} (write nothing). From ${REPO} run exactly this one command (it reads the repo and the snapshot ${SNAPDIR(u.id)} and writes nothing):
+  const ask = l => crit(P(`Post-${tag} check for unit ${u.id} (write nothing). From ${REPO} run exactly this one command (it reads the repo and this unit's snapshot, which it finds under the --snap directory itself, and writes nothing; copy the command verbatim: --snap is the parent directory, never the unit's subfolder):
 ${TREE_TOOL} check --unit ${u.id} --snap ${SNAP}
 It prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits). If it exits non-zero, return {ok: false, len: -1, sum: "", pipeline_sha: {}, accept_sha: null, owner_sha: null, changed: [], tree_changed: [], tree_base_sha256: "", ug1: {index: "", atlas: ""}, files_sha: {}, app_sha: {}}.`),
     {label: l, phase: tag === 'pre-restore' ? 'Restore' : 'Implement', schema: CHECK, ...MECH})
@@ -482,7 +482,7 @@ Return {summary, files_changed, strings_added, notes}.`), {label: 'fix ' + u.id 
 async function restore(u, snap) {   // puts back the unit files, the accept file, the owner answers and every tree path that moved; verified in code against the snapshot
   const reverted = new Set()
   for (let k = 0; k < 2; k++) {
-    const r = await crit(P_RESTORE(`Restore unit ${u.id} from its snapshot ${SNAPDIR(u.id)}. From ${REPO} run exactly this one command (it puts back the unit files, the guarded files ${JSON.stringify(GUARD(u))} and every moved tree path, and verifies the result):
+    const r = await crit(P_RESTORE(`Restore unit ${u.id} from its snapshot. From ${REPO} run exactly this one command, copied verbatim (--snap is the parent directory, never the unit's subfolder) (it puts back the unit files, the guarded files ${JSON.stringify(GUARD(u))} and every moved tree path, and verifies the result):
 ${TREE_TOOL} restore --unit ${u.id} --snap ${SNAP}
 The tool does every copy and delete; do not copy, move or delete anything yourself. It prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (no edits). If it exits non-zero, return {ok: false, len: -1, sum: "", dirs: [], files: {}, accept_sha: null, owner_sha: null, tree_changed: [], tree_base_sha256: "", reverted: []}.`),
       {label: 'restore ' + u.id + (k ? ' (again)' : ''), phase: 'Restore', schema: RESTR, ...MECH})
