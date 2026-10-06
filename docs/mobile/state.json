@@ -3,7 +3,7 @@
   "item": "Mobile 4",
   "app_sha": {
     "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-    "maps-site/index.html": "45c02fd41ce698cd50a5a04e21881c2c3dc0a6d0fd5c64fce7cc1a8bc3a1b6fb"
+    "maps-site/index.html": "566f1cead36db41512fe72fc8ff220dc429c870cbeadd1405ac8e51f79c4c22a"
   },
   "baselines": {
     "B0": "7dbac85b923ea59d8c93248a4f57fa9e6ba1a40977125f8dedde2ff43453cfd3",
@@ -96,19 +96,268 @@
       "ref_before": "after-D3"
     },
     "A-U1": {
-      "status": "skipped",
-      "attempts": 0,
-      "capture": null,
-      "files_sha": {},
+      "status": "failed",
+      "attempts": 3,
+      "capture": "docs/mobile/captures/A-U1.json",
+      "files_sha": {
+        "docs/mobile/accept/A-U1.json": "68192d0f8956cb9e42718ac251dba2d76406b839536bad8a164b70c149429f4d",
+        "maps-site/index.html": "566f1cead36db41512fe72fc8ff220dc429c870cbeadd1405ac8e51f79c4c22a"
+      },
       "failing": [
         {
-          "key": "skipped",
+          "key": "atlas.iphone13.extras.safe_area.env_rules",
+          "op": ">=",
+          "expected": 1,
+          "got": 0
+        },
+        {
+          "key": "atlas.pixel7.extras.safe_area.env_rules",
+          "op": ">=",
+          "expected": 1,
+          "got": 0
+        },
+        {
+          "key": "atlas.landscape.extras.safe_area.env_rules",
+          "op": ">=",
+          "expected": 1,
+          "got": 0
+        },
+        {
+          "key": "atlas.desktop.metrics",
+          "op": "deep-equals",
+          "expected": "equal to rebase-13 except declared",
+          "got": "env.viewport_meta: \"width=device-width, initial-scale=1.0, viewport-fit=cover\" vs \"width=device-width, initial-scale=1.0\"; first_load.bytes: 572297 vs 572135; first_load.max_asset.bytes: 68901 vs 68739; first_load.by_cat.html_other.bytes: 345348 vs 345186"
+        },
+        {
+          "key": "atlas.desktop2x.metrics",
+          "op": "deep-equals",
+          "expected": "equal to rebase-13 except declared",
+          "got": "env.viewport_meta: \"width=device-width, initial-scale=1.0, viewport-fit=cover\" vs \"width=device-width, initial-scale=1.0\"; first_load.bytes: 1898374 vs 1898212; first_load.max_asset.bytes: 68901 vs 68739; first_load.by_cat.html_other.bytes: 345912 vs 345750"
+        },
+        {
+          "key": "UG8.atlas.desktop.metrics",
+          "op": "gate",
+          "expected": "equal to B0 except declared",
+          "got": "env.viewport_meta \"width=device-width, initial-scale=1.0, viewport-fit=cover\" vs \"width=device-width, initial-scale=1.0\"; first_load.bytes 572297 vs 572135; first_load.max_asset.bytes 68901 vs 68739; first_load.by_cat.html_other.bytes 345348 vs 345186"
+        },
+        {
+          "key": "UG8.atlas.desktop2x.metrics",
+          "op": "gate",
+          "expected": "equal to B0 except declared",
+          "got": "env.viewport_meta \"width=device-width, initial-scale=1.0, viewport-fit=cover\" vs \"width=device-width, initial-scale=1.0\"; first_load.bytes 1898374 vs 1898212; first_load.max_asset.bytes 68901 vs 68739; first_load.by_cat.html_other.bytes 345912 vs 345750"
+        },
+        {
+          "key": "UG10.atlas.iphone13.bytes",
+          "op": "gate",
+          "expected": "<= 762193",
+          "got": 762355
+        },
+        {
+          "key": "atlas.iphone13.env.viewport_meta",
+          "op": "unchanged",
+          "expected": "width=device-width, initial-scale=1.0",
+          "got": "width=device-width, initial-scale=1.0, viewport-fit=cover"
+        },
+        {
+          "key": "atlas.iphone13.first_load.bytes",
+          "op": "unchanged",
+          "expected": 762193,
+          "got": 762355
+        },
+        {
+          "key": "atlas.iphone13.first_load.max_asset.bytes",
+          "op": "unchanged",
+          "expected": 68739,
+          "got": 68901
+        },
+        {
+          "key": "atlas.iphone13.first_load.by_cat.html_other.bytes",
+          "op": "unchanged",
+          "expected": 345750,
+          "got": 345912
+        },
+        {
+          "key": "atlas.iphone13.targets_under_44.count",
+          "op": "unchanged",
+          "expected": 81,
+          "got": 80
+        },
+        {
+          "key": "atlas.iphone13.targets_under_44.total",
+          "op": "unchanged",
+          "expected": 85,
+          "got": 84
+        },
+        {
+          "key": "atlas.iphone13.targets_under_44.ratio",
+          "op": "unchanged",
+          "expected": 0.9529,
+          "got": 0.9524
+        },
+        {
+          "key": "atlas.iphone13.chrome_cover.whole",
+          "op": "unchanged",
+          "expected": 0.2604,
+          "got": 0.2213
+        },
+        {
+          "key": "atlas.iphone13.chrome_cover.layers",
+          "op": "unchanged",
+          "expected": 0.6995,
+          "got": 0.6604
+        },
+        {
+          "key": "atlas.iphone13.controls",
+          "op": "unchanged",
+          "expected": "[long controls array omitted for size; differs from got in Close panel reach 0->1 and one fewer control]",
+          "got": "[omitted]"
+        },
+        {
+          "key": "atlas.iphone13.reach.button:Close panel",
+          "op": "unchanged",
+          "expected": 0,
+          "got": 1
+        },
+        {
+          "key": "atlas.iphone13.primary.button:Close panel.reach",
+          "op": "unchanged",
+          "expected": 0,
+          "got": 1
+        },
+        {
+          "key": "atlas.iphone13",
+          "op": "unchanged",
+          "expected": "equal to rebase-13",
+          "got": "1 more keys differ"
+        },
+        {
+          "key": "atlas.pixel7.env.viewport_meta",
+          "op": "unchanged",
+          "expected": "width=device-width, initial-scale=1.0",
+          "got": "width=device-width, initial-scale=1.0, viewport-fit=cover"
+        },
+        {
+          "key": "atlas.pixel7.first_load.bytes",
+          "op": "unchanged",
+          "expected": 636793,
+          "got": 636955
+        },
+        {
+          "key": "atlas.pixel7.first_load.max_asset.bytes",
+          "op": "unchanged",
+          "expected": 68739,
+          "got": 68901
+        },
+        {
+          "key": "atlas.pixel7.first_load.by_cat.html_other.bytes",
+          "op": "unchanged",
+          "expected": 345750,
+          "got": 345912
+        },
+        {
+          "key": "atlas.pixel7.chrome_cover.whole",
+          "op": "unchanged",
+          "expected": 0.1823,
+          "got": 0.1738
+        },
+        {
+          "key": "atlas.pixel7.chrome_cover.layers",
+          "op": "unchanged",
+          "expected": 0.6826,
+          "got": 0.6741
+        },
+        {
+          "key": "atlas.landscape.env.viewport_meta",
+          "op": "unchanged",
+          "expected": "width=device-width, initial-scale=1.0",
+          "got": "width=device-width, initial-scale=1.0, viewport-fit=cover"
+        },
+        {
+          "key": "atlas.landscape.first_load.bytes",
+          "op": "unchanged",
+          "expected": 572699,
+          "got": 572861
+        },
+        {
+          "key": "atlas.landscape.first_load.max_asset.bytes",
+          "op": "unchanged",
+          "expected": 68739,
+          "got": 68901
+        },
+        {
+          "key": "atlas.landscape.first_load.by_cat.html_other.bytes",
+          "op": "unchanged",
+          "expected": 345750,
+          "got": 345912
+        },
+        {
+          "key": "atlas.landscape.contents.kickerTop",
+          "op": "unchanged",
+          "expected": -73,
+          "got": 32
+        },
+        {
+          "key": "atlas.landscape.contents.titleTop",
+          "op": "unchanged",
+          "expected": -54,
+          "got": 51
+        },
+        {
+          "key": "atlas.landscape.contents.footBottom",
+          "op": "unchanged",
+          "expected": 413,
+          "got": 518
+        },
+        {
+          "key": "atlas.landscape.contents.cardTops",
+          "op": "unchanged",
+          "expected": [
+            58,
+            58,
+            58,
+            211,
+            211
+          ],
+          "got": [
+            163,
+            163,
+            163,
+            316,
+            316
+          ]
+        },
+        {
+          "key": "atlas.desktop.env.viewport_meta",
+          "op": "unchanged",
+          "expected": "width=device-width, initial-scale=1.0",
+          "got": "width=device-width, initial-scale=1.0, viewport-fit=cover"
+        },
+        {
+          "key": "atlas.desktop.first_load.bytes",
+          "op": "unchanged",
+          "expected": 572135,
+          "got": 572297
+        },
+        {
+          "key": "atlas.desktop.first_load.max_asset.bytes",
+          "op": "unchanged",
+          "expected": 68739,
+          "got": 68901
+        },
+        {
+          "key": "atlas.desktop.first_load.by_cat.html_other.bytes",
+          "op": "unchanged",
+          "expected": 345186,
+          "got": 345348
+        },
+        {
+          "key": "failing.more",
           "op": "loop",
-          "expected": "a run",
-          "got": "dependency not satisfied: D5 is failed"
+          "expected": "at most 40 recorded",
+          "got": "4 more (see the run result)"
         }
       ],
-      "ref_before": null
+      "ref_before": "rebase-13"
     },
     "A-U0": {
       "status": "passed",
@@ -283,6 +532,19 @@
       },
       "reason": "unit passed",
       "ref": "after-D5"
+    },
+    {
+      "before_unit": "A-U1",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "45c02fd41ce698cd50a5a04e21881c2c3dc0a6d0fd5c64fce7cc1a8bc3a1b6fb"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "566f1cead36db41512fe72fc8ff220dc429c870cbeadd1405ac8e51f79c4c22a"
+      },
+      "reason": "app file(s) changed outside the loop: maps-site/index.html",
+      "ref": "rebase-13"
     }
   ]
 }
