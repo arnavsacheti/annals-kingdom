@@ -27,7 +27,7 @@
     "UG10",
     "UG11"
   ],
-  "baseline": "rebase-7",
+  "baseline": "R1",
   "declared_change_keys": [
     "atlas.iphone13.first_load.bytes",
     "atlas.iphone13.first_load.requests",
@@ -41,6 +41,7 @@
     "atlas.iphone13.repeat_visit.bytes",
     "atlas.iphone13.repeat_visit.requests",
     "atlas.iphone13.repeat_visit.cache_hits",
+    "atlas.iphone13.hover_ungated",
     "atlas.pixel7.first_load.bytes",
     "atlas.pixel7.first_load.requests",
     "atlas.pixel7.first_load.foreign_origins",
@@ -53,6 +54,7 @@
     "atlas.pixel7.repeat_visit.bytes",
     "atlas.pixel7.repeat_visit.requests",
     "atlas.pixel7.repeat_visit.cache_hits",
+    "atlas.pixel7.hover_ungated",
     "atlas.landscape.first_load.bytes",
     "atlas.landscape.first_load.requests",
     "atlas.landscape.first_load.foreign_origins",
@@ -65,6 +67,7 @@
     "atlas.landscape.repeat_visit.bytes",
     "atlas.landscape.repeat_visit.requests",
     "atlas.landscape.repeat_visit.cache_hits",
+    "atlas.landscape.hover_ungated",
     "atlas.desktop.first_load.bytes",
     "atlas.desktop.first_load.requests",
     "atlas.desktop.first_load.foreign_origins",
@@ -77,6 +80,7 @@
     "atlas.desktop.repeat_visit.bytes",
     "atlas.desktop.repeat_visit.requests",
     "atlas.desktop.repeat_visit.cache_hits",
+    "atlas.desktop.hover_ungated",
     "atlas.desktop2x.first_load.bytes",
     "atlas.desktop2x.first_load.requests",
     "atlas.desktop2x.first_load.foreign_origins",
@@ -88,7 +92,8 @@
     "atlas.desktop2x.first_load.by_cat.html_other.bytes",
     "atlas.desktop2x.repeat_visit.bytes",
     "atlas.desktop2x.repeat_visit.requests",
-    "atlas.desktop2x.repeat_visit.cache_hits"
+    "atlas.desktop2x.repeat_visit.cache_hits",
+    "atlas.desktop2x.hover_ungated"
   ],
   "declared_first_view_growth": {
     "bytes": 380000,
@@ -156,6 +161,60 @@
       ]
     },
     {
+      "key": "atlas.iphone13.first_load.aborted",
+      "op": "deep-equals",
+      "value": [],
+      "was": []
+    },
+    {
+      "key": "atlas.iphone13.first_load.bytes",
+      "op": "<=",
+      "value": 807384,
+      "was": 427384
+    },
+    {
+      "key": "atlas.iphone13.first_load.requests",
+      "op": "<=",
+      "value": 53,
+      "was": 37
+    },
+    {
+      "key": "atlas.iphone13.first_load.by_cat.html_other.bytes",
+      "op": "<=",
+      "value": 447676,
+      "was": 67676
+    },
+    {
+      "key": "atlas.iphone13.first_load.by_cat.html_other.requests",
+      "op": "<=",
+      "value": 17,
+      "was": 1
+    },
+    {
+      "key": "atlas.iphone13.first_load.max_asset.bytes",
+      "op": "<=",
+      "value": 200000,
+      "was": 67676
+    },
+    {
+      "key": "atlas.iphone13.repeat_visit.requests",
+      "op": "<=",
+      "value": 54,
+      "was": 37
+    },
+    {
+      "key": "atlas.iphone13.repeat_visit.cache_hits",
+      "op": ">=",
+      "value": 37,
+      "was": 37
+    },
+    {
+      "key": "atlas.iphone13.hover_ungated",
+      "op": "==",
+      "value": 32,
+      "was": 29
+    },
+    {
       "key": "atlas.pixel7.first_load.foreign_origins",
       "op": "deep-equals",
       "value": [],
@@ -164,6 +223,60 @@
         "https://fonts.gstatic.com",
         "https://unpkg.com"
       ]
+    },
+    {
+      "key": "atlas.pixel7.first_load.aborted",
+      "op": "deep-equals",
+      "value": [],
+      "was": []
+    },
+    {
+      "key": "atlas.pixel7.first_load.bytes",
+      "op": "<=",
+      "value": 738539,
+      "was": 358539
+    },
+    {
+      "key": "atlas.pixel7.first_load.requests",
+      "op": "<=",
+      "value": 48,
+      "was": 32
+    },
+    {
+      "key": "atlas.pixel7.first_load.by_cat.html_other.bytes",
+      "op": "<=",
+      "value": 447676,
+      "was": 67676
+    },
+    {
+      "key": "atlas.pixel7.first_load.by_cat.html_other.requests",
+      "op": "<=",
+      "value": 17,
+      "was": 1
+    },
+    {
+      "key": "atlas.pixel7.first_load.max_asset.bytes",
+      "op": "<=",
+      "value": 200000,
+      "was": 67676
+    },
+    {
+      "key": "atlas.pixel7.repeat_visit.requests",
+      "op": "<=",
+      "value": 48,
+      "was": 32
+    },
+    {
+      "key": "atlas.pixel7.repeat_visit.cache_hits",
+      "op": ">=",
+      "value": 32,
+      "was": 32
+    },
+    {
+      "key": "atlas.pixel7.hover_ungated",
+      "op": "==",
+      "value": 32,
+      "was": 29
     },
     {
       "key": "atlas.landscape.first_load.foreign_origins",
@@ -176,6 +289,60 @@
       ]
     },
     {
+      "key": "atlas.landscape.first_load.aborted",
+      "op": "deep-equals",
+      "value": [],
+      "was": []
+    },
+    {
+      "key": "atlas.landscape.first_load.bytes",
+      "op": "<=",
+      "value": 674445,
+      "was": 294445
+    },
+    {
+      "key": "atlas.landscape.first_load.requests",
+      "op": "<=",
+      "value": 48,
+      "was": 32
+    },
+    {
+      "key": "atlas.landscape.first_load.by_cat.html_other.bytes",
+      "op": "<=",
+      "value": 447676,
+      "was": 67676
+    },
+    {
+      "key": "atlas.landscape.first_load.by_cat.html_other.requests",
+      "op": "<=",
+      "value": 17,
+      "was": 1
+    },
+    {
+      "key": "atlas.landscape.first_load.max_asset.bytes",
+      "op": "<=",
+      "value": 200000,
+      "was": 67676
+    },
+    {
+      "key": "atlas.landscape.repeat_visit.requests",
+      "op": "<=",
+      "value": 48,
+      "was": 32
+    },
+    {
+      "key": "atlas.landscape.repeat_visit.cache_hits",
+      "op": ">=",
+      "value": 32,
+      "was": 32
+    },
+    {
+      "key": "atlas.landscape.hover_ungated",
+      "op": "==",
+      "value": 32,
+      "was": 29
+    },
+    {
       "key": "atlas.desktop.first_load.foreign_origins",
       "op": "deep-equals",
       "value": [],
@@ -186,6 +353,60 @@
       ]
     },
     {
+      "key": "atlas.desktop.first_load.aborted",
+      "op": "deep-equals",
+      "value": [],
+      "was": []
+    },
+    {
+      "key": "atlas.desktop.first_load.bytes",
+      "op": "<=",
+      "value": 674445,
+      "was": 294445
+    },
+    {
+      "key": "atlas.desktop.first_load.requests",
+      "op": "<=",
+      "value": 48,
+      "was": 32
+    },
+    {
+      "key": "atlas.desktop.first_load.by_cat.html_other.bytes",
+      "op": "<=",
+      "value": 447676,
+      "was": 67676
+    },
+    {
+      "key": "atlas.desktop.first_load.by_cat.html_other.requests",
+      "op": "<=",
+      "value": 17,
+      "was": 1
+    },
+    {
+      "key": "atlas.desktop.first_load.max_asset.bytes",
+      "op": "<=",
+      "value": 200000,
+      "was": 67676
+    },
+    {
+      "key": "atlas.desktop.repeat_visit.requests",
+      "op": "<=",
+      "value": 48,
+      "was": 32
+    },
+    {
+      "key": "atlas.desktop.repeat_visit.cache_hits",
+      "op": ">=",
+      "value": 32,
+      "was": 32
+    },
+    {
+      "key": "atlas.desktop.hover_ungated",
+      "op": "==",
+      "value": 32,
+      "was": 29
+    },
+    {
       "key": "atlas.desktop2x.first_load.foreign_origins",
       "op": "deep-equals",
       "value": [],
@@ -194,6 +415,60 @@
         "https://fonts.gstatic.com",
         "https://unpkg.com"
       ]
+    },
+    {
+      "key": "atlas.desktop2x.first_load.aborted",
+      "op": "deep-equals",
+      "value": [],
+      "was": []
+    },
+    {
+      "key": "atlas.desktop2x.first_load.bytes",
+      "op": "<=",
+      "value": 1998518,
+      "was": 1618518
+    },
+    {
+      "key": "atlas.desktop2x.first_load.requests",
+      "op": "<=",
+      "value": 168,
+      "was": 152
+    },
+    {
+      "key": "atlas.desktop2x.first_load.by_cat.html_other.bytes",
+      "op": "<=",
+      "value": 447676,
+      "was": 67676
+    },
+    {
+      "key": "atlas.desktop2x.first_load.by_cat.html_other.requests",
+      "op": "<=",
+      "value": 17,
+      "was": 1
+    },
+    {
+      "key": "atlas.desktop2x.first_load.max_asset.bytes",
+      "op": "<=",
+      "value": 200000,
+      "was": 67676
+    },
+    {
+      "key": "atlas.desktop2x.repeat_visit.requests",
+      "op": "<=",
+      "value": 168,
+      "was": 152
+    },
+    {
+      "key": "atlas.desktop2x.repeat_visit.cache_hits",
+      "op": ">=",
+      "value": 152,
+      "was": 152
+    },
+    {
+      "key": "atlas.desktop2x.hover_ungated",
+      "op": "==",
+      "value": 32,
+      "was": 29
     },
     {
       "key": "atlas.desktop.shot_diff",
@@ -246,251 +521,12 @@
       "except": [
         "declared_change_keys"
       ]
-    },
-    {
-      "key": "atlas.iphone13.first_load.aborted",
-      "op": "deep-equals",
-      "value": [],
-      "was": []
-    },
-    {
-      "key": "atlas.iphone13.first_load.bytes",
-      "op": "<=",
-      "value": 863819,
-      "was": 483819
-    },
-    {
-      "key": "atlas.iphone13.first_load.requests",
-      "op": "<=",
-      "value": 58,
-      "was": 42
-    },
-    {
-      "key": "atlas.iphone13.first_load.by_cat.html_other.bytes",
-      "op": "<=",
-      "value": 447676,
-      "was": 67676
-    },
-    {
-      "key": "atlas.iphone13.first_load.by_cat.html_other.requests",
-      "op": "<=",
-      "value": 17,
-      "was": 1
-    },
-    {
-      "key": "atlas.iphone13.first_load.max_asset.bytes",
-      "op": "<=",
-      "value": 200000,
-      "was": 67676
-    },
-    {
-      "key": "atlas.iphone13.repeat_visit.requests",
-      "op": "<=",
-      "value": 58,
-      "was": 42
-    },
-    {
-      "key": "atlas.iphone13.repeat_visit.cache_hits",
-      "op": ">=",
-      "value": 42,
-      "was": 42
-    },
-    {
-      "key": "atlas.pixel7.first_load.aborted",
-      "op": "deep-equals",
-      "value": [],
-      "was": []
-    },
-    {
-      "key": "atlas.pixel7.first_load.bytes",
-      "op": "<=",
-      "value": 738539,
-      "was": 358539
-    },
-    {
-      "key": "atlas.pixel7.first_load.requests",
-      "op": "<=",
-      "value": 48,
-      "was": 32
-    },
-    {
-      "key": "atlas.pixel7.first_load.by_cat.html_other.bytes",
-      "op": "<=",
-      "value": 447676,
-      "was": 67676
-    },
-    {
-      "key": "atlas.pixel7.first_load.by_cat.html_other.requests",
-      "op": "<=",
-      "value": 17,
-      "was": 1
-    },
-    {
-      "key": "atlas.pixel7.first_load.max_asset.bytes",
-      "op": "<=",
-      "value": 200000,
-      "was": 67676
-    },
-    {
-      "key": "atlas.pixel7.repeat_visit.requests",
-      "op": "<=",
-      "value": 48,
-      "was": 32
-    },
-    {
-      "key": "atlas.pixel7.repeat_visit.cache_hits",
-      "op": ">=",
-      "value": 32,
-      "was": 32
-    },
-    {
-      "key": "atlas.landscape.first_load.aborted",
-      "op": "deep-equals",
-      "value": [],
-      "was": []
-    },
-    {
-      "key": "atlas.landscape.first_load.bytes",
-      "op": "<=",
-      "value": 674445,
-      "was": 294445
-    },
-    {
-      "key": "atlas.landscape.first_load.requests",
-      "op": "<=",
-      "value": 48,
-      "was": 32
-    },
-    {
-      "key": "atlas.landscape.first_load.by_cat.html_other.bytes",
-      "op": "<=",
-      "value": 447676,
-      "was": 67676
-    },
-    {
-      "key": "atlas.landscape.first_load.by_cat.html_other.requests",
-      "op": "<=",
-      "value": 17,
-      "was": 1
-    },
-    {
-      "key": "atlas.landscape.first_load.max_asset.bytes",
-      "op": "<=",
-      "value": 200000,
-      "was": 67676
-    },
-    {
-      "key": "atlas.landscape.repeat_visit.requests",
-      "op": "<=",
-      "value": 48,
-      "was": 32
-    },
-    {
-      "key": "atlas.landscape.repeat_visit.cache_hits",
-      "op": ">=",
-      "value": 32,
-      "was": 32
-    },
-    {
-      "key": "atlas.desktop.first_load.aborted",
-      "op": "deep-equals",
-      "value": [],
-      "was": []
-    },
-    {
-      "key": "atlas.desktop.first_load.bytes",
-      "op": "<=",
-      "value": 674445,
-      "was": 294445
-    },
-    {
-      "key": "atlas.desktop.first_load.requests",
-      "op": "<=",
-      "value": 48,
-      "was": 32
-    },
-    {
-      "key": "atlas.desktop.first_load.by_cat.html_other.bytes",
-      "op": "<=",
-      "value": 447676,
-      "was": 67676
-    },
-    {
-      "key": "atlas.desktop.first_load.by_cat.html_other.requests",
-      "op": "<=",
-      "value": 17,
-      "was": 1
-    },
-    {
-      "key": "atlas.desktop.first_load.max_asset.bytes",
-      "op": "<=",
-      "value": 200000,
-      "was": 67676
-    },
-    {
-      "key": "atlas.desktop.repeat_visit.requests",
-      "op": "<=",
-      "value": 48,
-      "was": 32
-    },
-    {
-      "key": "atlas.desktop.repeat_visit.cache_hits",
-      "op": ">=",
-      "value": 32,
-      "was": 32
-    },
-    {
-      "key": "atlas.desktop2x.first_load.aborted",
-      "op": "deep-equals",
-      "value": [],
-      "was": []
-    },
-    {
-      "key": "atlas.desktop2x.first_load.bytes",
-      "op": "<=",
-      "value": 1998518,
-      "was": 1618518
-    },
-    {
-      "key": "atlas.desktop2x.first_load.requests",
-      "op": "<=",
-      "value": 168,
-      "was": 152
-    },
-    {
-      "key": "atlas.desktop2x.first_load.by_cat.html_other.bytes",
-      "op": "<=",
-      "value": 447676,
-      "was": 67676
-    },
-    {
-      "key": "atlas.desktop2x.first_load.by_cat.html_other.requests",
-      "op": "<=",
-      "value": 17,
-      "was": 1
-    },
-    {
-      "key": "atlas.desktop2x.first_load.max_asset.bytes",
-      "op": "<=",
-      "value": 200000,
-      "was": 67676
-    },
-    {
-      "key": "atlas.desktop2x.repeat_visit.requests",
-      "op": "<=",
-      "value": 168,
-      "was": 152
-    },
-    {
-      "key": "atlas.desktop2x.repeat_visit.cache_hits",
-      "op": ">=",
-      "value": 152,
-      "was": 152
     }
   ],
   "unscored": [
     "sources (npm, run in a scratch dir): `npm pack leaflet@1.9.4` -> package/dist/{leaflet.css,leaflet.js,images/*}; `npm pack @fontsource/eb-garamond@5.3.0 @fontsource/lora@5.3.0 @fontsource/ibm-plex-mono@5.3.0` -> package/files/<family>-{latin,latin-ext}-<weight>-<style>.woff2 for exactly EB Garamond 400 normal, 400 italic, 600 normal; Lora 400 normal, 400 italic, 600 normal; IBM Plex Mono 400 normal, 600 normal, plus each package's LICENSE (OFL) beside the files and hand-written @font-face rules with the fontsource unicode-range. sha256 of leaflet.css = a7837102824184820dfa198d1ebcd109ff6d0ff9a2672a074b9a1b4d147d04c6 and of leaflet.js = db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a, equal to the existing SRI hashes (integrity attributes kept); the font shas are listed in docs/mobile/inputs/vendor-shas.txt and recorded in maps-site/vendor/SHA256SUMS; a Playwright route on **/leaflet@1.9.4/dist/* fires for the vendored URL (the filigree sandbox recipe still applies)",
     "document.fonts.check true for EB Garamond 400/600/400i, Lora 400/600/400i, IBM Plex Mono 400/600; the latin-ext woff2 is requested when Epēshu or Nīmlad is on screen; font-display:swap; OFL texts beside the files",
-    "font bytes on iphone13 first load <= 200 KB transferred (declared first-view growth: the vendored fonts and Leaflet now count as app-origin bytes)"
+    "font bytes on iphone13 first load <= 200 KB transferred (declared first-view growth: the vendored fonts and Leaflet now count as app-origin bytes)",
+    "leaflet.css stays a <link rel=stylesheet> with its integrity and crossorigin attributes (never an @import or inline copy)"
   ]
 }
