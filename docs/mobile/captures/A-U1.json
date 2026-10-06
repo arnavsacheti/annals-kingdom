@@ -2,9 +2,9 @@
  "meta": {
   "tool": "mobile-capture",
   "tool_version": 1,
-  "tool_sha": "128863844e650e2c47d35bdc73e4d7a0409034ab49d1ad433a25eb0b6dd8c4d9",
+  "tool_sha": "70896df4ea7d36b2edd39702d65b4147d267115e6b70c7cfd719c362623f317c",
   "index_sha": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-  "atlas_sha": "177c3b4f3fa35a88adfefdc5d39810a2497d63acbf3dfe9024ca37e276d05d57",
+  "atlas_sha": "404c75e236fefd7ee8cae741aad845daecc22268c8fd5e36254bffc676a09a65",
   "unit": "A-U1",
   "profiles": [
    "iphone13",
@@ -38,13 +38,13 @@
   "server": "spawn",
   "browser": "141.0.7390.37",
   "timing": {
-   "wall_ms": 1197073
+   "wall_ms": 1198241
   }
  },
  "repo": {
   "sha": {
    "index": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-   "atlas": "177c3b4f3fa35a88adfefdc5d39810a2497d63acbf3dfe9024ca37e276d05d57",
+   "atlas": "404c75e236fefd7ee8cae741aad845daecc22268c8fd5e36254bffc676a09a65",
    "server": "f093d3423e3d78c47a2405a79cfb3212c5273577bab9fe598e610a741c1eb233"
   },
   "syntax": {
@@ -743,17 +743,17 @@
     }
    },
    "first_load": {
-    "bytes": 762355,
+    "bytes": 762396,
     "requests": 54,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 68901
+     "bytes": 68942
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 345912
+      "bytes": 345953
      },
      "data": {
       "requests": 16,
@@ -790,7 +790,7 @@
    "inner_height": 664,
    "panel_closed": {
     "visibility": "hidden",
-    "top": 721,
+    "top": 705,
     "aria_hidden": "true",
     "leak_px": 0
    },
@@ -1869,14 +1869,14 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 135902
+    "wall_ms": 136675
    },
    "extras": {
     "safe_area": {
      "command": "applied",
      "env_top_px": 47,
      "viewport_fit_cover": true,
-     "env_rules": 0,
+     "env_rules": 10,
      "intersecting": [],
      "intersecting_n": 0,
      "safe_area": "applied"
@@ -1964,17 +1964,17 @@
     }
    },
    "first_load": {
-    "bytes": 636955,
+    "bytes": 636996,
     "requests": 44,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 68901
+     "bytes": 68942
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 345912
+      "bytes": 345953
      },
      "data": {
       "requests": 16,
@@ -2011,7 +2011,7 @@
    "inner_height": 839,
    "panel_closed": {
     "visibility": "hidden",
-    "top": 910,
+    "top": 894,
     "aria_hidden": "true",
     "leak_px": 0
    },
@@ -3038,14 +3038,14 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 138715
+    "wall_ms": 139561
    },
    "extras": {
     "safe_area": {
      "command": "applied",
      "env_top_px": 47,
      "viewport_fit_cover": true,
-     "env_rules": 0,
+     "env_rules": 10,
      "intersecting": [],
      "intersecting_n": 0,
      "safe_area": "applied"
@@ -3131,17 +3131,17 @@
     }
    },
    "first_load": {
-    "bytes": 572861,
+    "bytes": 572902,
     "requests": 44,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 68901
+     "bytes": 68942
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 345912
+      "bytes": 345953
      },
      "data": {
       "requests": 16,
@@ -4608,14 +4608,14 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 206902
+    "wall_ms": 206873
    },
    "extras": {
     "safe_area": {
      "command": "applied",
      "env_top_px": 47,
      "viewport_fit_cover": true,
-     "env_rules": 0,
+     "env_rules": 10,
      "intersecting": [],
      "intersecting_n": 0,
      "safe_area": "applied"
@@ -4707,17 +4707,17 @@
     }
    },
    "first_load": {
-    "bytes": 572297,
+    "bytes": 572338,
     "requests": 44,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 68901
+     "bytes": 68942
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 345348
+      "bytes": 345389
      },
      "data": {
       "requests": 16,
@@ -7077,7 +7077,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 341516
+    "wall_ms": 341624
    },
    "extras": {},
    "extra_errors": {
@@ -7142,17 +7142,17 @@
     }
    },
    "first_load": {
-    "bytes": 1898374,
+    "bytes": 1898415,
     "requests": 164,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 68901
+     "bytes": 68942
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 345912
+      "bytes": 345953
      },
      "data": {
       "requests": 16,
@@ -9524,7 +9524,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 372364
+    "wall_ms": 371872
    },
    "extras": {},
    "extra_errors": {
