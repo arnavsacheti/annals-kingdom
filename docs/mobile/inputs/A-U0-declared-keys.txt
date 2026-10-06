@@ -1,0 +1,136 @@
+n 135
+atlas.iphone13.first_load.bytes | 427384 -> 484453
+atlas.iphone13.first_load.requests | 37 -> 42
+atlas.iphone13.first_load.max_asset.bytes | 67676 -> 68310
+atlas.iphone13.first_load.by_cat.html_other.bytes | 67676 -> 68310
+atlas.iphone13.first_load.by_cat.tiles.requests | 20 -> 25
+atlas.iphone13.first_load.by_cat.tiles.bytes | 291281 -> 347716
+atlas.iphone13.repeat_visit.requests | 37 -> 42
+atlas.iphone13.repeat_visit.cache_hits | 37 -> 42
+atlas.iphone13.share_visible | 0.3602 -> 0.3794
+atlas.iphone13.targets_under_44.count | 71 -> 81
+atlas.iphone13.targets_under_44.total | 75 -> 85
+atlas.iphone13.targets_under_44.ratio | 0.9467 -> 0.9529
+atlas.iphone13.targets_under_44.markers | 59 -> 69
+atlas.iphone13.targets_under_44.markers_under44 | 59 -> 69
+atlas.iphone13.tiers_derived.fit | 1.95 -> 1.9
+atlas.iphone13.tiers_derived.B | 2.9667 -> 2.9333
+atlas.iphone13.tiers_derived.C | 3.9833 -> 3.9667
+atlas.iphone13.zoom.current | 1.95 -> 1.9
+atlas.iphone13.zoom.min | 1.95 -> 1.9
+atlas.iphone13.chrome_cover.whole | 0.2608 -> 0.2604
+atlas.iphone13.chrome_cover.layers | 0.7099 -> 0.6995
+atlas.iphone13.layers.rect | [4,183,372,405] -> [4,183,372,396]
+atlas.iphone13.tap_epeshu.zoom | 4.55 -> 4.5
+atlas.iphone13.tap_epeshu.glyph_center | [195,375] -> [195,371]
+atlas.iphone13.tap_fixture.n | 83 -> 86
+atlas.iphone13.tap_fixture.wrong_card | 15 -> 17
+atlas.iphone13.tap_fixture.wrong_taps | 15 -> 17
+atlas.iphone13.tap_fixture.views.whole.zoom | 1.95 -> 1.9
+atlas.iphone13.tap_fixture.views.whole.untappable | 141 -> 138
+atlas.iphone13.tap_fixture.views.whole.tapped | 46 -> 49
+atlas.iphone13.tap_fixture.views.whole.wrong_card | 5 -> 7
+atlas.iphone13.tap_fixture.taps | [{"view":"whole","name":"Aegban","outcome":"other","opened":"#place=Phagal"},{"view":"w... -> [{"view":"whole","name":"Aegban","outcome":"other","opened":"#place=Phagal"},{"view":"w...
+atlas.iphone13.controls | [{"id":"textbox:Search places…","w":370,"h":34,"marker":false,"primary":true,"reach":0,... -> [{"id":"textbox:Search places…","w":370,"h":34,"marker":false,"primary":true,"reach":0,...
+atlas.iphone13.reach.button:The South Lane | 0 -> undefined
+atlas.iphone13.reach.button:Leponnia — major regions | 0 -> undefined
+atlas.iphone13.reach.button:Pandikaba — lesser settl | 0 -> undefined
+atlas.iphone13.reach.button:Nagash — lesser settleme | 0 -> undefined
+atlas.iphone13.reach.button:Great Chasmous Sea — bod | undefined -> 0
+atlas.iphone13.reach.button:Haedi — lesser settlemen | undefined -> 0
+atlas.iphone13.reach.button:Urip — lesser settlement | undefined -> 0
+atlas.iphone13.reach.button:Far North | undefined -> 0
+atlas.iphone13.reach.button:Paerāndas | undefined -> 0
+atlas.pixel7.first_load.bytes | 358539 -> 359173
+atlas.pixel7.first_load.max_asset.bytes | 67676 -> 68310
+atlas.pixel7.first_load.by_cat.html_other.bytes | 67676 -> 68310
+atlas.pixel7.share_visible | 0.2924 -> 0.275
+atlas.pixel7.targets_under_44.count | 77 -> 73
+atlas.pixel7.targets_under_44.total | 81 -> 77
+atlas.pixel7.targets_under_44.ratio | 0.9506 -> 0.9481
+atlas.pixel7.targets_under_44.markers | 66 -> 62
+atlas.pixel7.targets_under_44.markers_under44 | 66 -> 62
+atlas.pixel7.tiers_derived.fit | 2.35 -> 2.4
+atlas.pixel7.tiers_derived.B | 3.2333 -> 3.2667
+atlas.pixel7.tiers_derived.C | 4.1167 -> 4.1333
+atlas.pixel7.zoom.current | 2.35 -> 2.4
+atlas.pixel7.zoom.min | 2.35 -> 2.4
+atlas.pixel7.chrome_cover.whole | 0.182 -> 0.1823
+atlas.pixel7.chrome_cover.layers | 0.6824 -> 0.6826
+atlas.pixel7.tap_epeshu.zoom | 4.95 -> 5
+atlas.pixel7.tap_epeshu.glyph_center | [206,462] -> [206,465]
+atlas.pixel7.tap_fixture.n | 94 -> 87
+atlas.pixel7.tap_fixture.wrong_card | 12 -> 10
+atlas.pixel7.tap_fixture.wrong_taps | 12 -> 10
+atlas.pixel7.tap_fixture.views.whole.zoom | 2.35 -> 2.4
+atlas.pixel7.tap_fixture.views.whole.untappable | 141 -> 147
+atlas.pixel7.tap_fixture.views.whole.tapped | 46 -> 40
+atlas.pixel7.tap_fixture.views.whole.wrong_card | 2 -> 0
+atlas.pixel7.tap_fixture.views.leponnia_z3.5.untappable | 166 -> 167
+atlas.pixel7.tap_fixture.views.leponnia_z3.5.tapped | 21 -> 20
+atlas.pixel7.tap_fixture.taps | [{"view":"whole","name":"Heron's House","outcome":"other","opened":"#company=Guantanamo... -> [{"view":"leponnia_z3.5","name":"Epēshu","outcome":"other","opened":"#faction=The Lektā...
+atlas.pixel7.controls | [{"id":"textbox:Search places…","w":392,"h":34,"marker":false,"primary":true,"reach":0,... -> [{"id":"textbox:Search places…","w":392,"h":34,"marker":false,"primary":true,"reach":0,...
+atlas.pixel7.reach.button:The North Coast Packet | 0 -> undefined
+atlas.pixel7.reach.button:Palagnon — lesser settle | 0 -> undefined
+atlas.pixel7.reach.button:Gehon Or — lesser settle | 0 -> undefined
+atlas.pixel7.reach.button:Malau — lesser settlemen | 0 -> undefined
+atlas.pixel7.reach.button:Thārban — lesser settlem | 0 -> undefined
+atlas.pixel7.reach.button:Sūl — lesser settlement | 0 -> undefined
+atlas.pixel7.reach.button:Hoarland — minor regions | 0 -> undefined
+atlas.pixel7.reach.button:Hometown of Frösted Flæk | 0 -> undefined
+atlas.pixel7.reach.button:Far North | 0 -> undefined
+atlas.pixel7.reach.button:Mountain Wall — mountain | undefined -> 0
+atlas.pixel7.reach.button:Heron's House — lesser s | undefined -> 0
+atlas.pixel7.reach.button:Nhin — lesser settlement | undefined -> 0
+atlas.landscape.first_load.bytes | 294445 -> 295079
+atlas.landscape.first_load.max_asset.bytes | 67676 -> 68310
+atlas.landscape.first_load.by_cat.html_other.bytes | 67676 -> 68310
+atlas.landscape.share_visible | 0.9775 -> 0.964
+atlas.landscape.targets_under_44.count | 80 -> 83
+atlas.landscape.targets_under_44.total | 83 -> 86
+atlas.landscape.targets_under_44.ratio | 0.9639 -> 0.9651
+atlas.landscape.targets_under_44.markers | 69 -> 72
+atlas.landscape.targets_under_44.markers_under44 | 69 -> 72
+atlas.landscape.chrome_cover.layers | 0.3471 -> 0.342
+atlas.landscape.layers.rect | [356,164,474,105] -> [356,164,474,102]
+atlas.landscape.tap_epeshu.glyph_center | [422,206] -> [422,204]
+atlas.landscape.tap_fixture.n | 153 -> 148
+atlas.landscape.tap_fixture.wrong_card | 65 -> 63
+atlas.landscape.tap_fixture.wrong_taps | 65 -> 63
+atlas.landscape.tap_fixture.views.whole.untappable | 57 -> 62
+atlas.landscape.tap_fixture.views.whole.tapped | 130 -> 125
+atlas.landscape.tap_fixture.views.whole.wrong_card | 60 -> 58
+atlas.landscape.tap_fixture.taps | [{"view":"whole","name":"Aegban","outcome":"other","opened":"#place=Phagal"},{"view":"w... -> [{"view":"whole","name":"Aegban","outcome":"other","opened":"#place=Phagal"},{"view":"w...
+atlas.landscape.controls | [{"id":"textbox:Search places…","w":360,"h":34,"marker":false,"primary":true,"reach":0,... -> [{"id":"textbox:Search places…","w":360,"h":34,"marker":false,"primary":true,"reach":0,...
+atlas.landscape.reach.button:Hometown of Frösted Flæk | 0 -> undefined
+atlas.landscape.reach.button:Watchwater | 0 -> undefined
+atlas.landscape.reach.button:Empheros — major regions | undefined -> 0
+atlas.landscape.reach.button:Pomos — lesser settlemen | undefined -> 0
+atlas.desktop.first_load.bytes | 294445 -> 295079
+atlas.desktop.first_load.max_asset.bytes | 67676 -> 68310
+atlas.desktop.first_load.by_cat.html_other.bytes | 67676 -> 68310
+atlas.desktop.share_visible | 0.9667 -> 0.9637
+atlas.desktop.tap_epeshu.glyph_center | [683,397] -> [683,396]
+atlas.desktop.tap_fixture.n | 270 -> 269
+atlas.desktop.tap_fixture.views.whole.untappable | 8 -> 9
+atlas.desktop.tap_fixture.views.whole.tapped | 179 -> 178
+atlas.desktop.controls | [{"id":"textbox:Search places…","w":360,"h":34,"marker":false,"primary":true,"reach":0,... -> [{"id":"textbox:Search places…","w":360,"h":34,"marker":false,"primary":true,"reach":0,...
+atlas.desktop.reach.button:Far North | 0 -> undefined
+atlas.desktop.reach.button:Fell Mountains | 0 -> undefined
+atlas.desktop.reach.button:Tungril — bodies of wate | undefined -> 0
+atlas.desktop2x.first_load.bytes | 1618518 -> 1619152
+atlas.desktop2x.first_load.max_asset.bytes | 67676 -> 68310
+atlas.desktop2x.first_load.by_cat.html_other.bytes | 67676 -> 68310
+atlas.desktop2x.share_visible | 0.8583 -> 0.8552
+atlas.desktop2x.targets_under_44.count | 174 -> 173
+atlas.desktop2x.targets_under_44.total | 176 -> 175
+atlas.desktop2x.targets_under_44.markers | 161 -> 160
+atlas.desktop2x.targets_under_44.markers_under44 | 161 -> 160
+atlas.desktop2x.tap_epeshu.glyph_center | [720,463] -> [720,462]
+atlas.desktop2x.tap_fixture.n | 293 -> 292
+atlas.desktop2x.tap_fixture.views.whole.untappable | 6 -> 7
+atlas.desktop2x.tap_fixture.views.whole.tapped | 181 -> 180
+atlas.desktop2x.controls | [{"id":"textbox:Search places…","w":360,"h":34,"marker":false,"primary":true,"reach":0,... -> [{"id":"textbox:Search places…","w":360,"h":34,"marker":false,"primary":true,"reach":0,...
+atlas.desktop2x.reach.button:Far North | 0 -> undefined
+atlas.desktop2x.reach.button:Fell Mountains | 0 -> undefined
+atlas.desktop2x.reach.button:Far Mountains — mountain | undefined -> 0

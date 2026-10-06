@@ -234,7 +234,7 @@
   },
   {
     "id": "A-U0",
-    "title": "Atlas: re-fit the map once the web fonts swap in",
+    "title": "Atlas: size the map the same before and after the web fonts swap in",
     "files": [
       "maps-site/index.html",
       "docs/mobile/accept/A-U0.json"
@@ -246,15 +246,16 @@
       "F1"
     ],
     "model": "sonnet",
-    "effort": "medium",
+    "effort": "high",
     "run": "Mobile 4",
     "acceptance": [
       "UG1-UG11 (docs/mobile/gates.md, copied from plan section 4.2) pass on iphone13, pixel7, desktop and desktop2x, scored in code by `node tools/mobile-capture.js --accept docs/mobile/accept/A-U0.json` (the accept file is authored before the implementer runs and handed over read-only; schema and worked example in docs/mobile/metrics.md section 8)",
-      "maps-site/index.html sizes the Leaflet map once at startup (fillZoom() reads map.getSize()) and re-measures only on a window resize, so when the web fonts land the header reflows (iPhone 13: 111 px on the fallback serif, 116 px with EB Garamond and Lora) and Leaflet keeps the pre-swap size (iphone13 #map 390x509 vs Leaflet 390x518; pixel7 698 vs 693; landscape 215 vs 218; desktop 688 vs 691; desktop2x 820 vs 823). Fix: one ResizeObserver on #map (document.fonts.ready may also trigger it) that calls map.invalidateSize() and re-runs the existing fit (fillZoom) when, and only when, the #map box changed; created once, never a loop, no timer",
-      "after load, on all five profiles, Leaflet's getSize() equals the #map box (the capture runs with the production fonts answered after the startup layout, as R1 was, so the swap happens after the first fit and the re-fit is exercised)",
-      "declared changes, per profile, against R1: the zoom keys the fit sets, first_load and repeat_visit tile requests and bytes (iphone13: the post-swap 25-tile grid, a superset of the pre-swap 20), share_visible, the layers list height, the tap fixture rows whose glyph moved, chrome_cover where the map box moved; desktop and desktop2x shots may differ from R1 only by the re-fit (declared, with the shot_diff bound the re-fit actually produces); every other key equals R1",
-      "no new clock token (UG3 counts unchanged), grep -c matchMedia maps-site/index.html unchanged, no new pane, zero console errors; xmur3, mulberry32, genCityCanvas, washMake and sampleCityMask untouched",
-      "unscored, for the reviewers: two captures of the edited tree give identical atlas first_load and repeat_visit keys on iphone13 (the race between the fonts and the first fit no longer changes what is requested)"
+      "maps-site/index.html sizes the Leaflet map once at startup (fillZoom() reads map.getSize()), and the header and footer heights depend on which font is showing (iPhone 13 header 111 px on the fallback serif, 116 px with EB Garamond), so the first view depends on whether the web fonts beat the inline script. Fix it so text takes the same boxes before and after the swap; never by re-fitting (a ResizeObserver re-fit fetched both tile grids, 45 tiles, and was rejected) and never by changing which fonts load or when",
+      "apply docs/mobile/inputs/A-U0.patch (a measured prototype, CSS only: metric-matched local fallback faces 'EB Garamond fb', 'Lora fb', 'IBM Plex Mono fb' with size-adjust / ascent-, descent-, line-gap-override over the web subsets' unicode-range, each listed right after its web face in every font-family stack, plus header and footer line-heights pinned to the web faces' line boxes for WebKit); change it only if a check below fails, and say why",
+      "with the fonts blocked and with them served, on all five profiles: header heights equal (116/116/97/52/52 px for iphone13/pixel7/landscape/desktop/desktop2x), footers equal, and map.getSize() equals the #map box (390x509, 412x698, 844x215, 1366x688, 1440x820); no JS change, no new clock token, no matchMedia, no timer, the canvas font string unchanged",
+      "declared changes against the reference in force: exactly the 135 atlas keys listed in docs/mobile/inputs/A-U0-declared-keys.txt (the map now sized to its true box, plus +634 B of HTML), with checks on: iphone13 first_load 42 requests / <= 490,000 B (25 tiles, one grid), other profiles' first_load bytes = reference + 634 and requests unchanged; header_h and the chrome controls NOT declared (they must equal the reference)",
+      "shots: 1-contents unchanged on every profile (<= 0.005); the map raster moves to centre on its true box, so 2-whole-chart / 3-layers / 4-place-card may differ up to the measured values plus a quarter (desktop 0.146 / 0.117 / 0.094, desktop2x 0.156 / 0.132 / 0.095, iphone13 0.197 / 0.066 / 0.030, pixel7 0.247 / 0.066 / 0.037, landscape 0.105 / 0.078 / 0.049), declared; the header, controls, company bar, scale bar and footer pixels unchanged",
+      "unscored, for the reviewers: two captures of the edited tree give identical iphone13 atlas keys; the WebKit and Android notes in the patch's comment hold (no WebKit browser here: Mobile 15's real-device pass checks iOS and Android)"
     ]
   },
   {
