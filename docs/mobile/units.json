@@ -371,7 +371,8 @@
       "ATLAS.tiers() b, c and d are identical on iphone13, pixel7, landscape, desktop and desktop2x (|delta| < 1e-9); `a` is reported per profile and is EXPECTED to vary with the viewport-derived minZoom (fit 1.95 on iphone13 vs 2.35 on desktop); the cross-profile equality never includes `a`",
       "per-profile delta table vs B0 written to docs/mobile/captures/A-U2.json; no desktop control reveals later (delta <= 0 on both); if any desktop |delta| > 0.35 (computed: 1x desktop tier C -0.58) and the owner answer is not recorded, the unit stops and is DEFERRED to Mobile 5b (see owner_gate); with answer a recorded it ships the min-of-two values",
       "tier-A content present at minZoom on every profile; desktop flyTo targets unchanged",
-      "G2 parity sweep: at z 2.0, 2.5, 3.0, 3.5, 4.0, 4.55, 6.15 the marker types drawn are identical across all five profiles"
+      "G2 parity sweep: at z 2.0, 2.5, 3.0, 3.5, 4.0, 4.55, 6.15 the marker types drawn are identical across all five profiles",
+      "byte keys this unit moves, declared per profile: atlas.<profile>.first_load.{bytes, max_asset.bytes, by_cat.html_other.bytes} on all five profiles, each an upper bound (between the reference value and reference + 512 B, never an exact value): the tier constants and their clamp add gzipped HTML; declared_first_view_growth {bytes: 512, requests: 0}; every request count unchanged"
     ],
     "run": "Mobile 5",
     "owner_gate": {
@@ -408,7 +409,8 @@
       "elementsFromPoint at any faded (tier-hidden) marker returns no faded element on any profile (closes POLISH \"Tier-hidden markers intercept clicks\")",
       "glyphs never move (no badge offset): marker glyph rects equal R1; desktop click fixture opens the same hashes as R1 (except clicks that landed on faded waypoints, which now reach the marker beneath: listed as the declared change)",
       "no Leaflet pane created (UG7)",
-      "if A-U2 is deferred-5b the unit proceeds against B0 tiers and records tiers_deferred:true"
+      "if A-U2 is deferred-5b the unit proceeds against B0 tiers and records tiers_deferred:true",
+      "byte keys this unit moves, declared per profile: atlas.<profile>.first_load.{bytes, max_asset.bytes, by_cat.html_other.bytes} on all five profiles, each an upper bound (between the reference value and reference + 2048 B, never an exact value): the tap resolver and the chooser sheet add gzipped HTML; declared_first_view_growth {bytes: 2048, requests: 0}; every request count unchanged"
     ],
     "run": "Mobile 5"
   },
@@ -433,7 +435,8 @@
       "coarse profiles: interactive controls under 44x44 <= 5% (was 123/127 iphone13, 106/110 pixel7); markers counted by pad size; header links, close, toggles, era control, jbar, layer rows, Leaflet zoom all >= 44",
       "marker glyph rects equal R1 (map-region shot diff <= 0.5% by the metrics.md section 7 function); chrome text >= 12 px on coarse pointers (min_font_px)",
       "tap fixture still wrong_card = 0 (pads never decide a tap)",
-      "desktop and desktop2x identical (fine pointer)"
+      "desktop and desktop2x identical (fine pointer)",
+      "byte keys this unit moves, declared per profile: atlas.<profile>.first_load.{bytes, max_asset.bytes, by_cat.html_other.bytes} on all five profiles, each an upper bound (between the reference value and reference + 1024 B, never an exact value): the coarse-pointer target and pad rules add gzipped HTML; declared_first_view_growth {bytes: 1024, requests: 0}; every request count unchanged"
     ],
     "run": "Mobile 5"
   },
