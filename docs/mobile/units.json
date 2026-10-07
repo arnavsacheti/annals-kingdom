@@ -372,6 +372,7 @@
       "per-profile delta table vs B0 written to docs/mobile/captures/A-U2.json; no desktop control reveals later (delta <= 0 on both); if any desktop |delta| > 0.35 (computed: 1x desktop tier C -0.58) and the owner answer is not recorded, the unit stops and is DEFERRED to Mobile 5b (see owner_gate); with answer a recorded it ships the min-of-two values",
       "tier-A content present at minZoom on every profile; desktop flyTo targets unchanged",
       "G2 parity sweep: at z 2.0, 2.5, 3.0, 3.5, 4.0, 4.55, 6.15 the marker types drawn are identical across all five profiles",
+      "the earlier 1x-desktop reveal (owner answer a: tier C 4.7833 to 4.20) shows in the desktop tap fixture: at epeshu_z4.55 the 1x desktop now draws the two tier-C glyphs every other profile already drew there, so atlas.desktop.tap_fixture.n and atlas.desktop.tap_fixture.views.epeshu_z4.55.{glyphs, untappable, tapped} are declared (measured 269 to 270, 187 to 189, 165 to 166, 22 to 23: each equals the desktop2x count at that view or grows by at most 2, nothing removed); the desktop2x tap fixture is unchanged",
       "byte keys this unit moves, declared per profile: atlas.<profile>.first_load.{bytes, max_asset.bytes, by_cat.html_other.bytes} on all five profiles, each an upper bound (between the reference value and reference + 512 B, never an exact value): the tier constants and their clamp add gzipped HTML; declared_first_view_growth {bytes: 512, requests: 0}; every request count unchanged"
     ],
     "run": "Mobile 5",
