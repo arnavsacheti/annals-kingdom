@@ -1,0 +1,4923 @@
+{
+ "meta": {
+  "tool": "mobile-capture",
+  "tool_version": 1,
+  "tool_sha": "98789b14f5aca25c1b913b3e86d3e3e08706dbb48861f64ccce691c4ff992e2e",
+  "index_sha": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+  "atlas_sha": "1c53756f1623eab7b6a2120f4bc0e205c562bafe3f7397c6b555fe73cde38312",
+  "unit": "A-U3",
+  "profiles": [
+   "iphone13",
+   "pixel7",
+   "landscape",
+   "desktop",
+   "desktop2x"
+  ],
+  "clock": "virtual",
+  "pinned": {
+   "hardwareConcurrency": 8,
+   "deviceMemory": 8
+  },
+  "cpu": 1,
+  "throttle": null,
+  "service_workers": "block",
+  "save_data": false,
+  "query": null,
+  "seeds": [
+   "epeshu",
+   "tamar1374"
+  ],
+  "extras": [
+   "safe_area",
+   "keyboard",
+   "ctxloss"
+  ],
+  "cdn_routed": true,
+  "fonts": "aborted",
+  "font_files": "after the startup layout (fontGate)",
+  "server": "spawn",
+  "browser": "141.0.7390.37",
+  "timing": {
+   "wall_ms": 473018
+  }
+ },
+ "repo": {
+  "sha": {
+   "index": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+   "atlas": "1c53756f1623eab7b6a2120f4bc0e205c562bafe3f7397c6b555fe73cde38312",
+   "server": "f093d3423e3d78c47a2405a79cfb3212c5273577bab9fe598e610a741c1eb233"
+  },
+  "syntax": {
+   "index": "OK 1",
+   "atlas": "OK 1"
+  },
+  "clock_tokens": {
+   "index": {
+    "P": {
+     "occurrences": 37,
+     "lines": 35,
+     "multiset": [
+      {
+       "line": "const now = performance.now();",
+       "sha": "03f709b45db9",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "camera.position.z += (Math.random()-0.5)*m;",
+       "sha": "0450c09359cb",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "const a = W.agents[(Math.random()*W.agents.length)|0];",
+       "sha": "053db990d0b2",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "tick(0.0001, performance.now());",
+       "sha": "09e0be3d5582",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "camera.position.x += (Math.random()-0.5)*m;",
+       "sha": "0b0a9c22a144",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "if(performance.now() < (W.eclipseUntil||0)) wMul *= 0.13;",
+       "sha": "3b8d7ddb56e4",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "CAM.lastInput = performance.now();",
+       "sha": "4bf7e31cb093",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "const now = W.clock.day, ms = performance.now();",
+       "sha": "565dc628f45b",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "arr[i*3+2] = Math.random()*560 - 280;",
+       "sha": "571a1c6d0bd0",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "const s = W.settlements[(Math.random()*W.settlements.length)|0];",
+       "sha": "59384a3911f9",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "if(sh.t <= 0){ sh.t = 4 + Math.random()*7; sh.a = Math.random()*6.28; }",
+       "sha": "7e2e65ce385f",
+       "tokens": {
+        "Math.random": 2
+       }
+      },
+      {
+       "line": "if(W.overlayMode){ paintOverlay(W.overlayMode); W.lastTerrMs = performance.now(); }",
+       "sha": "825ef756aa8f",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "W.comet = { startMs: performance.now(), dur: 40000 };",
+       "sha": "91dc238ec801",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "for(let i=0;i<(n||1);i++) tick(1/60, performance.now());",
+       "sha": "96d6fd9de95f",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "if(Math.random() < 0.3 && W.agents.length){",
+       "sha": "9cc057dc0d14",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "arr[i*3] = Math.random()*560 - 280;",
+       "sha": "9fa2c181fe06",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "CAM.lastInput = performance.now();",
+       "sha": "a2600fd501dc",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "const s = document.getElementById('seedIn').value.trim() || String(Math.floor(Math.random()*9000000)+1000000);",
+       "sha": "a3212334d436",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "CAM.shakeMag = 6; CAM.shakeUntil = performance.now() + 2600;",
+       "sha": "a3d0340e1162",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "if(!W._flash && Math.random() < 0.006) W._flash = nowSec + 0.13;",
+       "sha": "ad3415cd4569",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "const s = String(Math.floor(Math.random()*9000000)+1000000);",
+       "sha": "ae8e5b83d596",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "hold(ms){ DIR.suppressUntil = performance.now() + (ms || 60000); CAM.lastInput = performance.now(); return 'held'; },",
+       "sha": "b2412d691169",
+       "tokens": {
+        "performance.now": 2
+       }
+      },
+      {
+       "line": "W.eclipseUntil = performance.now() + 20000;",
+       "sha": "b4dac24c28cd",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "CAM.lastInput = performance.now();",
+       "sha": "b6705d58eb07",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "CAM.lastInput = performance.now();",
+       "sha": "b6705d58eb07",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "camera.position.y += (Math.random()-0.5)*m*0.6;",
+       "sha": "bd0556e4478b",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "W.fx.push({type: 'hearth', s, mesh, mat: sm, phase: Math.random()*6, baseY: hAt(b.x, b.z) + 5.5, born: nowMs});",
+       "sha": "cb80a6153854",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "W.fx.push({type: 'pyre', s, mesh, mat: sm, phase: Math.random()*6, baseY: hAt(s.x,s.z) + 5});",
+       "sha": "d3017e7757cd",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "CAM.lastInput = performance.now(); CAM.intro = false;",
+       "sha": "d72737f518b7",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "CAM.lastInput = performance.now(); CAM.intro = false;",
+       "sha": "d72737f518b7",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "CAM.lastInput = performance.now(); CAM.intro = false;",
+       "sha": "d72737f518b7",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "arr[i*3+1] = Math.random()*260;",
+       "sha": "e714a5888742",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "flyToQuiet(s.x, s.z, 560 + Math.random()*320);",
+       "sha": "eafb3ea51382",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "let prevMs = performance.now(), frameN = 0;",
+       "sha": "ee0ba3f3d95a",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "const b = s.buildings[(Math.random()*s.buildings.length)|0];",
+       "sha": "f2b4a97e2737",
+       "tokens": {
+        "Math.random": 1
+       }
+      }
+     ]
+    },
+    "W": {
+     "occurrences": 37,
+     "lines": 35,
+     "multiset": [
+      {
+       "line": "const now = performance.now();",
+       "sha": "03f709b45db9",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "camera.position.z += (Math.random()-0.5)*m;",
+       "sha": "0450c09359cb",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "const a = W.agents[(Math.random()*W.agents.length)|0];",
+       "sha": "053db990d0b2",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "tick(0.0001, performance.now());",
+       "sha": "09e0be3d5582",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "camera.position.x += (Math.random()-0.5)*m;",
+       "sha": "0b0a9c22a144",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "if(performance.now() < (W.eclipseUntil||0)) wMul *= 0.13;",
+       "sha": "3b8d7ddb56e4",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "CAM.lastInput = performance.now();",
+       "sha": "4bf7e31cb093",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "const now = W.clock.day, ms = performance.now();",
+       "sha": "565dc628f45b",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "arr[i*3+2] = Math.random()*560 - 280;",
+       "sha": "571a1c6d0bd0",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "const s = W.settlements[(Math.random()*W.settlements.length)|0];",
+       "sha": "59384a3911f9",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "if(sh.t <= 0){ sh.t = 4 + Math.random()*7; sh.a = Math.random()*6.28; }",
+       "sha": "7e2e65ce385f",
+       "tokens": {
+        "Math.random": 2
+       }
+      },
+      {
+       "line": "if(W.overlayMode){ paintOverlay(W.overlayMode); W.lastTerrMs = performance.now(); }",
+       "sha": "825ef756aa8f",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "W.comet = { startMs: performance.now(), dur: 40000 };",
+       "sha": "91dc238ec801",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "for(let i=0;i<(n||1);i++) tick(1/60, performance.now());",
+       "sha": "96d6fd9de95f",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "if(Math.random() < 0.3 && W.agents.length){",
+       "sha": "9cc057dc0d14",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "arr[i*3] = Math.random()*560 - 280;",
+       "sha": "9fa2c181fe06",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "CAM.lastInput = performance.now();",
+       "sha": "a2600fd501dc",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "const s = document.getElementById('seedIn').value.trim() || String(Math.floor(Math.random()*9000000)+1000000);",
+       "sha": "a3212334d436",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "CAM.shakeMag = 6; CAM.shakeUntil = performance.now() + 2600;",
+       "sha": "a3d0340e1162",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "if(!W._flash && Math.random() < 0.006) W._flash = nowSec + 0.13;",
+       "sha": "ad3415cd4569",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "const s = String(Math.floor(Math.random()*9000000)+1000000);",
+       "sha": "ae8e5b83d596",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "hold(ms){ DIR.suppressUntil = performance.now() + (ms || 60000); CAM.lastInput = performance.now(); return 'held'; },",
+       "sha": "b2412d691169",
+       "tokens": {
+        "performance.now": 2
+       }
+      },
+      {
+       "line": "W.eclipseUntil = performance.now() + 20000;",
+       "sha": "b4dac24c28cd",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "CAM.lastInput = performance.now();",
+       "sha": "b6705d58eb07",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "CAM.lastInput = performance.now();",
+       "sha": "b6705d58eb07",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "camera.position.y += (Math.random()-0.5)*m*0.6;",
+       "sha": "bd0556e4478b",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "W.fx.push({type: 'hearth', s, mesh, mat: sm, phase: Math.random()*6, baseY: hAt(b.x, b.z) + 5.5, born: nowMs});",
+       "sha": "cb80a6153854",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "W.fx.push({type: 'pyre', s, mesh, mat: sm, phase: Math.random()*6, baseY: hAt(s.x,s.z) + 5});",
+       "sha": "d3017e7757cd",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "CAM.lastInput = performance.now(); CAM.intro = false;",
+       "sha": "d72737f518b7",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "CAM.lastInput = performance.now(); CAM.intro = false;",
+       "sha": "d72737f518b7",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "CAM.lastInput = performance.now(); CAM.intro = false;",
+       "sha": "d72737f518b7",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "arr[i*3+1] = Math.random()*260;",
+       "sha": "e714a5888742",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "flyToQuiet(s.x, s.z, 560 + Math.random()*320);",
+       "sha": "eafb3ea51382",
+       "tokens": {
+        "Math.random": 1
+       }
+      },
+      {
+       "line": "let prevMs = performance.now(), frameN = 0;",
+       "sha": "ee0ba3f3d95a",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "const b = s.buildings[(Math.random()*s.buildings.length)|0];",
+       "sha": "f2b4a97e2737",
+       "tokens": {
+        "Math.random": 1
+       }
+      }
+     ]
+    }
+   },
+   "atlas": {
+    "P": {
+     "occurrences": 1,
+     "lines": 1,
+     "multiset": [
+      {
+       "line": "jrn.playing=true; jrn.dwellUntil=0; jrn.lastFrame=performance.now();",
+       "sha": "541ff43e1991",
+       "tokens": {
+        "performance.now": 1
+       }
+      }
+     ]
+    },
+    "W": {
+     "occurrences": 2,
+     "lines": 2,
+     "multiset": [
+      {
+       "line": "jrn.playing=true; jrn.dwellUntil=0; jrn.lastFrame=performance.now();",
+       "sha": "541ff43e1991",
+       "tokens": {
+        "performance.now": 1
+       }
+      },
+      {
+       "line": "(window.requestIdleCallback||function(f){setTimeout(f,180);})(function(){ensureCityGen(near.name);});",
+       "sha": "804f982f7d85",
+       "tokens": {
+        "requestIdleCallback": 1
+       }
+      }
+     ]
+    }
+   }
+  },
+  "keydown": {
+   "sha": "5ff9338c06f5d8226ad44f5a4009a22b5337a340b20162df0178b4e00aebec21",
+   "lines": 19
+  },
+  "camera_near": {
+   "literal": true,
+   "sha": "56670799edaa"
+  },
+  "ladder": {
+   "fpsAvg_degradeStep": true,
+   "wantShadow": true,
+   "steps": [
+    true,
+    true,
+    true
+   ]
+  },
+  "markers": {
+   "FILIGREE": 0,
+   "STREET": 0
+  },
+  "tithe_lines": 2,
+  "atlas_fn_sha": {
+   "xmur3": "aa5dba1f3bc99cb962693dc3a9aebbd6adfa0ccaa254a7f189744953964d9a25",
+   "mulberry32": "5c6206458f3930b36d23c1049a42114353dad286be69be8b54ae43ababd028b1",
+   "genCityCanvas": "e02f117c31ef6dd03d6a7d927c345115176a48123824bfaac0ad33479bc56366",
+   "washMake": "2decf2772e17a94f5a5ccaec08130135815766bc2786a2cb46abcc40cb5a2e0e",
+   "sampleCityMask": "3eafcaf93958317963bbc578877d7cbf320db349c82bd25d62e5cfa978cb67d7"
+  },
+  "createPane": 1,
+  "anchors": {
+   "filigree-1-research.js": {
+    "flag1": 23,
+    "found": 23,
+    "missing": []
+   },
+   "filigree-2-plan.js": {
+    "flag1": 23,
+    "found": 23,
+    "missing": []
+   },
+   "filigree-3-build.js": {
+    "flag1": 23,
+    "found": 23,
+    "missing": []
+   },
+   "filigree-4-review.js": {
+    "flag1": 23,
+    "found": 23,
+    "missing": []
+   },
+   "street-1-research.js": {
+    "flag1": 27,
+    "found": 27,
+    "missing": []
+   },
+   "street-2-plan.js": {
+    "flag1": 27,
+    "found": 27,
+    "missing": []
+   },
+   "street-3-build.js": {
+    "flag1": 27,
+    "found": 27,
+    "missing": []
+   },
+   "street-4-review.js": {
+    "flag1": 27,
+    "found": 27,
+    "missing": []
+   }
+  },
+  "anchors_missing": [],
+  "scripts_read": 8,
+  "stats_keys_expected": [
+   "fps",
+   "calls",
+   "tris",
+   "buildings",
+   "trees",
+   "seed",
+   "realm",
+   "treasury",
+   "pop",
+   "agents",
+   "chron"
+  ],
+  "vocab": "/\\b(saint|abbey|priest|baron|artillery|musket|rifle|pistol|cannon|gunpowder|gunfire|coach(es)?|tithes?|church|chapel|cathedral|monk|bishop|knight|castle|manor|feudal|vassal|pilgrim|parish|cavalry|crusade|sermon|cleric)\\b/i",
+  "pipeline_sha": {
+   ".claude/workflows/filigree-1-research.js": "e651497e3f96d7367d822b1059eed83e1c0f2d5276d60571040ae3575f17e58e",
+   ".claude/workflows/filigree-2-plan.js": "fb0a530448dd8b34773de841da25c7e86c47d79a17225a2f13f3519dc5b2b64c",
+   ".claude/workflows/filigree-3-build.js": "0164d2a71818c6026747809d3b271d1784696c670194f3f5b8f0627813644b38",
+   ".claude/workflows/filigree-4-review.js": "afdf9eefd6806e814e1171da00c2718cc6e6696bb6c7b0ce867f956e68e1e210",
+   ".claude/workflows/mobile-build.js": "782f386fda1994681745a40a77897efa6579e0e858b616fed95458a1f4fcb8d1",
+   ".claude/workflows/mobile-review.js": "c91940d44a535592103784a5f5cdc06d4b7c1a0decc2a90e2b9c2dd69181a460",
+   ".claude/workflows/street-1-research.js": "0afadd970a560ce94be05baf90b345696e00577394375170250e9e6feee4b5b2",
+   ".claude/workflows/street-2-plan.js": "d6ed1a1d1af3d92a5312b3d8b65e80c0e498a5498f9659e3cdac883b0518ab31",
+   ".claude/workflows/street-3-build.js": "544f9ea5c96c361e2be4fb4b5f341ba043231600c10d847eeb830e68ac16b73c",
+   ".claude/workflows/street-4-review.js": "330eb39a121dd81101c8aa2505f00d67974d25076fedd6567a4ef3d69ab71714",
+   "tools/street-drift.js": "d6efe75bc830f4ea942b070432cc93dc84202304e9ff5bb664bd28656e244413"
+  },
+  "street_drift_exit": 0
+ },
+ "atlas": {
+  "iphone13": {
+   "env": {
+    "w": 390,
+    "h": 664,
+    "dpr": 3,
+    "coarse": true,
+    "hover": false,
+    "hardwareConcurrency": 8,
+    "deviceMemory": 8,
+    "vv_scale": 1,
+    "viewport_meta": "width=device-width, initial-scale=1.0, viewport-fit=cover"
+   },
+   "shots": {
+    "1-contents": {
+     "path": "docs/mobile/shots/A-U3/atlas-iphone13-1-contents.png",
+     "w": 390,
+     "h": 664,
+     "bytes": 104860,
+     "scale": 1,
+     "sha": "dba91948a97b4b6440b34b99fba3a9ece47851f322be0cda7a8f28bd8bec529d"
+    },
+    "2-whole-chart": {
+     "path": "docs/mobile/shots/A-U3/atlas-iphone13-2-whole-chart.png",
+     "w": 390,
+     "h": 664,
+     "bytes": 276721,
+     "scale": 1,
+     "sha": "4328a00f5b3c0691dca51cc6881c8c299444ef9f56a20f4c3130ef99f71d1e25"
+    },
+    "3-layers": {
+     "path": "docs/mobile/shots/A-U3/atlas-iphone13-3-layers.png",
+     "w": 390,
+     "h": 664,
+     "bytes": 112612,
+     "scale": 1,
+     "sha": "f7a7eb9406a02ce627810a154b6a83cd546dbfa8a4bfef6ddf81f8accd15f397"
+    },
+    "4-place-card": {
+     "path": "docs/mobile/shots/A-U3/atlas-iphone13-4-place-card.png",
+     "w": 390,
+     "h": 664,
+     "bytes": 212474,
+     "scale": 1,
+     "sha": "5a6c74f2b715458d9893e6b363f511ea78b5bd06f11e8fa19a992c5094d1b4d3"
+    }
+   },
+   "first_load": {
+    "bytes": 763986,
+    "requests": 54,
+    "cache_hits": 0,
+    "max_asset": {
+     "path": "/maps-site/",
+     "bytes": 70532
+    },
+    "by_cat": {
+     "html_other": {
+      "requests": 13,
+      "bytes": 347543
+     },
+     "data": {
+      "requests": 16,
+      "bytes": 68427
+     },
+     "tiles": {
+      "requests": 25,
+      "bytes": 348016
+     }
+    },
+    "foreign_origins": [],
+    "routed": [],
+    "aborted": []
+   },
+   "contents": {
+    "open": true,
+    "kickerTop": 32,
+    "titleTop": 51,
+    "footBottom": 819,
+    "cardTops": [
+     147,
+     280,
+     413,
+     546,
+     659
+    ]
+   },
+   "repeat_visit": {
+    "bytes": 4843,
+    "requests": 54,
+    "cache_hits": 54
+   },
+   "doc_scroll": 664,
+   "inner_height": 664,
+   "panel_closed": {
+    "visibility": "hidden",
+    "top": 745,
+    "aria_hidden": "true",
+    "leak_px": 0
+   },
+   "share_visible": 0.3794,
+   "targets_under_44": {
+    "count": 16,
+    "total": 20,
+    "ratio": 0.8,
+    "markers": 5,
+    "markers_under44": 5
+   },
+   "min_font_px": {
+    "px": 9.5,
+    "who": "SPAN"
+   },
+   "hover_ungated": 32,
+   "panes": [
+    "leaflet-pane leaflet-map-pane",
+    "leaflet-pane leaflet-tile-pane",
+    "leaflet-pane leaflet-overlay-pane",
+    "leaflet-pane leaflet-shadow-pane",
+    "leaflet-pane leaflet-marker-pane",
+    "leaflet-pane leaflet-tooltip-pane",
+    "leaflet-pane leaflet-popup-pane",
+    "leaflet-pane leaflet-pRealm-pane",
+    "leaflet-pane leaflet-pDistrict-pane",
+    "leaflet-pane leaflet-pTrail-pane",
+    "leaflet-pane leaflet-pLane-pane",
+    "leaflet-pane leaflet-pWay-pane",
+    "leaflet-pane leaflet-pRouteLine-pane",
+    "leaflet-pane leaflet-pJTrail-pane",
+    "leaflet-pane leaflet-pCityWash-pane",
+    "leaflet-pane leaflet-pCity-pane",
+    "leaflet-pane leaflet-pWater-pane",
+    "leaflet-pane leaflet-pMajor-pane",
+    "leaflet-pane leaflet-pMtn-pane",
+    "leaflet-pane leaflet-pLesser-pane",
+    "leaflet-pane leaflet-pSettle-pane",
+    "leaflet-pane leaflet-pMinor-pane",
+    "leaflet-pane leaflet-pOrigin-pane",
+    "leaflet-pane leaflet-pFaction-pane",
+    "leaflet-pane leaflet-pRouteWp-pane",
+    "leaflet-pane leaflet-pJTrav-pane",
+    "leaflet-pane leaflet-pCityPOI-pane"
+   ],
+   "tiers": {
+    "a": 1.9000000000000001,
+    "b": 3.4,
+    "c": 4.2,
+    "d": 7.5
+   },
+   "tiers_derived": {
+    "fit": 1.9,
+    "ceil": 5,
+    "B": 2.9333,
+    "C": 3.9667
+   },
+   "zoom": {
+    "current": 1.9,
+    "min": 1.9,
+    "max": 8
+   },
+   "header_h": 116,
+   "doc_scroll_w": 390,
+   "sw_registrations": 0,
+   "chrome_cover": {
+    "whole": 0.2213,
+    "layers": 0.6604,
+    "card": 0.2767,
+    "peek": "no-sheet",
+    "half": "no-sheet"
+   },
+   "layers_tap_opened": false,
+   "layers": {
+    "rect": [
+     4,
+     183,
+     372,
+     396
+    ],
+    "fits_viewport": true,
+    "rows": 16,
+    "row_h": 23,
+    "scrolls": true
+   },
+   "tap_epeshu": {
+    "found": true,
+    "zoom": 4.5,
+    "glyph_center": [
+     195,
+     371
+    ],
+    "stack": [
+     "DIV.fac-badge",
+     "DIV.leaflet-marker-icon leaflet-zoom-ani",
+     "SPAN.glyph",
+     "DIV.leaflet-marker-icon leaflet-zoom-ani"
+    ],
+    "opened_hash": "#view=1236,1417,4.50",
+    "panel_open": false,
+    "panel_title": ""
+   },
+   "card": {
+    "open": false,
+    "rect": [
+     0,
+     745,
+     390,
+     326
+    ],
+    "covers": 0,
+    "body_scroll_h": 324,
+    "body_client_h": 324,
+    "close_btn": [
+     30,
+     30
+    ]
+   },
+   "tap_fixture": {
+    "n": 30,
+    "complete": true,
+    "wrong_card": 0,
+    "wrong_taps": 0,
+    "no_open": 0,
+    "chooser": 14,
+    "chooser_without_glyph": 0,
+    "views": {
+     "whole": {
+      "zoom": 1.9,
+      "glyphs": 18,
+      "untappable": 14,
+      "unnamed": 0,
+      "tapped": 4,
+      "wrong_card": 0
+     },
+     "leponnia_z3.5": {
+      "zoom": 3.5,
+      "glyphs": 41,
+      "untappable": 38,
+      "unnamed": 0,
+      "tapped": 3,
+      "wrong_card": 0
+     },
+     "epeshu_z4.55": {
+      "zoom": 4.55,
+      "glyphs": 189,
+      "untappable": 180,
+      "unnamed": 0,
+      "tapped": 9,
+      "wrong_card": 0
+     },
+     "epeshu_z4.95": {
+      "zoom": 4.95,
+      "glyphs": 189,
+      "untappable": 180,
+      "unnamed": 0,
+      "tapped": 9,
+      "wrong_card": 0
+     },
+     "city_z6.15": {
+      "zoom": 6.15,
+      "glyphs": 189,
+      "untappable": 184,
+      "unnamed": 0,
+      "tapped": 5,
+      "wrong_card": 0
+     }
+    },
+    "taps": [
+     {
+      "view": "epeshu_z4.55",
+      "name": "Epēshu",
+      "outcome": "chooser",
+      "opened": "The Gulf Crossing"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "Epēshu",
+      "outcome": "chooser",
+      "opened": "The Gulf Crossing"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "Lepon",
+      "outcome": "chooser",
+      "opened": "The Gulf Crossing"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "Pebros's Army",
+      "outcome": "chooser",
+      "opened": "The Gulf Crossing"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "The Eshbrīn",
+      "outcome": "chooser",
+      "opened": "The Gulf Crossing"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "The Lektān Priesthood",
+      "outcome": "chooser",
+      "opened": "The Gulf Crossing"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "The Orondēs",
+      "outcome": "chooser",
+      "opened": "The Gulf Crossing"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "The Senate of Epēshu",
+      "outcome": "chooser",
+      "opened": "The Gulf Crossing"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "Epēshu",
+      "outcome": "chooser",
+      "opened": "White Sea (Dagon's attack)"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "Epēshu",
+      "outcome": "chooser",
+      "opened": "White Sea (Dagon's attack)"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "The Eshbrīn",
+      "outcome": "chooser",
+      "opened": "Pebros's Army"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "The Lektān Priesthood",
+      "outcome": "chooser",
+      "opened": "Pebros's Army"
+     },
+     {
+      "view": "city_z6.15",
+      "name": "Epēshu",
+      "outcome": "chooser",
+      "opened": "White Sea (Dagon's attack)"
+     },
+     {
+      "view": "city_z6.15",
+      "name": "The Eshbrīn",
+      "outcome": "chooser",
+      "opened": "Epēshu"
+     }
+    ]
+   },
+   "long_press": {
+    "name_visible": false
+   },
+   "controls": [
+    {
+     "id": "textbox:Search places…",
+     "w": 370,
+     "h": 34,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Switch to night map",
+     "w": 37,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Contents",
+     "w": 79,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:Lexicon",
+     "w": 58,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:Wiki ↗",
+     "w": 56,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:Sim ↗",
+     "w": 51,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "region:Map of the Wide World — ",
+     "w": 390,
+     "h": 509,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Green Sea — bodies of wa",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Great Chasmous Sea — bod",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Empheros — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Khōrgos — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Far North — major region",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Zoom in",
+     "w": 44,
+     "h": 44,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Zoom out",
+     "w": 44,
+     "h": 44,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:The Atlas Through the Ag",
+     "w": 70.8,
+     "h": 24.8,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Layers",
+     "w": 44,
+     "h": 44,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:⚑ Follow the journey",
+     "w": 139,
+     "h": 34,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:⛊ Groups & Powers",
+     "w": 120,
+     "h": 29,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Collapse the Company",
+     "w": 24,
+     "h": 24,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "link:A JavaScript library for",
+     "w": 58,
+     "h": 13,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:White Sea (Dagon's attac",
+     "w": 20,
+     "h": 20,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:Close panel",
+     "w": 30,
+     "h": 30,
+     "marker": false,
+     "primary": true,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:⚘ Descend into Epēshu",
+     "w": 350,
+     "h": 43,
+     "marker": false,
+     "primary": true,
+     "card_first_action": true,
+     "reach": 1,
+     "bottom25": true
+    },
+    {
+     "id": "checkbox:",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#2",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#3",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#4",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#5",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#6",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#7",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#8",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#9",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#10",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#11",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#12",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    }
+   ],
+   "reach": {
+    "textbox:Search places…": 0,
+    "button:Switch to night map": 0,
+    "button:Contents": 0,
+    "link:Lexicon": 0,
+    "link:Wiki ↗": 0,
+    "link:Sim ↗": 0,
+    "region:Map of the Wide World — ": 0,
+    "button:Green Sea — bodies of wa": 0,
+    "button:Great Chasmous Sea — bod": 0,
+    "button:Empheros — major regions": 0,
+    "button:Khōrgos — major regions": 0,
+    "button:Far North — major region": 0,
+    "button:Zoom in": 0,
+    "button:Zoom out": 0,
+    "button:The Atlas Through the Ag": 0,
+    "button:Layers": 0,
+    "button:⚑ Follow the journey": 0,
+    "button:⛊ Groups & Powers": 0,
+    "button:Collapse the Company": 0,
+    "link:A JavaScript library for": 0,
+    "checkbox:": 1,
+    "checkbox:#2": 1,
+    "checkbox:#3": 1,
+    "checkbox:#4": 1,
+    "checkbox:#5": 1,
+    "checkbox:#6": 1,
+    "checkbox:#7": 1,
+    "checkbox:#8": 1,
+    "checkbox:#9": 1,
+    "checkbox:#10": 1,
+    "checkbox:#11": 1,
+    "checkbox:#12": 1,
+    "button:White Sea (Dagon's attac": 1,
+    "button:Close panel": 1,
+    "button:⚘ Descend into Epēshu": 1
+   },
+   "reach_max": 1,
+   "primary": {
+    "textbox:Search places…": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 370,
+     "h": 34
+    },
+    "button:Zoom in": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 44,
+     "h": 44
+    },
+    "button:Zoom out": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 44,
+     "h": 44
+    },
+    "button:Layers": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 44,
+     "h": 44
+    },
+    "button:Close panel": {
+     "reach": 1,
+     "bottom25": false,
+     "w": 30,
+     "h": 30
+    },
+    "button:⚘ Descend into Epēshu": {
+     "reach": 1,
+     "bottom25": true,
+     "w": 350,
+     "h": 43
+    }
+   },
+   "city_canvas": {
+    "Kanae": "344f04c8bcb563f16074f49a2782f353c2b13b338b729b123aaa9ea559bc5e19",
+    "Sokundo": "d9d30ddd6b9f4b50b7382034d2031e0ad56c11a40d83757d20ab762cd6817a13",
+    "Tamaron": "49ab9ac3a911a403205a48f1550e4e632435b1b6a77989c423d3d5a5499266b5"
+   },
+   "cityCanvasSha": "606ef25b945740997e832a9bbe726d18ff24eed7d9f96043063c15e5e9be6268",
+   "errors": {
+    "console": 0,
+    "page": 0,
+    "unexplained": 0,
+    "messages": []
+   },
+   "timing": {
+    "wall_ms": 72824
+   },
+   "extras": {
+    "safe_area": {
+     "command": "applied",
+     "env_top_px": 47,
+     "viewport_fit_cover": true,
+     "env_rules": 13,
+     "intersecting": [],
+     "intersecting_n": 0,
+     "safe_area": "applied"
+    },
+    "keyboard": {
+     "vv_height": 300,
+     "inner_height": 300,
+     "search_rect": [
+      10,
+      35,
+      370,
+      34
+     ],
+     "search_visible": true,
+     "font_px": 14
+    }
+   },
+   "extra_errors": {
+    "repeat_visit": {
+     "console": 0,
+     "page": 0,
+     "unexplained": 0,
+     "messages": []
+    },
+    "safe_area": {
+     "console": 0,
+     "page": 0,
+     "unexplained": 0,
+     "messages": []
+    },
+    "keyboard": {
+     "console": 0,
+     "page": 0,
+     "unexplained": 0,
+     "messages": []
+    }
+   }
+  },
+  "pixel7": {
+   "env": {
+    "w": 412,
+    "h": 839,
+    "dpr": 2.625,
+    "coarse": true,
+    "hover": false,
+    "hardwareConcurrency": 8,
+    "deviceMemory": 8,
+    "vv_scale": 1,
+    "viewport_meta": "width=device-width, initial-scale=1.0, viewport-fit=cover"
+   },
+   "shots": {
+    "1-contents": {
+     "path": "docs/mobile/shots/A-U3/atlas-pixel7-1-contents.png",
+     "w": 412,
+     "h": 839,
+     "bytes": 131404,
+     "scale": 1,
+     "sha": "89545c61ca8748f78acda2fcae9a3e214faedea3568b5ee57383f5dc1027c6c1"
+    },
+    "2-whole-chart": {
+     "path": "docs/mobile/shots/A-U3/atlas-pixel7-2-whole-chart.png",
+     "w": 206,
+     "h": 419,
+     "bytes": 115130,
+     "scale": 0.5,
+     "sha": "0dee4e3e25360b89d88391cedf02292c224d485cd2af01d26d941d6fc32e5bdd",
+     "full_path": "docs/mobile/shots/A-U3/atlas-pixel7-2-whole-chart.full.png",
+     "full_sha": "16b55f76e665f361a663a54741ac4bc3e73324fc3c9a803ab5026acb3653972c"
+    },
+    "3-layers": {
+     "path": "docs/mobile/shots/A-U3/atlas-pixel7-3-layers.png",
+     "w": 412,
+     "h": 839,
+     "bytes": 178666,
+     "scale": 1,
+     "sha": "4c7caa53db6c2532328f02a71afe838a5607b0b1521a922bada681bbc8d1118a"
+    },
+    "4-place-card": {
+     "path": "docs/mobile/shots/A-U3/atlas-pixel7-4-place-card.png",
+     "w": 412,
+     "h": 839,
+     "bytes": 297217,
+     "scale": 1,
+     "sha": "7fc34efd77205633eada72c8c35d202efed61283546f8e0daa6de7c31bb1a513"
+    }
+   },
+   "first_load": {
+    "bytes": 638586,
+    "requests": 44,
+    "cache_hits": 0,
+    "max_asset": {
+     "path": "/maps-site/",
+     "bytes": 70532
+    },
+    "by_cat": {
+     "html_other": {
+      "requests": 13,
+      "bytes": 347543
+     },
+     "data": {
+      "requests": 16,
+      "bytes": 68427
+     },
+     "tiles": {
+      "requests": 15,
+      "bytes": 222616
+     }
+    },
+    "foreign_origins": [],
+    "routed": [],
+    "aborted": []
+   },
+   "contents": {
+    "open": true,
+    "kickerTop": 36,
+    "titleTop": 55,
+    "footBottom": 803,
+    "cardTops": [
+     151,
+     264,
+     397,
+     530,
+     643
+    ]
+   },
+   "repeat_visit": {
+    "bytes": 4843,
+    "requests": 44,
+    "cache_hits": 44
+   },
+   "doc_scroll": 839,
+   "inner_height": 839,
+   "panel_closed": {
+    "visibility": "hidden",
+    "top": 934,
+    "aria_hidden": "true",
+    "leak_px": 0
+   },
+   "share_visible": 0.275,
+   "targets_under_44": {
+    "count": 16,
+    "total": 20,
+    "ratio": 0.8,
+    "markers": 5,
+    "markers_under44": 5
+   },
+   "min_font_px": {
+    "px": 9.5,
+    "who": "SPAN"
+   },
+   "hover_ungated": 32,
+   "panes": [
+    "leaflet-pane leaflet-map-pane",
+    "leaflet-pane leaflet-tile-pane",
+    "leaflet-pane leaflet-overlay-pane",
+    "leaflet-pane leaflet-shadow-pane",
+    "leaflet-pane leaflet-marker-pane",
+    "leaflet-pane leaflet-tooltip-pane",
+    "leaflet-pane leaflet-popup-pane",
+    "leaflet-pane leaflet-pRealm-pane",
+    "leaflet-pane leaflet-pDistrict-pane",
+    "leaflet-pane leaflet-pTrail-pane",
+    "leaflet-pane leaflet-pLane-pane",
+    "leaflet-pane leaflet-pWay-pane",
+    "leaflet-pane leaflet-pRouteLine-pane",
+    "leaflet-pane leaflet-pJTrail-pane",
+    "leaflet-pane leaflet-pCityWash-pane",
+    "leaflet-pane leaflet-pCity-pane",
+    "leaflet-pane leaflet-pWater-pane",
+    "leaflet-pane leaflet-pMajor-pane",
+    "leaflet-pane leaflet-pMtn-pane",
+    "leaflet-pane leaflet-pLesser-pane",
+    "leaflet-pane leaflet-pSettle-pane",
+    "leaflet-pane leaflet-pMinor-pane",
+    "leaflet-pane leaflet-pOrigin-pane",
+    "leaflet-pane leaflet-pFaction-pane",
+    "leaflet-pane leaflet-pRouteWp-pane",
+    "leaflet-pane leaflet-pJTrav-pane",
+    "leaflet-pane leaflet-pCityPOI-pane"
+   ],
+   "tiers": {
+    "a": 2.4000000000000004,
+    "b": 3.4,
+    "c": 4.2,
+    "d": 7.5
+   },
+   "tiers_derived": {
+    "fit": 2.4,
+    "ceil": 5,
+    "B": 3.2667,
+    "C": 4.1333
+   },
+   "zoom": {
+    "current": 2.4,
+    "min": 2.4,
+    "max": 8
+   },
+   "header_h": 116,
+   "doc_scroll_w": 412,
+   "sw_registrations": 0,
+   "chrome_cover": {
+    "whole": 0.1738,
+    "layers": 0.6741,
+    "card": 0.216,
+    "peek": "no-sheet",
+    "half": "no-sheet"
+   },
+   "layers_tap_opened": false,
+   "layers": {
+    "rect": [
+     4,
+     185,
+     394,
+     434
+    ],
+    "fits_viewport": true,
+    "rows": 16,
+    "row_h": 23,
+    "scrolls": false
+   },
+   "tap_epeshu": {
+    "found": true,
+    "zoom": 5,
+    "glyph_center": [
+     206,
+     465
+    ],
+    "stack": [
+     "SPAN.glyph",
+     "DIV.leaflet-marker-icon leaflet-zoom-ani",
+     "DIV.leaflet-container leaflet-touch leaf",
+     "DIV."
+    ],
+    "opened_hash": "#view=1236,1417,5.00",
+    "panel_open": false,
+    "panel_title": ""
+   },
+   "card": {
+    "open": false,
+    "rect": [
+     0,
+     934,
+     412,
+     447
+    ],
+    "covers": 0,
+    "body_scroll_h": 445,
+    "body_client_h": 445,
+    "close_btn": [
+     30,
+     30
+    ]
+   },
+   "tap_fixture": {
+    "n": 35,
+    "complete": true,
+    "wrong_card": 0,
+    "wrong_taps": 0,
+    "no_open": 0,
+    "chooser": 18,
+    "chooser_without_glyph": 0,
+    "views": {
+     "whole": {
+      "zoom": 2.4,
+      "glyphs": 18,
+      "untappable": 15,
+      "unnamed": 0,
+      "tapped": 3,
+      "wrong_card": 0
+     },
+     "leponnia_z3.5": {
+      "zoom": 3.5,
+      "glyphs": 41,
+      "untappable": 36,
+      "unnamed": 0,
+      "tapped": 5,
+      "wrong_card": 0
+     },
+     "epeshu_z4.55": {
+      "zoom": 4.55,
+      "glyphs": 189,
+      "untappable": 178,
+      "unnamed": 0,
+      "tapped": 11,
+      "wrong_card": 0
+     },
+     "epeshu_z4.95": {
+      "zoom": 4.95,
+      "glyphs": 189,
+      "untappable": 178,
+      "unnamed": 0,
+      "tapped": 11,
+      "wrong_card": 0
+     },
+     "city_z6.15": {
+      "zoom": 6.15,
+      "glyphs": 189,
+      "untappable": 184,
+      "unnamed": 0,
+      "tapped": 5,
+      "wrong_card": 0
+     }
+    },
+    "taps": [
+     {
+      "view": "epeshu_z4.55",
+      "name": "Epēshu",
+      "outcome": "chooser",
+      "opened": "The North Coast Packet"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "Epēshu",
+      "outcome": "chooser",
+      "opened": "The North Coast Packet"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "Lepon",
+      "outcome": "chooser",
+      "opened": "The North Coast Packet"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "Paerāndas",
+      "outcome": "chooser",
+      "opened": "The North Coast Packet"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "Paerāndas",
+      "outcome": "chooser",
+      "opened": "The North Coast Packet"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "Pebros's Army",
+      "outcome": "chooser",
+      "opened": "The North Coast Packet"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "The Eshbrīn",
+      "outcome": "chooser",
+      "opened": "The North Coast Packet"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "The Lektān Priesthood",
+      "outcome": "chooser",
+      "opened": "The North Coast Packet"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "The Orondēs",
+      "outcome": "chooser",
+      "opened": "The North Coast Packet"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "The Senate of Epēshu",
+      "outcome": "chooser",
+      "opened": "The North Coast Packet"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "Epēshu",
+      "outcome": "chooser",
+      "opened": "White Sea (Dagon's attack)"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "Epēshu",
+      "outcome": "chooser",
+      "opened": "White Sea (Dagon's attack)"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "Paerāndas",
+      "outcome": "chooser",
+      "opened": "Lepon"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "Paerāndas",
+      "outcome": "chooser",
+      "opened": "Lepon"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "The Eshbrīn",
+      "outcome": "chooser",
+      "opened": "Pebros's Army"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "The Lektān Priesthood",
+      "outcome": "chooser",
+      "opened": "Pebros's Army"
+     },
+     {
+      "view": "city_z6.15",
+      "name": "Epēshu",
+      "outcome": "chooser",
+      "opened": "White Sea (Dagon's attack)"
+     },
+     {
+      "view": "city_z6.15",
+      "name": "The Eshbrīn",
+      "outcome": "chooser",
+      "opened": "Epēshu"
+     }
+    ]
+   },
+   "long_press": {
+    "name_visible": false
+   },
+   "controls": [
+    {
+     "id": "textbox:Search places…",
+     "w": 392,
+     "h": 34,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Switch to night map",
+     "w": 37,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Contents",
+     "w": 79,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:Lexicon",
+     "w": 58,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:Wiki ↗",
+     "w": 56,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:Sim ↗",
+     "w": 51,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "region:Map of the Wide World — ",
+     "w": 412,
+     "h": 698,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Great Chasmous Sea — bod",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Empheros — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Khōrgos — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Zoom in",
+     "w": 44,
+     "h": 44,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Zoom out",
+     "w": 44,
+     "h": 44,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:The Atlas Through the Ag",
+     "w": 70.8,
+     "h": 24.8,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Layers",
+     "w": 44,
+     "h": 44,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:⚑ Follow the journey",
+     "w": 139,
+     "h": 34,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:⛊ Groups & Powers",
+     "w": 120,
+     "h": 29,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Collapse the Company",
+     "w": 24,
+     "h": 24,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "link:A JavaScript library for",
+     "w": 58,
+     "h": 13,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Close panel",
+     "w": 30,
+     "h": 30,
+     "marker": false,
+     "primary": true,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:⚘ Descend into Epēshu",
+     "w": 372,
+     "h": 43,
+     "marker": false,
+     "primary": true,
+     "card_first_action": true,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "checkbox:",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#2",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#3",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#4",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#5",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#6",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#7",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#8",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#9",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#10",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#11",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#12",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#13",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#14",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#15",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#16",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    }
+   ],
+   "reach": {
+    "textbox:Search places…": 0,
+    "button:Switch to night map": 0,
+    "button:Contents": 0,
+    "link:Lexicon": 0,
+    "link:Wiki ↗": 0,
+    "link:Sim ↗": 0,
+    "region:Map of the Wide World — ": 0,
+    "button:Great Chasmous Sea — bod": 0,
+    "button:Empheros — major regions": 0,
+    "button:Khōrgos — major regions": 0,
+    "button:Zoom in": 0,
+    "button:Zoom out": 0,
+    "button:The Atlas Through the Ag": 0,
+    "button:Layers": 0,
+    "button:⚑ Follow the journey": 0,
+    "button:⛊ Groups & Powers": 0,
+    "button:Collapse the Company": 0,
+    "link:A JavaScript library for": 0,
+    "checkbox:": 1,
+    "checkbox:#2": 1,
+    "checkbox:#3": 1,
+    "checkbox:#4": 1,
+    "checkbox:#5": 1,
+    "checkbox:#6": 1,
+    "checkbox:#7": 1,
+    "checkbox:#8": 1,
+    "checkbox:#9": 1,
+    "checkbox:#10": 1,
+    "checkbox:#11": 1,
+    "checkbox:#12": 1,
+    "checkbox:#13": 1,
+    "checkbox:#14": 1,
+    "checkbox:#15": 1,
+    "checkbox:#16": 1,
+    "button:Close panel": 1,
+    "button:⚘ Descend into Epēshu": 1
+   },
+   "reach_max": 1,
+   "primary": {
+    "textbox:Search places…": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 392,
+     "h": 34
+    },
+    "button:Zoom in": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 44,
+     "h": 44
+    },
+    "button:Zoom out": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 44,
+     "h": 44
+    },
+    "button:Layers": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 44,
+     "h": 44
+    },
+    "button:Close panel": {
+     "reach": 1,
+     "bottom25": false,
+     "w": 30,
+     "h": 30
+    },
+    "button:⚘ Descend into Epēshu": {
+     "reach": 1,
+     "bottom25": false,
+     "w": 372,
+     "h": 43
+    }
+   },
+   "city_canvas": {
+    "Kanae": "344f04c8bcb563f16074f49a2782f353c2b13b338b729b123aaa9ea559bc5e19",
+    "Sokundo": "d9d30ddd6b9f4b50b7382034d2031e0ad56c11a40d83757d20ab762cd6817a13",
+    "Tamaron": "49ab9ac3a911a403205a48f1550e4e632435b1b6a77989c423d3d5a5499266b5"
+   },
+   "cityCanvasSha": "606ef25b945740997e832a9bbe726d18ff24eed7d9f96043063c15e5e9be6268",
+   "errors": {
+    "console": 0,
+    "page": 0,
+    "unexplained": 0,
+    "messages": []
+   },
+   "timing": {
+    "wall_ms": 79746
+   },
+   "extras": {
+    "safe_area": {
+     "command": "applied",
+     "env_top_px": 47,
+     "viewport_fit_cover": true,
+     "env_rules": 13,
+     "intersecting": [],
+     "intersecting_n": 0,
+     "safe_area": "applied"
+    },
+    "keyboard": {
+     "vv_height": 300,
+     "inner_height": 300,
+     "search_rect": [
+      10,
+      35,
+      392,
+      34
+     ],
+     "search_visible": true,
+     "font_px": 14
+    }
+   },
+   "extra_errors": {
+    "repeat_visit": {
+     "console": 0,
+     "page": 0,
+     "unexplained": 0,
+     "messages": []
+    },
+    "safe_area": {
+     "console": 0,
+     "page": 0,
+     "unexplained": 0,
+     "messages": []
+    },
+    "keyboard": {
+     "console": 0,
+     "page": 0,
+     "unexplained": 0,
+     "messages": []
+    }
+   }
+  },
+  "landscape": {
+   "env": {
+    "w": 844,
+    "h": 340,
+    "dpr": 3,
+    "coarse": true,
+    "hover": false,
+    "hardwareConcurrency": 8,
+    "deviceMemory": 8,
+    "vv_scale": 1,
+    "viewport_meta": "width=device-width, initial-scale=1.0, viewport-fit=cover"
+   },
+   "shots": {
+    "1-contents": {
+     "path": "docs/mobile/shots/A-U3/atlas-landscape-1-contents.png",
+     "w": 844,
+     "h": 340,
+     "bytes": 92762,
+     "scale": 1,
+     "sha": "f987f101410b4f50b099124916e3676f5a99405eacfdec1fe8dfd43ed7bcf6bb"
+    },
+    "2-whole-chart": {
+     "path": "docs/mobile/shots/A-U3/atlas-landscape-2-whole-chart.png",
+     "w": 844,
+     "h": 340,
+     "bytes": 192090,
+     "scale": 1,
+     "sha": "5460cbad12b7564407a644eb5221de6ad4cdf5e694d87ba61c12a75e4c0cf942"
+    },
+    "3-layers": {
+     "path": "docs/mobile/shots/A-U3/atlas-landscape-3-layers.png",
+     "w": 844,
+     "h": 340,
+     "bytes": 150144,
+     "scale": 1,
+     "sha": "e03c61050e2c373c4d4735a88930772d916549d05c6f2aa1374233662bc65fd8"
+    },
+    "4-place-card": {
+     "path": "docs/mobile/shots/A-U3/atlas-landscape-4-place-card.png",
+     "w": 844,
+     "h": 340,
+     "bytes": 221838,
+     "scale": 1,
+     "sha": "3761019691bea38e8fd6617eee8dd57dfb17b3da072dfb359c23cbf70bdcfc35"
+    }
+   },
+   "first_load": {
+    "bytes": 574492,
+    "requests": 44,
+    "cache_hits": 0,
+    "max_asset": {
+     "path": "/maps-site/",
+     "bytes": 70532
+    },
+    "by_cat": {
+     "html_other": {
+      "requests": 13,
+      "bytes": 347543
+     },
+     "data": {
+      "requests": 16,
+      "bytes": 68427
+     },
+     "tiles": {
+      "requests": 15,
+      "bytes": 158522
+     }
+    },
+    "foreign_origins": [],
+    "routed": [],
+    "aborted": []
+   },
+   "contents": {
+    "open": true,
+    "kickerTop": 32,
+    "titleTop": 51,
+    "footBottom": 518,
+    "cardTops": [
+     163,
+     163,
+     163,
+     316,
+     316
+    ]
+   },
+   "repeat_visit": {
+    "bytes": 4843,
+    "requests": 44,
+    "cache_hits": 44
+   },
+   "doc_scroll": 340,
+   "inner_height": 340,
+   "panel_closed": {
+    "visibility": "visible",
+    "top": 97,
+    "aria_hidden": "true",
+    "leak_px": 243
+   },
+   "share_visible": 0.964,
+   "targets_under_44": {
+    "count": 25,
+    "total": 28,
+    "ratio": 0.8929,
+    "markers": 14,
+    "markers_under44": 14
+   },
+   "min_font_px": {
+    "px": 9.5,
+    "who": "SPAN"
+   },
+   "hover_ungated": 32,
+   "panes": [
+    "leaflet-pane leaflet-map-pane",
+    "leaflet-pane leaflet-tile-pane",
+    "leaflet-pane leaflet-overlay-pane",
+    "leaflet-pane leaflet-shadow-pane",
+    "leaflet-pane leaflet-marker-pane",
+    "leaflet-pane leaflet-tooltip-pane",
+    "leaflet-pane leaflet-popup-pane",
+    "leaflet-pane leaflet-pRealm-pane",
+    "leaflet-pane leaflet-pDistrict-pane",
+    "leaflet-pane leaflet-pTrail-pane",
+    "leaflet-pane leaflet-pLane-pane",
+    "leaflet-pane leaflet-pWay-pane",
+    "leaflet-pane leaflet-pRouteLine-pane",
+    "leaflet-pane leaflet-pJTrail-pane",
+    "leaflet-pane leaflet-pCityWash-pane",
+    "leaflet-pane leaflet-pCity-pane",
+    "leaflet-pane leaflet-pWater-pane",
+    "leaflet-pane leaflet-pMajor-pane",
+    "leaflet-pane leaflet-pMtn-pane",
+    "leaflet-pane leaflet-pLesser-pane",
+    "leaflet-pane leaflet-pSettle-pane",
+    "leaflet-pane leaflet-pMinor-pane",
+    "leaflet-pane leaflet-pOrigin-pane",
+    "leaflet-pane leaflet-pFaction-pane",
+    "leaflet-pane leaflet-pRouteWp-pane",
+    "leaflet-pane leaflet-pJTrav-pane",
+    "leaflet-pane leaflet-pCityPOI-pane"
+   ],
+   "tiers": {
+    "a": 0.7000000000000001,
+    "b": 3.4,
+    "c": 4.2,
+    "d": 7.5
+   },
+   "tiers_derived": {
+    "fit": 0.7,
+    "ceil": 5,
+    "B": 2.1333,
+    "C": 3.5667
+   },
+   "zoom": {
+    "current": 0.7,
+    "min": 0.7,
+    "max": 8
+   },
+   "header_h": 97,
+   "doc_scroll_w": 844,
+   "sw_registrations": 0,
+   "chrome_cover": {
+    "whole": 0.1902,
+    "layers": 0.342,
+    "card": 0.1902,
+    "peek": "no-sheet",
+    "half": "no-sheet"
+   },
+   "layers_tap_opened": false,
+   "layers": {
+    "rect": [
+     356,
+     164,
+     474,
+     102
+    ],
+    "fits_viewport": true,
+    "rows": 16,
+    "row_h": 23,
+    "scrolls": true
+   },
+   "tap_epeshu": {
+    "found": true,
+    "zoom": 3.3,
+    "glyph_center": [
+     422,
+     204
+    ],
+    "stack": [
+     "DIV.leaflet-container leaflet-touch leaf",
+     "DIV.",
+     "DIV.",
+     "BODY."
+    ],
+    "opened_hash": "#view=1236,1417,3.30",
+    "panel_open": false,
+    "panel_title": ""
+   },
+   "card": {
+    "open": false,
+    "rect": [
+     -354,
+     97,
+     340,
+     215
+    ],
+    "covers": 0,
+    "body_scroll_h": 215,
+    "body_client_h": 215,
+    "close_btn": [
+     30,
+     30
+    ]
+   },
+   "tap_fixture": {
+    "n": 28,
+    "complete": true,
+    "wrong_card": 0,
+    "wrong_taps": 0,
+    "no_open": 0,
+    "chooser": 8,
+    "chooser_without_glyph": 0,
+    "views": {
+     "whole": {
+      "zoom": 0.7,
+      "glyphs": 18,
+      "untappable": 7,
+      "unnamed": 0,
+      "tapped": 11,
+      "wrong_card": 0
+     },
+     "leponnia_z3.5": {
+      "zoom": 3.5,
+      "glyphs": 41,
+      "untappable": 38,
+      "unnamed": 0,
+      "tapped": 3,
+      "wrong_card": 0
+     },
+     "epeshu_z4.55": {
+      "zoom": 4.55,
+      "glyphs": 189,
+      "untappable": 185,
+      "unnamed": 0,
+      "tapped": 4,
+      "wrong_card": 0
+     },
+     "epeshu_z4.95": {
+      "zoom": 4.95,
+      "glyphs": 189,
+      "untappable": 184,
+      "unnamed": 0,
+      "tapped": 5,
+      "wrong_card": 0
+     },
+     "city_z6.15": {
+      "zoom": 6.15,
+      "glyphs": 189,
+      "untappable": 184,
+      "unnamed": 0,
+      "tapped": 5,
+      "wrong_card": 0
+     }
+    },
+    "taps": [
+     {
+      "view": "epeshu_z4.55",
+      "name": "Epēshu",
+      "outcome": "chooser",
+      "opened": "The North Coast Packet"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "The Lektān Priesthood",
+      "outcome": "chooser",
+      "opened": "The North Coast Packet"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "Epēshu",
+      "outcome": "chooser",
+      "opened": "White Sea (Dagon's attack)"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "Epēshu",
+      "outcome": "chooser",
+      "opened": "White Sea (Dagon's attack)"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "The Eshbrīn",
+      "outcome": "chooser",
+      "opened": "White Sea (Dagon's attack)"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "The Lektān Priesthood",
+      "outcome": "chooser",
+      "opened": "White Sea (Dagon's attack)"
+     },
+     {
+      "view": "city_z6.15",
+      "name": "Epēshu",
+      "outcome": "chooser",
+      "opened": "White Sea (Dagon's attack)"
+     },
+     {
+      "view": "city_z6.15",
+      "name": "The Eshbrīn",
+      "outcome": "chooser",
+      "opened": "Epēshu"
+     }
+    ]
+   },
+   "long_press": {
+    "name_visible": false
+   },
+   "controls": [
+    {
+     "id": "textbox:Search places…",
+     "w": 360,
+     "h": 34,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Switch to night map",
+     "w": 37,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Contents",
+     "w": 79,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:Lexicon",
+     "w": 70,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:Wiki ↗",
+     "w": 69,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:Sim ↗",
+     "w": 63,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "region:Map of the Wide World — ",
+     "w": 844,
+     "h": 215,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Green Sea — bodies of wa",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Aldronde — bodies of wat",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Great Chasmous Sea — bod",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Empheros — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Relkor — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Garnatos — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Sargāzat — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Khōrgos — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Horat — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Mākh Abath — major regio",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Leponnia — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Zoom in",
+     "w": 44,
+     "h": 44,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:The Atlas Through the Ag",
+     "w": 70.8,
+     "h": 24.8,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Layers",
+     "w": 44,
+     "h": 44,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:⚑ Follow the journey",
+     "w": 139,
+     "h": 34,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:⛊ Groups & Powers",
+     "w": 135,
+     "h": 32,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Collapse the Company",
+     "w": 24,
+     "h": 24,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:A JavaScript library for",
+     "w": 58,
+     "h": 13,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:The Lektān Priesthood",
+     "w": 22,
+     "h": 22,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:White Sea (Dagon's attac",
+     "w": 20,
+     "h": 20,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:Epēshu",
+     "w": 20,
+     "h": 20,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:Zoom out",
+     "w": 44,
+     "h": 44,
+     "marker": false,
+     "primary": true,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:Close the card",
+     "w": 44,
+     "h": 44,
+     "marker": false,
+     "primary": true,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:Epēshu — settlements",
+     "w": 360,
+     "h": 44,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:The Lektān Priesthood — ",
+     "w": 360,
+     "h": 44,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": true
+    },
+    {
+     "id": "checkbox:",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    }
+   ],
+   "reach": {
+    "textbox:Search places…": 0,
+    "button:Switch to night map": 0,
+    "button:Contents": 0,
+    "link:Lexicon": 0,
+    "link:Wiki ↗": 0,
+    "link:Sim ↗": 0,
+    "region:Map of the Wide World — ": 0,
+    "button:Green Sea — bodies of wa": 0,
+    "button:Aldronde — bodies of wat": 0,
+    "button:Great Chasmous Sea — bod": 0,
+    "button:Empheros — major regions": 0,
+    "button:Relkor — major regions": 0,
+    "button:Garnatos — major regions": 0,
+    "button:Sargāzat — major regions": 0,
+    "button:Khōrgos — major regions": 0,
+    "button:Horat — major regions": 0,
+    "button:Mākh Abath — major regio": 0,
+    "button:Leponnia — major regions": 0,
+    "button:Zoom in": 0,
+    "button:The Atlas Through the Ag": 0,
+    "button:Layers": 0,
+    "button:⚑ Follow the journey": 0,
+    "button:⛊ Groups & Powers": 0,
+    "button:Collapse the Company": 0,
+    "link:A JavaScript library for": 0,
+    "checkbox:": 1,
+    "button:The Lektān Priesthood": 1,
+    "button:White Sea (Dagon's attac": 1,
+    "button:Epēshu": 1,
+    "button:Zoom out": 1,
+    "button:Close the card": 1,
+    "button:Epēshu — settlements": 1,
+    "button:The Lektān Priesthood — ": 1
+   },
+   "reach_max": 1,
+   "primary": {
+    "textbox:Search places…": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 360,
+     "h": 34
+    },
+    "button:Zoom in": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 44,
+     "h": 44
+    },
+    "button:Layers": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 44,
+     "h": 44
+    },
+    "button:Zoom out": {
+     "reach": 1,
+     "bottom25": false,
+     "w": 44,
+     "h": 44
+    },
+    "button:Close the card": {
+     "reach": 1,
+     "bottom25": false,
+     "w": 44,
+     "h": 44
+    }
+   },
+   "city_canvas": {
+    "Kanae": "344f04c8bcb563f16074f49a2782f353c2b13b338b729b123aaa9ea559bc5e19",
+    "Sokundo": "d9d30ddd6b9f4b50b7382034d2031e0ad56c11a40d83757d20ab762cd6817a13",
+    "Tamaron": "49ab9ac3a911a403205a48f1550e4e632435b1b6a77989c423d3d5a5499266b5"
+   },
+   "cityCanvasSha": "606ef25b945740997e832a9bbe726d18ff24eed7d9f96043063c15e5e9be6268",
+   "errors": {
+    "console": 0,
+    "page": 0,
+    "unexplained": 0,
+    "messages": []
+   },
+   "timing": {
+    "wall_ms": 70658
+   },
+   "extras": {
+    "safe_area": {
+     "command": "applied",
+     "env_top_px": 0,
+     "viewport_fit_cover": true,
+     "env_rules": 13,
+     "intersecting": [],
+     "intersecting_n": 0,
+     "safe_area": "applied"
+    },
+    "keyboard": {
+     "vv_height": 300,
+     "inner_height": 300,
+     "search_rect": [
+      437,
+      8,
+      360,
+      34
+     ],
+     "search_visible": true,
+     "font_px": 14
+    }
+   },
+   "extra_errors": {
+    "repeat_visit": {
+     "console": 0,
+     "page": 0,
+     "unexplained": 0,
+     "messages": []
+    },
+    "safe_area": {
+     "console": 0,
+     "page": 0,
+     "unexplained": 0,
+     "messages": []
+    },
+    "keyboard": {
+     "console": 0,
+     "page": 0,
+     "unexplained": 0,
+     "messages": []
+    }
+   }
+  },
+  "desktop": {
+   "env": {
+    "w": 1366,
+    "h": 768,
+    "dpr": 1,
+    "coarse": false,
+    "hover": true,
+    "hardwareConcurrency": 8,
+    "deviceMemory": 8,
+    "vv_scale": 1,
+    "viewport_meta": "width=device-width, initial-scale=1.0, viewport-fit=cover"
+   },
+   "shots": {
+    "1-contents": {
+     "path": "docs/mobile/shots/A-U3/atlas-desktop-1-contents.png",
+     "w": 1366,
+     "h": 768,
+     "bytes": 217391,
+     "scale": 1,
+     "sha": "3c501d804f6fbf716f2045007c68dceb658f34cb8e744cd41d13c632c84e71ed"
+    },
+    "2-whole-chart": {
+     "path": "docs/mobile/shots/A-U3/atlas-desktop-2-whole-chart.png",
+     "w": 455,
+     "h": 256,
+     "bytes": 155379,
+     "scale": 0.3333333333333333,
+     "sha": "0b8a7e251a6e998eea22322aaf827abdb9bbe43f0c3bf8fe03611645aca6ebc1",
+     "full_path": "docs/mobile/shots/A-U3/atlas-desktop-2-whole-chart.full.png",
+     "full_sha": "50378f8821f82b3dd950552aa4da7392af17d6b91babcabd4b7c78ee962b9c73"
+    },
+    "3-layers": {
+     "path": "docs/mobile/shots/A-U3/atlas-desktop-3-layers.png",
+     "w": 683,
+     "h": 384,
+     "bytes": 276196,
+     "scale": 0.5,
+     "sha": "616636d4134b3fbbe2091fd9bc7e20c4130e5cfa98c52c6d424aa92f7ebe0ac7",
+     "full_path": "docs/mobile/shots/A-U3/atlas-desktop-3-layers.full.png",
+     "full_sha": "bee8338cadb3092f36df3a9096093391684c0ca294efa05fb3063e6a2da75918"
+    },
+    "4-place-card": {
+     "path": "docs/mobile/shots/A-U3/atlas-desktop-4-place-card.png",
+     "w": 683,
+     "h": 384,
+     "bytes": 290649,
+     "scale": 0.5,
+     "sha": "dc133a4fd66b0c9ff5be3b72c5d1a95ab404c9b3fa7627003fbcf3c8fdfa1ba1",
+     "full_path": "docs/mobile/shots/A-U3/atlas-desktop-4-place-card.full.png",
+     "full_sha": "c625ad796fa308156e909b450b8905abc86e31bf6d6b43ee21ca36102bdb58ca"
+    }
+   },
+   "first_load": {
+    "bytes": 573928,
+    "requests": 44,
+    "cache_hits": 0,
+    "max_asset": {
+     "path": "/maps-site/",
+     "bytes": 70532
+    },
+    "by_cat": {
+     "html_other": {
+      "requests": 13,
+      "bytes": 346979
+     },
+     "data": {
+      "requests": 16,
+      "bytes": 68427
+     },
+     "tiles": {
+      "requests": 15,
+      "bytes": 158522
+     }
+    },
+    "foreign_origins": [],
+    "routed": [],
+    "aborted": []
+   },
+   "contents": {
+    "open": true,
+    "kickerTop": 172,
+    "titleTop": 191,
+    "footBottom": 596,
+    "cardTops": [
+     303,
+     303,
+     303,
+     436,
+     436
+    ]
+   },
+   "repeat_visit": {
+    "bytes": 4843,
+    "requests": 44,
+    "cache_hits": 44
+   },
+   "doc_scroll": 768,
+   "inner_height": 768,
+   "panel_closed": {
+    "visibility": "visible",
+    "top": 52,
+    "aria_hidden": "true",
+    "leak_px": 716
+   },
+   "share_visible": 0.9637,
+   "targets_under_44": {
+    "count": 29,
+    "total": 31,
+    "ratio": 0.9355,
+    "markers": 16,
+    "markers_under44": 16
+   },
+   "min_font_px": {
+    "px": 9.5,
+    "who": "SPAN"
+   },
+   "hover_ungated": 32,
+   "panes": [
+    "leaflet-pane leaflet-map-pane",
+    "leaflet-pane leaflet-tile-pane",
+    "leaflet-pane leaflet-overlay-pane",
+    "leaflet-pane leaflet-shadow-pane",
+    "leaflet-pane leaflet-marker-pane",
+    "leaflet-pane leaflet-tooltip-pane",
+    "leaflet-pane leaflet-popup-pane",
+    "leaflet-pane leaflet-pRealm-pane",
+    "leaflet-pane leaflet-pDistrict-pane",
+    "leaflet-pane leaflet-pTrail-pane",
+    "leaflet-pane leaflet-pLane-pane",
+    "leaflet-pane leaflet-pWay-pane",
+    "leaflet-pane leaflet-pRouteLine-pane",
+    "leaflet-pane leaflet-pJTrail-pane",
+    "leaflet-pane leaflet-pCityWash-pane",
+    "leaflet-pane leaflet-pCity-pane",
+    "leaflet-pane leaflet-pWater-pane",
+    "leaflet-pane leaflet-pMajor-pane",
+    "leaflet-pane leaflet-pMtn-pane",
+    "leaflet-pane leaflet-pLesser-pane",
+    "leaflet-pane leaflet-pSettle-pane",
+    "leaflet-pane leaflet-pMinor-pane",
+    "leaflet-pane leaflet-pOrigin-pane",
+    "leaflet-pane leaflet-pFaction-pane",
+    "leaflet-pane leaflet-pRouteWp-pane",
+    "leaflet-pane leaflet-pJTrav-pane",
+    "leaflet-pane leaflet-pCityPOI-pane"
+   ],
+   "tiers": {
+    "a": 2.35,
+    "b": 3.4,
+    "c": 4.2,
+    "d": 7.5
+   },
+   "tiers_derived": {
+    "fit": 2.35,
+    "ceil": 6,
+    "B": 3.5667,
+    "C": 4.7833
+   },
+   "zoom": {
+    "current": 2.35,
+    "min": 2.35,
+    "max": 8
+   },
+   "header_h": 52,
+   "doc_scroll_w": 1366,
+   "sw_registrations": 0,
+   "chrome_cover": {
+    "whole": 0.0513,
+    "layers": 0.244,
+    "card": 0.2731,
+    "peek": "no-sheet",
+    "half": "no-sheet"
+   },
+   "layers_tap_opened": true,
+   "layers": {
+    "rect": [
+     883,
+     121,
+     469,
+     420
+    ],
+    "fits_viewport": true,
+    "rows": 16,
+    "row_h": 23,
+    "scrolls": false
+   },
+   "tap_epeshu": {
+    "found": true,
+    "zoom": 4.95,
+    "glyph_center": [
+     683,
+     396
+    ],
+    "stack": [
+     "SPAN.glyph",
+     "DIV.leaflet-marker-icon leaflet-zoom-ani",
+     "DIV.leaflet-container leaflet-touch leaf",
+     "DIV."
+    ],
+    "opened_hash": "#place=Epēshu",
+    "panel_open": true,
+    "panel_title": "Epēshu"
+   },
+   "card": {
+    "open": true,
+    "rect": [
+     0,
+     52,
+     340,
+     688
+    ],
+    "covers": 0.223,
+    "body_scroll_h": 5985,
+    "body_client_h": 688,
+    "close_btn": [
+     30,
+     30
+    ]
+   },
+   "tap_fixture": {
+    "n": 73,
+    "complete": true,
+    "wrong_card": 4,
+    "wrong_taps": 4,
+    "no_open": 0,
+    "chooser": 0,
+    "chooser_without_glyph": 0,
+    "views": {
+     "whole": {
+      "zoom": 2.35,
+      "glyphs": 18,
+      "untappable": 2,
+      "unnamed": 0,
+      "tapped": 16,
+      "wrong_card": 0
+     },
+     "leponnia_z3.5": {
+      "zoom": 3.5,
+      "glyphs": 41,
+      "untappable": 29,
+      "unnamed": 0,
+      "tapped": 12,
+      "wrong_card": 0
+     },
+     "epeshu_z4.55": {
+      "zoom": 4.55,
+      "glyphs": 189,
+      "untappable": 166,
+      "unnamed": 0,
+      "tapped": 23,
+      "wrong_card": 2
+     },
+     "epeshu_z4.95": {
+      "zoom": 4.95,
+      "glyphs": 189,
+      "untappable": 176,
+      "unnamed": 0,
+      "tapped": 13,
+      "wrong_card": 1
+     },
+     "city_z6.15": {
+      "zoom": 6.15,
+      "glyphs": 189,
+      "untappable": 180,
+      "unnamed": 0,
+      "tapped": 9,
+      "wrong_card": 1
+     }
+    },
+    "taps": [
+     {
+      "view": "epeshu_z4.55",
+      "name": "Epēshu",
+      "outcome": "other",
+      "opened": "#faction=The Lektān Priesthood"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "The Eshbrīn",
+      "outcome": "other",
+      "opened": "Epēshu"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "The Eshbrīn",
+      "outcome": "other",
+      "opened": "Epēshu"
+     },
+     {
+      "view": "city_z6.15",
+      "name": "The Eshbrīn",
+      "outcome": "other",
+      "opened": "Epēshu"
+     }
+    ]
+   },
+   "long_press": null,
+   "controls": [
+    {
+     "id": "textbox:Search places…",
+     "w": 360,
+     "h": 34,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Switch to night map",
+     "w": 37,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Contents",
+     "w": 79,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:Lexicon",
+     "w": 70,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:Wiki ↗",
+     "w": 69,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:Sim ↗",
+     "w": 63,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "region:Map of the Wide World — ",
+     "w": 1366,
+     "h": 688,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Green Sea — bodies of wa",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Aldronde — bodies of wat",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:White Sea — bodies of wa",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Great Chasmous Sea — bod",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Tungril — bodies of wate",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Empheros — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Alensis — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Relkor — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Garnatos — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Sargāzat — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Khōrgos — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Mākh Abath — major regio",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Leponnia — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Far South — major region",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Far North — major region",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Home Islands — major reg",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Moonless Lands — major r",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Zoom in",
+     "w": 30,
+     "h": 30,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Zoom out",
+     "w": 30,
+     "h": 30,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:The Atlas Through the Ag",
+     "w": 70.8,
+     "h": 24.8,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Layers",
+     "w": 44,
+     "h": 44,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:⚑ Follow the journey",
+     "w": 139,
+     "h": 34,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:⛊ Groups & Powers",
+     "w": 135,
+     "h": 32,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Collapse the Company",
+     "w": 24,
+     "h": 24,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "link:A JavaScript library for",
+     "w": 58,
+     "h": 13,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Epēshu — settlements",
+     "w": 65,
+     "h": 22,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:The Lektān Priesthood",
+     "w": 22,
+     "h": 22,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:The Senate of Epēshu",
+     "w": 22,
+     "h": 22,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:White Sea (Dagon's attac",
+     "w": 20,
+     "h": 20,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:Epēshu",
+     "w": 20,
+     "h": 20,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:Close panel",
+     "w": 30,
+     "h": 30,
+     "marker": false,
+     "primary": true,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:⚘ Descend into Epēshu",
+     "w": 298,
+     "h": 43,
+     "marker": false,
+     "primary": true,
+     "card_first_action": true,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "checkbox:",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#2",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#3",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#4",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#5",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#6",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#7",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#8",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#9",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#10",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#11",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#12",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#13",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#14",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#15",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#16",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    }
+   ],
+   "reach": {
+    "textbox:Search places…": 0,
+    "button:Switch to night map": 0,
+    "button:Contents": 0,
+    "link:Lexicon": 0,
+    "link:Wiki ↗": 0,
+    "link:Sim ↗": 0,
+    "region:Map of the Wide World — ": 0,
+    "button:Green Sea — bodies of wa": 0,
+    "button:Aldronde — bodies of wat": 0,
+    "button:White Sea — bodies of wa": 0,
+    "button:Great Chasmous Sea — bod": 0,
+    "button:Tungril — bodies of wate": 0,
+    "button:Empheros — major regions": 0,
+    "button:Alensis — major regions": 0,
+    "button:Relkor — major regions": 0,
+    "button:Garnatos — major regions": 0,
+    "button:Sargāzat — major regions": 0,
+    "button:Khōrgos — major regions": 0,
+    "button:Mākh Abath — major regio": 0,
+    "button:Leponnia — major regions": 0,
+    "button:Far South — major region": 0,
+    "button:Far North — major region": 0,
+    "button:Home Islands — major reg": 0,
+    "button:Moonless Lands — major r": 0,
+    "button:Zoom in": 0,
+    "button:Zoom out": 0,
+    "button:The Atlas Through the Ag": 0,
+    "button:Layers": 0,
+    "button:⚑ Follow the journey": 0,
+    "button:⛊ Groups & Powers": 0,
+    "button:Collapse the Company": 0,
+    "link:A JavaScript library for": 0,
+    "checkbox:": 1,
+    "checkbox:#2": 1,
+    "checkbox:#3": 1,
+    "checkbox:#4": 1,
+    "checkbox:#5": 1,
+    "checkbox:#6": 1,
+    "checkbox:#7": 1,
+    "checkbox:#8": 1,
+    "checkbox:#9": 1,
+    "checkbox:#10": 1,
+    "checkbox:#11": 1,
+    "checkbox:#12": 1,
+    "checkbox:#13": 1,
+    "checkbox:#14": 1,
+    "checkbox:#15": 1,
+    "checkbox:#16": 1,
+    "button:Epēshu — settlements": 1,
+    "button:The Lektān Priesthood": 1,
+    "button:The Senate of Epēshu": 1,
+    "button:White Sea (Dagon's attac": 1,
+    "button:Epēshu": 1,
+    "button:Close panel": 1,
+    "button:⚘ Descend into Epēshu": 1
+   },
+   "reach_max": 1,
+   "primary": {
+    "textbox:Search places…": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 360,
+     "h": 34
+    },
+    "button:Zoom in": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 30,
+     "h": 30
+    },
+    "button:Zoom out": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 30,
+     "h": 30
+    },
+    "button:Layers": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 44,
+     "h": 44
+    },
+    "button:Close panel": {
+     "reach": 1,
+     "bottom25": false,
+     "w": 30,
+     "h": 30
+    },
+    "button:⚘ Descend into Epēshu": {
+     "reach": 1,
+     "bottom25": false,
+     "w": 298,
+     "h": 43
+    }
+   },
+   "city_canvas": {
+    "Kanae": "8cb72ccb1a1a62dc94e657419e0a1809d839fd06909cc96a6f512c5ee514d8b2",
+    "Sokundo": "798ee6a5fb1561d2bbe5a5c5b389cb0a2b3c5b08216ce14139f64110a57268d5",
+    "Tamaron": "864c5c9de5743f1f34a3bda86f689f742beb99b6a0436be9421bb2a3cf8d8c83"
+   },
+   "cityCanvasSha": "516b2981295d5524003580f85b012ec47c67eb3ae08694f39191a4cf0e2de81e",
+   "errors": {
+    "console": 0,
+    "page": 0,
+    "unexplained": 0,
+    "messages": []
+   },
+   "timing": {
+    "wall_ms": 117770
+   },
+   "extras": {},
+   "extra_errors": {
+    "repeat_visit": {
+     "console": 0,
+     "page": 0,
+     "unexplained": 0,
+     "messages": []
+    }
+   }
+  },
+  "desktop2x": {
+   "env": {
+    "w": 1440,
+    "h": 900,
+    "dpr": 2,
+    "coarse": false,
+    "hover": true,
+    "hardwareConcurrency": 8,
+    "deviceMemory": 8,
+    "vv_scale": 1,
+    "viewport_meta": "width=device-width, initial-scale=1.0, viewport-fit=cover"
+   },
+   "shots": {
+    "1-contents": {
+     "path": "docs/mobile/shots/A-U3/atlas-desktop2x-1-contents.png",
+     "w": 1440,
+     "h": 900,
+     "bytes": 247116,
+     "scale": 1,
+     "sha": "d4ac8c526541319dbf6c478f8a5d9d63f6b96cf5b9a3c9c81e47cb935bf03b75"
+    },
+    "2-whole-chart": {
+     "path": "docs/mobile/shots/A-U3/atlas-desktop2x-2-whole-chart.png",
+     "w": 480,
+     "h": 300,
+     "bytes": 199325,
+     "scale": 0.3333333333333333,
+     "sha": "9c7f41358d491bb12fdf1bf47b46a63f59b383009a4396062c41b31e8faec486",
+     "full_path": "docs/mobile/shots/A-U3/atlas-desktop2x-2-whole-chart.full.png",
+     "full_sha": "7b4b632f21922bc6ed757233d65057fa0dd6d883cba1a3c238dc16151e9bddf9"
+    },
+    "3-layers": {
+     "path": "docs/mobile/shots/A-U3/atlas-desktop2x-3-layers.png",
+     "w": 480,
+     "h": 300,
+     "bytes": 178570,
+     "scale": 0.3333333333333333,
+     "sha": "1bfb17f336a700a910458174688da37c99ab13277e711e65e009907e968bcb85",
+     "full_path": "docs/mobile/shots/A-U3/atlas-desktop2x-3-layers.full.png",
+     "full_sha": "a1178e7a92821e2c97b8181e945b248eddfd6d908aaa2947da75c3a6e21ff581"
+    },
+    "4-place-card": {
+     "path": "docs/mobile/shots/A-U3/atlas-desktop2x-4-place-card.png",
+     "w": 480,
+     "h": 300,
+     "bytes": 180780,
+     "scale": 0.3333333333333333,
+     "sha": "e91352f8a3dbcee5cf4ce08521057dc98fc38e42f7f012cd9ff06e83505c42eb",
+     "full_path": "docs/mobile/shots/A-U3/atlas-desktop2x-4-place-card.full.png",
+     "full_sha": "da2e39f4d2d4f77927c82f2eb63abdc294d7dc582b87dfd0495823ccd31f371a"
+    }
+   },
+   "first_load": {
+    "bytes": 1900005,
+    "requests": 164,
+    "cache_hits": 0,
+    "max_asset": {
+     "path": "/maps-site/",
+     "bytes": 70532
+    },
+    "by_cat": {
+     "html_other": {
+      "requests": 13,
+      "bytes": 347543
+     },
+     "data": {
+      "requests": 16,
+      "bytes": 68427
+     },
+     "tiles": {
+      "requests": 135,
+      "bytes": 1484035
+     }
+    },
+    "foreign_origins": [],
+    "routed": [],
+    "aborted": []
+   },
+   "contents": {
+    "open": true,
+    "kickerTop": 238,
+    "titleTop": 257,
+    "footBottom": 662,
+    "cardTops": [
+     369,
+     369,
+     369,
+     502,
+     502
+    ]
+   },
+   "repeat_visit": {
+    "bytes": 4843,
+    "requests": 164,
+    "cache_hits": 164
+   },
+   "doc_scroll": 900,
+   "inner_height": 900,
+   "panel_closed": {
+    "visibility": "visible",
+    "top": 52,
+    "aria_hidden": "true",
+    "leak_px": 848
+   },
+   "share_visible": 0.8552,
+   "targets_under_44": {
+    "count": 28,
+    "total": 30,
+    "ratio": 0.9333,
+    "markers": 15,
+    "markers_under44": 15
+   },
+   "min_font_px": {
+    "px": 9.5,
+    "who": "SPAN"
+   },
+   "hover_ungated": 32,
+   "panes": [
+    "leaflet-pane leaflet-map-pane",
+    "leaflet-pane leaflet-tile-pane",
+    "leaflet-pane leaflet-overlay-pane",
+    "leaflet-pane leaflet-shadow-pane",
+    "leaflet-pane leaflet-marker-pane",
+    "leaflet-pane leaflet-tooltip-pane",
+    "leaflet-pane leaflet-popup-pane",
+    "leaflet-pane leaflet-pRealm-pane",
+    "leaflet-pane leaflet-pDistrict-pane",
+    "leaflet-pane leaflet-pTrail-pane",
+    "leaflet-pane leaflet-pLane-pane",
+    "leaflet-pane leaflet-pWay-pane",
+    "leaflet-pane leaflet-pRouteLine-pane",
+    "leaflet-pane leaflet-pJTrail-pane",
+    "leaflet-pane leaflet-pCityWash-pane",
+    "leaflet-pane leaflet-pCity-pane",
+    "leaflet-pane leaflet-pWater-pane",
+    "leaflet-pane leaflet-pMajor-pane",
+    "leaflet-pane leaflet-pMtn-pane",
+    "leaflet-pane leaflet-pLesser-pane",
+    "leaflet-pane leaflet-pSettle-pane",
+    "leaflet-pane leaflet-pMinor-pane",
+    "leaflet-pane leaflet-pOrigin-pane",
+    "leaflet-pane leaflet-pFaction-pane",
+    "leaflet-pane leaflet-pRouteWp-pane",
+    "leaflet-pane leaflet-pJTrav-pane",
+    "leaflet-pane leaflet-pCityPOI-pane"
+   ],
+   "tiers": {
+    "a": 2.6,
+    "b": 3.4,
+    "c": 4.2,
+    "d": 7.5
+   },
+   "tiers_derived": {
+    "fit": 2.6,
+    "ceil": 5,
+    "B": 3.4,
+    "C": 4.2
+   },
+   "zoom": {
+    "current": 2.6,
+    "min": 2.6,
+    "max": 8
+   },
+   "header_h": 52,
+   "doc_scroll_w": 1440,
+   "sw_registrations": 0,
+   "chrome_cover": {
+    "whole": 0.0414,
+    "layers": 0.1974,
+    "card": 0.2559,
+    "peek": "no-sheet",
+    "half": "no-sheet"
+   },
+   "layers_tap_opened": true,
+   "layers": {
+    "rect": [
+     957,
+     121,
+     469,
+     420
+    ],
+    "fits_viewport": true,
+    "rows": 16,
+    "row_h": 23,
+    "scrolls": false
+   },
+   "tap_epeshu": {
+    "found": true,
+    "zoom": 5.2,
+    "glyph_center": [
+     720,
+     462
+    ],
+    "stack": [
+     "SPAN.glyph",
+     "DIV.leaflet-marker-icon leaflet-zoom-ani",
+     "DIV.leaflet-container leaflet-touch leaf",
+     "DIV."
+    ],
+    "opened_hash": "#place=Epēshu",
+    "panel_open": true,
+    "panel_title": "Epēshu"
+   },
+   "card": {
+    "open": true,
+    "rect": [
+     0,
+     52,
+     340,
+     820
+    ],
+    "covers": 0.215,
+    "body_scroll_h": 5986,
+    "body_client_h": 820,
+    "close_btn": [
+     30,
+     30
+    ]
+   },
+   "tap_fixture": {
+    "n": 82,
+    "complete": true,
+    "wrong_card": 4,
+    "wrong_taps": 4,
+    "no_open": 0,
+    "chooser": 0,
+    "chooser_without_glyph": 0,
+    "views": {
+     "whole": {
+      "zoom": 2.6,
+      "glyphs": 18,
+      "untappable": 1,
+      "unnamed": 0,
+      "tapped": 17,
+      "wrong_card": 0
+     },
+     "leponnia_z3.5": {
+      "zoom": 3.5,
+      "glyphs": 41,
+      "untappable": 29,
+      "unnamed": 0,
+      "tapped": 12,
+      "wrong_card": 0
+     },
+     "epeshu_z4.55": {
+      "zoom": 4.55,
+      "glyphs": 189,
+      "untappable": 164,
+      "unnamed": 0,
+      "tapped": 25,
+      "wrong_card": 2
+     },
+     "epeshu_z4.95": {
+      "zoom": 4.95,
+      "glyphs": 189,
+      "untappable": 172,
+      "unnamed": 0,
+      "tapped": 17,
+      "wrong_card": 1
+     },
+     "city_z6.15": {
+      "zoom": 6.15,
+      "glyphs": 189,
+      "untappable": 178,
+      "unnamed": 0,
+      "tapped": 11,
+      "wrong_card": 1
+     }
+    },
+    "taps": [
+     {
+      "view": "epeshu_z4.55",
+      "name": "Epēshu",
+      "outcome": "other",
+      "opened": "#faction=The Lektān Priesthood"
+     },
+     {
+      "view": "epeshu_z4.55",
+      "name": "The Eshbrīn",
+      "outcome": "other",
+      "opened": "Epēshu"
+     },
+     {
+      "view": "epeshu_z4.95",
+      "name": "The Eshbrīn",
+      "outcome": "other",
+      "opened": "Epēshu"
+     },
+     {
+      "view": "city_z6.15",
+      "name": "The Eshbrīn",
+      "outcome": "other",
+      "opened": "Epēshu"
+     }
+    ]
+   },
+   "long_press": null,
+   "controls": [
+    {
+     "id": "textbox:Search places…",
+     "w": 360,
+     "h": 34,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Switch to night map",
+     "w": 37,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Contents",
+     "w": 79,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:Lexicon",
+     "w": 70,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:Wiki ↗",
+     "w": 69,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "link:Sim ↗",
+     "w": 63,
+     "h": 31,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "region:Map of the Wide World — ",
+     "w": 1440,
+     "h": 820,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Green Sea — bodies of wa",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Aldronde — bodies of wat",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:White Sea — bodies of wa",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Great Chasmous Sea — bod",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Tungril — bodies of wate",
+     "w": 22,
+     "h": 22,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Empheros — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Alensis — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Relkor — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Garnatos — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Sargāzat — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Khōrgos — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Horat — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Mākh Abath — major regio",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Leponnia — major regions",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Far South — major region",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Far North — major region",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Home Islands — major reg",
+     "w": 24,
+     "h": 24,
+     "marker": true,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Zoom in",
+     "w": 30,
+     "h": 30,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Zoom out",
+     "w": 30,
+     "h": 30,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:The Atlas Through the Ag",
+     "w": 70.8,
+     "h": 24.8,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:Layers",
+     "w": 44,
+     "h": 44,
+     "marker": false,
+     "primary": true,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:⚑ Follow the journey",
+     "w": 139,
+     "h": 34,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": false
+    },
+    {
+     "id": "button:⛊ Groups & Powers",
+     "w": 135,
+     "h": 32,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Collapse the Company",
+     "w": 24,
+     "h": 24,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "link:A JavaScript library for",
+     "w": 58,
+     "h": 13,
+     "marker": false,
+     "primary": false,
+     "reach": 0,
+     "bottom25": true
+    },
+    {
+     "id": "button:Epēshu — settlements",
+     "w": 65,
+     "h": 22,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:The Lektān Priesthood",
+     "w": 22,
+     "h": 22,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:The Senate of Epēshu",
+     "w": 22,
+     "h": 22,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:White Sea (Dagon's attac",
+     "w": 20,
+     "h": 20,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:Epēshu",
+     "w": 20,
+     "h": 20,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:Close panel",
+     "w": 30,
+     "h": 30,
+     "marker": false,
+     "primary": true,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "button:⚘ Descend into Epēshu",
+     "w": 298,
+     "h": 43,
+     "marker": false,
+     "primary": true,
+     "card_first_action": true,
+     "reach": 1,
+     "bottom25": false
+    },
+    {
+     "id": "checkbox:",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#2",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#3",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#4",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#5",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#6",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#7",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#8",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#9",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#10",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#11",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#12",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#13",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#14",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#15",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    },
+    {
+     "id": "checkbox:#16",
+     "w": null,
+     "h": null,
+     "marker": false,
+     "primary": false,
+     "reach": 1,
+     "bottom25": null
+    }
+   ],
+   "reach": {
+    "textbox:Search places…": 0,
+    "button:Switch to night map": 0,
+    "button:Contents": 0,
+    "link:Lexicon": 0,
+    "link:Wiki ↗": 0,
+    "link:Sim ↗": 0,
+    "region:Map of the Wide World — ": 0,
+    "button:Green Sea — bodies of wa": 0,
+    "button:Aldronde — bodies of wat": 0,
+    "button:White Sea — bodies of wa": 0,
+    "button:Great Chasmous Sea — bod": 0,
+    "button:Tungril — bodies of wate": 0,
+    "button:Empheros — major regions": 0,
+    "button:Alensis — major regions": 0,
+    "button:Relkor — major regions": 0,
+    "button:Garnatos — major regions": 0,
+    "button:Sargāzat — major regions": 0,
+    "button:Khōrgos — major regions": 0,
+    "button:Horat — major regions": 0,
+    "button:Mākh Abath — major regio": 0,
+    "button:Leponnia — major regions": 0,
+    "button:Far South — major region": 0,
+    "button:Far North — major region": 0,
+    "button:Home Islands — major reg": 0,
+    "button:Zoom in": 0,
+    "button:Zoom out": 0,
+    "button:The Atlas Through the Ag": 0,
+    "button:Layers": 0,
+    "button:⚑ Follow the journey": 0,
+    "button:⛊ Groups & Powers": 0,
+    "button:Collapse the Company": 0,
+    "link:A JavaScript library for": 0,
+    "checkbox:": 1,
+    "checkbox:#2": 1,
+    "checkbox:#3": 1,
+    "checkbox:#4": 1,
+    "checkbox:#5": 1,
+    "checkbox:#6": 1,
+    "checkbox:#7": 1,
+    "checkbox:#8": 1,
+    "checkbox:#9": 1,
+    "checkbox:#10": 1,
+    "checkbox:#11": 1,
+    "checkbox:#12": 1,
+    "checkbox:#13": 1,
+    "checkbox:#14": 1,
+    "checkbox:#15": 1,
+    "checkbox:#16": 1,
+    "button:Epēshu — settlements": 1,
+    "button:The Lektān Priesthood": 1,
+    "button:The Senate of Epēshu": 1,
+    "button:White Sea (Dagon's attac": 1,
+    "button:Epēshu": 1,
+    "button:Close panel": 1,
+    "button:⚘ Descend into Epēshu": 1
+   },
+   "reach_max": 1,
+   "primary": {
+    "textbox:Search places…": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 360,
+     "h": 34
+    },
+    "button:Zoom in": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 30,
+     "h": 30
+    },
+    "button:Zoom out": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 30,
+     "h": 30
+    },
+    "button:Layers": {
+     "reach": 0,
+     "bottom25": false,
+     "w": 44,
+     "h": 44
+    },
+    "button:Close panel": {
+     "reach": 1,
+     "bottom25": false,
+     "w": 30,
+     "h": 30
+    },
+    "button:⚘ Descend into Epēshu": {
+     "reach": 1,
+     "bottom25": false,
+     "w": 298,
+     "h": 43
+    }
+   },
+   "city_canvas": {
+    "Kanae": "344f04c8bcb563f16074f49a2782f353c2b13b338b729b123aaa9ea559bc5e19",
+    "Sokundo": "d9d30ddd6b9f4b50b7382034d2031e0ad56c11a40d83757d20ab762cd6817a13",
+    "Tamaron": "49ab9ac3a911a403205a48f1550e4e632435b1b6a77989c423d3d5a5499266b5"
+   },
+   "cityCanvasSha": "606ef25b945740997e832a9bbe726d18ff24eed7d9f96043063c15e5e9be6268",
+   "errors": {
+    "console": 0,
+    "page": 0,
+    "unexplained": 0,
+    "messages": []
+   },
+   "timing": {
+    "wall_ms": 130611
+   },
+   "extras": {},
+   "extra_errors": {
+    "repeat_visit": {
+     "console": 0,
+     "page": 0,
+     "unexplained": 0,
+     "messages": []
+    }
+   }
+  }
+ }
+}
