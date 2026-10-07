@@ -391,6 +391,19 @@
       },
       "reason": "the last passed unit's capture was not taken as the reference",
       "ref": "rebase-17"
+    },
+    {
+      "before_unit": "A-U3",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "b51481211e495a68db92b6ad77137a76b3d0cbe694211d78966217c3d05c9003"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "b51481211e495a68db92b6ad77137a76b3d0cbe694211d78966217c3d05c9003"
+      },
+      "reason": "pipeline scripts changed since the reference (UG11 compares against it): .claude/workflows/mobile-build.js",
+      "ref": "rebase-18"
     }
   ]
 }
