@@ -122,40 +122,16 @@
       "attempts": 3,
       "capture": "docs/mobile/captures/A-U2.json",
       "files_sha": {
-        "docs/mobile/accept/A-U2.json": "3349bd3efd862aa5e9176d965b2a9e49bbe647188a0ead72f9a5e0f1fd92579b",
+        "docs/mobile/accept/A-U2.json": "aa053695b38ab12ff63e53f290bcc835c3d77029c294e1539733eeecd5b7df7e",
         "docs/mobile/owner-answers.json": "55896dce184427dd5026f9d0f6afd32d6aff4146f2abf48af28196ef569429d6",
         "maps-site/index.html": "4f9757bfac2319b74735e21abfc324447fff9717eed77464142a1a6590ba19e8"
       },
       "failing": [
         {
-          "key": "UG8.atlas.desktop.metrics",
-          "op": "gate",
-          "expected": "equal to B0 except declared",
-          "got": "tap_fixture.n 270 vs 269; tap_fixture.views.epeshu_z4.55.glyphs 189 vs 187; tap_fixture.views.epeshu_z4.55.untappable 166 vs 165; tap_fixture.views.epeshu_z4.55.tapped 23 vs 22"
-        },
-        {
-          "key": "atlas.desktop.tap_fixture.n",
-          "op": "unchanged",
-          "expected": 269,
-          "got": 270
-        },
-        {
-          "key": "atlas.desktop.tap_fixture.views.epeshu_z4.55.glyphs",
-          "op": "unchanged",
-          "expected": 187,
-          "got": 189
-        },
-        {
-          "key": "atlas.desktop.tap_fixture.views.epeshu_z4.55.untappable",
-          "op": "unchanged",
-          "expected": 165,
-          "got": 166
-        },
-        {
-          "key": "atlas.desktop.tap_fixture.views.epeshu_z4.55.tapped",
-          "op": "unchanged",
-          "expected": 22,
-          "got": 23
+          "key": "review.parity.major",
+          "op": "loop",
+          "expected": "no surviving blocker or major",
+          "got": "Absolute B/C bands reveal later than before on real retina desktops (and short 1x windows) whose map is shorter than the profile; their flyTo targets also move :: The old band (relZoom: fit + (TIER_CEIL-fit)/3 for B, fit + 2(TIER_CEIL-fit)/3 for C) used fit = ceil20(4+log2(mapH/2188)). That formula "
         }
       ],
       "ref_before": "after-A-U1"
