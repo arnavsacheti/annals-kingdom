@@ -983,7 +983,8 @@ async function simStart(P, base, seed, o) {
   await P.page.evaluate(() => { window.ANNALS.speed(0); window.ANNALS.hold(1e12) })
   await pump(P, 3)
 }
-const TAP_VIEWS = [['whole', null, null], ['leponnia_z3.5', 'Epēshu', 3.5], ['epeshu_z4.55', 'Epēshu', 4.55], ['epeshu_z4.95', 'Epēshu', 4.95], ['city_z6.15', 'Epēshu', 6.15]]   // [id, centre on, absolute zoom]: the views A-U3 names
+const TAP_VIEWS = [['whole', null, null], ['leponnia_z3_5', 'Epēshu', 3.5], ['epeshu_z4_55', 'Epēshu', 4.55], ['epeshu_z4_95', 'Epēshu', 4.95], ['city_z6_15', 'Epēshu', 6.15]]   // [id, centre on, absolute zoom]: the views A-U3 names
+// view ids become key segments: no '.' in them, or a declared 'tap_fixture.views.*.x' glob never matches (it split 'leponnia_z3.5' in two)
 const SIM_VIEWS = [['overview', 0, 2200, 0.6], ['mid', 1, 700, 2.4], ['close', 2, 160, 4.0]]   // [name, settlement by descending population, altitude, yaw]
 async function simViews(P) {
   const out = {}
@@ -1576,6 +1577,7 @@ function compareCaptures(a, b) {
 async function selfTest() {
   const out = []; const ok = (n, v, d) => { out.push({n, ok: !!v, d: d || ''}); log((v ? 'ok   ' : 'FAIL ') + n + (d && !v ? ' :: ' + d : '')) }
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'mc-'))
+  ok('tap views: no id holds a dot (key segments)', TAP_VIEWS.every(v => !v[0].includes('.')))
   ok('chooser pick: the row naming the tapped place, kind on either side of a dash', chooserPick(['The Lektān Priesthood — faction', 'Epēshu — settlements'], 'Epēshu') === 1 && chooserPick(['settlements · Epēshu'], 'Epēshu') === 0)
   ok('chooser pick: no row names it -> -1 (never a near miss)', chooserPick(['Epēshu Gate — road', 'Lepon the Old — ruin'], 'Epēshu') === -1 && chooserPick(['Lepon the Old — ruin'], 'Lepon') === -1)
   const sr = d => ({style: {cssText: d}, cssRules: []}), unreadable = {get cssRules() { throw new Error('cross-origin') }}

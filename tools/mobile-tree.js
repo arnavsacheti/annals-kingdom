@@ -12,6 +12,7 @@
 //   node tools/mobile-tree.js write-state --from TMP --to PATH --expect-len N
 //   node tools/mobile-tree.js hold [--repo R]   (fil1 gate, app_sha, pipeline_sha; writes nothing)
 //   node tools/mobile-tree.js accept --file REL [--repo R]   (an accept file read and linted; writes nothing)
+//   node tools/mobile-tree.js measure --dir T   (the measurer's T/code, T/out.json and T/err.txt, relayed; writes nothing)
 //   node tools/mobile-tree.js --self-test
 'use strict'
 const fs = require('fs'), path = require('path'), crypto = require('crypto'), os = require('os'), cp = require('child_process')
@@ -254,6 +255,18 @@ function accept(a) {   // what the loop scores an accept file by, read from disk
     accept: {unit: pick('unit'), profiles: pick('profiles'), gates: pick('gates'), waive: pick('waive'), baseline: pick('baseline'), capture: pick('capture'), files_touched: pick('files_touched'),
       checks_n: Array.isArray(pick('checks')) ? j.checks.length : -1, declared_n: Array.isArray(pick('declared_change_keys')) ? j.declared_change_keys.length : -1}}
 }
+function measure(a) {   // the --accept run as the tool wrote it, so a long failing list reaches the loop whole (each value capped so the line stays relayable)
+  const d = path.resolve(String(a.dir || ''))
+  if (!a.dir || !isDir(d)) fail('--dir must be the measurer temp dir')
+  const rd = f => { try { return fs.readFileSync(path.join(d, f), 'utf8') } catch { return null } }
+  const code = (rd('code') || '').trim(), out = rd('out.json'), err = rd('err.txt') || ''
+  let res = null
+  try { res = out === null ? null : JSON.parse(out) } catch {}
+  const cap = v => { const t = typeof v === 'string' ? v : JSON.stringify(v === undefined ? null : v); return t.length > 300 ? t.slice(0, 297) + '...' : t }
+  const result = res && typeof res === 'object' && !Array.isArray(res) ? {unit: res.unit ?? null, pass: res.pass ?? null,
+    failing: Array.isArray(res.failing) ? res.failing.map(f => ({key: String(f && f.key), op: String(f && f.op), expected: cap(f && f.expected), got: cap(f && f.got)})) : null} : null
+  return {exit_code: /^-?\d+$/.test(code) ? +code : -1, result, failing_n: result && result.failing ? result.failing.length : -1, stderr_tail: err.slice(-400)}
+}
 function writeState(a) {
   if (!a.from || !a.to) fail('write-state needs --from and --to')
   if (!/^\d+$/.test(a['expect-len'] || '')) fail('--expect-len must be a non-negative integer')
@@ -398,6 +411,15 @@ function selfTest() {
     bad(run(['accept', '--file', '../x.json']), 'accept outside docs/mobile/accept')
     const tam = {...h2, sum: h2.sum, pipeline_sha: {...h2.pipeline_sha, 'tools/street-drift.js': h2.pipeline_sha['tools/street-drift.js'].replace(/^./, ch => ch === 'a' ? 'b' : 'a')}}
     ok(!lenOk(tam) && tam.len === h2.len, 'sum: one altered hex digit keeps len but fails the sum')
+    const MD = path.join(T, 'meas'); fs.mkdirSync(MD)
+    const long = Array.from({length: 120}, (_, i) => ({key: 'atlas.iphone13.k' + i, op: 'unchanged', expected: i, got: {x: 'y'.repeat(400)}}))
+    fs.writeFileSync(path.join(MD, 'out.json'), JSON.stringify({unit: 'T9', pass: false, failing: long, notes: {a: 1}})); fs.writeFileSync(path.join(MD, 'code'), '1\n'); fs.writeFileSync(path.join(MD, 'err.txt'), 'e'.repeat(900))
+    const me = good(run(['measure', '--dir', MD], false), 'measure')
+    ok(me.exit_code === 1 && me.failing_n === 120 && me.result.failing.length === 120 && me.result.unit === 'T9' && me.result.pass === false && me.result.failing[7].key === 'atlas.iphone13.k7' && me.result.failing[7].expected === '7' && me.result.failing[7].got.length === 300 && me.stderr_tail.length === 400 && lenOk(me), 'measure: a 120-entry failing list relays whole, values capped, len and sum hold')
+    fs.writeFileSync(path.join(MD, 'out.json'), 'not json'); fs.writeFileSync(path.join(MD, 'code'), '0')
+    const mn = good(run(['measure', '--dir', MD], false), 'measure unparseable')
+    ok(mn.result === null && mn.failing_n === -1 && mn.exit_code === 0, 'measure: an unparseable out.json is null, never invented')
+    bad(run(['measure', '--dir', path.join(T, 'nope')], false), 'measure without a dir')
     const r5 = good(run(['restore', '--unit', 'T4', '--snap', SNAP]), 'restore T4')
     ok(eq(r5.reverted, ['.github/workflows/pages.yml', '.gitignore', 'DEPLOY.md']) && RD('.github/workflows/pages.yml') === 'on: push\n' && RD('.gitignore') === 'x\n' && !lst(path.join(T, 'DEPLOY.md')), 'restore T4 reverts .github/x and .gitignore')
   } finally { fs.rmSync(T, {recursive: true, force: true}) }
@@ -410,8 +432,8 @@ function main() {
   try {
     const a = parseArgs(argv)
     if (a.selfTest) { process.stdout.write(JSON.stringify({ok: true, self_test: selfTest()}) + '\n'); return }
-    const cmd = a._[0], fn = {snapshot, check, restore, 'write-state': writeState, hold, accept}[cmd]
-    if (!fn || a._.length !== 1) fail('usage: mobile-tree.js snapshot|check|restore|write-state|hold|accept ... | --self-test')
+    const cmd = a._[0], fn = {snapshot, check, restore, 'write-state': writeState, hold, accept, measure}[cmd]
+    if (!fn || a._.length !== 1) fail('usage: mobile-tree.js snapshot|check|restore|write-state|hold|accept|measure ... | --self-test')
     const f = canon(fn(a)), t = JSON.stringify(f)
     process.stdout.write(JSON.stringify({ok: true, ...f, len: t.length, sum: fnv(t)}) + '\n')
   } catch (e) {

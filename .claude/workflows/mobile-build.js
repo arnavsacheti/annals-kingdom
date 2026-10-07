@@ -112,7 +112,7 @@ const SNAPR = OBJ({ok: B, len: I, sum: S, error: S, manifest: MAN, pipeline_sha:
 const IMPL = OBJ({summary: S, files_changed: SA, strings_added: SA, notes: S})
 const CHECK = OBJ({ok: B, len: I, sum: S, pipeline_sha: SHAS, accept_sha: NS, owner_sha: NS, changed: SA, tree_changed: SA, tree_base_sha256: S, ug1: OBJ({index: S, atlas: S}), files_sha: NSHAS, app_sha: SHAS})
 const RESTR = OBJ({ok: B, len: I, sum: S, dirs: SA, files: NSHAS, accept_sha: NS, owner_sha: NS, tree_changed: SA, tree_base_sha256: S, reverted: SA})
-const MEAS = OBJ({exit_code: I, result: {type: ['object', 'null']}, failing_n: I, infra_error: S, stderr_tail: S})
+const MEAS = OBJ({ok: B, len: I, sum: S, exit_code: I, result: {type: ['object', 'null']}, failing_n: I, stderr_tail: S, infra_error: S, dir: S})
 const FIND = OBJ({findings: {type: 'array', items: OBJ({severity: {type: 'string', enum: ['blocker', 'major', 'minor', 'nit']}, title: S, evidence: S, where: S})}})
 const REFUTE = OBJ({refuted: B, reason: S})
 const ADV = OBJ({path: S, sha256: S, orig_sha256: S, index_sha: S, atlas_sha: S, pipeline_sha: SHAS})
@@ -123,6 +123,7 @@ const canonJ = v => Array.isArray(v) ? v.map(canonJ) : v && typeof v === 'object
 const same = (a, b) => JSON.stringify(canonJ(a ?? null)) === JSON.stringify(canonJ(b ?? null))
 const fnv = s => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0 } return h.toString(16).padStart(8, '0') }   // must equal fnv in tools/mobile-tree.js
 const lenOk = r => { if (!r || r.ok !== true || !Number.isInteger(r.len)) return false; const t = JSON.stringify(canonJ(Object.fromEntries(Object.entries(r).filter(([k]) => k !== 'ok' && k !== 'len' && k !== 'sum')))); return t.length === r.len && fnv(t) === r.sum }   // tools/mobile-tree.js prints len and sum over every other field: a relay that dropped or altered anything, even one hex digit, fails here
+const measOk = m => !!m && lenOk(Object.fromEntries(Object.entries(m).filter(([k]) => k !== 'infra_error' && k !== 'dir')))   // the measure relay: dir and infra_error are the agent's own, outside the tool's line
 const diffKeys = (a, b) => [...new Set([...Object.keys(a || {}), ...Object.keys(b || {})])].filter(k => (a || {})[k] !== (b || {})[k])
 async function crit(p, o) { return (await agent(p, o)) ?? (await agent(p, {...o, label: o.label + ' (retry)'})) }
 const F = (key, expected, got) => ({key, op: 'loop', expected, got: typeof got === 'string' ? got.slice(0, 300) : got})
@@ -447,11 +448,19 @@ function checkWhy(u, snap, c) {   // UG1, UG11 hash gate, accept read-only, writ
   return out
 }
 async function measure(u, round) {
-  const m = await crit(P(`Measure unit ${u.id} (round ${round}): run the tool and report; do not interpret, do not edit anything. ${CDN_STEP} From ${REPO} run: ${NODE_TOOL} --accept ${docsAccept(u.id)} --jobs ${JOBS}${serverFlag(u)} --cdn-dir <T or the dir above>, stdout to T/out.json, stderr to T/err.txt. ${LONG_RUN} (The tool writes docs/mobile/captures/${u.id}.json itself; write nothing else.) Then return {exit_code (the integer in T/code), result: T/out.json parsed (null when it does not parse), failing_n: the length of result.failing computed by node (-1 when absent), infra_error: "" or a short reason when the tool could not start (browser, port, CDN, Playwright), stderr_tail: the last 1500 characters of T/err.txt}.`),
+  let m = await crit(P(`Measure unit ${u.id} (round ${round}): run the tool and report; do not interpret, do not edit anything. ${CDN_STEP} From ${REPO} run: ${NODE_TOOL} --accept ${docsAccept(u.id)} --jobs ${JOBS}${serverFlag(u)} --cdn-dir <T or the dir above>, stdout to T/out.json, stderr to T/err.txt. ${LONG_RUN} (The tool writes docs/mobile/captures/${u.id}.json itself; write nothing else.) When T/code exists, run exactly: ${TREE_TOOL} measure --dir <the absolute path of T>. It prints exactly one line of JSON (the tool's result, its exit code and stderr tail, with a length and checksum the workflow re-checks). Return that line parsed, every key and value exactly as printed: never shorten, summarize or drop entries, however long the failing list is. Add two keys: dir (the absolute path of T) and infra_error ("" or a short reason when the capture tool could not start: browser, port, CDN, Playwright). If the relay command exits non-zero, return {ok: false, len: -1, sum: "", exit_code: -1, result: null, failing_n: -1, stderr_tail: "", infra_error: <its error text>, dir: <T>}.`),
     {label: 'measure ' + u.id + ' r' + round, phase: 'Measure', schema: MEAS, model: 'sonnet', effort: 'low'})
   if (!m) return {pass: false, infra: true, failing: [F('measure.died', 'a measurement', 'died twice')]}
+  if (!measOk(m) && !m.infra_error && /^\//.test(m.dir || '')) {   // a relay that altered or cut the tool's line gets one fresh agent over the same finished run
+    const m2 = await crit(P(`Relay a finished measurement of unit ${u.id} (write nothing, run nothing else). From ${REPO} run exactly this one command:
+${TREE_TOOL} measure --dir ${JSON.stringify(m.dir)}
+It prints exactly one line of JSON. Return that line parsed, every key and value exactly as printed (never shorten, summarize or drop entries), plus dir: ${JSON.stringify(m.dir)} and infra_error: "". If it exits non-zero, return {ok: false, len: -1, sum: "", exit_code: -1, result: null, failing_n: -1, stderr_tail: "", infra_error: "", dir: ${JSON.stringify(m.dir)}}.`),
+      {label: 'measure ' + u.id + ' r' + round + ' (relay retry)', phase: 'Measure', schema: MEAS, ...MECH})
+    if (m2) m = {...m2, infra_error: '', dir: m.dir}
+  }
   const r = m.result
   if (m.infra_error || m.exit_code === 2 || !r || typeof r !== 'object') return {pass: false, infra: true, failing: [F('measure.infra', 'the tool ran', m.infra_error || ('exit ' + m.exit_code + ' ' + (m.stderr_tail || '').slice(-200)))]}
+  if (!measOk(m)) return {pass: false, failing: [F('measure.digest', 'the tool output relayed intact (len and sum)', 'mismatch twice')]}
   if (!Array.isArray(r.failing) || r.failing.length !== m.failing_n) return {pass: false, failing: [F('measure.digest', 'failing list intact (' + m.failing_n + ')', Array.isArray(r.failing) ? r.failing.length : 'absent')]}
   if ((m.exit_code === 0) !== (r.pass === true)) return {pass: false, failing: [F('measure.inconsistent', 'exit 0 iff pass', 'exit ' + m.exit_code + ', pass ' + r.pass)]}
   const pass = m.exit_code === 0 && r.pass === true && r.failing.length === 0 && r.unit === u.id
