@@ -3,7 +3,7 @@
   "item": "Mobile 5",
   "app_sha": {
     "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-    "maps-site/index.html": "4f9757bfac2319b74735e21abfc324447fff9717eed77464142a1a6590ba19e8"
+    "maps-site/index.html": "b51481211e495a68db92b6ad77137a76b3d0cbe694211d78966217c3d05c9003"
   },
   "baselines": {
     "B0": "7dbac85b923ea59d8c93248a4f57fa9e6ba1a40977125f8dedde2ff43453cfd3",
@@ -118,38 +118,34 @@
       "ref_before": "rebase-9"
     },
     "A-U2": {
-      "status": "failed",
-      "attempts": 3,
+      "status": "passed",
+      "attempts": 1,
       "capture": "docs/mobile/captures/A-U2.json",
       "files_sha": {
-        "docs/mobile/accept/A-U2.json": "aa053695b38ab12ff63e53f290bcc835c3d77029c294e1539733eeecd5b7df7e",
-        "docs/mobile/owner-answers.json": "55896dce184427dd5026f9d0f6afd32d6aff4146f2abf48af28196ef569429d6",
-        "maps-site/index.html": "4f9757bfac2319b74735e21abfc324447fff9717eed77464142a1a6590ba19e8"
+        "docs/mobile/accept/A-U2.json": "19ff17d2829efcf9a82c5e4724cdb50dc5bde4a032e0be41431959ed801a5d96",
+        "docs/mobile/owner-answers.json": "c51dc89d17f867d3965573fe62b75136d0ac27f7fdf27600b093cfc1badc8293",
+        "maps-site/index.html": "b51481211e495a68db92b6ad77137a76b3d0cbe694211d78966217c3d05c9003"
       },
-      "failing": [
-        {
-          "key": "review.parity.major",
-          "op": "loop",
-          "expected": "no surviving blocker or major",
-          "got": "Absolute B/C bands reveal later than before on real retina desktops (and short 1x windows) whose map is shorter than the profile; their flyTo targets also move :: The old band (relZoom: fit + (TIER_CEIL-fit)/3 for B, fit + 2(TIER_CEIL-fit)/3 for C) used fit = ceil20(4+log2(mapH/2188)). That formula "
-        }
-      ],
+      "failing": [],
       "ref_before": "after-A-U1"
     },
     "A-U3": {
-      "status": "skipped",
-      "attempts": 0,
-      "capture": null,
-      "files_sha": {},
+      "status": "failed",
+      "attempts": 3,
+      "capture": "docs/mobile/captures/A-U3.json",
+      "files_sha": {
+        "docs/mobile/accept/A-U3.json": "ba9bb70292ce633ac7783236e2856cb46bbfd50738b1b09b8de238ebb1218257",
+        "maps-site/index.html": "b51481211e495a68db92b6ad77137a76b3d0cbe694211d78966217c3d05c9003"
+      },
       "failing": [
         {
-          "key": "skipped",
+          "key": "measure.digest",
           "op": "loop",
-          "expected": "a run",
-          "got": "dependency not satisfied: A-U2 is failed"
+          "expected": "failing list intact (67)",
+          "got": "absent"
         }
       ],
-      "ref_before": null
+      "ref_before": "after-A-U2"
     },
     "A-U4": {
       "status": "skipped",
@@ -161,7 +157,7 @@
           "key": "skipped",
           "op": "loop",
           "expected": "a run",
-          "got": "dependency not satisfied: A-U3 is skipped"
+          "got": "dependency not satisfied: A-U3 is failed"
         }
       ],
       "ref_before": null
@@ -368,6 +364,20 @@
       },
       "reason": "unit passed",
       "ref": "after-A-U1"
+    },
+    {
+      "before_unit": null,
+      "after_unit": "A-U2",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "b51481211e495a68db92b6ad77137a76b3d0cbe694211d78966217c3d05c9003"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "b51481211e495a68db92b6ad77137a76b3d0cbe694211d78966217c3d05c9003"
+      },
+      "reason": "unit passed",
+      "ref": "after-A-U2"
     }
   ]
 }

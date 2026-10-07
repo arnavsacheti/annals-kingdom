@@ -830,6 +830,9 @@ var TILES_V=1;function tv(u){return u+(u.indexOf('?')<0?'?t=':'&t=')+TILES_V;}
   // city's own cityMaxZ near its footprint, up to Z_STREET. TIER_CEIL keeps the A/B/C
   // reveal tiers pinned to the OLD fixed ceiling so dynamic maxZoom can't jitter them.
   var Z_STREET=11.5, Z_OPEN_MAX=8.0, Z_TIER_D=7.5;
+  // A19: absolute B/C reveal bands, the same zoom on every device (owner q1 a: the
+  // earlier of the two measured desktops, 1366x768@1 and 1440x900@2).
+  var Z_TIER_B=3.4, Z_TIER_C=4.2;
   var TIER_CEIL=RETINA?5:6;
   var FOOT_R={capital:26,town:14,village:9,ruin:8};   // footprint radius, world px, by kind
 
@@ -898,8 +901,8 @@ var TILES_V=1;function tv(u){return u+(u.indexOf('?')<0?'?t=':'&t=')+TILES_V;}
   // ---- initial view: vertical-lock so the atlas ALWAYS fills the height ----
   // minZoom is the smallest z with (IMG_H·2^(z−NZ)) ≥ viewport height, snapped up
   // to zoomSnap; below it parchment void would show above/below. Horizontal panning
-  // stays free inside maxBounds (Google-Maps side-scroll feel). fitZoom feeds the
-  // tier system (tierZoom/tierFor/revealZoom), so the reveal tiers ride on it.
+  // stays free inside maxBounds (Google-Maps side-scroll feel). fitZoom is tier A and
+  // the floor of the absolute B/C bands; fly targets still ride on it (relZoom).
   function fillZoom(){
     var vh=map.getSize().y||map.getContainer().clientHeight||IMG_H;
     var z=NZ+Math.log(vh/IMG_H)/Math.LN2;   // IMG_H·2^(z−NZ) = vh
@@ -1206,7 +1209,7 @@ var TILES_V=1;function tv(u){return u+(u.indexOf('?')<0?'?t=':'&t=')+TILES_V;}
     if(i<0||i>=ROUTE.length)return;
     if(jrn.on&&JSTOPS.length){jStopTo(i);return;}   // journey mode: walk the traveller to that stop
     var p=ROUTE[i],c=clampToFrame(p.x,p.y);
-    map.flyTo(px(c.x,c.y),Math.max(map.getZoom(),tierZoom('c')),{duration:1.2,easeLinearity:.25});
+    map.flyTo(px(c.x,c.y),Math.max(map.getZoom(),flyZoom('c')),{duration:1.2,easeLinearity:.25});
     openWaypoint(i);
   }
 
@@ -1271,18 +1274,23 @@ var TILES_V=1;function tv(u){return u+(u.indexOf('?')<0?'?t=':'&t=')+TILES_V;}
   };
   var LAYERS={}, LESSER=L.layerGroup();   // LESSER: traced-census 'Lesser settlements' (tier C only)
 
-  // tier boundary zooms, relative to the (viewport-dependent) fit zoom so tiers
-  // A/B/C are all reachable within [minZoom,maxZoom]; the fit view sits in tier A
-  // and the range up to maxZoom is split into thirds.
+  // tier boundary zooms: A from the fit zoom, B/C absolute (never below the fit zoom)
   function tierZoom(t){
-    var range=TIER_CEIL-fitZoom;                 // pinned to the fixed atlas ceiling, not
-    if(range<=0)return fitZoom;                   // the live dynamic maxZoom (see constants)
+    return t==='c'?Math.max(Z_TIER_C,fitZoom):t==='b'?Math.max(Z_TIER_B,fitZoom):fitZoom;
+  }
+  // the old relative bands: thirds of fit..TIER_CEIL (the fixed atlas ceiling, not
+  // the live dynamic maxZoom). Flies keep them so no desktop fly target moves, and
+  // never land short of the revealed tier.
+  function relZoom(t){
+    var range=TIER_CEIL-fitZoom;
+    if(range<=0)return fitZoom;
     return t==='c'?fitZoom+2*range/3:t==='b'?fitZoom+range/3:fitZoom;
   }
+  function flyZoom(t){return Math.max(relZoom(t),tierZoom(t));}
   function revealZoom(type){
     // broad features read at tier B; points reveal fully (labels + waypoints) at tier C
     var t=(type==='Major Regions'||type==='Bodies of Water')?'b':'c';
-    return Math.max(map.getZoom(),tierZoom(t));
+    return Math.max(map.getZoom(),flyZoom(t));
   }
   function flyToMarker(m){
     map.flyTo(m._mk.getLatLng(),revealZoom(m.type),{duration:.9,easeLinearity:.25});
@@ -1547,7 +1555,7 @@ var TILES_V=1;function tv(u){return u+(u.indexOf('?')<0?'?t=':'&t=')+TILES_V;}
     return ((w[0]?w[0][0]:'?')+(w[1]?w[1][0]:'')).toUpperCase();}
   function slugUrl(s){return WIKI_BASE+String(s).split('/').map(encodeURIComponent).join('/');}
   function flyTo(x,y,t){var c=clampToFrame(x,y);
-    map.flyTo(px(c.x,c.y),Math.max(map.getZoom(),tierZoom(t||'c')),
+    map.flyTo(px(c.x,c.y),Math.max(map.getZoom(),flyZoom(t||'c')),
     {duration:.9,easeLinearity:.25});}
   function alignColor(a){return a==='ally'?'#5a6b34':a==='foe'?'#8a3c28':
     a==='tension'?'#8a6224':'#7a6a53';}
@@ -3767,6 +3775,7 @@ var TILES_V=1;function tv(u){return u+(u.indexOf('?')<0?'?t=':'&t=')+TILES_V;}
       // meshed world (spec MW): descend into a city + the generator's overlay hook
       descend:function(n,poi){return flyIntoCity(n,poi||0);},
       registerCityOverlay:registerCityOverlay,
+      tiers:function(){return {a:tierZoom('a'),b:tierZoom('b'),c:tierZoom('c'),d:Z_TIER_D};},
       cityAnchors:CITY_ANCHORS, cityReg:CITYREG, cityTraits:CITY_TRAITS};
   });
 })();

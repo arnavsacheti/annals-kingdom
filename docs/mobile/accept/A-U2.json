@@ -1,0 +1,381 @@
+{
+  "unit": "A-U2",
+  "profiles": [
+    "iphone13",
+    "pixel7",
+    "landscape",
+    "desktop",
+    "desktop2x"
+  ],
+  "clock": "virtual",
+  "files_touched": [
+    "maps-site/index.html",
+    "docs/mobile/accept/A-U2.json",
+    "docs/mobile/owner-answers.json"
+  ],
+  "gates": [
+    "UG1",
+    "UG2",
+    "UG3",
+    "UG4",
+    "UG5",
+    "UG6",
+    "UG7",
+    "UG8",
+    "UG9",
+    "UG10",
+    "UG11"
+  ],
+  "baseline": "after-A-U1",
+  "declared_change_keys": [
+    "atlas.iphone13.tiers",
+    "atlas.pixel7.tiers",
+    "atlas.landscape.tiers",
+    "atlas.desktop.tiers",
+    "atlas.desktop2x.tiers",
+    "atlas.desktop.tap_fixture.n",
+    "atlas.desktop.tap_fixture.views.epeshu_z4.55.glyphs",
+    "atlas.desktop.tap_fixture.views.epeshu_z4.55.untappable",
+    "atlas.desktop.tap_fixture.views.epeshu_z4.55.tapped",
+    "atlas.iphone13.first_load.bytes",
+    "atlas.iphone13.first_load.max_asset.bytes",
+    "atlas.iphone13.first_load.by_cat.html_other.bytes",
+    "atlas.pixel7.first_load.bytes",
+    "atlas.pixel7.first_load.max_asset.bytes",
+    "atlas.pixel7.first_load.by_cat.html_other.bytes",
+    "atlas.landscape.first_load.bytes",
+    "atlas.landscape.first_load.max_asset.bytes",
+    "atlas.landscape.first_load.by_cat.html_other.bytes",
+    "atlas.desktop.first_load.bytes",
+    "atlas.desktop.first_load.max_asset.bytes",
+    "atlas.desktop.first_load.by_cat.html_other.bytes",
+    "atlas.desktop2x.first_load.bytes",
+    "atlas.desktop2x.first_load.max_asset.bytes",
+    "atlas.desktop2x.first_load.by_cat.html_other.bytes"
+  ],
+  "declared_first_view_growth": {
+    "bytes": 512,
+    "requests": 0
+  },
+  "mask": [],
+  "strings": [],
+  "checks": [
+    {
+      "key": "atlas.iphone13.tiers.a",
+      "op": "within",
+      "value": 1.9,
+      "tol": 1e-06,
+      "was": null
+    },
+    {
+      "key": "atlas.iphone13.tiers.b",
+      "op": "within",
+      "value": 3.4,
+      "tol": 1e-06,
+      "was": null
+    },
+    {
+      "key": "atlas.iphone13.tiers.c",
+      "op": "within",
+      "value": 4.2,
+      "tol": 1e-06,
+      "was": null
+    },
+    {
+      "key": "atlas.pixel7.tiers.a",
+      "op": "within",
+      "value": 2.4,
+      "tol": 1e-06,
+      "was": null
+    },
+    {
+      "key": "atlas.pixel7.tiers.b",
+      "op": "within",
+      "value": 3.4,
+      "tol": 1e-06,
+      "was": null
+    },
+    {
+      "key": "atlas.pixel7.tiers.c",
+      "op": "within",
+      "value": 4.2,
+      "tol": 1e-06,
+      "was": null
+    },
+    {
+      "key": "atlas.landscape.tiers.a",
+      "op": "within",
+      "value": 0.7,
+      "tol": 1e-06,
+      "was": null
+    },
+    {
+      "key": "atlas.landscape.tiers.b",
+      "op": "within",
+      "value": 3.4,
+      "tol": 1e-06,
+      "was": null
+    },
+    {
+      "key": "atlas.landscape.tiers.c",
+      "op": "within",
+      "value": 4.2,
+      "tol": 1e-06,
+      "was": null
+    },
+    {
+      "key": "atlas.desktop.tiers.a",
+      "op": "within",
+      "value": 2.35,
+      "tol": 1e-06,
+      "was": null
+    },
+    {
+      "key": "atlas.desktop.tiers.b",
+      "op": "within",
+      "value": 3.4,
+      "tol": 1e-06,
+      "was": null
+    },
+    {
+      "key": "atlas.desktop.tiers.c",
+      "op": "within",
+      "value": 4.2,
+      "tol": 1e-06,
+      "was": null
+    },
+    {
+      "key": "atlas.desktop2x.tiers.a",
+      "op": "within",
+      "value": 2.6,
+      "tol": 1e-06,
+      "was": null
+    },
+    {
+      "key": "atlas.desktop2x.tiers.b",
+      "op": "within",
+      "value": 3.4,
+      "tol": 1e-06,
+      "was": null
+    },
+    {
+      "key": "atlas.desktop2x.tiers.c",
+      "op": "within",
+      "value": 4.2,
+      "tol": 1e-06,
+      "was": null
+    },
+    {
+      "key": "atlas.desktop.tiers.b",
+      "op": "<=",
+      "value": 3.5667,
+      "was": null
+    },
+    {
+      "key": "atlas.desktop.tiers.c",
+      "op": "<=",
+      "value": 4.7833,
+      "was": null
+    },
+    {
+      "key": "atlas.desktop2x.tiers.b",
+      "op": "<=",
+      "value": 3.4,
+      "was": null
+    },
+    {
+      "key": "atlas.desktop2x.tiers.c",
+      "op": "<=",
+      "value": 4.2,
+      "was": null
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.n",
+      "op": "between",
+      "value": [
+        269,
+        271
+      ],
+      "was": 269
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture",
+      "op": "deep-equals",
+      "ref": "after-A-U1"
+    },
+    {
+      "key": "atlas.iphone13.first_load.bytes",
+      "op": "between",
+      "value": [
+        762552,
+        763064
+      ],
+      "was": 762552
+    },
+    {
+      "key": "atlas.iphone13.first_load.max_asset.bytes",
+      "op": "between",
+      "value": [
+        69098,
+        69610
+      ],
+      "was": 69098
+    },
+    {
+      "key": "atlas.iphone13.first_load.by_cat.html_other.bytes",
+      "op": "between",
+      "value": [
+        346109,
+        346621
+      ],
+      "was": 346109
+    },
+    {
+      "key": "atlas.iphone13.first_load.requests",
+      "op": "==",
+      "value": 54,
+      "was": 54
+    },
+    {
+      "key": "atlas.pixel7.first_load.bytes",
+      "op": "between",
+      "value": [
+        637152,
+        637664
+      ],
+      "was": 637152
+    },
+    {
+      "key": "atlas.pixel7.first_load.max_asset.bytes",
+      "op": "between",
+      "value": [
+        69098,
+        69610
+      ],
+      "was": 69098
+    },
+    {
+      "key": "atlas.pixel7.first_load.by_cat.html_other.bytes",
+      "op": "between",
+      "value": [
+        346109,
+        346621
+      ],
+      "was": 346109
+    },
+    {
+      "key": "atlas.pixel7.first_load.requests",
+      "op": "==",
+      "value": 44,
+      "was": 44
+    },
+    {
+      "key": "atlas.landscape.first_load.bytes",
+      "op": "between",
+      "value": [
+        573058,
+        573570
+      ],
+      "was": 573058
+    },
+    {
+      "key": "atlas.landscape.first_load.max_asset.bytes",
+      "op": "between",
+      "value": [
+        69098,
+        69610
+      ],
+      "was": 69098
+    },
+    {
+      "key": "atlas.landscape.first_load.by_cat.html_other.bytes",
+      "op": "between",
+      "value": [
+        346109,
+        346621
+      ],
+      "was": 346109
+    },
+    {
+      "key": "atlas.landscape.first_load.requests",
+      "op": "==",
+      "value": 44,
+      "was": 44
+    },
+    {
+      "key": "atlas.desktop.first_load.bytes",
+      "op": "between",
+      "value": [
+        572494,
+        573006
+      ],
+      "was": 572494
+    },
+    {
+      "key": "atlas.desktop.first_load.max_asset.bytes",
+      "op": "between",
+      "value": [
+        69098,
+        69610
+      ],
+      "was": 69098
+    },
+    {
+      "key": "atlas.desktop.first_load.by_cat.html_other.bytes",
+      "op": "between",
+      "value": [
+        345545,
+        346057
+      ],
+      "was": 345545
+    },
+    {
+      "key": "atlas.desktop.first_load.requests",
+      "op": "==",
+      "value": 44,
+      "was": 44
+    },
+    {
+      "key": "atlas.desktop2x.first_load.bytes",
+      "op": "between",
+      "value": [
+        1898571,
+        1899083
+      ],
+      "was": 1898571
+    },
+    {
+      "key": "atlas.desktop2x.first_load.max_asset.bytes",
+      "op": "between",
+      "value": [
+        69098,
+        69610
+      ],
+      "was": 69098
+    },
+    {
+      "key": "atlas.desktop2x.first_load.by_cat.html_other.bytes",
+      "op": "between",
+      "value": [
+        346109,
+        346621
+      ],
+      "was": 346109
+    },
+    {
+      "key": "atlas.desktop2x.first_load.requests",
+      "op": "==",
+      "value": 164,
+      "was": 164
+    }
+  ],
+  "unscored": [
+    "ATLAS.tiers() b, c and d are identical on iphone13, pixel7, landscape, desktop and desktop2x (|delta| < 1e-9); `a` is reported per profile and is EXPECTED to vary with the viewport-derived minZoom (fit 1.95 on iphone13 vs 2.35 on desktop); the cross-profile equality never includes `a` (b and c are pinned per profile by checks; d and the cross-profile equality are not measurable by the tool)",
+    "tierZoom reads absolute constants Z_TIER_B and Z_TIER_C chosen by the recorded owner answer, clamped to >= the live minZoom; the `var TIER_CEIL=` literal is kept; ATLAS.tiers() returns {a, b, c, d}",
+    "per-tier deltas vs B0 are read from atlas.<profile>.tiers vs tiers_derived; if any desktop |delta| > 0.35 and the owner answer is not recorded, the unit stops and is DEFERRED to Mobile 5b (the answer is recorded as a; with it the unit ships the min-of-two values)",
+    "tier-A content present at minZoom on every profile; flyTo targets unchanged on the two measured desktops (flyZoom keeps max(old relative band, tierZoom), so a fly always lands inside the revealed tier)",
+    "G2 parity sweep: at z 2.0, 2.5, 3.0, 3.5, 4.0, 4.55, 6.15 the marker types drawn are identical across all five profiles",
+    "owner ruling 2026-10-07 (docs/mobile/owner-answers.json notes.q1_2026_10_07): the same zoom everywhere. tierZoom has no device, pointer or viewport branch beyond the minZoom clamp. Accepted consequences, not findings: a desktop window shorter than the measured profiles (retina map under about 820 CSS px, 1x under about 580 px) reveals B/C up to 0.27 zoom later than its old relative band and its fly targets rise by up to 0.07 to the pinned band; every phone reveals B/C later than its old relative band (landscape B 2.13 to 3.40)",
+    "at epeshu_z4.55 the 1x desktop now draws the two tier-C glyphs every other profile already drew there: atlas.desktop.tap_fixture.views.epeshu_z4.55.{glyphs, untappable, tapped} (measured 187 to 189, 165 to 166, 22 to 23) each equals the desktop2x count at that view or grows by at most 2, nothing removed (the view key contains a dot, so the tool cannot check it; atlas.desktop.tap_fixture.n is checked)"
+  ]
+}
