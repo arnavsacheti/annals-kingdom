@@ -134,27 +134,27 @@
       "attempts": 3,
       "capture": "docs/mobile/captures/A-U3.json",
       "files_sha": {
-        "docs/mobile/accept/A-U3.json": "4d894f3907099bfc9e0921e43f3752621f9eaf08356937239e01a39da3b44571",
+        "docs/mobile/accept/A-U3.json": "51206924c539009f218064dd216aaa89531b154a21c08946555e0de0b4973e4d",
         "maps-site/index.html": "b51481211e495a68db92b6ad77137a76b3d0cbe694211d78966217c3d05c9003"
       },
       "failing": [
         {
-          "expected": "true",
-          "got": "[\"×\",\"Epēshu — settlement\",\"The Lektān Priesthood — faction\"]",
-          "key": "atlas.iphone13.tap_epeshu.via_chooser",
-          "op": "=="
+          "expected": "0",
+          "got": "14",
+          "key": "atlas.iphone13.tap_fixture.chooser",
+          "op": "unchanged"
         },
         {
-          "expected": "true",
-          "got": "[\"×\",\"Epēshu — settlement\",\"The Lektān Priesthood — faction\"]",
-          "key": "atlas.pixel7.tap_epeshu.via_chooser",
-          "op": "=="
+          "expected": "0",
+          "got": "18",
+          "key": "atlas.pixel7.tap_fixture.chooser",
+          "op": "unchanged"
         },
         {
-          "expected": "true",
-          "got": "[\"×\",\"Epēshu — settlement\",\"The Lektān Priesthood — faction\"]",
-          "key": "atlas.landscape.tap_epeshu.via_chooser",
-          "op": "=="
+          "expected": "0",
+          "got": "8",
+          "key": "atlas.landscape.tap_fixture.chooser",
+          "op": "unchanged"
         }
       ],
       "ref_before": "rebase-18"

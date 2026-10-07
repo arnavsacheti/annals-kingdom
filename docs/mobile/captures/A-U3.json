@@ -2,9 +2,9 @@
  "meta": {
   "tool": "mobile-capture",
   "tool_version": 1,
-  "tool_sha": "1835d4b10984cc5ec3f67500f19cbcd176c5296a933ed03265cb8e926edebd9c",
+  "tool_sha": "795dc9565e0e6b7114924a000eae774eb7c174bf0323c627b0b24e7c2eceeb18",
   "index_sha": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-  "atlas_sha": "4523cbdded588faaaca4ba0625a64fb4ff1965e1ac48b4339c41f40fb34e1d4b",
+  "atlas_sha": "f268732d4fbf9ca5322eea54346db8b299359edcd21928303c1d12149f368915",
   "unit": "A-U3",
   "profiles": [
    "iphone13",
@@ -38,13 +38,13 @@
   "server": "spawn",
   "browser": "141.0.7390.37",
   "timing": {
-   "wall_ms": 481666
+   "wall_ms": 480568
   }
  },
  "repo": {
   "sha": {
    "index": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-   "atlas": "4523cbdded588faaaca4ba0625a64fb4ff1965e1ac48b4339c41f40fb34e1d4b",
+   "atlas": "f268732d4fbf9ca5322eea54346db8b299359edcd21928303c1d12149f368915",
    "server": "f093d3423e3d78c47a2405a79cfb3212c5273577bab9fe598e610a741c1eb233"
   },
   "syntax": {
@@ -743,17 +743,17 @@
     }
    },
    "first_load": {
-    "bytes": 764745,
+    "bytes": 764405,
     "requests": 54,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 71291
+     "bytes": 70951
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 348302
+      "bytes": 347962
      },
      "data": {
       "requests": 16,
@@ -893,7 +893,6 @@
     "panel_open": true,
     "panel_title": "Epēshu",
     "via_chooser": [
-     "×",
      "Epēshu — settlement",
      "The Lektān Priesthood — faction"
     ]
@@ -1461,7 +1460,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 74475
+    "wall_ms": 74762
    },
    "extras": {
     "safe_area": {
@@ -1556,17 +1555,17 @@
     }
    },
    "first_load": {
-    "bytes": 639345,
+    "bytes": 639005,
     "requests": 44,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 71291
+     "bytes": 70951
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 348302
+      "bytes": 347962
      },
      "data": {
       "requests": 16,
@@ -1706,7 +1705,6 @@
     "panel_open": true,
     "panel_title": "Epēshu",
     "via_chooser": [
-     "×",
      "Epēshu — settlement",
      "The Lektān Priesthood — faction"
     ]
@@ -2308,7 +2306,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 80795
+    "wall_ms": 81867
    },
    "extras": {
     "safe_area": {
@@ -2401,17 +2399,17 @@
     }
    },
    "first_load": {
-    "bytes": 575251,
+    "bytes": 574911,
     "requests": 44,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 71291
+     "bytes": 70951
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 348302
+      "bytes": 347962
      },
      "data": {
       "requests": 16,
@@ -2551,7 +2549,6 @@
     "panel_open": true,
     "panel_title": "Epēshu",
     "via_chooser": [
-     "×",
      "Epēshu — settlement",
      "The Lektān Priesthood — faction"
     ]
@@ -3016,7 +3013,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 74596
+    "wall_ms": 73780
    },
    "extras": {
     "safe_area": {
@@ -3115,17 +3112,17 @@
     }
    },
    "first_load": {
-    "bytes": 574687,
+    "bytes": 574347,
     "requests": 44,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 71291
+     "bytes": 70951
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 347738
+      "bytes": 347398
      },
      "data": {
       "requests": 16,
@@ -3966,7 +3963,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 119204
+    "wall_ms": 118527
    },
    "extras": {},
    "extra_errors": {
@@ -4031,17 +4028,17 @@
     }
    },
    "first_load": {
-    "bytes": 1900764,
+    "bytes": 1900424,
     "requests": 164,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 71291
+     "bytes": 70951
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 348302
+      "bytes": 347962
      },
      "data": {
       "requests": 16,
@@ -4882,7 +4879,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 131184
+    "wall_ms": 130235
    },
    "extras": {},
    "extra_errors": {
