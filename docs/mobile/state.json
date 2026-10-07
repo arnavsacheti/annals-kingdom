@@ -134,18 +134,18 @@
       "attempts": 3,
       "capture": "docs/mobile/captures/A-U3.json",
       "files_sha": {
-        "docs/mobile/accept/A-U3.json": "ba9bb70292ce633ac7783236e2856cb46bbfd50738b1b09b8de238ebb1218257",
+        "docs/mobile/accept/A-U3.json": "8f9ada6c5cbcb4650bc43b7a5590672cb61e90400475f47e0861e32ab757d460",
         "maps-site/index.html": "b51481211e495a68db92b6ad77137a76b3d0cbe694211d78966217c3d05c9003"
       },
       "failing": [
         {
           "key": "measure.digest",
           "op": "loop",
-          "expected": "failing list intact (67)",
+          "expected": "failing list intact (34)",
           "got": "absent"
         }
       ],
-      "ref_before": "after-A-U2"
+      "ref_before": "rebase-17"
     },
     "A-U4": {
       "status": "skipped",
@@ -356,7 +356,7 @@
       "after_unit": "A-U1",
       "app_sha_before": {
         "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-        "maps-site/index.html": "4f9757bfac2319b74735e21abfc324447fff9717eed77464142a1a6590ba19e8"
+        "maps-site/index.html": "566f1cead36db41512fe72fc8ff220dc429c870cbeadd1405ac8e51f79c4c22a"
       },
       "app_sha_after": {
         "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
@@ -370,7 +370,7 @@
       "after_unit": "A-U2",
       "app_sha_before": {
         "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-        "maps-site/index.html": "b51481211e495a68db92b6ad77137a76b3d0cbe694211d78966217c3d05c9003"
+        "maps-site/index.html": "4f9757bfac2319b74735e21abfc324447fff9717eed77464142a1a6590ba19e8"
       },
       "app_sha_after": {
         "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
@@ -378,7 +378,19 @@
       },
       "reason": "unit passed",
       "ref": "after-A-U2"
+    },
+    {
+      "before_unit": "A-U3",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "b51481211e495a68db92b6ad77137a76b3d0cbe694211d78966217c3d05c9003"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "b51481211e495a68db92b6ad77137a76b3d0cbe694211d78966217c3d05c9003"
+      },
+      "reason": "the last passed unit's capture was not taken as the reference",
+      "ref": "rebase-17"
     }
-  ],
-  "ref_stale": true
+  ]
 }

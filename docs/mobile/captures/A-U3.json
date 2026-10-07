@@ -2,9 +2,9 @@
  "meta": {
   "tool": "mobile-capture",
   "tool_version": 1,
-  "tool_sha": "98789b14f5aca25c1b913b3e86d3e3e08706dbb48861f64ccce691c4ff992e2e",
+  "tool_sha": "7dced04066004ead512303fda508f68416c8f2ab6ddc17d785e589d485942213",
   "index_sha": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-  "atlas_sha": "1c53756f1623eab7b6a2120f4bc0e205c562bafe3f7397c6b555fe73cde38312",
+  "atlas_sha": "798d0e4509864636be015985ec2c6a03ab74a79e1c99367a69f89f3dd22e433f",
   "unit": "A-U3",
   "profiles": [
    "iphone13",
@@ -38,13 +38,13 @@
   "server": "spawn",
   "browser": "141.0.7390.37",
   "timing": {
-   "wall_ms": 473018
+   "wall_ms": 479272
   }
  },
  "repo": {
   "sha": {
    "index": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-   "atlas": "1c53756f1623eab7b6a2120f4bc0e205c562bafe3f7397c6b555fe73cde38312",
+   "atlas": "798d0e4509864636be015985ec2c6a03ab74a79e1c99367a69f89f3dd22e433f",
    "server": "f093d3423e3d78c47a2405a79cfb3212c5273577bab9fe598e610a741c1eb233"
   },
   "syntax": {
@@ -737,23 +737,23 @@
      "path": "docs/mobile/shots/A-U3/atlas-iphone13-4-place-card.png",
      "w": 390,
      "h": 664,
-     "bytes": 212474,
+     "bytes": 182485,
      "scale": 1,
-     "sha": "5a6c74f2b715458d9893e6b363f511ea78b5bd06f11e8fa19a992c5094d1b4d3"
+     "sha": "dc43cc9b07477d73bf6a0c0a3e02a319a27fe4ab6168a8178e5e45857c4780fb"
     }
    },
    "first_load": {
-    "bytes": 763986,
+    "bytes": 764676,
     "requests": 54,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 70532
+     "bytes": 71222
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 347543
+      "bytes": 348233
      },
      "data": {
       "requests": 16,
@@ -859,7 +859,7 @@
    "chrome_cover": {
     "whole": 0.2213,
     "layers": 0.6604,
-    "card": 0.2767,
+    "card": 0.553,
     "peek": "no-sheet",
     "half": "no-sheet"
    },
@@ -889,20 +889,25 @@
      "SPAN.glyph",
      "DIV.leaflet-marker-icon leaflet-zoom-ani"
     ],
-    "opened_hash": "#view=1236,1417,4.50",
-    "panel_open": false,
-    "panel_title": ""
+    "opened_hash": "#place=Epēshu",
+    "panel_open": true,
+    "panel_title": "Epēshu",
+    "via_chooser": [
+     "×",
+     "Epēshu — settlement",
+     "The Lektān Priesthood — faction"
+    ]
    },
    "card": {
-    "open": false,
+    "open": true,
     "rect": [
      0,
-     745,
+     299,
      390,
      326
     ],
-    "covers": 0,
-    "body_scroll_h": 324,
+    "covers": 0.491,
+    "body_scroll_h": 5370,
     "body_client_h": 324,
     "close_btn": [
      30,
@@ -1456,14 +1461,14 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 72824
+    "wall_ms": 74511
    },
    "extras": {
     "safe_area": {
      "command": "applied",
      "env_top_px": 47,
      "viewport_fit_cover": true,
-     "env_rules": 13,
+     "env_rules": 14,
      "intersecting": [],
      "intersecting_n": 0,
      "safe_area": "applied"
@@ -1545,23 +1550,23 @@
      "path": "docs/mobile/shots/A-U3/atlas-pixel7-4-place-card.png",
      "w": 412,
      "h": 839,
-     "bytes": 297217,
+     "bytes": 221747,
      "scale": 1,
-     "sha": "7fc34efd77205633eada72c8c35d202efed61283546f8e0daa6de7c31bb1a513"
+     "sha": "573e03350faa489806b2015dad0440daea8f8abaa19ad50564f8c0865245c31a"
     }
    },
    "first_load": {
-    "bytes": 638586,
+    "bytes": 639276,
     "requests": 44,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 70532
+     "bytes": 71222
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 347543
+      "bytes": 348233
      },
      "data": {
       "requests": 16,
@@ -1667,7 +1672,7 @@
    "chrome_cover": {
     "whole": 0.1738,
     "layers": 0.6741,
-    "card": 0.216,
+    "card": 0.5792,
     "peek": "no-sheet",
     "half": "no-sheet"
    },
@@ -1697,20 +1702,25 @@
      "DIV.leaflet-container leaflet-touch leaf",
      "DIV."
     ],
-    "opened_hash": "#view=1236,1417,5.00",
-    "panel_open": false,
-    "panel_title": ""
+    "opened_hash": "#place=Epēshu",
+    "panel_open": true,
+    "panel_title": "Epēshu",
+    "via_chooser": [
+     "×",
+     "Epēshu — settlement",
+     "The Lektān Priesthood — faction"
+    ]
    },
    "card": {
-    "open": false,
+    "open": true,
     "rect": [
      0,
-     934,
+     367,
      412,
      447
     ],
-    "covers": 0,
-    "body_scroll_h": 445,
+    "covers": 0.532,
+    "body_scroll_h": 5136,
     "body_client_h": 445,
     "close_btn": [
      30,
@@ -2298,14 +2308,14 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 79746
+    "wall_ms": 80598
    },
    "extras": {
     "safe_area": {
      "command": "applied",
      "env_top_px": 47,
      "viewport_fit_cover": true,
-     "env_rules": 13,
+     "env_rules": 14,
      "intersecting": [],
      "intersecting_n": 0,
      "safe_area": "applied"
@@ -2385,23 +2395,23 @@
      "path": "docs/mobile/shots/A-U3/atlas-landscape-4-place-card.png",
      "w": 844,
      "h": 340,
-     "bytes": 221838,
+     "bytes": 257976,
      "scale": 1,
-     "sha": "3761019691bea38e8fd6617eee8dd57dfb17b3da072dfb359c23cbf70bdcfc35"
+     "sha": "f4c2cf4074e1c0ad72ae0cc785eda7525b16072cfb473157bfeb7e024405d58d"
     }
    },
    "first_load": {
-    "bytes": 574492,
+    "bytes": 575182,
     "requests": 44,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 70532
+     "bytes": 71222
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 347543
+      "bytes": 348233
      },
      "data": {
       "requests": 16,
@@ -2507,7 +2517,7 @@
    "chrome_cover": {
     "whole": 0.1902,
     "layers": 0.342,
-    "card": 0.1902,
+    "card": 0.4364,
     "peek": "no-sheet",
     "half": "no-sheet"
    },
@@ -2526,31 +2536,36 @@
    },
    "tap_epeshu": {
     "found": true,
-    "zoom": 3.3,
+    "zoom": 4.3,
     "glyph_center": [
      422,
-     204
+     205
     ],
     "stack": [
-     "DIV.leaflet-container leaflet-touch leaf",
-     "DIV.",
-     "DIV.",
-     "BODY."
+     "DIV.fac-badge",
+     "DIV.leaflet-marker-icon leaflet-zoom-ani",
+     "SPAN.glyph",
+     "DIV.leaflet-marker-icon leaflet-zoom-ani"
     ],
-    "opened_hash": "#view=1236,1417,3.30",
-    "panel_open": false,
-    "panel_title": ""
+    "opened_hash": "#place=Epēshu",
+    "panel_open": true,
+    "panel_title": "Epēshu",
+    "via_chooser": [
+     "×",
+     "Epēshu — settlement",
+     "The Lektān Priesthood — faction"
+    ]
    },
    "card": {
-    "open": false,
+    "open": true,
     "rect": [
-     -354,
+     0,
      97,
      340,
      215
     ],
-    "covers": 0,
-    "body_scroll_h": 215,
+    "covers": 0.255,
+    "body_scroll_h": 5986,
     "body_client_h": 215,
     "close_btn": [
      30,
@@ -2888,25 +2903,7 @@
      "bottom25": true
     },
     {
-     "id": "button:The Lektān Priesthood",
-     "w": 22,
-     "h": 22,
-     "marker": false,
-     "primary": false,
-     "reach": 1,
-     "bottom25": false
-    },
-    {
      "id": "button:White Sea (Dagon's attac",
-     "w": 20,
-     "h": 20,
-     "marker": false,
-     "primary": false,
-     "reach": 1,
-     "bottom25": false
-    },
-    {
-     "id": "button:Epēshu",
      "w": 20,
      "h": 20,
      "marker": false,
@@ -2924,31 +2921,13 @@
      "bottom25": false
     },
     {
-     "id": "button:Close the card",
-     "w": 44,
-     "h": 44,
+     "id": "button:Close panel",
+     "w": 30,
+     "h": 30,
      "marker": false,
      "primary": true,
      "reach": 1,
      "bottom25": false
-    },
-    {
-     "id": "button:Epēshu — settlements",
-     "w": 360,
-     "h": 44,
-     "marker": false,
-     "primary": false,
-     "reach": 1,
-     "bottom25": false
-    },
-    {
-     "id": "button:The Lektān Priesthood — ",
-     "w": 360,
-     "h": 44,
-     "marker": false,
-     "primary": false,
-     "reach": 1,
-     "bottom25": true
     },
     {
      "id": "checkbox:",
@@ -2987,13 +2966,9 @@
     "button:Collapse the Company": 0,
     "link:A JavaScript library for": 0,
     "checkbox:": 1,
-    "button:The Lektān Priesthood": 1,
     "button:White Sea (Dagon's attac": 1,
-    "button:Epēshu": 1,
     "button:Zoom out": 1,
-    "button:Close the card": 1,
-    "button:Epēshu — settlements": 1,
-    "button:The Lektān Priesthood — ": 1
+    "button:Close panel": 1
    },
    "reach_max": 1,
    "primary": {
@@ -3021,11 +2996,11 @@
      "w": 44,
      "h": 44
     },
-    "button:Close the card": {
+    "button:Close panel": {
      "reach": 1,
      "bottom25": false,
-     "w": 44,
-     "h": 44
+     "w": 30,
+     "h": 30
     }
    },
    "city_canvas": {
@@ -3041,14 +3016,14 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 70658
+    "wall_ms": 74048
    },
    "extras": {
     "safe_area": {
      "command": "applied",
      "env_top_px": 0,
      "viewport_fit_cover": true,
-     "env_rules": 13,
+     "env_rules": 14,
      "intersecting": [],
      "intersecting_n": 0,
      "safe_area": "applied"
@@ -3140,17 +3115,17 @@
     }
    },
    "first_load": {
-    "bytes": 573928,
+    "bytes": 574618,
     "requests": 44,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 70532
+     "bytes": 71222
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 346979
+      "bytes": 347669
      },
      "data": {
       "requests": 16,
@@ -3991,7 +3966,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 117770
+    "wall_ms": 118520
    },
    "extras": {},
    "extra_errors": {
@@ -4056,17 +4031,17 @@
     }
    },
    "first_load": {
-    "bytes": 1900005,
+    "bytes": 1900695,
     "requests": 164,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 70532
+     "bytes": 71222
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 347543
+      "bytes": 348233
      },
      "data": {
       "requests": 16,
@@ -4907,7 +4882,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 130611
+    "wall_ms": 130313
    },
    "extras": {},
    "extra_errors": {
