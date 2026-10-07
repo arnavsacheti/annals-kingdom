@@ -131,30 +131,30 @@
     },
     "A-U3": {
       "status": "failed",
-      "attempts": 5,
+      "attempts": 3,
       "capture": "docs/mobile/captures/A-U3.json",
       "files_sha": {
-        "docs/mobile/accept/A-U3.json": "dc47bcf445542aee9667ad74dc4f21ccec2d92ec86e8eaefcd344dd86164806f",
+        "docs/mobile/accept/A-U3.json": "4d894f3907099bfc9e0921e43f3752621f9eaf08356937239e01a39da3b44571",
         "maps-site/index.html": "b51481211e495a68db92b6ad77137a76b3d0cbe694211d78966217c3d05c9003"
       },
       "failing": [
         {
-          "key": "review.desktop.major",
-          "op": "loop",
-          "expected": "no surviving blocker or major",
-          "got": "Faded-pane CSS also hides interactive SVG paths, so on desktop the invisible realm, district, way, lane, route and trail lines and fills stop answering hover and click. This change is not declared. :: The new rule at maps-site/index.html:595-605 hides `:is(.leaflet-marker-icon,svg)` inside every fad"
+          "expected": "true",
+          "got": "[\"×\",\"Epēshu — settlement\",\"The Lektān Priesthood — faction\"]",
+          "key": "atlas.iphone13.tap_epeshu.via_chooser",
+          "op": "=="
         },
         {
-          "key": "review.voice.major",
-          "op": "loop",
-          "expected": "no surviving blocker or major",
-          "got": "Chooser adds player-visible strings that are not listed in README section 3 or in the accept file, so UG9 never voice-read or VOCAB-grepped them :: The diff adds these new player-visible strings to maps-site/index.html. (1) 'Which mark is meant?' appears twice: as the visible .chooser-head text and "
+          "expected": "true",
+          "got": "[\"×\",\"Epēshu — settlement\",\"The Lektān Priesthood — faction\"]",
+          "key": "atlas.pixel7.tap_epeshu.via_chooser",
+          "op": "=="
         },
         {
-          "key": "review.acceptance.major",
-          "op": "loop",
-          "expected": "no surviving blocker or major",
-          "got": "Bullet 3 unmet: a tap with no glyph centre within 22 px still opens a card (label box, realm fill, sea lane) :: The resolver returns before preventDefault when near() finds nothing (`if(!hits.length)return;`), so the native Leaflet click goes through. The implementer's own comment at 3633-3634 says "
+          "expected": "true",
+          "got": "[\"×\",\"Epēshu — settlement\",\"The Lektān Priesthood — faction\"]",
+          "key": "atlas.landscape.tap_epeshu.via_chooser",
+          "op": "=="
         }
       ],
       "ref_before": "rebase-18"
