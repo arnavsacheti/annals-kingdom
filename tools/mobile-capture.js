@@ -648,6 +648,8 @@ function wantedNames(glyphName) {
 }
 const SEG_RE = /\s+(?:[—–·|•]|-)\s+/
 const nameSegs = t => { const f = foldName(t); return [f, ...f.split(SEG_RE)] }   // a chooser row may carry a kind on either side of a dash; the name is a whole segment
+// the card view taps through a chooser (A-U3) to the row that names the tapped place: the first row whose name segment is a wanted name
+const chooserPick = (rows, name) => { const want = wantedNames(name); return rows.findIndex(t => nameSegs(t).some(n => want.has(n))) }
 const titleSegs = t => { const f = foldName(t); return [f, f.split(SEG_RE)[0]] }   // a card title is the name, or the name before a dash
 function tapOutcome(glyphName, res, before) {
   const want = wantedNames(glyphName), has = names => names.some(n => want.has(n))
@@ -766,15 +768,22 @@ async function captureAtlas(env, key, o) {
     } catch (e) { R.layers = {error: String(e).slice(0, 120)} }
     // the Epeshu tap at minZoom + 2.6 (the harness's z4.55 on iphone13), then the card state
     const tapAtZoom = async (name, dz) => {
-      const info = await page.evaluate(([n, d]) => { const m = window.ATLAS.find(n); if (!m) return null; const ll = m._mk.getLatLng(); window.ATLAS.map.setView(ll, Math.min(window.ATLAS.map.getMaxZoom(), window.ATLAS.map.getMinZoom() + d), {animate: false}); return {z: window.ATLAS.map.getZoom()} }, [name, dz])
+      const info = await page.evaluate(([n, d]) => { const m = window.ATLAS.find(n); if (!m) return null; const ll = m._mk.getLatLng(); const T = window.ATLAS.tiers ? window.ATLAS.tiers() : null; window.ATLAS.map.setView(ll, Math.min(window.ATLAS.map.getMaxZoom(), Math.max(window.ATLAS.map.getMinZoom() + d, T ? T.c + 0.1 : -Infinity)), {animate: false}); return {z: window.ATLAS.map.getZoom()} }, [name, dz])
       if (!info) return {found: false}
       await sleep(600); await settle(P, 800)
       const pos = await page.evaluate(n => { const el = window.ATLAS.find(n)._mk.getElement(), g = el && el.querySelector('.glyph'); if (!g) return null; const r = g.getBoundingClientRect(); return {x: r.left + r.width / 2, y: r.top + r.height / 2} }, name)
       if (!pos) return {found: true, zoom: rnd(info.z, 3), glyph: null}
       const stack = await page.evaluate(([x, y]) => document.elementsFromPoint(x, y).slice(0, 4).map(e => (e.tagName + '.' + (typeof e.className === 'string' ? e.className : '')).slice(0, 40)), [pos.x, pos.y])
       await tapAt(P, prof, pos.x, pos.y); await sleep(1200); await settle(P, 600)
+      const rows = await page.evaluate(() => {
+        const vis = e => window.__mc.shown(e) && e.getAttribute('aria-hidden') !== 'true' && e.getBoundingClientRect().width > 0 && e.getBoundingClientRect().height > 0
+        const ch = [...document.querySelectorAll('[class*=chooser]')].find(vis)
+        return ch ? [...ch.querySelectorAll('li,button,a,[role=option],[role=menuitem],[class*=row],[class*=item]')].filter(vis).map(e => { const r = e.getBoundingClientRect(); return {text: e.textContent.replace(/\s+/g, ' ').trim(), x: r.left + r.width / 2, y: r.top + r.height / 2} }) : null
+      })
+      const pick = rows ? chooserPick(rows.map(r => r.text), name) : -1
+      if (pick >= 0) { await tapAt(P, prof, rows[pick].x, rows[pick].y); await sleep(1200); await settle(P, 600) }
       const res = await page.evaluate(() => { const p = document.getElementById('panel'); return {hash: decodeURIComponent(location.hash), open: p.getAttribute('aria-hidden') === 'false', title: ((p.querySelector('h2,h3') || {}).textContent || '').trim().slice(0, 60)} })
-      return {found: true, zoom: rnd(info.z, 3), glyph_center: [Math.round(pos.x), Math.round(pos.y)], stack, opened_hash: res.hash, panel_open: res.open, panel_title: res.title}
+      return {found: true, zoom: rnd(info.z, 3), glyph_center: [Math.round(pos.x), Math.round(pos.y)], stack, opened_hash: res.hash, panel_open: res.open, panel_title: res.title, ...(rows ? {via_chooser: rows.map(r => r.text).slice(0, 6)} : {})}
     }
     const closeCard = async () => {
       await page.evaluate(() => { const c = document.getElementById('panelClose'); if (c) c.click(); history.replaceState(null, '', location.pathname + location.search) }).catch(() => {})
@@ -1567,6 +1576,8 @@ function compareCaptures(a, b) {
 async function selfTest() {
   const out = []; const ok = (n, v, d) => { out.push({n, ok: !!v, d: d || ''}); log((v ? 'ok   ' : 'FAIL ') + n + (d && !v ? ' :: ' + d : '')) }
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'mc-'))
+  ok('chooser pick: the row naming the tapped place, kind on either side of a dash', chooserPick(['The Lektān Priesthood — faction', 'Epēshu — settlements'], 'Epēshu') === 1 && chooserPick(['settlements · Epēshu'], 'Epēshu') === 0)
+  ok('chooser pick: no row names it -> -1 (never a near miss)', chooserPick(['Epēshu Gate — road', 'Lepon the Old — ruin'], 'Epēshu') === -1 && chooserPick(['Lepon the Old — ruin'], 'Lepon') === -1)
   const sr = d => ({style: {cssText: d}, cssRules: []}), unreadable = {get cssRules() { throw new Error('cross-origin') }}
   ok('safe-area rules: nested, @media and plain rules count by their own declarations', safeAreaRules([{cssRules: [sr('padding-top: max(8px, env(safe-area-inset-top));'), sr('color: red;'), {cssRules: [sr('bottom: env(safe-area-inset-bottom);')]}, {style: {cssText: 'color: red;'}, cssRules: [sr('left: env(safe-area-inset-left);')]}]}, unreadable]) === 3)
   ok('safe-area rules: a rule without style or cssRules counts by its text', safeAreaRules([{cssRules: [{cssText: '.a { top: env(safe-area-inset-top) }'}, {cssText: '.b { top: 0 }'}]}]) === 1)
