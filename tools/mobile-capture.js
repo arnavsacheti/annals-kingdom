@@ -778,7 +778,10 @@ async function captureAtlas(env, key, o) {
       const rows = await page.evaluate(() => {
         const vis = e => window.__mc.shown(e) && e.getAttribute('aria-hidden') !== 'true' && e.getBoundingClientRect().width > 0 && e.getBoundingClientRect().height > 0
         const ch = [...document.querySelectorAll('[class*=chooser]')].find(vis)
-        return ch ? [...ch.querySelectorAll('li,button,a,[role=option],[role=menuitem],[class*=row],[class*=item]')].filter(vis).map(e => { const r = e.getBoundingClientRect(); return {text: e.textContent.replace(/\s+/g, ' ').trim(), x: r.left + r.width / 2, y: r.top + r.height / 2} }) : null
+        if (!ch) return null
+        const els = [...ch.querySelectorAll('li,button,a,[role=option],[role=menuitem],[class*=row],[class*=item]')].filter(vis)
+        // innermost matches only (an li around its button is one row), and only rows that name something (the close glyph is not a row)
+        return els.filter(e => !els.some(o => o !== e && e.contains(o))).map(e => { const r = e.getBoundingClientRect(); return {text: e.textContent.replace(/\s+/g, ' ').trim(), x: r.left + r.width / 2, y: r.top + r.height / 2} }).filter(r => /\p{L}/u.test(r.text))
       })
       const pick = rows ? chooserPick(rows.map(r => r.text), name) : -1
       if (pick >= 0) { await tapAt(P, prof, rows[pick].x, rows[pick].y); await sleep(1200); await settle(P, 600) }
