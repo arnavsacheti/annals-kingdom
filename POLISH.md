@@ -184,7 +184,7 @@ Agents never run git.
     67,676 B, data 68,427 B, first load 427,384 B; repeat visit 4,843 B, 37/37 cached; sim page
     746,236 B. Header lint 0 mismatches; manifest byte-identical on rerun. The capture tool now
     takes the repeat visit in a cache-on probe (page.route turns the HTTP cache off).
-- [ ] **Mobile 4 · Atlas: vendored, versioned, framed (USER REQUEST)** — vendored Leaflet 1.9.4 and
+- [x] **Mobile 4 · Atlas: vendored, versioned, framed (USER REQUEST)** — vendored Leaflet 1.9.4 and
   the OFL fonts (A9); raster URLs carry ?t=TILES_V (A8); the closed sheet clipped, the Contents
   heading safe, safe areas and dvh (A1, A11, A14). Resolves "Notch safe-areas".
   - Done when: 0 foreign origins (was 3), and the vendored Leaflet bytes equal its SRI; every raster
@@ -196,6 +196,12 @@ Agents never run git.
     wraps differently). Applied centrally: UG8 cannot pass a unit that moves the desktop map, so R1
     is re-taken after it.
   - Prerequisites: Mobile 3.
+  - Result (2026-10-07): A-U0 (central), D3, D5 and A-U1 landed. 0 foreign origins; every raster
+    carries ?t=1; iPhone first load 762,552 B / 54 requests, repeat visit 4,843 B with 54/54 cached.
+    Sheet closed: page height 664/839 (was 964/1,279); Contents kicker top 32 on iPhone and landscape
+    (was −61/−73); viewport-fit=cover with all four insets handled, 0 controls in any inset band
+    (portrait 47/34, turned 47/47/21); desktop and desktop2x shots identical. Tool fixes on the way:
+    safe-area rules counted under CSS nesting, the turned phone's side insets emulated.
 - [ ] **Mobile 5 · Atlas: absolute bands and the right tap (USER REQUEST)** — reveal tiers pinned to
   absolute zooms at the earlier of the two desktops (A19); one glyph-centre tap resolver with a
   "which mark?" chooser, so faded glyphs never take a tap (A2); 44 px controls and invisible marker
@@ -244,6 +250,8 @@ Agents never run git.
   - Done when: no surviving blocker or major; the staged Pages copy and both desktops re-captured
     clean; docs/mobile/final.json written for the atlas (the FM8 reference).
   - Prerequisites: Mobile 4-8. Must pass before Filigree 2.
+  - Carry (A-U1 review, minor): `safe center` on older WebKit; the transport bar's side insets on
+    721-774 px landscape phones. Rule on both with the lane diff.
 - [ ] **Mobile 10 · Sim: vendored, reach and escape (USER REQUEST)** — three r128 and IM Fell
   English vendored (S6); 44 px controls, 13 px HUD text, page zoom unlocked, manipulation on HUD
   buttons (S5, S13); a "Return the court" tab and a close button on the full chart (S4, S11).
@@ -301,6 +309,10 @@ Agents never run git.
     the fonts land on Android (no Times New Roman/Liberation/Tinos: Noto Serif fallback) and
     Safari 16 or older (no size-adjust), and with a large minimum font size; IPA glyphs in the
     fallback range now render through the matched faces (none in today's place cards).
+  - Also check (A-U1): the Contents heading on iOS Safari 17.5 or older (`align-items: safe center`
+    is newer; an auto-margin centre would not need it); the transport bar against a side cutout on
+    a 721-774 px wide landscape phone with the sheet closed (the inset rules stop at 720 px, and
+    only from 775 px does the bar's 680 px cap leave 47 px each side).
 - [ ] **Atlas reduced motion for its own animations (dashmove, copulse)** — the atlas's two CSS
   animations ignore reduced motion: `.route-line.playing` loops `dashmove` for as long as a journey
   is on, and `.glyph.copulse` pulses a new origin. Add one `@media (prefers-reduced-motion:
