@@ -4,9 +4,10 @@
   "q2": "a",
   "answered": "2026-10-05",
   "notes": {
-    "q1": "accept: tiers B/C pinned to the retina-desktop zooms (3.40/4.20); 1x desktops reveal earlier, nothing later anywhere",
+    "q1": "accept: tiers B/C pinned to the retina-desktop zooms (3.40/4.20); the 1x desktop reveals earlier; for shorter windows and phones see q1_2026_10_07",
     "q2": "fit width, letterboxed on parchment",
     "rulings": "owner confirmed R2 R7 R12 R14 R18 and ST8; R6 ST7 ST9 ST19 stay default",
-    "releases": "keep work on the feature branch; versioned cuts happen at merge"
+    "releases": "keep work on the feature branch; versioned cuts happen at merge",
+    "q1_2026_10_07": "same zoom everywhere (confirmed after A-U2's review): B/C stay 3.40/4.20 on every device and window. The earlier note 'nothing later anywhere' held only on the two measured desktops: shorter desktop windows (retina map under ~820 px, 1x under ~580 px) reveal up to 0.27 zoom later and fly up to 0.07 deeper, and phones reveal later; accepted."
   }
 }
