@@ -2,9 +2,9 @@
  "meta": {
   "tool": "mobile-capture",
   "tool_version": 1,
-  "tool_sha": "7dced04066004ead512303fda508f68416c8f2ab6ddc17d785e589d485942213",
+  "tool_sha": "1835d4b10984cc5ec3f67500f19cbcd176c5296a933ed03265cb8e926edebd9c",
   "index_sha": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-  "atlas_sha": "798d0e4509864636be015985ec2c6a03ab74a79e1c99367a69f89f3dd22e433f",
+  "atlas_sha": "56da22c24d8ad6f930ed19971b190dd8f0f981977ea4b51d5d831205e0d4650d",
   "unit": "A-U3",
   "profiles": [
    "iphone13",
@@ -38,13 +38,13 @@
   "server": "spawn",
   "browser": "141.0.7390.37",
   "timing": {
-   "wall_ms": 479272
+   "wall_ms": 480706
   }
  },
  "repo": {
   "sha": {
    "index": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-   "atlas": "798d0e4509864636be015985ec2c6a03ab74a79e1c99367a69f89f3dd22e433f",
+   "atlas": "56da22c24d8ad6f930ed19971b190dd8f0f981977ea4b51d5d831205e0d4650d",
    "server": "f093d3423e3d78c47a2405a79cfb3212c5273577bab9fe598e610a741c1eb233"
   },
   "syntax": {
@@ -685,7 +685,7 @@
    ".claude/workflows/filigree-2-plan.js": "fb0a530448dd8b34773de841da25c7e86c47d79a17225a2f13f3519dc5b2b64c",
    ".claude/workflows/filigree-3-build.js": "0164d2a71818c6026747809d3b271d1784696c670194f3f5b8f0627813644b38",
    ".claude/workflows/filigree-4-review.js": "afdf9eefd6806e814e1171da00c2718cc6e6696bb6c7b0ce867f956e68e1e210",
-   ".claude/workflows/mobile-build.js": "782f386fda1994681745a40a77897efa6579e0e858b616fed95458a1f4fcb8d1",
+   ".claude/workflows/mobile-build.js": "6262146b8ce2d7be272732c492fbcaa229cdc47f1692dcc80d10162a13dcf9d3",
    ".claude/workflows/mobile-review.js": "c91940d44a535592103784a5f5cdc06d4b7c1a0decc2a90e2b9c2dd69181a460",
    ".claude/workflows/street-1-research.js": "0afadd970a560ce94be05baf90b345696e00577394375170250e9e6feee4b5b2",
    ".claude/workflows/street-2-plan.js": "d6ed1a1d1af3d92a5312b3d8b65e80c0e498a5498f9659e3cdac883b0518ab31",
@@ -743,17 +743,17 @@
     }
    },
    "first_load": {
-    "bytes": 764676,
+    "bytes": 764354,
     "requests": 54,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 71222
+     "bytes": 70900
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 348233
+      "bytes": 347911
      },
      "data": {
       "requests": 16,
@@ -931,7 +931,7 @@
       "tapped": 4,
       "wrong_card": 0
      },
-     "leponnia_z3.5": {
+     "leponnia_z3_5": {
       "zoom": 3.5,
       "glyphs": 41,
       "untappable": 38,
@@ -939,7 +939,7 @@
       "tapped": 3,
       "wrong_card": 0
      },
-     "epeshu_z4.55": {
+     "epeshu_z4_55": {
       "zoom": 4.55,
       "glyphs": 189,
       "untappable": 180,
@@ -947,7 +947,7 @@
       "tapped": 9,
       "wrong_card": 0
      },
-     "epeshu_z4.95": {
+     "epeshu_z4_95": {
       "zoom": 4.95,
       "glyphs": 189,
       "untappable": 180,
@@ -955,7 +955,7 @@
       "tapped": 9,
       "wrong_card": 0
      },
-     "city_z6.15": {
+     "city_z6_15": {
       "zoom": 6.15,
       "glyphs": 189,
       "untappable": 184,
@@ -966,85 +966,85 @@
     },
     "taps": [
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "Epēshu",
       "outcome": "chooser",
       "opened": "The Gulf Crossing"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "Epēshu",
       "outcome": "chooser",
       "opened": "The Gulf Crossing"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "Lepon",
       "outcome": "chooser",
       "opened": "The Gulf Crossing"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "Pebros's Army",
       "outcome": "chooser",
       "opened": "The Gulf Crossing"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "The Eshbrīn",
       "outcome": "chooser",
       "opened": "The Gulf Crossing"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "The Lektān Priesthood",
       "outcome": "chooser",
       "opened": "The Gulf Crossing"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "The Orondēs",
       "outcome": "chooser",
       "opened": "The Gulf Crossing"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "The Senate of Epēshu",
       "outcome": "chooser",
       "opened": "The Gulf Crossing"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "Epēshu",
       "outcome": "chooser",
       "opened": "White Sea (Dagon's attack)"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "Epēshu",
       "outcome": "chooser",
       "opened": "White Sea (Dagon's attack)"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "The Eshbrīn",
       "outcome": "chooser",
       "opened": "Pebros's Army"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "The Lektān Priesthood",
       "outcome": "chooser",
       "opened": "Pebros's Army"
      },
      {
-      "view": "city_z6.15",
+      "view": "city_z6_15",
       "name": "Epēshu",
       "outcome": "chooser",
       "opened": "White Sea (Dagon's attack)"
      },
      {
-      "view": "city_z6.15",
+      "view": "city_z6_15",
       "name": "The Eshbrīn",
       "outcome": "chooser",
       "opened": "Epēshu"
@@ -1461,7 +1461,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 74511
+    "wall_ms": 74660
    },
    "extras": {
     "safe_area": {
@@ -1556,17 +1556,17 @@
     }
    },
    "first_load": {
-    "bytes": 639276,
+    "bytes": 638954,
     "requests": 44,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 71222
+     "bytes": 70900
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 348233
+      "bytes": 347911
      },
      "data": {
       "requests": 16,
@@ -1744,7 +1744,7 @@
       "tapped": 3,
       "wrong_card": 0
      },
-     "leponnia_z3.5": {
+     "leponnia_z3_5": {
       "zoom": 3.5,
       "glyphs": 41,
       "untappable": 36,
@@ -1752,7 +1752,7 @@
       "tapped": 5,
       "wrong_card": 0
      },
-     "epeshu_z4.55": {
+     "epeshu_z4_55": {
       "zoom": 4.55,
       "glyphs": 189,
       "untappable": 178,
@@ -1760,7 +1760,7 @@
       "tapped": 11,
       "wrong_card": 0
      },
-     "epeshu_z4.95": {
+     "epeshu_z4_95": {
       "zoom": 4.95,
       "glyphs": 189,
       "untappable": 178,
@@ -1768,7 +1768,7 @@
       "tapped": 11,
       "wrong_card": 0
      },
-     "city_z6.15": {
+     "city_z6_15": {
       "zoom": 6.15,
       "glyphs": 189,
       "untappable": 184,
@@ -1779,109 +1779,109 @@
     },
     "taps": [
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "Epēshu",
       "outcome": "chooser",
       "opened": "The North Coast Packet"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "Epēshu",
       "outcome": "chooser",
       "opened": "The North Coast Packet"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "Lepon",
       "outcome": "chooser",
       "opened": "The North Coast Packet"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "Paerāndas",
       "outcome": "chooser",
       "opened": "The North Coast Packet"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "Paerāndas",
       "outcome": "chooser",
       "opened": "The North Coast Packet"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "Pebros's Army",
       "outcome": "chooser",
       "opened": "The North Coast Packet"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "The Eshbrīn",
       "outcome": "chooser",
       "opened": "The North Coast Packet"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "The Lektān Priesthood",
       "outcome": "chooser",
       "opened": "The North Coast Packet"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "The Orondēs",
       "outcome": "chooser",
       "opened": "The North Coast Packet"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "The Senate of Epēshu",
       "outcome": "chooser",
       "opened": "The North Coast Packet"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "Epēshu",
       "outcome": "chooser",
       "opened": "White Sea (Dagon's attack)"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "Epēshu",
       "outcome": "chooser",
       "opened": "White Sea (Dagon's attack)"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "Paerāndas",
       "outcome": "chooser",
       "opened": "Lepon"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "Paerāndas",
       "outcome": "chooser",
       "opened": "Lepon"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "The Eshbrīn",
       "outcome": "chooser",
       "opened": "Pebros's Army"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "The Lektān Priesthood",
       "outcome": "chooser",
       "opened": "Pebros's Army"
      },
      {
-      "view": "city_z6.15",
+      "view": "city_z6_15",
       "name": "Epēshu",
       "outcome": "chooser",
       "opened": "White Sea (Dagon's attack)"
      },
      {
-      "view": "city_z6.15",
+      "view": "city_z6_15",
       "name": "The Eshbrīn",
       "outcome": "chooser",
       "opened": "Epēshu"
@@ -2308,7 +2308,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 80598
+    "wall_ms": 81231
    },
    "extras": {
     "safe_area": {
@@ -2401,17 +2401,17 @@
     }
    },
    "first_load": {
-    "bytes": 575182,
+    "bytes": 574860,
     "requests": 44,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 71222
+     "bytes": 70900
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 348233
+      "bytes": 347911
      },
      "data": {
       "requests": 16,
@@ -2589,7 +2589,7 @@
       "tapped": 11,
       "wrong_card": 0
      },
-     "leponnia_z3.5": {
+     "leponnia_z3_5": {
       "zoom": 3.5,
       "glyphs": 41,
       "untappable": 38,
@@ -2597,7 +2597,7 @@
       "tapped": 3,
       "wrong_card": 0
      },
-     "epeshu_z4.55": {
+     "epeshu_z4_55": {
       "zoom": 4.55,
       "glyphs": 189,
       "untappable": 185,
@@ -2605,7 +2605,7 @@
       "tapped": 4,
       "wrong_card": 0
      },
-     "epeshu_z4.95": {
+     "epeshu_z4_95": {
       "zoom": 4.95,
       "glyphs": 189,
       "untappable": 184,
@@ -2613,7 +2613,7 @@
       "tapped": 5,
       "wrong_card": 0
      },
-     "city_z6.15": {
+     "city_z6_15": {
       "zoom": 6.15,
       "glyphs": 189,
       "untappable": 184,
@@ -2624,49 +2624,49 @@
     },
     "taps": [
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "Epēshu",
       "outcome": "chooser",
       "opened": "The North Coast Packet"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "The Lektān Priesthood",
       "outcome": "chooser",
       "opened": "The North Coast Packet"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "Epēshu",
       "outcome": "chooser",
       "opened": "White Sea (Dagon's attack)"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "Epēshu",
       "outcome": "chooser",
       "opened": "White Sea (Dagon's attack)"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "The Eshbrīn",
       "outcome": "chooser",
       "opened": "White Sea (Dagon's attack)"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "The Lektān Priesthood",
       "outcome": "chooser",
       "opened": "White Sea (Dagon's attack)"
      },
      {
-      "view": "city_z6.15",
+      "view": "city_z6_15",
       "name": "Epēshu",
       "outcome": "chooser",
       "opened": "White Sea (Dagon's attack)"
      },
      {
-      "view": "city_z6.15",
+      "view": "city_z6_15",
       "name": "The Eshbrīn",
       "outcome": "chooser",
       "opened": "Epēshu"
@@ -3016,7 +3016,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 74048
+    "wall_ms": 73729
    },
    "extras": {
     "safe_area": {
@@ -3115,17 +3115,17 @@
     }
    },
    "first_load": {
-    "bytes": 574618,
+    "bytes": 574296,
     "requests": 44,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 71222
+     "bytes": 70900
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 347669
+      "bytes": 347347
      },
      "data": {
       "requests": 16,
@@ -3298,7 +3298,7 @@
       "tapped": 16,
       "wrong_card": 0
      },
-     "leponnia_z3.5": {
+     "leponnia_z3_5": {
       "zoom": 3.5,
       "glyphs": 41,
       "untappable": 29,
@@ -3306,7 +3306,7 @@
       "tapped": 12,
       "wrong_card": 0
      },
-     "epeshu_z4.55": {
+     "epeshu_z4_55": {
       "zoom": 4.55,
       "glyphs": 189,
       "untappable": 166,
@@ -3314,7 +3314,7 @@
       "tapped": 23,
       "wrong_card": 2
      },
-     "epeshu_z4.95": {
+     "epeshu_z4_95": {
       "zoom": 4.95,
       "glyphs": 189,
       "untappable": 176,
@@ -3322,7 +3322,7 @@
       "tapped": 13,
       "wrong_card": 1
      },
-     "city_z6.15": {
+     "city_z6_15": {
       "zoom": 6.15,
       "glyphs": 189,
       "untappable": 180,
@@ -3333,25 +3333,25 @@
     },
     "taps": [
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "Epēshu",
       "outcome": "other",
       "opened": "#faction=The Lektān Priesthood"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "The Eshbrīn",
       "outcome": "other",
       "opened": "Epēshu"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "The Eshbrīn",
       "outcome": "other",
       "opened": "Epēshu"
      },
      {
-      "view": "city_z6.15",
+      "view": "city_z6_15",
       "name": "The Eshbrīn",
       "outcome": "other",
       "opened": "Epēshu"
@@ -3966,7 +3966,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 118520
+    "wall_ms": 118997
    },
    "extras": {},
    "extra_errors": {
@@ -4031,17 +4031,17 @@
     }
    },
    "first_load": {
-    "bytes": 1900695,
+    "bytes": 1900373,
     "requests": 164,
     "cache_hits": 0,
     "max_asset": {
      "path": "/maps-site/",
-     "bytes": 71222
+     "bytes": 70900
     },
     "by_cat": {
      "html_other": {
       "requests": 13,
-      "bytes": 348233
+      "bytes": 347911
      },
      "data": {
       "requests": 16,
@@ -4214,7 +4214,7 @@
       "tapped": 17,
       "wrong_card": 0
      },
-     "leponnia_z3.5": {
+     "leponnia_z3_5": {
       "zoom": 3.5,
       "glyphs": 41,
       "untappable": 29,
@@ -4222,7 +4222,7 @@
       "tapped": 12,
       "wrong_card": 0
      },
-     "epeshu_z4.55": {
+     "epeshu_z4_55": {
       "zoom": 4.55,
       "glyphs": 189,
       "untappable": 164,
@@ -4230,7 +4230,7 @@
       "tapped": 25,
       "wrong_card": 2
      },
-     "epeshu_z4.95": {
+     "epeshu_z4_95": {
       "zoom": 4.95,
       "glyphs": 189,
       "untappable": 172,
@@ -4238,7 +4238,7 @@
       "tapped": 17,
       "wrong_card": 1
      },
-     "city_z6.15": {
+     "city_z6_15": {
       "zoom": 6.15,
       "glyphs": 189,
       "untappable": 178,
@@ -4249,25 +4249,25 @@
     },
     "taps": [
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "Epēshu",
       "outcome": "other",
       "opened": "#faction=The Lektān Priesthood"
      },
      {
-      "view": "epeshu_z4.55",
+      "view": "epeshu_z4_55",
       "name": "The Eshbrīn",
       "outcome": "other",
       "opened": "Epēshu"
      },
      {
-      "view": "epeshu_z4.95",
+      "view": "epeshu_z4_95",
       "name": "The Eshbrīn",
       "outcome": "other",
       "opened": "Epēshu"
      },
      {
-      "view": "city_z6.15",
+      "view": "city_z6_15",
       "name": "The Eshbrīn",
       "outcome": "other",
       "opened": "Epēshu"
@@ -4882,7 +4882,7 @@
     "messages": []
    },
    "timing": {
-    "wall_ms": 130313
+    "wall_ms": 130750
    },
    "extras": {},
    "extra_errors": {
