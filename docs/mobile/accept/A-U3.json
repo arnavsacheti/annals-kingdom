@@ -1,0 +1,1336 @@
+{
+  "unit": "A-U3",
+  "profiles": [
+    "iphone13",
+    "pixel7",
+    "landscape",
+    "desktop",
+    "desktop2x"
+  ],
+  "clock": "virtual",
+  "files_touched": [
+    "maps-site/index.html",
+    "docs/mobile/accept/A-U3.json"
+  ],
+  "gates": [
+    "UG1",
+    "UG2",
+    "UG3",
+    "UG4",
+    "UG5",
+    "UG6",
+    "UG7",
+    "UG8",
+    "UG9",
+    "UG10",
+    "UG11"
+  ],
+  "baseline": "rebase-18",
+  "declared_change_keys": [
+    "atlas.iphone13.targets_under_44",
+    "atlas.iphone13.controls",
+    "atlas.iphone13.reach",
+    "atlas.iphone13.primary",
+    "atlas.iphone13.tap_fixture",
+    "atlas.iphone13.first_load.bytes",
+    "atlas.iphone13.first_load.max_asset.bytes",
+    "atlas.iphone13.first_load.by_cat.html_other.bytes",
+    "atlas.iphone13.tap_epeshu",
+    "atlas.iphone13.card",
+    "atlas.iphone13.chrome_cover.card",
+    "atlas.iphone13.extras.safe_area.env_rules",
+    "atlas.pixel7.targets_under_44",
+    "atlas.pixel7.controls",
+    "atlas.pixel7.reach",
+    "atlas.pixel7.primary",
+    "atlas.pixel7.tap_fixture",
+    "atlas.pixel7.first_load.bytes",
+    "atlas.pixel7.first_load.max_asset.bytes",
+    "atlas.pixel7.first_load.by_cat.html_other.bytes",
+    "atlas.pixel7.tap_epeshu",
+    "atlas.pixel7.card",
+    "atlas.pixel7.chrome_cover.card",
+    "atlas.pixel7.extras.safe_area.env_rules",
+    "atlas.landscape.targets_under_44",
+    "atlas.landscape.controls",
+    "atlas.landscape.reach",
+    "atlas.landscape.primary",
+    "atlas.landscape.tap_fixture",
+    "atlas.landscape.first_load.bytes",
+    "atlas.landscape.first_load.max_asset.bytes",
+    "atlas.landscape.first_load.by_cat.html_other.bytes",
+    "atlas.landscape.tap_epeshu",
+    "atlas.landscape.card",
+    "atlas.landscape.chrome_cover.card",
+    "atlas.landscape.extras.safe_area.env_rules",
+    "atlas.desktop.targets_under_44",
+    "atlas.desktop.controls",
+    "atlas.desktop.reach",
+    "atlas.desktop.primary",
+    "atlas.desktop.tap_fixture",
+    "atlas.desktop.first_load.bytes",
+    "atlas.desktop.first_load.max_asset.bytes",
+    "atlas.desktop.first_load.by_cat.html_other.bytes",
+    "atlas.desktop2x.targets_under_44",
+    "atlas.desktop2x.controls",
+    "atlas.desktop2x.reach",
+    "atlas.desktop2x.primary",
+    "atlas.desktop2x.tap_fixture",
+    "atlas.desktop2x.first_load.bytes",
+    "atlas.desktop2x.first_load.max_asset.bytes",
+    "atlas.desktop2x.first_load.by_cat.html_other.bytes"
+  ],
+  "declared_first_view_growth": {
+    "bytes": 2048,
+    "requests": 0
+  },
+  "mask": [],
+  "strings": [
+    "Which mark is meant?",
+    "Close the card",
+    "settlement",
+    "lesser settlement",
+    "region",
+    "water",
+    "mountains",
+    "company",
+    "faction",
+    "waypoint",
+    "sea lane",
+    "road",
+    "place"
+  ],
+  "checks": [
+    {
+      "key": "atlas.iphone13.targets_under_44.count",
+      "op": "<=",
+      "value": 16,
+      "was": 80
+    },
+    {
+      "key": "atlas.iphone13.targets_under_44.total",
+      "op": "<=",
+      "value": 20,
+      "was": 84
+    },
+    {
+      "key": "atlas.iphone13.targets_under_44.markers",
+      "op": "<=",
+      "value": 69,
+      "was": 69
+    },
+    {
+      "key": "atlas.iphone13.targets_under_44.markers_under44",
+      "op": "<=",
+      "value": 69,
+      "was": 69
+    },
+    {
+      "key": "atlas.iphone13.controls.length",
+      "op": "<=",
+      "value": 75,
+      "was": 75
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.n",
+      "op": "<=",
+      "value": 86,
+      "was": 86
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.wrong_card",
+      "op": "==",
+      "value": 0,
+      "was": 17
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.wrong_taps",
+      "op": "==",
+      "value": 0,
+      "was": 17
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.no_open",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.chooser_without_glyph",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.chooser",
+      "op": ">",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.whole.glyphs",
+      "op": "<=",
+      "value": 187,
+      "was": 187
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.whole.untappable",
+      "op": "<=",
+      "value": 138,
+      "was": 138
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.whole.tapped",
+      "op": "<=",
+      "value": 49,
+      "was": 49
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.whole.wrong_card",
+      "op": "<=",
+      "value": 0,
+      "was": 7
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.leponnia_z3_5.glyphs",
+      "op": "<=",
+      "value": 187,
+      "was": 187
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.leponnia_z3_5.untappable",
+      "op": "<=",
+      "value": 173,
+      "was": 173
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.leponnia_z3_5.tapped",
+      "op": "<=",
+      "value": 14,
+      "was": 14
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.leponnia_z3_5.wrong_card",
+      "op": "<=",
+      "value": 0,
+      "was": 6
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.epeshu_z4_55.glyphs",
+      "op": "<=",
+      "value": 189,
+      "was": 189
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.epeshu_z4_55.untappable",
+      "op": "<=",
+      "value": 180,
+      "was": 180
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.epeshu_z4_55.tapped",
+      "op": "<=",
+      "value": 9,
+      "was": 9
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.epeshu_z4_55.wrong_card",
+      "op": "<=",
+      "value": 0,
+      "was": 2
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.epeshu_z4_95.glyphs",
+      "op": "<=",
+      "value": 189,
+      "was": 189
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.epeshu_z4_95.untappable",
+      "op": "<=",
+      "value": 180,
+      "was": 180
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.epeshu_z4_95.tapped",
+      "op": "<=",
+      "value": 9,
+      "was": 9
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.epeshu_z4_95.wrong_card",
+      "op": "<=",
+      "value": 0,
+      "was": 1
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.city_z6_15.glyphs",
+      "op": "<=",
+      "value": 189,
+      "was": 189
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.city_z6_15.untappable",
+      "op": "<=",
+      "value": 184,
+      "was": 184
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.city_z6_15.tapped",
+      "op": "<=",
+      "value": 5,
+      "was": 5
+    },
+    {
+      "key": "atlas.iphone13.tap_fixture.views.city_z6_15.wrong_card",
+      "op": "<=",
+      "value": 0,
+      "was": 1
+    },
+    {
+      "key": "atlas.iphone13.first_load.bytes",
+      "op": "between",
+      "value": [
+        762735,
+        764783
+      ],
+      "was": 762735
+    },
+    {
+      "key": "atlas.iphone13.first_load.max_asset.bytes",
+      "op": "between",
+      "value": [
+        69281,
+        71329
+      ],
+      "was": 69281
+    },
+    {
+      "key": "atlas.iphone13.first_load.by_cat.html_other.bytes",
+      "op": "between",
+      "value": [
+        346292,
+        348340
+      ],
+      "was": 346292
+    },
+    {
+      "key": "atlas.iphone13.first_load.requests",
+      "op": "==",
+      "value": 54,
+      "was": 54
+    },
+    {
+      "key": "atlas.iphone13.tap_epeshu.opened_hash",
+      "op": "==",
+      "value": "#place=Epēshu",
+      "was": "#faction=The Lektān Priesthood"
+    },
+    {
+      "key": "atlas.iphone13.tap_epeshu.panel_title",
+      "op": "==",
+      "value": "Epēshu",
+      "was": "The Lektān Priesthood"
+    },
+    {
+      "key": "atlas.iphone13.tap_epeshu.panel_open",
+      "op": "==",
+      "value": true,
+      "was": true
+    },
+    {
+      "key": "atlas.iphone13.tap_epeshu.via_chooser",
+      "op": "deep-equals",
+      "value": [
+        "Epēshu — settlement",
+        "The Lektān Priesthood — faction"
+      ],
+      "was": null
+    },
+    {
+      "key": "atlas.iphone13.extras.safe_area.env_rules",
+      "op": "==",
+      "value": 14,
+      "was": 13
+    },
+    {
+      "key": "atlas.iphone13.extras.safe_area.intersecting_n",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.pixel7.targets_under_44.count",
+      "op": "<=",
+      "value": 73,
+      "was": 73
+    },
+    {
+      "key": "atlas.pixel7.targets_under_44.total",
+      "op": "<=",
+      "value": 77,
+      "was": 77
+    },
+    {
+      "key": "atlas.pixel7.targets_under_44.markers",
+      "op": "<=",
+      "value": 62,
+      "was": 62
+    },
+    {
+      "key": "atlas.pixel7.targets_under_44.markers_under44",
+      "op": "<=",
+      "value": 62,
+      "was": 62
+    },
+    {
+      "key": "atlas.pixel7.controls.length",
+      "op": "<=",
+      "value": 74,
+      "was": 74
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.n",
+      "op": "<=",
+      "value": 87,
+      "was": 87
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.wrong_card",
+      "op": "==",
+      "value": 0,
+      "was": 10
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.wrong_taps",
+      "op": "==",
+      "value": 0,
+      "was": 10
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.no_open",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.chooser_without_glyph",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.chooser",
+      "op": ">",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.whole.glyphs",
+      "op": "<=",
+      "value": 187,
+      "was": 187
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.whole.untappable",
+      "op": "<=",
+      "value": 147,
+      "was": 147
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.whole.tapped",
+      "op": "<=",
+      "value": 40,
+      "was": 40
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.whole.wrong_card",
+      "op": "<=",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.leponnia_z3_5.glyphs",
+      "op": "<=",
+      "value": 187,
+      "was": 187
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.leponnia_z3_5.untappable",
+      "op": "<=",
+      "value": 167,
+      "was": 167
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.leponnia_z3_5.tapped",
+      "op": "<=",
+      "value": 20,
+      "was": 20
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.leponnia_z3_5.wrong_card",
+      "op": "<=",
+      "value": 0,
+      "was": 6
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.epeshu_z4_55.glyphs",
+      "op": "<=",
+      "value": 189,
+      "was": 189
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.epeshu_z4_55.untappable",
+      "op": "<=",
+      "value": 178,
+      "was": 178
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.epeshu_z4_55.tapped",
+      "op": "<=",
+      "value": 11,
+      "was": 11
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.epeshu_z4_55.wrong_card",
+      "op": "<=",
+      "value": 0,
+      "was": 2
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.epeshu_z4_95.glyphs",
+      "op": "<=",
+      "value": 189,
+      "was": 189
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.epeshu_z4_95.untappable",
+      "op": "<=",
+      "value": 178,
+      "was": 178
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.epeshu_z4_95.tapped",
+      "op": "<=",
+      "value": 11,
+      "was": 11
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.epeshu_z4_95.wrong_card",
+      "op": "<=",
+      "value": 0,
+      "was": 1
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.city_z6_15.glyphs",
+      "op": "<=",
+      "value": 189,
+      "was": 189
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.city_z6_15.untappable",
+      "op": "<=",
+      "value": 184,
+      "was": 184
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.city_z6_15.tapped",
+      "op": "<=",
+      "value": 5,
+      "was": 5
+    },
+    {
+      "key": "atlas.pixel7.tap_fixture.views.city_z6_15.wrong_card",
+      "op": "<=",
+      "value": 0,
+      "was": 1
+    },
+    {
+      "key": "atlas.pixel7.first_load.bytes",
+      "op": "between",
+      "value": [
+        637335,
+        639383
+      ],
+      "was": 637335
+    },
+    {
+      "key": "atlas.pixel7.first_load.max_asset.bytes",
+      "op": "between",
+      "value": [
+        69281,
+        71329
+      ],
+      "was": 69281
+    },
+    {
+      "key": "atlas.pixel7.first_load.by_cat.html_other.bytes",
+      "op": "between",
+      "value": [
+        346292,
+        348340
+      ],
+      "was": 346292
+    },
+    {
+      "key": "atlas.pixel7.first_load.requests",
+      "op": "==",
+      "value": 44,
+      "was": 44
+    },
+    {
+      "key": "atlas.pixel7.tap_epeshu.opened_hash",
+      "op": "==",
+      "value": "#place=Epēshu",
+      "was": "#place=Epēshu"
+    },
+    {
+      "key": "atlas.pixel7.tap_epeshu.panel_title",
+      "op": "==",
+      "value": "Epēshu",
+      "was": "Epēshu"
+    },
+    {
+      "key": "atlas.pixel7.tap_epeshu.panel_open",
+      "op": "==",
+      "value": true,
+      "was": true
+    },
+    {
+      "key": "atlas.pixel7.tap_epeshu.via_chooser",
+      "op": "deep-equals",
+      "value": [
+        "Epēshu — settlement",
+        "The Lektān Priesthood — faction"
+      ],
+      "was": null
+    },
+    {
+      "key": "atlas.pixel7.extras.safe_area.env_rules",
+      "op": "==",
+      "value": 14,
+      "was": 13
+    },
+    {
+      "key": "atlas.pixel7.extras.safe_area.intersecting_n",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.landscape.targets_under_44.count",
+      "op": "<=",
+      "value": 83,
+      "was": 83
+    },
+    {
+      "key": "atlas.landscape.targets_under_44.total",
+      "op": "<=",
+      "value": 86,
+      "was": 86
+    },
+    {
+      "key": "atlas.landscape.targets_under_44.markers",
+      "op": "<=",
+      "value": 72,
+      "was": 72
+    },
+    {
+      "key": "atlas.landscape.targets_under_44.markers_under44",
+      "op": "<=",
+      "value": 72,
+      "was": 72
+    },
+    {
+      "key": "atlas.landscape.controls.length",
+      "op": "<=",
+      "value": 85,
+      "was": 85
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.n",
+      "op": "<=",
+      "value": 148,
+      "was": 148
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.wrong_card",
+      "op": "<",
+      "value": 63,
+      "was": 63
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.wrong_taps",
+      "op": "<",
+      "value": 63,
+      "was": 63
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.no_open",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.chooser_without_glyph",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.chooser",
+      "op": ">",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.whole.glyphs",
+      "op": "<=",
+      "value": 187,
+      "was": 187
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.whole.untappable",
+      "op": "<=",
+      "value": 62,
+      "was": 62
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.whole.tapped",
+      "op": "<=",
+      "value": 125,
+      "was": 125
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.whole.wrong_card",
+      "op": "<=",
+      "value": 58,
+      "was": 58
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.leponnia_z3_5.glyphs",
+      "op": "<=",
+      "value": 187,
+      "was": 187
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.leponnia_z3_5.untappable",
+      "op": "<=",
+      "value": 178,
+      "was": 178
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.leponnia_z3_5.tapped",
+      "op": "<=",
+      "value": 9,
+      "was": 9
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.leponnia_z3_5.wrong_card",
+      "op": "<=",
+      "value": 2,
+      "was": 2
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.epeshu_z4_55.glyphs",
+      "op": "<=",
+      "value": 189,
+      "was": 189
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.epeshu_z4_55.untappable",
+      "op": "<=",
+      "value": 185,
+      "was": 185
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.epeshu_z4_55.tapped",
+      "op": "<=",
+      "value": 4,
+      "was": 4
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.epeshu_z4_55.wrong_card",
+      "op": "<=",
+      "value": 1,
+      "was": 1
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.epeshu_z4_95.glyphs",
+      "op": "<=",
+      "value": 189,
+      "was": 189
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.epeshu_z4_95.untappable",
+      "op": "<=",
+      "value": 184,
+      "was": 184
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.epeshu_z4_95.tapped",
+      "op": "<=",
+      "value": 5,
+      "was": 5
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.epeshu_z4_95.wrong_card",
+      "op": "<=",
+      "value": 1,
+      "was": 1
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.city_z6_15.glyphs",
+      "op": "<=",
+      "value": 189,
+      "was": 189
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.city_z6_15.untappable",
+      "op": "<=",
+      "value": 184,
+      "was": 184
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.city_z6_15.tapped",
+      "op": "<=",
+      "value": 5,
+      "was": 5
+    },
+    {
+      "key": "atlas.landscape.tap_fixture.views.city_z6_15.wrong_card",
+      "op": "<=",
+      "value": 1,
+      "was": 1
+    },
+    {
+      "key": "atlas.landscape.first_load.bytes",
+      "op": "between",
+      "value": [
+        573241,
+        575289
+      ],
+      "was": 573241
+    },
+    {
+      "key": "atlas.landscape.first_load.max_asset.bytes",
+      "op": "between",
+      "value": [
+        69281,
+        71329
+      ],
+      "was": 69281
+    },
+    {
+      "key": "atlas.landscape.first_load.by_cat.html_other.bytes",
+      "op": "between",
+      "value": [
+        346292,
+        348340
+      ],
+      "was": 346292
+    },
+    {
+      "key": "atlas.landscape.first_load.requests",
+      "op": "==",
+      "value": 44,
+      "was": 44
+    },
+    {
+      "key": "atlas.landscape.tap_epeshu.opened_hash",
+      "op": "==",
+      "value": "#place=Epēshu",
+      "was": "#faction=The Lektān Priesthood"
+    },
+    {
+      "key": "atlas.landscape.tap_epeshu.panel_title",
+      "op": "==",
+      "value": "Epēshu",
+      "was": "The Lektān Priesthood"
+    },
+    {
+      "key": "atlas.landscape.tap_epeshu.panel_open",
+      "op": "==",
+      "value": true,
+      "was": true
+    },
+    {
+      "key": "atlas.landscape.tap_epeshu.via_chooser",
+      "op": "deep-equals",
+      "value": [
+        "Epēshu — settlement",
+        "The Lektān Priesthood — faction"
+      ],
+      "was": null
+    },
+    {
+      "key": "atlas.landscape.extras.safe_area.env_rules",
+      "op": "==",
+      "value": 14,
+      "was": 13
+    },
+    {
+      "key": "atlas.landscape.extras.safe_area.intersecting_n",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop.targets_under_44.count",
+      "op": "<=",
+      "value": 29,
+      "was": 173
+    },
+    {
+      "key": "atlas.desktop.targets_under_44.total",
+      "op": "<=",
+      "value": 31,
+      "was": 175
+    },
+    {
+      "key": "atlas.desktop.targets_under_44.markers",
+      "op": "<=",
+      "value": 160,
+      "was": 160
+    },
+    {
+      "key": "atlas.desktop.targets_under_44.markers_under44",
+      "op": "<=",
+      "value": 160,
+      "was": 160
+    },
+    {
+      "key": "atlas.desktop.controls.length",
+      "op": "<=",
+      "value": 196,
+      "was": 196
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.n",
+      "op": "<=",
+      "value": 270,
+      "was": 270
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.wrong_card",
+      "op": "<",
+      "value": 23,
+      "was": 23
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.wrong_taps",
+      "op": "<",
+      "value": 23,
+      "was": 23
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.no_open",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.chooser_without_glyph",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.chooser",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.whole.glyphs",
+      "op": "<=",
+      "value": 187,
+      "was": 187
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.whole.untappable",
+      "op": "<=",
+      "value": 9,
+      "was": 9
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.whole.tapped",
+      "op": "<=",
+      "value": 178,
+      "was": 178
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.whole.wrong_card",
+      "op": "<=",
+      "value": 13,
+      "was": 13
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.leponnia_z3_5.glyphs",
+      "op": "<=",
+      "value": 187,
+      "was": 187
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.leponnia_z3_5.untappable",
+      "op": "<=",
+      "value": 140,
+      "was": 140
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.leponnia_z3_5.tapped",
+      "op": "<=",
+      "value": 47,
+      "was": 47
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.leponnia_z3_5.wrong_card",
+      "op": "<=",
+      "value": 6,
+      "was": 6
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.epeshu_z4_55.glyphs",
+      "op": "<=",
+      "value": 189,
+      "was": 189
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.epeshu_z4_55.untappable",
+      "op": "<=",
+      "value": 166,
+      "was": 166
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.epeshu_z4_55.tapped",
+      "op": "<=",
+      "value": 23,
+      "was": 23
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.epeshu_z4_55.wrong_card",
+      "op": "<=",
+      "value": 2,
+      "was": 2
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.epeshu_z4_95.glyphs",
+      "op": "<=",
+      "value": 189,
+      "was": 189
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.epeshu_z4_95.untappable",
+      "op": "<=",
+      "value": 176,
+      "was": 176
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.epeshu_z4_95.tapped",
+      "op": "<=",
+      "value": 13,
+      "was": 13
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.epeshu_z4_95.wrong_card",
+      "op": "<=",
+      "value": 1,
+      "was": 1
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.city_z6_15.glyphs",
+      "op": "<=",
+      "value": 189,
+      "was": 189
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.city_z6_15.untappable",
+      "op": "<=",
+      "value": 180,
+      "was": 180
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.city_z6_15.tapped",
+      "op": "<=",
+      "value": 9,
+      "was": 9
+    },
+    {
+      "key": "atlas.desktop.tap_fixture.views.city_z6_15.wrong_card",
+      "op": "<=",
+      "value": 1,
+      "was": 1
+    },
+    {
+      "key": "atlas.desktop.first_load.bytes",
+      "op": "between",
+      "value": [
+        572677,
+        574725
+      ],
+      "was": 572677
+    },
+    {
+      "key": "atlas.desktop.first_load.max_asset.bytes",
+      "op": "between",
+      "value": [
+        69281,
+        71329
+      ],
+      "was": 69281
+    },
+    {
+      "key": "atlas.desktop.first_load.by_cat.html_other.bytes",
+      "op": "between",
+      "value": [
+        345728,
+        347776
+      ],
+      "was": 345728
+    },
+    {
+      "key": "atlas.desktop.first_load.requests",
+      "op": "==",
+      "value": 44,
+      "was": 44
+    },
+    {
+      "key": "atlas.desktop.tap_epeshu.via_chooser",
+      "op": "absent",
+      "was": null
+    },
+    {
+      "key": "atlas.desktop2x.targets_under_44.count",
+      "op": "<=",
+      "value": 173,
+      "was": 173
+    },
+    {
+      "key": "atlas.desktop2x.targets_under_44.total",
+      "op": "<=",
+      "value": 175,
+      "was": 175
+    },
+    {
+      "key": "atlas.desktop2x.targets_under_44.markers",
+      "op": "<=",
+      "value": 160,
+      "was": 160
+    },
+    {
+      "key": "atlas.desktop2x.targets_under_44.markers_under44",
+      "op": "<=",
+      "value": 160,
+      "was": 160
+    },
+    {
+      "key": "atlas.desktop2x.controls.length",
+      "op": "<=",
+      "value": 199,
+      "was": 199
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.n",
+      "op": "<=",
+      "value": 292,
+      "was": 292
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.wrong_card",
+      "op": "<",
+      "value": 20,
+      "was": 20
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.wrong_taps",
+      "op": "<",
+      "value": 20,
+      "was": 20
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.no_open",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.chooser_without_glyph",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.chooser",
+      "op": "==",
+      "value": 0,
+      "was": 0
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.whole.glyphs",
+      "op": "<=",
+      "value": 187,
+      "was": 187
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.whole.untappable",
+      "op": "<=",
+      "value": 7,
+      "was": 7
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.whole.tapped",
+      "op": "<=",
+      "value": 180,
+      "was": 180
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.whole.wrong_card",
+      "op": "<=",
+      "value": 10,
+      "was": 10
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.leponnia_z3_5.glyphs",
+      "op": "<=",
+      "value": 187,
+      "was": 187
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.leponnia_z3_5.untappable",
+      "op": "<=",
+      "value": 128,
+      "was": 128
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.leponnia_z3_5.tapped",
+      "op": "<=",
+      "value": 59,
+      "was": 59
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.leponnia_z3_5.wrong_card",
+      "op": "<=",
+      "value": 6,
+      "was": 6
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.epeshu_z4_55.glyphs",
+      "op": "<=",
+      "value": 189,
+      "was": 189
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.epeshu_z4_55.untappable",
+      "op": "<=",
+      "value": 164,
+      "was": 164
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.epeshu_z4_55.tapped",
+      "op": "<=",
+      "value": 25,
+      "was": 25
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.epeshu_z4_55.wrong_card",
+      "op": "<=",
+      "value": 2,
+      "was": 2
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.epeshu_z4_95.glyphs",
+      "op": "<=",
+      "value": 189,
+      "was": 189
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.epeshu_z4_95.untappable",
+      "op": "<=",
+      "value": 172,
+      "was": 172
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.epeshu_z4_95.tapped",
+      "op": "<=",
+      "value": 17,
+      "was": 17
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.epeshu_z4_95.wrong_card",
+      "op": "<=",
+      "value": 1,
+      "was": 1
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.city_z6_15.glyphs",
+      "op": "<=",
+      "value": 189,
+      "was": 189
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.city_z6_15.untappable",
+      "op": "<=",
+      "value": 178,
+      "was": 178
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.city_z6_15.tapped",
+      "op": "<=",
+      "value": 11,
+      "was": 11
+    },
+    {
+      "key": "atlas.desktop2x.tap_fixture.views.city_z6_15.wrong_card",
+      "op": "<=",
+      "value": 1,
+      "was": 1
+    },
+    {
+      "key": "atlas.desktop2x.first_load.bytes",
+      "op": "between",
+      "value": [
+        1898754,
+        1900802
+      ],
+      "was": 1898754
+    },
+    {
+      "key": "atlas.desktop2x.first_load.max_asset.bytes",
+      "op": "between",
+      "value": [
+        69281,
+        71329
+      ],
+      "was": 69281
+    },
+    {
+      "key": "atlas.desktop2x.first_load.by_cat.html_other.bytes",
+      "op": "between",
+      "value": [
+        346292,
+        348340
+      ],
+      "was": 346292
+    },
+    {
+      "key": "atlas.desktop2x.first_load.requests",
+      "op": "==",
+      "value": 164,
+      "was": 164
+    },
+    {
+      "key": "atlas.desktop2x.tap_epeshu.via_chooser",
+      "op": "absent",
+      "was": null
+    }
+  ],
+  "unscored": [
+    "tapped glyph opened or listed in 100% of taps (tap fixture, every interactive glyph centre in whole chart, Leponnia z3.5, Epēshu z4.55, Epēshu z4.95, city z6.15, on iphone13 and pixel7)",
+    "chooser shown iff >= 2 glyph centres lie within 22 px (scripted on the 10 most crowded pairs); rows >= 44 px, nearest first, names plus kind. Central ruling 2026-10-07: a tap with no glyph centre within 22 px opens no MARKER card (pads never decide); on a VISIBLE line, fill or printed place label it does what it did before (that feature own card), and on a faded (invisible) line or fill it opens nothing. The chooser closes on any tap outside it and never stays over a card",
+    "faded (tier-hidden) markers take no input on any profile: elementsFromPoint at a faded marker glyph centre returns no faded marker. On coarse pointers faded lines and fills (realm, district, way, lane, route and trail panes) take no tap either, so elementsFromPoint there returns no faded element at all; on fine pointers faded lines and fills keep their hover and click exactly as before (desktop identity). Desktop sequential focus skips faded markers (declared, not a finding)",
+    "glyphs never move (no badge offset): marker glyph rects equal R1; desktop click fixture opens the same hashes as R1 (except clicks that landed on faded waypoints, which now reach the marker beneath: listed as the declared change)",
+    "if A-U2 is deferred-5b the unit proceeds against B0 tiers and records tiers_deferred:true",
+    "desktop chrome controls are unchanged (bullet 8); the desktop card view is unchanged (bullet 9)",
+    "the chooser sheet clears the home bar with its own env(safe-area-inset-*) padding; the unit uses exactly the fixed chooser words, voice read by the lens"
+  ]
+}
