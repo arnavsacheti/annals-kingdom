@@ -41,7 +41,9 @@ Avoid these words in visible text (internal names may keep them): menu, drawer, 
 |---|---|---|
 | A-U8, A-U9, S-U8 | sheet handle (aria-label and title) | Draw the sheet up or down |
 | A-U8 | layers control | Layers of the chart |
-| A-U8, A-U9 | close control of a sheet or the place card | Close the card |
+| A-U3, A-U8, A-U9 | close control of a sheet, the tap chooser or the place card | Close the card |
+| A-U3 | tap chooser heading and aria-label, coarse pointer | Which mark is meant? |
+| A-U3 | kind word after each chooser row's name ("<name> — <kind>") | settlement · lesser settlement · region · water · mountains · company · faction · waypoint · sea lane · road · place |
 | S-U2 | court tab, 44 px, on the sim (coarse pointer) | ❦ Return the court |
 | S-U2 | court tab title on coarse pointers (replaces the old "tap the map edge") | Bring back the court |
 | S-U2 | court tab title on fine pointers | Bring back the court (H) |

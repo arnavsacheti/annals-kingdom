@@ -551,6 +551,13 @@ Agents never run git.
 - [ ] **Tier-hidden markers intercept clicks** — invisible (tier-faded) route waypoints
   still capture pointer events and can steal clicks from markers beneath them
   (pre-existing Leaflet pane quirk): set pointer-events none on faded panes.
+- [ ] **Ghost hovers on faded lines and fills (desktop)** — at tiers where the realm, district,
+  way, lane, route and trail panes are faded to nothing, their invisible paths still answer
+  desktop hover and click (Leaflet's `path.leaflet-interactive` overrides the pane's
+  pointer-events): at the world view a realm name tooltips and opens from an invisible fill, and
+  over a city an invisible road or packet lane does. Mobile 5 (A-U3) stops this on touch only and
+  keeps desktop identical. Owner call: keep the hidden hover as a discovery aid, or make faded
+  lines and fills inert on desktop too (one CSS rule; declare the desktop change).
 - [ ] **Sim ↔ atlas continuity** — matching deep-link vocabulary both ways
   (sim `#goto=` ↔ atlas `#chart=`), so cross-links can land on the same place.
 
