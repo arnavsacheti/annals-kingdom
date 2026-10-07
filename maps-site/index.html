@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>Agrakh Nīmilkad Utheg — the Wide World</title>
 <link rel="stylesheet" href="vendor/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <style>
@@ -110,7 +110,7 @@
   *{box-sizing:border-box;}
   html,body{margin:0;height:100%;background:var(--parch);color:var(--ink);
     font-family:'Lora','Lora fb',Georgia,serif;}
-  #app{display:flex;flex-direction:column;height:100%;}
+  #app{display:flex;flex-direction:column;height:100%;height:100dvh;}
 
   header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
     padding:8px 16px;background:linear-gradient(180deg,var(--panel),var(--panel2));
@@ -144,7 +144,7 @@
   .links button:focus-visible{outline:2px solid var(--rust);outline-offset:2px;}
 
   /* ---- Contents landing overlay (spec D): a thematic start page over the chart ---- */
-  #contents{position:fixed;inset:0;z-index:1500;display:flex;align-items:center;
+  #contents{position:fixed;inset:0;z-index:1500;display:flex;align-items:center;align-items:safe center;
     justify-content:center;padding:32px 20px;overflow:auto;
     background:radial-gradient(130% 120% at 50% -10%,var(--parch2),var(--parch) 58%,var(--panel2));}
   #contents[hidden]{display:none;}
@@ -651,9 +651,11 @@
     .links a{font-size:13px;line-height:17px;padding:4px 8px;}
     footer{font-size:11px;line-height:14px;}
     #panel{top:auto;left:0;right:0;bottom:0;width:auto;max-width:none;height:64%;
-      transform:translateY(104%);border-right:none;border-top:2px solid var(--line2);
+      transform:translateY(calc(100% + 120px));border-right:none;border-top:2px solid var(--line2);
       border-radius:16px 16px 0 0;box-shadow:0 -6px 22px rgba(44,36,24,.4);}
     #panel.open{transform:translateY(0);}
+    #stage{overflow:hidden;}
+    #panel:not(.open){visibility:hidden;transition:transform .28s cubic-bezier(.4,0,.2,1),visibility 0s .28s;}
     .panel-open .leaflet-top.leaflet-left{margin-left:0;}
     .panel-open .leaflet-bottom.leaflet-left{margin-left:0;visibility:hidden;}  /* bottom sheet covers it anyway */
     .era-ctrl{max-width:200px;padding:6px 8px;}
@@ -667,6 +669,28 @@
     .chart-title{max-width:44vw;padding:4px 9px;}
     .chart-title .ct-name{font-size:14px;}
     .chart-title .ct-sub{font-size:8.5px;letter-spacing:1px;}
+  }
+  /* ---- safe areas: the notch and home bar never sit under a control ---- */
+  header{padding:calc(8px + env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 8px max(16px,env(safe-area-inset-left));}
+  footer{padding:5px max(16px,env(safe-area-inset-right)) calc(5px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));}
+  #contents{padding:calc(32px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));}
+  #panel{padding-left:env(safe-area-inset-left);}
+  #jbar{bottom:calc(16px + env(safe-area-inset-bottom));}
+  #stage{padding:0 env(safe-area-inset-right) 0 env(safe-area-inset-left);}
+  .panel-open .leaflet-top.leaflet-left,.panel-open .leaflet-bottom.leaflet-left{margin-left:calc(346px - env(safe-area-inset-left));}
+  .uncharted-mark{right:calc(14px + env(safe-area-inset-right));}
+  @media (max-width:720px){
+    #jbar{left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));}
+    .panel-open #jbar{left:max(12px,env(safe-area-inset-left));}
+  }
+  @media (min-width:721px) and (pointer:coarse) and (hover:none){
+    .panel-open #jbar{left:calc(358px + env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));transform:none;width:auto;max-width:680px;}
+  }
+  @media (max-width:640px){
+    header{padding:calc(6px + env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) 6px max(10px,env(safe-area-inset-left));}
+    #panel{padding-right:env(safe-area-inset-right);}
+    .panel-open .leaflet-top.leaflet-left{margin-left:0;}
+    .panel-open .leaflet-bottom.leaflet-left{margin-left:0;}
   }
 </style>
 </head>

@@ -3,7 +3,7 @@
   "item": "Mobile 4",
   "app_sha": {
     "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-    "maps-site/index.html": "566f1cead36db41512fe72fc8ff220dc429c870cbeadd1405ac8e51f79c4c22a"
+    "maps-site/index.html": "4f9757bfac2319b74735e21abfc324447fff9717eed77464142a1a6590ba19e8"
   },
   "baselines": {
     "B0": "7dbac85b923ea59d8c93248a4f57fa9e6ba1a40977125f8dedde2ff43453cfd3",
@@ -96,22 +96,15 @@
       "ref_before": "after-D3"
     },
     "A-U1": {
-      "status": "failed",
-      "attempts": 3,
+      "status": "passed",
+      "attempts": 2,
       "capture": "docs/mobile/captures/A-U1.json",
       "files_sha": {
-        "docs/mobile/accept/A-U1.json": "ef3fb62700eac58a567f401b63f1cfc9301ecd6d932918cfd4a35ea8d421adab",
-        "maps-site/index.html": "566f1cead36db41512fe72fc8ff220dc429c870cbeadd1405ac8e51f79c4c22a"
+        "docs/mobile/accept/A-U1.json": "8bdce4f31fab09734504cf6ab77518de45297f3dd9c96868a95ae2edeb805e26",
+        "maps-site/index.html": "4f9757bfac2319b74735e21abfc324447fff9717eed77464142a1a6590ba19e8"
       },
-      "failing": [
-        {
-          "key": "check.digest",
-          "op": "loop",
-          "expected": "the tool output relayed intact",
-          "got": "len mismatch"
-        }
-      ],
-      "ref_before": "rebase-13"
+      "failing": [],
+      "ref_before": "rebase-14"
     },
     "A-U0": {
       "status": "passed",
@@ -312,6 +305,20 @@
       },
       "reason": "pipeline scripts changed since the reference (UG11 compares against it): .claude/workflows/mobile-build.js",
       "ref": "rebase-14"
+    },
+    {
+      "before_unit": null,
+      "after_unit": "A-U1",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "4f9757bfac2319b74735e21abfc324447fff9717eed77464142a1a6590ba19e8"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "4f9757bfac2319b74735e21abfc324447fff9717eed77464142a1a6590ba19e8"
+      },
+      "reason": "unit passed",
+      "ref": "after-A-U1"
     }
   ]
 }

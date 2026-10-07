@@ -1,0 +1,536 @@
+{
+  "unit": "A-U1",
+  "profiles": [
+    "iphone13",
+    "pixel7",
+    "landscape",
+    "desktop",
+    "desktop2x"
+  ],
+  "clock": "virtual",
+  "files_touched": [
+    "maps-site/index.html",
+    "docs/mobile/accept/A-U1.json"
+  ],
+  "gates": [
+    "UG1",
+    "UG2",
+    "UG3",
+    "UG4",
+    "UG5",
+    "UG6",
+    "UG7",
+    "UG8",
+    "UG9",
+    "UG10",
+    "UG11"
+  ],
+  "baseline": "rebase-14",
+  "declared_change_keys": [
+    "atlas.iphone13.doc_scroll",
+    "atlas.iphone13.panel_closed.visibility",
+    "atlas.iphone13.panel_closed.top",
+    "atlas.iphone13.panel_closed.leak_px",
+    "atlas.iphone13.chrome_cover.whole",
+    "atlas.iphone13.chrome_cover.layers",
+    "atlas.pixel7.doc_scroll",
+    "atlas.pixel7.panel_closed.visibility",
+    "atlas.pixel7.panel_closed.top",
+    "atlas.pixel7.panel_closed.leak_px",
+    "atlas.pixel7.chrome_cover.whole",
+    "atlas.pixel7.chrome_cover.layers",
+    "atlas.iphone13.contents.kickerTop",
+    "atlas.iphone13.contents.titleTop",
+    "atlas.iphone13.contents.footBottom",
+    "atlas.iphone13.contents.cardTops",
+    "atlas.landscape.contents.kickerTop",
+    "atlas.landscape.contents.titleTop",
+    "atlas.landscape.contents.footBottom",
+    "atlas.landscape.contents.cardTops",
+    "atlas.iphone13.targets_under_44.count",
+    "atlas.iphone13.targets_under_44.total",
+    "atlas.iphone13.targets_under_44.ratio",
+    "atlas.iphone13.controls",
+    "atlas.iphone13.reach.button:Close panel",
+    "atlas.iphone13.primary.button:Close panel.reach",
+    "atlas.iphone13.primary.button:Close panel.bottom25",
+    "atlas.iphone13.extras.safe_area.viewport_fit_cover",
+    "atlas.iphone13.extras.safe_area.env_rules",
+    "atlas.iphone13.extras.safe_area.intersecting",
+    "atlas.iphone13.extras.safe_area.intersecting_n",
+    "atlas.pixel7.extras.safe_area.viewport_fit_cover",
+    "atlas.pixel7.extras.safe_area.env_rules",
+    "atlas.pixel7.extras.safe_area.intersecting",
+    "atlas.pixel7.extras.safe_area.intersecting_n",
+    "atlas.landscape.extras.safe_area.viewport_fit_cover",
+    "atlas.landscape.extras.safe_area.env_rules",
+    "atlas.landscape.extras.safe_area.intersecting",
+    "atlas.landscape.extras.safe_area.intersecting_n",
+    "atlas.iphone13.env.viewport_meta",
+    "atlas.iphone13.first_load.bytes",
+    "atlas.iphone13.first_load.max_asset.bytes",
+    "atlas.iphone13.first_load.by_cat.html_other.bytes",
+    "atlas.pixel7.env.viewport_meta",
+    "atlas.pixel7.first_load.bytes",
+    "atlas.pixel7.first_load.max_asset.bytes",
+    "atlas.pixel7.first_load.by_cat.html_other.bytes",
+    "atlas.landscape.env.viewport_meta",
+    "atlas.landscape.first_load.bytes",
+    "atlas.landscape.first_load.max_asset.bytes",
+    "atlas.landscape.first_load.by_cat.html_other.bytes",
+    "atlas.desktop.env.viewport_meta",
+    "atlas.desktop.first_load.bytes",
+    "atlas.desktop.first_load.max_asset.bytes",
+    "atlas.desktop.first_load.by_cat.html_other.bytes",
+    "atlas.desktop2x.env.viewport_meta",
+    "atlas.desktop2x.first_load.bytes",
+    "atlas.desktop2x.first_load.max_asset.bytes",
+    "atlas.desktop2x.first_load.by_cat.html_other.bytes"
+  ],
+  "declared_first_view_growth": {
+    "bytes": 512,
+    "requests": 0
+  },
+  "mask": [],
+  "strings": [],
+  "checks": [
+    {
+      "key": "atlas.iphone13.doc_scroll",
+      "op": "==",
+      "value": 664,
+      "was": 964
+    },
+    {
+      "key": "atlas.iphone13.panel_closed.visibility",
+      "op": "==",
+      "value": "hidden",
+      "was": "visible"
+    },
+    {
+      "key": "atlas.iphone13.panel_closed.top",
+      "op": ">=",
+      "value": 664,
+      "was": 638
+    },
+    {
+      "key": "atlas.iphone13.panel_closed.leak_px",
+      "op": "==",
+      "value": 0,
+      "was": 26
+    },
+    {
+      "key": "atlas.iphone13.chrome_cover.whole",
+      "op": "<=",
+      "value": 0.2604,
+      "was": 0.2604
+    },
+    {
+      "key": "atlas.iphone13.chrome_cover.layers",
+      "op": "<=",
+      "value": 0.6995,
+      "was": 0.6995
+    },
+    {
+      "key": "atlas.pixel7.doc_scroll",
+      "op": "==",
+      "value": 839,
+      "was": 1279
+    },
+    {
+      "key": "atlas.pixel7.panel_closed.visibility",
+      "op": "==",
+      "value": "hidden",
+      "was": "visible"
+    },
+    {
+      "key": "atlas.pixel7.panel_closed.top",
+      "op": ">=",
+      "value": 839,
+      "was": 832
+    },
+    {
+      "key": "atlas.pixel7.panel_closed.leak_px",
+      "op": "==",
+      "value": 0,
+      "was": 7
+    },
+    {
+      "key": "atlas.pixel7.chrome_cover.whole",
+      "op": "<=",
+      "value": 0.1823,
+      "was": 0.1823
+    },
+    {
+      "key": "atlas.pixel7.chrome_cover.layers",
+      "op": "<=",
+      "value": 0.6826,
+      "was": 0.6826
+    },
+    {
+      "key": "atlas.iphone13.contents.kickerTop",
+      "op": ">=",
+      "value": 0,
+      "was": -61
+    },
+    {
+      "key": "atlas.iphone13.contents.titleTop",
+      "op": ">=",
+      "value": 0,
+      "was": -42
+    },
+    {
+      "key": "atlas.landscape.contents.kickerTop",
+      "op": ">=",
+      "value": 0,
+      "was": -73
+    },
+    {
+      "key": "atlas.landscape.contents.titleTop",
+      "op": ">=",
+      "value": 0,
+      "was": -54
+    },
+    {
+      "key": "atlas.iphone13.targets_under_44.count",
+      "op": "==",
+      "value": 80,
+      "was": 81
+    },
+    {
+      "key": "atlas.iphone13.targets_under_44.total",
+      "op": "==",
+      "value": 84,
+      "was": 85
+    },
+    {
+      "key": "atlas.iphone13.targets_under_44.ratio",
+      "op": "between",
+      "value": [
+        0.9523,
+        0.9529
+      ],
+      "was": 0.9529
+    },
+    {
+      "key": "atlas.iphone13.reach.button:Close panel",
+      "op": "==",
+      "value": 1,
+      "was": 0
+    },
+    {
+      "key": "atlas.iphone13.primary.button:Close panel.reach",
+      "op": "==",
+      "value": 1,
+      "was": 0
+    },
+    {
+      "key": "atlas.iphone13.primary.button:Close panel.bottom25",
+      "op": "==",
+      "value": false,
+      "was": true
+    },
+    {
+      "key": "atlas.iphone13.extras.safe_area.viewport_fit_cover",
+      "op": "==",
+      "value": true,
+      "was": false
+    },
+    {
+      "key": "atlas.iphone13.extras.safe_area.env_rules",
+      "op": ">=",
+      "value": 1,
+      "was": 0
+    },
+    {
+      "key": "atlas.iphone13.extras.safe_area.intersecting_n",
+      "op": "==",
+      "value": 0,
+      "was": 2
+    },
+    {
+      "key": "atlas.pixel7.extras.safe_area.viewport_fit_cover",
+      "op": "==",
+      "value": true,
+      "was": false
+    },
+    {
+      "key": "atlas.pixel7.extras.safe_area.env_rules",
+      "op": ">=",
+      "value": 1,
+      "was": 0
+    },
+    {
+      "key": "atlas.pixel7.extras.safe_area.intersecting_n",
+      "op": "==",
+      "value": 0,
+      "was": 3
+    },
+    {
+      "key": "atlas.landscape.extras.safe_area.viewport_fit_cover",
+      "op": "==",
+      "value": true,
+      "was": false
+    },
+    {
+      "key": "atlas.landscape.extras.safe_area.env_rules",
+      "op": ">=",
+      "value": 1,
+      "was": 0
+    },
+    {
+      "key": "atlas.landscape.extras.safe_area.intersecting_n",
+      "op": "==",
+      "value": 0,
+      "was": 9
+    },
+    {
+      "key": "atlas.iphone13.env.viewport_meta",
+      "op": "!=",
+      "value": "width=device-width, initial-scale=1.0",
+      "was": "width=device-width, initial-scale=1.0"
+    },
+    {
+      "key": "atlas.iphone13.first_load.bytes",
+      "op": "between",
+      "value": [
+        762193,
+        762705
+      ],
+      "was": 762193
+    },
+    {
+      "key": "atlas.iphone13.first_load.max_asset.bytes",
+      "op": "between",
+      "value": [
+        68739,
+        69251
+      ],
+      "was": 68739
+    },
+    {
+      "key": "atlas.iphone13.first_load.by_cat.html_other.bytes",
+      "op": "between",
+      "value": [
+        345750,
+        346262
+      ],
+      "was": 345750
+    },
+    {
+      "key": "atlas.iphone13.first_load.requests",
+      "op": "==",
+      "value": 54,
+      "was": 54
+    },
+    {
+      "key": "atlas.pixel7.env.viewport_meta",
+      "op": "!=",
+      "value": "width=device-width, initial-scale=1.0",
+      "was": "width=device-width, initial-scale=1.0"
+    },
+    {
+      "key": "atlas.pixel7.first_load.bytes",
+      "op": "between",
+      "value": [
+        636793,
+        637305
+      ],
+      "was": 636793
+    },
+    {
+      "key": "atlas.pixel7.first_load.max_asset.bytes",
+      "op": "between",
+      "value": [
+        68739,
+        69251
+      ],
+      "was": 68739
+    },
+    {
+      "key": "atlas.pixel7.first_load.by_cat.html_other.bytes",
+      "op": "between",
+      "value": [
+        345750,
+        346262
+      ],
+      "was": 345750
+    },
+    {
+      "key": "atlas.pixel7.first_load.requests",
+      "op": "==",
+      "value": 44,
+      "was": 44
+    },
+    {
+      "key": "atlas.landscape.env.viewport_meta",
+      "op": "!=",
+      "value": "width=device-width, initial-scale=1.0",
+      "was": "width=device-width, initial-scale=1.0"
+    },
+    {
+      "key": "atlas.landscape.first_load.bytes",
+      "op": "between",
+      "value": [
+        572699,
+        573211
+      ],
+      "was": 572699
+    },
+    {
+      "key": "atlas.landscape.first_load.max_asset.bytes",
+      "op": "between",
+      "value": [
+        68739,
+        69251
+      ],
+      "was": 68739
+    },
+    {
+      "key": "atlas.landscape.first_load.by_cat.html_other.bytes",
+      "op": "between",
+      "value": [
+        345750,
+        346262
+      ],
+      "was": 345750
+    },
+    {
+      "key": "atlas.landscape.first_load.requests",
+      "op": "==",
+      "value": 44,
+      "was": 44
+    },
+    {
+      "key": "atlas.desktop.env.viewport_meta",
+      "op": "!=",
+      "value": "width=device-width, initial-scale=1.0",
+      "was": "width=device-width, initial-scale=1.0"
+    },
+    {
+      "key": "atlas.desktop.first_load.bytes",
+      "op": "between",
+      "value": [
+        572135,
+        572647
+      ],
+      "was": 572135
+    },
+    {
+      "key": "atlas.desktop.first_load.max_asset.bytes",
+      "op": "between",
+      "value": [
+        68739,
+        69251
+      ],
+      "was": 68739
+    },
+    {
+      "key": "atlas.desktop.first_load.by_cat.html_other.bytes",
+      "op": "between",
+      "value": [
+        345186,
+        345698
+      ],
+      "was": 345186
+    },
+    {
+      "key": "atlas.desktop.first_load.requests",
+      "op": "==",
+      "value": 44,
+      "was": 44
+    },
+    {
+      "key": "atlas.desktop2x.env.viewport_meta",
+      "op": "!=",
+      "value": "width=device-width, initial-scale=1.0",
+      "was": "width=device-width, initial-scale=1.0"
+    },
+    {
+      "key": "atlas.desktop2x.first_load.bytes",
+      "op": "between",
+      "value": [
+        1898212,
+        1898724
+      ],
+      "was": 1898212
+    },
+    {
+      "key": "atlas.desktop2x.first_load.max_asset.bytes",
+      "op": "between",
+      "value": [
+        68739,
+        69251
+      ],
+      "was": 68739
+    },
+    {
+      "key": "atlas.desktop2x.first_load.by_cat.html_other.bytes",
+      "op": "between",
+      "value": [
+        345750,
+        346262
+      ],
+      "was": 345750
+    },
+    {
+      "key": "atlas.desktop2x.first_load.requests",
+      "op": "==",
+      "value": 164,
+      "was": 164
+    },
+    {
+      "key": "atlas.desktop.shot_diff.1-contents",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "rebase-14"
+    },
+    {
+      "key": "atlas.desktop.shot_diff.2-whole-chart",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "rebase-14"
+    },
+    {
+      "key": "atlas.desktop.shot_diff.3-layers",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "rebase-14"
+    },
+    {
+      "key": "atlas.desktop.shot_diff.4-place-card",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "rebase-14"
+    },
+    {
+      "key": "atlas.desktop2x.shot_diff.1-contents",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "rebase-14"
+    },
+    {
+      "key": "atlas.desktop2x.shot_diff.2-whole-chart",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "rebase-14"
+    },
+    {
+      "key": "atlas.desktop2x.shot_diff.3-layers",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "rebase-14"
+    },
+    {
+      "key": "atlas.desktop2x.shot_diff.4-place-card",
+      "op": "<=",
+      "value": 0.005,
+      "ref": "rebase-14"
+    }
+  ],
+  "unscored": [
+    "if the CDP command is unavailable the tool records safe_area:'unavailable' and the safe-area bullet is a proposal until Mobile 15, with the checkable pass condition that every fixed or absolute control rule uses env(safe-area-inset-*)",
+    "hiding the closed sheet changes what the inventory saw of it: it leaked 26 px (iphone13) and 7 px (pixel7) into view, so its Close button counted as an on-screen control at the bottom edge and its strip as chrome; the iphone13 controls inventory changes accordingly (now the open sheet's button) and none of chrome_cover may grow",
+    "viewport-fit=cover lets the page run under a side notch too: header, footer, Contents, the sheet, the transport bar and the Leaflet control corners all clear the side bands under the turned phone's 47 px left / 47 px right / 21 px bottom inset",
+    "desktop browsers ignore viewport-fit, so the desktop and desktop2x shots stay identical to R1"
+  ]
+}
