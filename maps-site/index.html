@@ -592,6 +592,38 @@
   .map-tier-d .leaflet-pLane-pane,.map-tier-d .leaflet-pWay-pane,
   .map-tier-d .leaflet-pDistrict-pane,
   .map-tier-d .leaflet-pRouteWp-pane{opacity:0!important;pointer-events:none;}
+  /* a faded pane's marker icons re-enable pointer-events: once the fade has run, hide them
+     so a faded glyph never takes a click, a tap or a Tab stop (lines and fills: coarse only) */
+  .map-tier-a :is(.leaflet-pSettle-pane,.leaflet-pMtn-pane,.leaflet-pRealm-pane,.leaflet-pMinor-pane,.leaflet-pLesser-pane,
+    .leaflet-pRouteLine-pane,.leaflet-pRouteWp-pane,.leaflet-pLane-pane,.leaflet-pWay-pane,.leaflet-pDistrict-pane,
+    .leaflet-pOrigin-pane,.leaflet-pTrail-pane,.leaflet-pFaction-pane) .leaflet-marker-icon,
+  .map-tier-b :is(.leaflet-pMinor-pane,.leaflet-pLesser-pane,.leaflet-pRouteWp-pane,.leaflet-pDistrict-pane,
+    .leaflet-pTrail-pane,.leaflet-pFaction-pane) .leaflet-marker-icon,
+  .map-tier-d :is(.leaflet-pRealm-pane,.leaflet-pTrail-pane,.leaflet-pRouteLine-pane,.leaflet-pWater-pane,
+    .leaflet-pMajor-pane,.leaflet-pMtn-pane,.leaflet-pSettle-pane,.leaflet-pMinor-pane,.leaflet-pLesser-pane,
+    .leaflet-pOrigin-pane,.leaflet-pFaction-pane,.leaflet-pLane-pane,.leaflet-pWay-pane,.leaflet-pDistrict-pane,
+    .leaflet-pRouteWp-pane) .leaflet-marker-icon{visibility:hidden;transition:visibility 0s .2s;}
+  @media (pointer:coarse){
+    .map-tier-a :is(.leaflet-pRealm-pane,.leaflet-pRouteLine-pane,.leaflet-pLane-pane,.leaflet-pWay-pane,
+      .leaflet-pDistrict-pane,.leaflet-pTrail-pane) > svg,
+    .map-tier-b :is(.leaflet-pDistrict-pane,.leaflet-pTrail-pane) > svg,
+    .map-tier-d :is(.leaflet-pRealm-pane,.leaflet-pTrail-pane,.leaflet-pRouteLine-pane,.leaflet-pLane-pane,
+      .leaflet-pWay-pane,.leaflet-pDistrict-pane) > svg{visibility:hidden;transition:visibility 0s .2s;}
+    /* the "which mark?" chooser (the tap resolver raises it on coarse pointers only) */
+    .chooser{position:fixed;left:0;right:0;bottom:0;z-index:1300;max-height:62%;overflow-y:auto;
+      background:linear-gradient(180deg,var(--panel),var(--panel2));border-top:2px solid var(--line2);
+      border-radius:16px 16px 0 0;box-shadow:0 -6px 22px rgba(44,36,24,.4);
+      padding:6px max(14px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));}
+    .chooser-head{display:flex;align-items:center;justify-content:space-between;
+      font-family:'Lora','Lora fb',serif;font-style:italic;font-size:15px;color:var(--muted);}
+    .chooser button{min-height:44px;color:var(--ink);cursor:pointer;}
+    .chooser-x{width:44px;border:1px solid var(--line2);border-radius:50%;background:var(--parch2);font-size:22px;line-height:1;}
+    .chooser-list button{display:block;width:100%;text-align:left;background:none;border:0;
+      border-top:1px solid var(--line);padding:8px 4px;font-family:'EB Garamond','EB Garamond fb',serif;
+      font-size:18px;font-weight:600;}
+    .chooser-list i{font-family:'Lora','Lora fb',serif;font-size:14px;font-weight:400;color:var(--muted);}
+    #panel.veiled{visibility:hidden;}   /* the chooser never sits over a card */
+  }
 
   /* ---- uncharted treatment: parchment grain + corner watermark ---- */
   .uncharted-grain{position:absolute;inset:0;pointer-events:none;z-index:350;opacity:0;
@@ -741,6 +773,10 @@
     </div>
   </div>
   <footer>Atlas by the campaign's cartographer · interactive chart for the Tale of the Allhammers</footer>
+  <div id="chooser" class="chooser" role="dialog" aria-label="Which mark is meant?" hidden>
+    <div class="chooser-head">Which mark is meant?<button type="button" class="chooser-x" aria-label="Close the card" title="Close the card">×</button></div>
+    <div class="chooser-list"></div>
+  </div>
   <div id="contents" class="contents" role="dialog" aria-modal="true"
        aria-label="Contents — choose where the chart opens" hidden>
     <div class="contents-inner">
@@ -1099,8 +1135,14 @@ var TILES_V=1;function tv(u){return u+(u.indexOf('?')<0?'?t=':'&t=')+TILES_V;}
   var panel=document.getElementById('panel'),
       panelBody=document.getElementById('panelBody'),
       stage=document.getElementById('stage');
+  var chooser=document.getElementById('chooser'), chooserList=chooser.querySelector('.chooser-list');
+  function shutChooser(){
+    if(panel.classList.contains('veiled')){panel.classList.remove('veiled');
+      if(panel.classList.contains('open'))panel.setAttribute('aria-hidden','false');}
+    if(!chooser.hidden){chooser.hidden=true;chooserList.textContent='';}}
   document.getElementById('panelClose').addEventListener('click',closePanel);
   function showPanel(html){
+    shutChooser();
     panelBody.innerHTML=html; panelBody.scrollTop=0;
     panel.classList.add('open'); stage.classList.add('panel-open');
     panel.setAttribute('aria-hidden','false');
@@ -3569,6 +3611,68 @@ var TILES_V=1;function tv(u){return u+(u.indexOf('?')<0?'?t=':'&t=')+TILES_V;}
   // nearest-city / instantiate / GC / setMaxZoom only on zoomend+moveend (never mid-fly).
   map.on('zoom zoomend moveend',worldOpacityUpdate);
   map.on('zoomend moveend',worldCityUpdate);
+
+  // ---- coarse-pointer tap resolver (R7): glyph centres within 22 px decide. One opens its
+  // own card, two or more raise the chooser (nearest first); none opens no mark, though a
+  // printed name still opens its own and a visible line or fill keeps its own click.
+  (function(){
+    var CQ=window.matchMedia&&matchMedia('(pointer:coarse)'),
+      KIND={pSettle:'settlement',pLesser:'lesser settlement',pMajor:'region',pMinor:'region',
+        pWater:'water',pMtn:'mountains',pOrigin:'company',pFaction:'faction',pRouteWp:'waypoint',
+        pLane:'sea lane',pWay:'road'};
+    function inR(el,x,y){var r=el&&el.offsetWidth&&el.getBoundingClientRect();
+      return !!r&&x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom;}
+    function near(x,y,mi){
+      var out=[];
+      map.eachLayer(function(l){
+        var ic=l._icon; if(!ic||!ic.classList.contains('leaflet-interactive'))return;
+        var g=ic.querySelector('.glyph')||ic, r=g.getBoundingClientRect();
+        if(!r.width||getComputedStyle(g).visibility!=='visible')return;
+        var d=Math.hypot(r.left+r.width/2-x,r.top+r.height/2-y), c=d<=22,
+          lb=ic===mi&&inR(ic.querySelector('.lbl'),x,y);   // the printed name under the finger
+        if(lb||inR(ic.querySelector('.way-label'),x,y))d=0;   // a road's name chip is its own glyph
+        if(d<=22)out.push({l:l,d:d,ic:ic,c:c,lb:lb});
+      });
+      return out.sort(function(a,b){return a.d-b.d;});
+    }
+    // a fired click opens the layer's tooltip; only a finger on that icon ever leaves it
+    function go(l,e,on){shutChooser();l.fire('click',{originalEvent:e,latlng:l.getLatLng()});
+      if(!on&&l.closeTooltip)l.closeTooltip();}
+    map.getContainer().addEventListener('click',function(e){
+      if(!CQ||!CQ.matches||(map.dragging&&map.dragging.moved()))return;
+      var t=e.target; if(!t.closest||!t.closest('.leaflet-map-pane'))return;
+      var mi=t.closest('.leaflet-marker-icon'), hits=near(e.clientX,e.clientY,mi);
+      if(!hits.length){
+        if(mi&&!inR(mi.querySelector('.lbl'),e.clientX,e.clientY)&&!inR(mi.querySelector('.way-label'),e.clientX,e.clientY))
+          e.stopPropagation();
+        return;
+      }
+      e.preventDefault(); e.stopPropagation();
+      // a printed name opens its own place unless two glyph centres crowd the finger
+      var own=hits.filter(function(h){return h.lb;})[0];
+      if(own&&hits.filter(function(h){return h.c;}).length<2){go(own.l,e,true);return;}
+      if(hits.length===1){go(hits[0].l,e,hits[0].ic.contains(t));return;}
+      // an open card (and a running journey) stays put, veiled under the chooser until it shuts
+      shutChooser();
+      hits.forEach(function(h){
+        var ic=h.ic, b=document.createElement('button'),
+          k=(ic.parentNode.className.match(/leaflet-(p\w+)-pane/)||[])[1];
+        b.type='button';
+        b.innerHTML=esc((ic.getAttribute('aria-label')||ic.getAttribute('title')||ic.textContent).replace(/ — .*$/,'').trim())+
+          ' <i>— '+(KIND[k]||'place')+'</i>';
+        b.addEventListener('click',function(){go(h.l,e);});
+        chooserList.appendChild(b);
+      });
+      if(panel.classList.contains('open')){panel.classList.add('veiled');panel.setAttribute('aria-hidden','true');}
+      chooser.hidden=false; chooserList.firstChild.focus({preventScroll:true});
+    },true);
+    chooser.querySelector('.chooser-x').addEventListener('click',shutChooser);
+    map.on('movestart zoomstart',shutChooser);
+    document.addEventListener('click',function(e){
+      if(!chooser.hidden&&!chooser.contains(e.target))shutChooser();},true);
+    document.addEventListener('keydown',function(e){
+      if(e.key==='Escape'&&!chooser.hidden){shutChooser();e.stopPropagation();}},true);
+  })();
 
   // ---- deep link (#place=Name) ----
   function hashVal(re){var m=String(location.hash||'').match(re);if(!m)return null;

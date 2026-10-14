@@ -3,7 +3,7 @@
   "item": "Mobile 5",
   "app_sha": {
     "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
-    "maps-site/index.html": "b51481211e495a68db92b6ad77137a76b3d0cbe694211d78966217c3d05c9003"
+    "maps-site/index.html": "7601b85c703861100faf49228bc822949ab17fa83e0e038d41aa892fceb3eb0a"
   },
   "baselines": {
     "B0": "7dbac85b923ea59d8c93248a4f57fa9e6ba1a40977125f8dedde2ff43453cfd3",
@@ -130,49 +130,33 @@
       "ref_before": "after-A-U1"
     },
     "A-U3": {
-      "status": "failed",
+      "status": "passed",
       "attempts": 3,
       "capture": "docs/mobile/captures/A-U3.json",
       "files_sha": {
-        "docs/mobile/accept/A-U3.json": "51206924c539009f218064dd216aaa89531b154a21c08946555e0de0b4973e4d",
-        "maps-site/index.html": "b51481211e495a68db92b6ad77137a76b3d0cbe694211d78966217c3d05c9003"
+        "docs/mobile/accept/A-U3.json": "5f4940dac6810d9b8104cfaf0581b01ad0e18f2bd8a085a206e6a050ecdce6a6",
+        "maps-site/index.html": "7601b85c703861100faf49228bc822949ab17fa83e0e038d41aa892fceb3eb0a"
       },
-      "failing": [
-        {
-          "expected": "0",
-          "got": "14",
-          "key": "atlas.iphone13.tap_fixture.chooser",
-          "op": "unchanged"
-        },
-        {
-          "expected": "0",
-          "got": "18",
-          "key": "atlas.pixel7.tap_fixture.chooser",
-          "op": "unchanged"
-        },
-        {
-          "expected": "0",
-          "got": "8",
-          "key": "atlas.landscape.tap_fixture.chooser",
-          "op": "unchanged"
-        }
-      ],
+      "failing": [],
       "ref_before": "rebase-18"
     },
     "A-U4": {
-      "status": "skipped",
-      "attempts": 0,
-      "capture": null,
-      "files_sha": {},
+      "status": "failed",
+      "attempts": 4,
+      "capture": "docs/mobile/captures/A-U4.json",
+      "files_sha": {
+        "docs/mobile/accept/A-U4.json": "6e1d5ddf2a0445d23a6f10fc2cc0e9922946bd9c6038dc68525cab5008b0a952",
+        "maps-site/index.html": "7601b85c703861100faf49228bc822949ab17fa83e0e038d41aa892fceb3eb0a"
+      },
       "failing": [
         {
-          "key": "skipped",
+          "key": "review.acceptance.major",
           "op": "loop",
-          "expected": "a run",
-          "got": "dependency not satisfied: A-U3 is failed"
+          "expected": "no surviving blocker or major",
+          "got": "Company chips stay about 26-30 px: the 'toggles all >= 44' and under-44 <= 5% bullets are unmet for them :: The coarse block only adds `.co-chip:after{inset:-2px}` (maps-site/index.html:748-749). That gives a hit box of about 30 px on a 26x26 chip (CSS at line 525), so each chip stays well under 44."
         }
       ],
-      "ref_before": null
+      "ref_before": "after-A-U3"
     }
   },
   "rebase": [
@@ -416,6 +400,20 @@
       },
       "reason": "pipeline scripts changed since the reference (UG11 compares against it): .claude/workflows/mobile-build.js",
       "ref": "rebase-18"
+    },
+    {
+      "before_unit": null,
+      "after_unit": "A-U3",
+      "app_sha_before": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "7601b85c703861100faf49228bc822949ab17fa83e0e038d41aa892fceb3eb0a"
+      },
+      "app_sha_after": {
+        "index.html": "343824234963452d359e77502d6468b22e38500ba718c71704c6e33231c60433",
+        "maps-site/index.html": "7601b85c703861100faf49228bc822949ab17fa83e0e038d41aa892fceb3eb0a"
+      },
+      "reason": "unit passed",
+      "ref": "after-A-U3"
     }
   ]
 }
