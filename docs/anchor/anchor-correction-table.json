@@ -1,0 +1,4382 @@
+{
+ "_readme": "anchor-propagation-collateral, static probe of the HEAD export. Pairs: every city-anchors.json entry plus the Summarch and Penthelon literals in meshedWorldInit, matched by fold(name) to a maps_markers.json Settlements entry (\"Lepon the Old\" via the alias \"Lepon\"). Each row is a pair more than 3 px apart. Water test: the verbatim buildCityMask colour test (luma>=110 gives weight; r-b<=54 is water; radius-2 box blur on both; ratio>=0.5; only border-connected water kept), applied on the sampleCityMask window (ox=round((x-1.35r)*2), n=round(5.4r) z5 px, missing tiles filled rgb(198,178,128)). land_frac_footR = 1 - kept water inside the circle of radius FOOT_R[kind] world px (2r z5 px). Tiles are decoded by Pillow, not Chrome, so expect a small tolerance. Calibration: the Epēshu anchor reads nearest water SW 9.1 px at 212°, against stored SSW (202.5°) 10 px. nearest_sea_8way uses a WIDER window than sampleCityMask (±160 atlas px, the same test plus border connectivity) because stored distPx reaches 77 px; it gives the nearest kept-water pixel as an 8-way side, the exact bearing and the distance in atlas px. Side deltas are angular (degrees), because stored sides are 16-point. living_sea_mask_rule APPROXIMATES an unbuilt tool (tools/living-sea-mask.js does not exist yet): 1 mask px = 8x8 atlas px, water when >=50% of its signal pixels pass r-b<=54; Chebyshev neighbourhoods; harbor radius from the STORED sea.distPx (sea:null harbors use 2, the genCityCanvas default distPx 8). Only city-anchors.json entries are in scope as written. Approaches: segCircleHits + mergeAngles (0.25 rad) re-implemented at R=2.5*FOOT_R over party-route legs [prev,...via,cur] plus named-ways (land) and sea-lanes (sea). Bearings are compass degrees (0=N, clockwise); shift = nearest-match per anchor bearing; gained/lost = >20° from any bearing at the other position. visual_audit was read by eye from contact sheets of the z5 tiles. CAVEAT: the colour test cannot separate water from the olive/grey political region tints (tint r-b≈46-48 = gulf water r-b≈47). Where the marker footprint reads <30% land while sitting on a printed land dot, colour_test_reliable_here is false and the mask and living numbers there describe tint, not coast.",
+ "summary": {
+  "pairs_over_3px": 40,
+  "pairs_within_3px": 82,
+  "anchors_without_marker": [
+   "Sokundo",
+   "Kanae",
+   "Mago",
+   "Aldorūs",
+   "Rēketis",
+   "Āglaz",
+   "Mīth Mirdānak",
+   "Pharzeban",
+   "Sardil",
+   "Perōna",
+   "Tarap",
+   "Thalbaen",
+   "Medem",
+   "Shengo",
+   "Kardunash",
+   "Rhup"
+  ],
+  "verdicts": {
+   "keep (anchor is on the ◉; fix the marker instead)": [
+    "Drāmūz"
+   ],
+   "move": [
+    "Damoklir",
+    "Pontoron",
+    "Zhomphek",
+    "Philider",
+    "Permūr",
+    "Hordon",
+    "Līrider",
+    "Dargan",
+    "Lek Zagrok",
+    "Gehon Iepīr",
+    "Bash Phaug",
+    "Clickerhall-by-Goblin-Hole",
+    "Hordon Mopher",
+    "Ion Ephel",
+    "Gehon Or",
+    "Iet Ford",
+    "Ghōdar",
+    "Sūl",
+    "Bash Dargis",
+    "Stony Ford",
+    "Bēgroth Amar",
+    "Hemdok Laego",
+    "Summarch",
+    "Harney",
+    "Zōr Iket",
+    "Gakapē",
+    "Lendānak",
+    "Aldrakhar",
+    "Līrider Hana",
+    "Leprekhōr",
+    "Gel",
+    "Pel",
+    "Darā",
+    "Pandikaba",
+    "Cyrikon",
+    "Tamaron",
+    "Lepon the Old"
+   ],
+   "owner call": [
+    "Penthelon",
+    "Paga"
+   ]
+  },
+  "living_rule_in_scope_pass": {
+   "at_anchor": 14,
+   "at_marker": 21,
+   "in_scope": 38
+  },
+  "living_rule_fail_at_both": [
+   "Paga",
+   "Pontoron",
+   "Philider",
+   "Permūr",
+   "Lek Zagrok",
+   "Gehon Iepīr",
+   "Hordon Mopher",
+   "Gehon Or",
+   "Iet Ford",
+   "Bash Dargis",
+   "Hemdok Laego",
+   "Zōr Iket",
+   "Aldrakhar",
+   "Gel",
+   "Pel",
+   "Darā"
+  ],
+  "living_rule_fail_at_anchor_only": [
+   "Damoklir",
+   "Zhomphek",
+   "Līrider",
+   "Ion Ephel",
+   "Bēgroth Amar",
+   "Gakapē",
+   "Lendānak",
+   "Leprekhōr"
+  ],
+  "living_rule_fail_at_marker_only": [
+   "Ghōdar"
+  ],
+  "colour_test_unreliable": [
+   "Penthelon",
+   "Paga",
+   "Pontoron",
+   "Philider",
+   "Permūr",
+   "Lek Zagrok",
+   "Gehon Iepīr",
+   "Hordon Mopher",
+   "Gehon Or",
+   "Iet Ford",
+   "Ghōdar",
+   "Bash Dargis",
+   "Hemdok Laego",
+   "Zōr Iket",
+   "Lendānak",
+   "Aldrakhar",
+   "Gel",
+   "Pel",
+   "Darā"
+  ],
+  "polyline_vertex_on_anchor": {
+   "Drāmūz": {
+    "dist": 0.2,
+    "poly": "way:Road that Walks with the Sun"
+   },
+   "Summarch": {
+    "dist": 0.0,
+    "poly": "route:Summarch"
+   },
+   "Tamaron": {
+    "dist": 1.7,
+    "poly": "way:Road that Walks with the Sun"
+   },
+   "Lepon the Old": {
+    "dist": 0.5,
+    "poly": "way:Road that Walks with the Sun"
+   }
+  },
+  "rows_with_land_approaches": [
+   "Drāmūz",
+   "Summarch",
+   "Harney",
+   "Tamaron",
+   "Lepon the Old"
+  ]
+ },
+ "rows": [
+  {
+   "name": "Penthelon",
+   "kind": "village",
+   "source": "meshedWorldInit literal",
+   "matched_by": "name (fold)",
+   "anchor": [
+    1962,
+    644
+   ],
+   "marker": [
+    1942,
+    755
+   ],
+   "marker_mag": true,
+   "offset_px": 112.8,
+   "offset_vec": [
+    -20,
+    111
+   ],
+   "visual_audit": {
+    "marker_sits": "on the printed ◉ at a finger tip of the Five Fingers, label \"Penthelon\"",
+    "anchor_sits": "on the tan/olive region-tint boundary ~113 px N of the ◉; no glyph there"
+   },
+   "harbor": true,
+   "stored_sea": null,
+   "traits_entry": true,
+   "traits_sea": null,
+   "traits_biome": "lake",
+   "land_frac_footR": {
+    "at_anchor": 0.625,
+    "at_marker": 0.019
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.443,
+     "water": true,
+     "bear": "S",
+     "land_frac_footR": 0.625
+    },
+    "at_marker": {
+     "frac_water_window": 0.985,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.019
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "S",
+     "bearing_deg": 188.1,
+     "distPx": 1.8
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "living_sea_mask_rule": {
+    "in_scope_as_written": false,
+    "at_anchor": true,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": true,
+    "rule": "harbor with sea:null: distPx undefined in the rule as written; evaluated with genCityCanvas default 8"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 650.4,
+     "poly": "route:Far North"
+    },
+    "at_marker": {
+     "dist": 631.5,
+     "poly": "lane:The Strait Run"
+    }
+   },
+   "notes_hits": [
+    "CHANGELOG.md: exactly onto their printed glyphs (Epēshu, Summarch, Penthelon, Hordon, Cyrikon)",
+    "CHANGELOG.md: - Penthelon stands on the Five Fingers at last: its anchor (which floated mid-lake at",
+    "CHANGELOG.md: Penthelon, goblin-and-dwarf burrow-holds at Clickerhall, Hord longhouse ruins at",
+    "POLISH.md: snapped exactly to their printed ◉ (Epēshu, Summarch, Penthelon, Hordon, Cyrikon).",
+    "POLISH.md: - [x] **Lake biome** — Penthelon's footprint anchor was floating IN the Five Fingers"
+   ],
+   "offDot_reason": "0.9.7 (CHANGELOG + POLISH \"Lake biome\"): anchor moved off the wiki marker, which \"floated mid-lake\" (14% land), onto \"the charted shore\". Stale: 0.9.12 later moved the marker onto the printed ◉; the new anchor sits on a region-tint edge, not an inked shore.",
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "owner call",
+   "verdict_basis": "The marker is on the printed ◉. The current colour test reads the olive region tint as water (tint r-b≈46-48, gulf water r-b≈47, test r-b<=54), so the ◉ footprint reads 2% land. Moving there with the mask unchanged gives a plan drawn almost all as water, the look 0.9.7 fixed. The 62% land at the current anchor is the untinted tan band N of the tint edge, so the shipped \"lake\" shore is the tint edge, not a shore. Mechanism (genCityCanvas, maps-site/index.html): Penthelon traits are harbor:true, sea:null, so the side comes from the branch `if(t.harbor&&!(t.sea&&t.sea.side)&&mask&&mask.water&&mask.bear)`. At the marker mask.water is true (0.98) but mask.bear is null, because the water centroid sits at the window centre. The side then falls back to the seeded `pick(Object.keys(COMPASS))`, and the 98%-water mask drowns the plan. At the current anchor bear=\"S\" because the tint edge is the only \"coast\" in the window. Choices: (a) move and give the mask land/water from the ink coastline or the filigree DEM, which touches pinned sampleCityMask (UG3); (b) keep with a corrected offDot reason (\"mask reads the Rhusagos tint as water\"); (c) leave it until the Filigree land/water mask exists.",
+   "collateral": []
+  },
+  {
+   "name": "Damoklir",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    348,
+    513
+   ],
+   "marker": [
+    417,
+    516
+   ],
+   "marker_mag": false,
+   "offset_px": 69.1,
+   "offset_vec": [
+    69,
+    3
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"D\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.009,
+    "at_marker": 0.792
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.993,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.009
+    },
+    "at_marker": {
+     "frac_water_window": 0.322,
+     "water": true,
+     "bear": "SW",
+     "land_frac_footR": 0.792
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "SW",
+     "bearing_deg": 229.1,
+     "distPx": 5.0
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 228.9,
+     "poly": "route:White Sea"
+    },
+    "at_marker": {
+     "dist": 194.5,
+     "poly": "route:White Sea"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Paga",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    2014,
+    767
+   ],
+   "marker": [
+    2061,
+    817
+   ],
+   "marker_mag": false,
+   "offset_px": 68.6,
+   "offset_vec": [
+    47,
+    50
+   ],
+   "visual_audit": {
+    "marker_sits": "on the \"P\" of the label; the printed ○ is ≈(+13,-8) px NE, near (2074,809)",
+    "anchor_sits": "on label text 69 px NW; no glyph"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.0,
+    "at_marker": 0.011
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 1.0,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.0
+    },
+    "at_marker": {
+     "frac_water_window": 0.993,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.011
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 656.6,
+     "poly": "lane:The Strait Run"
+    },
+    "at_marker": {
+     "dist": 643.3,
+     "poly": "lane:The Strait Run"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "owner call",
+   "verdict_basis": "The marker is also off-print (on the \"P\" of the label; the printed ○ is ≈15 px NE). Derive-by-name would land on the label. Both records need re-snapping to the printed ○ (≈2074,809) first.",
+   "collateral": []
+  },
+  {
+   "name": "Pontoron",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    3668,
+    1351
+   ],
+   "marker": [
+    3735,
+    1359
+   ],
+   "marker_mag": false,
+   "offset_px": 67.5,
+   "offset_vec": [
+    67,
+    8
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○ at the coast",
+    "anchor_sits": "on the \"P\" of the label, in the gulf"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.016,
+    "at_marker": 0.0
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.99,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.016
+    },
+    "at_marker": {
+     "frac_water_window": 1.0,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.0
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 1019.7,
+     "poly": "way:Road that Walks with the Sun"
+    },
+    "at_marker": {
+     "dist": 1071.1,
+     "poly": "way:Road that Walks with the Sun"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Zhomphek",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    982,
+    602
+   ],
+   "marker": [
+    1046,
+    610
+   ],
+   "marker_mag": false,
+   "offset_px": 64.5,
+   "offset_vec": [
+    64,
+    8
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"Z\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.0,
+    "at_marker": 0.411
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 1.0,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.0
+    },
+    "at_marker": {
+     "frac_water_window": 0.561,
+     "water": true,
+     "bear": "SW",
+     "land_frac_footR": 0.411
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "W",
+     "bearing_deg": 288.4,
+     "distPx": 0.8
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 511.5,
+     "poly": "route:White Sea"
+    },
+    "at_marker": {
+     "dist": 559.7,
+     "poly": "way:The East-West Road"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Philider",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    188,
+    916
+   ],
+   "marker": [
+    246,
+    918
+   ],
+   "marker_mag": false,
+   "offset_px": 58.0,
+   "offset_vec": [
+    58,
+    2
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"P\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.019,
+    "at_marker": 0.018
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.989,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.019
+    },
+    "at_marker": {
+     "frac_water_window": 0.973,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.018
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 304.0,
+     "poly": "route:White Sea"
+    },
+    "at_marker": {
+     "dist": 258.8,
+     "poly": "route:White Sea"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Permūr",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    311,
+    602
+   ],
+   "marker": [
+    364,
+    604
+   ],
+   "marker_mag": false,
+   "offset_px": 53.0,
+   "offset_vec": [
+    53,
+    2
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"P\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.025,
+    "at_marker": 0.093
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.99,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.025
+    },
+    "at_marker": {
+     "frac_water_window": 0.928,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.093
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 195.4,
+     "poly": "route:White Sea"
+    },
+    "at_marker": {
+     "dist": 150.6,
+     "poly": "route:White Sea"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Hordon",
+   "kind": "town",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    1139,
+    1730
+   ],
+   "marker": [
+    1124,
+    1690
+   ],
+   "marker_mag": true,
+   "offset_px": 42.7,
+   "offset_vec": [
+    -15,
+    -40
+   ],
+   "visual_audit": {
+    "marker_sits": "on the printed ◉ (hand-measured, 0.9.11)",
+    "anchor_sits": "on Maeges's printed ○; identical to the Maeges anchor (1139,1730)"
+   },
+   "harbor": true,
+   "stored_sea": null,
+   "traits_entry": true,
+   "traits_sea": null,
+   "traits_biome": "arid",
+   "land_frac_footR": {
+    "at_anchor": 0.47,
+    "at_marker": 0.641
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.476,
+     "water": true,
+     "bear": "NE",
+     "land_frac_footR": 0.47
+    },
+    "at_marker": {
+     "frac_water_window": 0.263,
+     "water": true,
+     "bear": "E",
+     "land_frac_footR": 0.641
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 1.1
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": true,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": true,
+    "rule": "harbor with sea:null: distPx undefined in the rule as written; evaluated with genCityCanvas default 8"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": [
+     297.2
+    ]
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 60.1,
+     "poly": "lane:The Gulf Crossing"
+    },
+    "at_marker": {
+     "dist": 26.3,
+     "poly": "lane:The Gulf Crossing"
+    }
+   },
+   "notes_hits": [
+    "CHANGELOG.md: exactly onto their printed glyphs (Epēshu, Summarch, Penthelon, Hordon, Cyrikon)",
+    "CHANGELOG.md: 110 verified or snapped exact (35 had drifted 5–69 px in transcription), Hordon's",
+    "CHANGELOG.md: arid Hordon per canon's own \"semi-arid island\", wooded Leponnian coasts), decay",
+    "CHANGELOG.md: - Three new canon anchors join the meshed world: Hordon (Epēshu's gulf rival),",
+    "POLISH.md: Hordon's hand-measured glyph) found all 15 double-ring majors: ten had NO marker",
+    "POLISH.md: snapped exactly to their printed ◉ (Epēshu, Summarch, Penthelon, Hordon, Cyrikon).",
+    "POLISH.md: 110 snapped exact (35 were off by 5–69px — census transcription drift), Hordon's",
+    "POLISH.md: biome/condition/hinterland with per-claim provenance (Hordon arid per canon's",
+    "POLISH.md: three new canon anchors (Hordon, Clickerhall, Ion Ephel); default-trait cities"
+   ],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "Marker on the hand-measured ◉ (0.9.11/0.9.12). The anchor duplicates Maeges (1139,1730), recorded in the filigree research dossier and queued as \"Filigree data — Hordon/Maeges anchor\" (density-bible F3-B, missing). 0.8.4 introduced the anchor; 0.9.12 snapped the marker only.",
+   "collateral": [
+    "Gains a sea approach (The Gulf Crossing at ~297°); traits sea:null, so the plan takes its side from the mask bearing (E at marker vs NE at anchor)."
+   ]
+  },
+  {
+   "name": "Līrider",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    943,
+    1722
+   ],
+   "marker": [
+    984,
+    1710
+   ],
+   "marker_mag": false,
+   "offset_px": 42.7,
+   "offset_vec": [
+    41,
+    -12
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"L\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.0,
+    "at_marker": 0.693
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 1.0,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.0
+    },
+    "at_marker": {
+     "frac_water_window": 0.372,
+     "water": true,
+     "bear": "S",
+     "land_frac_footR": 0.693
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "W",
+     "bearing_deg": 281.3,
+     "distPx": 1.3
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 159.1,
+     "poly": "lane:The Gulf Crossing"
+    },
+    "at_marker": {
+     "dist": 116.5,
+     "poly": "lane:The Gulf Crossing"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Dargan",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    785,
+    611
+   ],
+   "marker": [
+    750,
+    635
+   ],
+   "marker_mag": false,
+   "offset_px": 42.4,
+   "offset_vec": [
+    -35,
+    24
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on a ring-shaped letter of a region label (\"DORI…\")"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.612,
+    "at_marker": 0.547
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.503,
+     "water": true,
+     "bear": "N",
+     "land_frac_footR": 0.612
+    },
+    "at_marker": {
+     "frac_water_window": 0.541,
+     "water": true,
+     "bear": "NE",
+     "land_frac_footR": 0.547
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "SW",
+     "bearing_deg": 211.0,
+     "distPx": 1.5
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": true,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 317.7,
+     "poly": "route:White Sea"
+    },
+    "at_marker": {
+     "dist": 277.7,
+     "poly": "route:White Sea"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Lek Zagrok",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    1366,
+    835
+   ],
+   "marker": [
+    1402,
+    848
+   ],
+   "marker_mag": false,
+   "offset_px": 38.3,
+   "offset_vec": [
+    36,
+    13
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"L\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.012,
+    "at_marker": 0.025
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.99,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.012
+    },
+    "at_marker": {
+     "frac_water_window": 0.966,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.025
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 500.8,
+     "poly": "route:Paerāndas"
+    },
+    "at_marker": {
+     "dist": 491.3,
+     "poly": "route:Paerāndas"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Drāmūz",
+   "kind": "town",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    1335,
+    1733.8
+   ],
+   "marker": [
+    1344,
+    1769
+   ],
+   "marker_mag": false,
+   "offset_px": 36.3,
+   "offset_vec": [
+    9,
+    35.2
+   ],
+   "visual_audit": {
+    "marker_sits": "in open water 35 px S of the ◉; no glyph (filigree R21 data item)",
+    "anchor_sits": "on the printed ◉, on a Sun Road vertex (0.2 px)"
+   },
+   "harbor": true,
+   "stored_sea": {
+    "side": "SW",
+    "distPx": 6
+   },
+   "traits_entry": true,
+   "traits_sea": {
+    "side": "SW",
+    "distPx": 6
+   },
+   "traits_biome": "arid",
+   "land_frac_footR": {
+    "at_anchor": 0.659,
+    "at_marker": 0.001
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.454,
+     "water": true,
+     "bear": "SW",
+     "land_frac_footR": 0.659
+    },
+    "at_marker": {
+     "frac_water_window": 0.988,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.001
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "SW",
+     "bearing_deg": 213.3,
+     "distPx": 5.9
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": {
+     "ref": {
+      "side": "SW",
+      "distPx": 6
+     },
+     "side_delta_deg": 11.7,
+     "dist_delta_px": -0.1
+    },
+    "at_marker": {
+     "ref": {
+      "side": "SW",
+      "distPx": 6
+     },
+     "side_delta_deg": 90.0,
+     "dist_delta_px": -5.6
+    }
+   },
+   "sea_delta_vs_traits": {
+    "at_anchor": {
+     "ref": {
+      "side": "SW",
+      "distPx": 6
+     },
+     "side_delta_deg": 11.7,
+     "dist_delta_px": -0.1
+    },
+    "at_marker": {
+     "ref": {
+      "side": "SW",
+      "distPx": 6
+     },
+     "side_delta_deg": 90.0,
+     "dist_delta_px": -5.6
+    }
+   },
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": true,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": true,
+    "rule": "harbor: water within ceil(distPx/8)+1=2 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [
+     257.8
+    ],
+    "land_at_marker": [],
+    "land_shift_deg": [
+     null
+    ],
+    "land_gained": [],
+    "land_lost": [
+     257.8
+    ],
+    "sea_at_anchor": [
+     136.7
+    ],
+    "sea_at_marker": [
+     346.6,
+     106.4
+    ]
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 0.2,
+     "poly": "way:Road that Walks with the Sun"
+    },
+    "at_marker": {
+     "dist": 36.1,
+     "poly": "way:Road that Walks with the Sun"
+    }
+   },
+   "notes_hits": [
+    "CHANGELOG.md: - The Sun Road now follows its canon: Drāmūz to Cyrikon by Lepon, Epēshu, Tamaron,",
+    "CHANGELOG.md: Sjefenhold, a Trogmunder quarter in Drāmūz",
+    "CHANGELOG.md: Drāmūz provenance mislabel, retina chart tiles at max zoom",
+    "POLISH.md: bit-identical to baseline; Drāmūz honestly sea-only (no land route in data)."
+   ],
+   "offDot_reason": "not off-dot: the marker is the error. Recorded as filigree R21 data item \"Drāmūz marker 35 px off\" (docs/filigree/README.md R21; density-bible F3-B \"missing\").",
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "keep (anchor is on the ◉; fix the marker instead)",
+   "verdict_basis": "Resolving from maps_markers by name would drop Drāmūz into open water: 0% land, its Sun Road land approach is lost and two false sea approaches appear.",
+   "collateral": []
+  },
+  {
+   "name": "Gehon Iepīr",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    1466,
+    1186
+   ],
+   "marker": [
+    1483,
+    1217
+   ],
+   "marker_mag": false,
+   "offset_px": 35.4,
+   "offset_vec": [
+    17,
+    31
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"G\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.049,
+    "at_marker": 0.009
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.974,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.049
+    },
+    "at_marker": {
+     "frac_water_window": 0.97,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.009
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "SW",
+     "bearing_deg": 225.0,
+     "distPx": 1.1
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 197.1,
+     "poly": "route:Paerāndas"
+    },
+    "at_marker": {
+     "dist": 187.7,
+     "poly": "route:Paerāndas"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Bash Phaug",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    1378,
+    485
+   ],
+   "marker": [
+    1410,
+    498
+   ],
+   "marker_mag": false,
+   "offset_px": 34.5,
+   "offset_vec": [
+    32,
+    13
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"B\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.706,
+    "at_marker": 0.989
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.201,
+     "water": true,
+     "bear": "SE",
+     "land_frac_footR": 0.706
+    },
+    "at_marker": {
+     "frac_water_window": 0.088,
+     "water": true,
+     "bear": "NW",
+     "land_frac_footR": 0.989
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "SW",
+     "bearing_deg": 203.2,
+     "distPx": 90.6
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 293.8,
+     "distPx": 44.0
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": true,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 430.6,
+     "poly": "route:Fell Mountains"
+    },
+    "at_marker": {
+     "dist": 443.1,
+     "poly": "route:Fell Mountains"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Clickerhall-by-Goblin-Hole",
+   "kind": "town",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    2577,
+    255
+   ],
+   "marker": [
+    2608,
+    266
+   ],
+   "marker_mag": false,
+   "offset_px": 32.9,
+   "offset_vec": [
+    31,
+    11
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the word \"Goblin\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": true,
+   "traits_sea": null,
+   "traits_biome": "temperate",
+   "land_frac_footR": {
+    "at_anchor": 0.997,
+    "at_marker": 0.976
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.061,
+     "water": true,
+     "bear": "N",
+     "land_frac_footR": 0.997
+    },
+    "at_marker": {
+     "frac_water_window": 0.087,
+     "water": true,
+     "bear": "N",
+     "land_frac_footR": 0.976
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "E",
+     "bearing_deg": 111.8,
+     "distPx": 146.2
+    },
+    "at_marker": {
+     "side8": "SW",
+     "bearing_deg": 230.3,
+     "distPx": 68.5
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": true,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 790.6,
+     "poly": "route:Far North"
+    },
+    "at_marker": {
+     "dist": 823.5,
+     "poly": "route:Far North"
+    }
+   },
+   "notes_hits": [
+    "CHANGELOG.md: Clickerhall-by-Goblin-Hole snapped to its true printed dot, and a whole-atlas",
+    "CHANGELOG.md: Clickerhall-by-Goblin-Hole, and abandoned Ion Ephel at the Tungril's mouth"
+   ],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "0.9.2 says \"snapped 40px to its true printed dot\" but not which record moved (git is off-limits). The anchor still sits on the label word \"Goblin\" 33 px from the marker, and the marker is on the ○. So the 0.9.2 snap reached maps_markers and not city-anchors. No reason recorded for keeping the anchor there.",
+   "collateral": []
+  },
+  {
+   "name": "Hordon Mopher",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    549,
+    840
+   ],
+   "marker": [
+    535,
+    869
+   ],
+   "marker_mag": false,
+   "offset_px": 32.2,
+   "offset_vec": [
+    -14,
+    29
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the word \"Hordon\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.12,
+    "at_marker": 0.136
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.85,
+     "water": true,
+     "bear": "NW",
+     "land_frac_footR": 0.12
+    },
+    "at_marker": {
+     "frac_water_window": 0.884,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.136
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "SW",
+     "bearing_deg": 225.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 156.1,
+     "poly": "route:White Sea"
+    },
+    "at_marker": {
+     "dist": 177.7,
+     "poly": "route:White Sea"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Ion Ephel",
+   "kind": "ruin",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    1339,
+    2116
+   ],
+   "marker": [
+    1311,
+    2130
+   ],
+   "marker_mag": false,
+   "offset_px": 31.3,
+   "offset_vec": [
+    -28,
+    14
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○ at the Tungril mouth",
+    "anchor_sits": "on the word \"Ephel\" of the label"
+   },
+   "harbor": true,
+   "stored_sea": null,
+   "traits_entry": true,
+   "traits_sea": null,
+   "traits_biome": "riverine",
+   "land_frac_footR": {
+    "at_anchor": 0.97,
+    "at_marker": 0.667
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.098,
+     "water": true,
+     "bear": "N",
+     "land_frac_footR": 0.97
+    },
+    "at_marker": {
+     "frac_water_window": 0.327,
+     "water": true,
+     "bear": "S",
+     "land_frac_footR": 0.667
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "SW",
+     "bearing_deg": 240.7,
+     "distPx": 20.9
+    },
+    "at_marker": {
+     "side8": "S",
+     "bearing_deg": 186.3,
+     "distPx": 2.3
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": true,
+    "rule": "harbor with sea:null: distPx undefined in the rule as written; evaluated with genCityCanvas default 8"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 321.6,
+     "poly": "lane:The South Lane"
+    },
+    "at_marker": {
+     "dist": 345.8,
+     "poly": "lane:The South Lane"
+    }
+   },
+   "notes_hits": [
+    "CHANGELOG.md: Tungril passes ruined Ion Ephel on its way to the White Sea — lanes, buildings,",
+    "CHANGELOG.md: Clickerhall-by-Goblin-Hole, and abandoned Ion Ephel at the Tungril's mouth",
+    "POLISH.md: Kolens Connection placed on its riverbank; Ion Ephel's Tungril hugs the ruin",
+    "POLISH.md: \"semi-arid island\"; Ion Ephel ruin at the Tungril's mouth; 14 lesser Leponnian",
+    "POLISH.md: three new canon anchors (Hordon, Clickerhall, Ion Ephel); default-trait cities"
+   ],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": [
+    "harbor:true with sea:null. At the anchor the mask reads 97% land, nearest water 20.9 px SW. At the marker it reads 67% land, water 2.3 px S, at the Tungril mouth (canon). The move improves the harbor fit, and the living harbor rule flips from fail to pass."
+   ]
+  },
+  {
+   "name": "Gehon Or",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    1512,
+    1247
+   ],
+   "marker": [
+    1540,
+    1261
+   ],
+   "marker_mag": false,
+   "offset_px": 31.3,
+   "offset_vec": [
+    28,
+    14
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"G\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.343,
+    "at_marker": 0.151
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.758,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.343
+    },
+    "at_marker": {
+     "frac_water_window": 0.863,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.151
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "W",
+     "bearing_deg": 288.4,
+     "distPx": 0.8
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 165.0,
+     "poly": "lane:The Strait Run"
+    },
+    "at_marker": {
+     "dist": 133.7,
+     "poly": "lane:The Strait Run"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Iet Ford",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    1419,
+    725
+   ],
+   "marker": [
+    1398,
+    707
+   ],
+   "marker_mag": false,
+   "offset_px": 27.7,
+   "offset_vec": [
+    -21,
+    -18
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○ on the river",
+    "anchor_sits": "on the word \"Ford\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.0,
+    "at_marker": 0.056
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.95,
+     "water": true,
+     "bear": "SE",
+     "land_frac_footR": 0.0
+    },
+    "at_marker": {
+     "frac_water_window": 0.956,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.056
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 615.5,
+     "poly": "route:Paerāndas"
+    },
+    "at_marker": {
+     "dist": 631.0,
+     "poly": "route:Paerāndas"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Ghōdar",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    892,
+    773
+   ],
+   "marker": [
+    916,
+    784
+   ],
+   "marker_mag": false,
+   "offset_px": 26.4,
+   "offset_vec": [
+    24,
+    11
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"G\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.858,
+    "at_marker": 0.128
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.227,
+     "water": true,
+     "bear": "SE",
+     "land_frac_footR": 0.858
+    },
+    "at_marker": {
+     "frac_water_window": 0.867,
+     "water": true,
+     "bear": "S",
+     "land_frac_footR": 0.128
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "SE",
+     "bearing_deg": 113.2,
+     "distPx": 1.9
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": true,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 418.4,
+     "poly": "route:White Sea"
+    },
+    "at_marker": {
+     "dist": 444.0,
+     "poly": "route:White Sea"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Sūl",
+   "kind": "town",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    1986,
+    1691
+   ],
+   "marker": [
+    1960,
+    1694
+   ],
+   "marker_mag": false,
+   "offset_px": 26.2,
+   "offset_vec": [
+    -26,
+    3
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the label \"Sūl\""
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.956,
+    "at_marker": 0.677
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.115,
+     "water": true,
+     "bear": "NW",
+     "land_frac_footR": 0.956
+    },
+    "at_marker": {
+     "frac_water_window": 0.412,
+     "water": true,
+     "bear": "NW",
+     "land_frac_footR": 0.677
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "N",
+     "bearing_deg": 352.3,
+     "distPx": 9.3
+    },
+    "at_marker": {
+     "side8": "W",
+     "bearing_deg": 282.3,
+     "distPx": 5.9
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": true,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 48.1,
+     "poly": "way:Road that Walks with the Sun"
+    },
+    "at_marker": {
+     "dist": 63.3,
+     "poly": "way:Road that Walks with the Sun"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Bash Dargis",
+   "kind": "town",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    2154,
+    727
+   ],
+   "marker": [
+    2172,
+    742
+   ],
+   "marker_mag": false,
+   "offset_px": 23.4,
+   "offset_vec": [
+    18,
+    15
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"D\" of \"Dargis\""
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.001,
+    "at_marker": 0.007
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.998,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.001
+    },
+    "at_marker": {
+     "frac_water_window": 0.993,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.007
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 771.8,
+     "poly": "lane:The Strait Run"
+    },
+    "at_marker": {
+     "dist": 772.2,
+     "poly": "lane:The Strait Run"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Stony Ford",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    591,
+    183
+   ],
+   "marker": [
+    611,
+    172
+   ],
+   "marker_mag": false,
+   "offset_px": 22.8,
+   "offset_vec": [
+    20,
+    -11
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the word \"Stony\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 1.0,
+    "at_marker": 1.0
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.012,
+     "water": false,
+     "bear": "W",
+     "land_frac_footR": 1.0
+    },
+    "at_marker": {
+     "frac_water_window": 0.021,
+     "water": false,
+     "bear": "SE",
+     "land_frac_footR": 1.0
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "E",
+     "bearing_deg": 77.9,
+     "distPx": 68.3
+    },
+    "at_marker": {
+     "side8": "E",
+     "bearing_deg": 86.0,
+     "distPx": 46.9
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": true,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 47.0,
+     "poly": "route:Summarch"
+    },
+    "at_marker": {
+     "dist": 32.0,
+     "poly": "route:Summarch"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Bēgroth Amar",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    4066,
+    996
+   ],
+   "marker": [
+    4082,
+    1010
+   ],
+   "marker_mag": false,
+   "offset_px": 21.3,
+   "offset_vec": [
+    16,
+    14
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the label text"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.031,
+    "at_marker": 0.844
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.97,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.031
+    },
+    "at_marker": {
+     "frac_water_window": 0.266,
+     "water": true,
+     "bear": "NW",
+     "land_frac_footR": 0.844
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "W",
+     "bearing_deg": 283.4,
+     "distPx": 5.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 1550.4,
+     "poly": "way:Road that Walks with the Sun"
+    },
+    "at_marker": {
+     "dist": 1554.9,
+     "poly": "way:Road that Walks with the Sun"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Hemdok Laego",
+   "kind": "town",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    1855,
+    688
+   ],
+   "marker": [
+    1872,
+    700
+   ],
+   "marker_mag": false,
+   "offset_px": 20.8,
+   "offset_vec": [
+    17,
+    12
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the word \"Laego\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.014,
+    "at_marker": 0.053
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.974,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.014
+    },
+    "at_marker": {
+     "frac_water_window": 0.966,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.053
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 661.4,
+     "poly": "lane:The Strait Run"
+    },
+    "at_marker": {
+     "dist": 655.2,
+     "poly": "lane:The Strait Run"
+    }
+   },
+   "notes_hits": [
+    "POLISH.md: keeps the continental view clean; Hemdok Laego descends onto a mask-true plan."
+   ],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Summarch",
+   "kind": "town",
+   "source": "meshedWorldInit literal",
+   "matched_by": "name (fold)",
+   "anchor": [
+    523,
+    58
+   ],
+   "marker": [
+    542,
+    52
+   ],
+   "marker_mag": true,
+   "offset_px": 19.9,
+   "offset_vec": [
+    19,
+    -6
+   ],
+   "visual_audit": {
+    "marker_sits": "on the printed ◉",
+    "anchor_sits": "~20 px WSW of the ◉, no glyph; equals the party-route \"Summarch\" endpoint (523,58)"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": true,
+   "traits_sea": null,
+   "traits_biome": "riverine",
+   "land_frac_footR": {
+    "at_anchor": 1.0,
+    "at_marker": 0.995
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.006,
+     "water": false,
+     "bear": null,
+     "land_frac_footR": 1.0
+    },
+    "at_marker": {
+     "frac_water_window": 0.01,
+     "water": false,
+     "bear": "W",
+     "land_frac_footR": 0.995
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "E",
+     "bearing_deg": 86.1,
+     "distPx": 159.1
+    },
+    "at_marker": {
+     "side8": "E",
+     "bearing_deg": 87.5,
+     "distPx": 157.9
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "living_sea_mask_rule": {
+    "in_scope_as_written": false,
+    "at_anchor": true,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [
+     140.0,
+     90.4,
+     122.4
+    ],
+    "land_at_marker": [
+     171.6,
+     100.5,
+     117.1
+    ],
+    "land_shift_deg": [
+     22.9,
+     10.1,
+     5.3
+    ],
+    "land_gained": [
+     171.6
+    ],
+    "land_lost": [
+     140.0
+    ],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 0.0,
+     "poly": "route:Summarch"
+    },
+    "at_marker": {
+     "dist": 19.9,
+     "poly": "route:Summarch"
+    }
+   },
+   "notes_hits": [
+    "CHANGELOG.md: exactly onto their printed glyphs (Epēshu, Summarch, Penthelon, Hordon, Cyrikon)",
+    "CHANGELOG.md: - Places with traveller reviews wear their average in the card's corner — Summarch",
+    "CHANGELOG.md: - Summarch gets its true city plan — \"Sun's March\" (player-provided, 4245×3951):",
+    "CHANGELOG.md: beneath you into real city plans (Epēshu with its 19 legend POIs, the Summarch",
+    "CHANGELOG.md: Summarch sketch, Rhusagos, Relkor, and more as fitted overlays), with a",
+    "POLISH.md: snapped exactly to their printed ◉ (Epēshu, Summarch, Penthelon, Hordon, Cyrikon)."
+   ],
+   "offDot_reason": null,
+   "generated_plan_changes": false,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": true,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": [
+    "The anchor literal in meshedWorldInit (labelled \"sourced from maps_markers (spec §A.2)\") is the pre-0.9.12 marker. party-route.json has TWO \"Summarch\" entries: index 1 at (523,58) is exactly the anchor; index 5 at (545,80) is 28 px S of the ◉. Unless route endpoints are also resolved by name, both stay off-centre: 20 px for the first, 28 px for the second.",
+    "Land bearings shift 22.9°/10.1°/5.3°: one gained (171.6°), one lost (140.0°).",
+    "The canon overlay art/overlay-Summarch.jpg is placed by cityBox centred on the anchor. Moving the centre to the ◉ does not register the DM chart: it is not known that the chart's own ◉ sits at its image centre. That needs control points (registration), not medium."
+   ]
+  },
+  {
+   "name": "Harney",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    522,
+    195
+   ],
+   "marker": [
+    508,
+    207
+   ],
+   "marker_mag": false,
+   "offset_px": 18.4,
+   "offset_vec": [
+    -14,
+    12
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the end of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 1.0,
+    "at_marker": 0.999
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.0,
+     "water": false,
+     "bear": null,
+     "land_frac_footR": 1.0
+    },
+    "at_marker": {
+     "frac_water_window": 0.03,
+     "water": true,
+     "bear": "NW",
+     "land_frac_footR": 0.999
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "E",
+     "bearing_deg": 79.1,
+     "distPx": 138.3
+    },
+    "at_marker": {
+     "side8": "W",
+     "bearing_deg": 262.8,
+     "distPx": 154.5
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": true,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [
+     59.4,
+     113.9
+    ],
+    "land_at_marker": [],
+    "land_shift_deg": [
+     null,
+     null
+    ],
+    "land_gained": [],
+    "land_lost": [
+     59.4,
+     113.9
+    ],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 18.7,
+     "poly": "route:Sepos"
+    },
+    "at_marker": {
+     "dist": 36.2,
+     "poly": "route:Sepos"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": [
+    "Loses both land approaches (59.4°, 113.9°). They came from the party-route \"Sepos\" leg via (540,190), which passes 18.7 px from the anchor and 36.2 px from the marker; the circle radius is 22.5. The gates disappear unless the route via is re-traced."
+   ]
+  },
+  {
+   "name": "Zōr Iket",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    1282,
+    945
+   ],
+   "marker": [
+    1269,
+    958
+   ],
+   "marker_mag": false,
+   "offset_px": 18.4,
+   "offset_vec": [
+    -13,
+    13
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the word \"Iket\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.102,
+    "at_marker": 0.028
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.955,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.102
+    },
+    "at_marker": {
+     "frac_water_window": 0.953,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.028
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "W",
+     "bearing_deg": 281.3,
+     "distPx": 1.3
+    },
+    "at_marker": {
+     "side8": "SW",
+     "bearing_deg": 225.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 390.1,
+     "poly": "route:Paerāndas"
+    },
+    "at_marker": {
+     "dist": 372.5,
+     "poly": "route:Paerāndas"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Gakapē",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    2209,
+    1606
+   ],
+   "marker": [
+    2197,
+    1619
+   ],
+   "marker_mag": false,
+   "offset_px": 17.7,
+   "offset_vec": [
+    -12,
+    13
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the end of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.006,
+    "at_marker": 0.81
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.909,
+     "water": true,
+     "bear": "N",
+     "land_frac_footR": 0.006
+    },
+    "at_marker": {
+     "frac_water_window": 0.339,
+     "water": true,
+     "bear": "N",
+     "land_frac_footR": 0.81
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 318.6,
+     "distPx": 5.7
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 129.8,
+     "poly": "way:Road that Walks with the Sun"
+    },
+    "at_marker": {
+     "dist": 112.3,
+     "poly": "way:Road that Walks with the Sun"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Lendānak",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    837,
+    594
+   ],
+   "marker": [
+    822,
+    594
+   ],
+   "marker_mag": false,
+   "offset_px": 15.0,
+   "offset_vec": [
+    -15,
+    0
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"L\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.016,
+    "at_marker": 0.244
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.948,
+     "water": true,
+     "bear": "SE",
+     "land_frac_footR": 0.016
+    },
+    "at_marker": {
+     "frac_water_window": 0.79,
+     "water": true,
+     "bear": "S",
+     "land_frac_footR": 0.244
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "W",
+     "bearing_deg": 281.3,
+     "distPx": 1.3
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 372.4,
+     "poly": "route:White Sea"
+    },
+    "at_marker": {
+     "dist": 358.1,
+     "poly": "route:White Sea"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Aldrakhar",
+   "kind": "town",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    1492,
+    631
+   ],
+   "marker": [
+    1478,
+    633
+   ],
+   "marker_mag": false,
+   "offset_px": 14.1,
+   "offset_vec": [
+    -14,
+    2
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"A\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.005,
+    "at_marker": 0.006
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.994,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.005
+    },
+    "at_marker": {
+     "frac_water_window": 0.993,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.006
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 583.3,
+     "poly": "route:Fell Mountains"
+    },
+    "at_marker": {
+     "dist": 583.2,
+     "poly": "route:Fell Mountains"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Līrider Hana",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    663,
+    688
+   ],
+   "marker": [
+    668,
+    701
+   ],
+   "marker_mag": false,
+   "offset_px": 13.9,
+   "offset_vec": [
+    5,
+    13
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"L\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 1.0,
+    "at_marker": 0.82
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.093,
+     "water": true,
+     "bear": "SW",
+     "land_frac_footR": 1.0
+    },
+    "at_marker": {
+     "frac_water_window": 0.309,
+     "water": true,
+     "bear": "SW",
+     "land_frac_footR": 0.82
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "SW",
+     "bearing_deg": 229.2,
+     "distPx": 9.6
+    },
+    "at_marker": {
+     "side8": "S",
+     "bearing_deg": 196.9,
+     "distPx": 6.0
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": true,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 183.4,
+     "poly": "route:White Sea"
+    },
+    "at_marker": {
+     "dist": 188.0,
+     "poly": "route:White Sea"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Leprekhōr",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    362,
+    871
+   ],
+   "marker": [
+    364,
+    883
+   ],
+   "marker_mag": false,
+   "offset_px": 12.2,
+   "offset_vec": [
+    2,
+    12
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"L\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.264,
+    "at_marker": 0.415
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.738,
+     "water": true,
+     "bear": "N",
+     "land_frac_footR": 0.264
+    },
+    "at_marker": {
+     "frac_water_window": 0.63,
+     "water": true,
+     "bear": "W",
+     "land_frac_footR": 0.415
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 207.8,
+     "poly": "route:White Sea"
+    },
+    "at_marker": {
+     "dist": 216.7,
+     "poly": "route:White Sea"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Gel",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    376,
+    999
+   ],
+   "marker": [
+    364,
+    1000
+   ],
+   "marker_mag": false,
+   "offset_px": 12.0,
+   "offset_vec": [
+    -12,
+    1
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"G\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.204,
+    "at_marker": 0.193
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.85,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.204
+    },
+    "at_marker": {
+     "frac_water_window": 0.886,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.193
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "W",
+     "bearing_deg": 281.3,
+     "distPx": 1.3
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 114.5,
+     "poly": "route:White Sea"
+    },
+    "at_marker": {
+     "dist": 119.8,
+     "poly": "route:White Sea"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Pel",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    3306,
+    1298
+   ],
+   "marker": [
+    3295,
+    1300
+   ],
+   "marker_mag": false,
+   "offset_px": 11.2,
+   "offset_vec": [
+    -11,
+    2
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"P\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.016,
+    "at_marker": 0.001
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.987,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.016
+    },
+    "at_marker": {
+     "frac_water_window": 0.993,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.001
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 792.8,
+     "poly": "way:Road that Walks with the Sun"
+    },
+    "at_marker": {
+     "dist": 784.6,
+     "poly": "way:Road that Walks with the Sun"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Darā",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    3819,
+    1329
+   ],
+   "marker": [
+    3808,
+    1330
+   ],
+   "marker_mag": false,
+   "offset_px": 11.0,
+   "offset_vec": [
+    -11,
+    1
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"D\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.003,
+    "at_marker": 0.006
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.995,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.003
+    },
+    "at_marker": {
+     "frac_water_window": 0.998,
+     "water": true,
+     "bear": null,
+     "land_frac_footR": 0.006
+    }
+   },
+   "colour_test_reliable_here": false,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 315.0,
+     "distPx": 0.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": false,
+    "at_marker_stored_distPx": false,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 1158.3,
+     "poly": "way:Road that Walks with the Sun"
+    },
+    "at_marker": {
+     "dist": 1148.4,
+     "poly": "way:Road that Walks with the Sun"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Pandikaba",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    2936,
+    979
+   ],
+   "marker": [
+    2926,
+    981
+   ],
+   "marker_mag": false,
+   "offset_px": 10.2,
+   "offset_vec": [
+    -10,
+    2
+   ],
+   "visual_audit": {
+    "marker_sits": "on printed ○",
+    "anchor_sits": "on the \"P\" of the label"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 0.875,
+    "at_marker": 0.839
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.199,
+     "water": true,
+     "bear": "NW",
+     "land_frac_footR": 0.875
+    },
+    "at_marker": {
+     "frac_water_window": 0.298,
+     "water": true,
+     "bear": "NW",
+     "land_frac_footR": 0.839
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NW",
+     "bearing_deg": 330.5,
+     "distPx": 6.6
+    },
+    "at_marker": {
+     "side8": "W",
+     "bearing_deg": 272.7,
+     "distPx": 5.3
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": true,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 944.8,
+     "poly": "way:Road that Walks with the Sun"
+    },
+    "at_marker": {
+     "dist": 939.4,
+     "poly": "way:Road that Walks with the Sun"
+    }
+   },
+   "notes_hits": [],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Cyrikon",
+   "kind": "town",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    2573,
+    1671
+   ],
+   "marker": [
+    2568,
+    1663
+   ],
+   "marker_mag": true,
+   "offset_px": 9.4,
+   "offset_vec": [
+    -5,
+    -8
+   ],
+   "visual_audit": {
+    "marker_sits": "on the printed ◉",
+    "anchor_sits": "on the label below the ◉"
+   },
+   "harbor": false,
+   "stored_sea": null,
+   "traits_entry": false,
+   "traits_sea": "n/a (no traits entry)",
+   "traits_biome": null,
+   "land_frac_footR": {
+    "at_anchor": 1.0,
+    "at_marker": 0.869
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.041,
+     "water": true,
+     "bear": "NW",
+     "land_frac_footR": 1.0
+    },
+    "at_marker": {
+     "frac_water_window": 0.18,
+     "water": true,
+     "bear": "N",
+     "land_frac_footR": 0.869
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "N",
+     "bearing_deg": 355.9,
+     "distPx": 17.3
+    },
+    "at_marker": {
+     "side8": "NW",
+     "bearing_deg": 332.7,
+     "distPx": 9.3
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": null,
+    "at_marker": null
+   },
+   "sea_delta_vs_traits": "no traits entry",
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": true,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [],
+    "land_at_marker": [],
+    "land_shift_deg": [],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 184.2,
+     "poly": "way:Road that Walks with the Sun"
+    },
+    "at_marker": {
+     "dist": 188.8,
+     "poly": "way:Road that Walks with the Sun"
+    }
+   },
+   "notes_hits": [
+    "CHANGELOG.md: exactly onto their printed glyphs (Epēshu, Summarch, Penthelon, Hordon, Cyrikon)",
+    "CHANGELOG.md: - The Sun Road now follows its canon: Drāmūz to Cyrikon by Lepon, Epēshu, Tamaron,",
+    "CHANGELOG.md: fit-relative zoom-tier reveal, \"Follow the journey\" fly-through, Cyrikon-miles",
+    "POLISH.md: snapped exactly to their printed ◉ (Epēshu, Summarch, Penthelon, Hordon, Cyrikon)."
+   ],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": []
+  },
+  {
+   "name": "Tamaron",
+   "kind": "town",
+   "source": "city-anchors.json",
+   "matched_by": "name (fold)",
+   "anchor": [
+    1657.9,
+    1548.3
+   ],
+   "marker": [
+    1659,
+    1556
+   ],
+   "marker_mag": true,
+   "offset_px": 7.8,
+   "offset_vec": [
+    1.1,
+    7.7
+   ],
+   "visual_audit": {
+    "marker_sits": "on the printed ◉",
+    "anchor_sits": "between the label and the ◉, ~8 px N"
+   },
+   "harbor": true,
+   "stored_sea": {
+    "side": "E",
+    "distPx": 2
+   },
+   "traits_entry": true,
+   "traits_sea": {
+    "side": "E",
+    "distPx": 2
+   },
+   "traits_biome": "wooded",
+   "land_frac_footR": {
+    "at_anchor": 0.427,
+    "at_marker": 0.724
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.643,
+     "water": true,
+     "bear": "N",
+     "land_frac_footR": 0.427
+    },
+    "at_marker": {
+     "frac_water_window": 0.449,
+     "water": true,
+     "bear": "N",
+     "land_frac_footR": 0.724
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "NE",
+     "bearing_deg": 32.5,
+     "distPx": 0.7
+    },
+    "at_marker": {
+     "side8": "N",
+     "bearing_deg": 18.4,
+     "distPx": 2.4
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": {
+     "ref": {
+      "side": "E",
+      "distPx": 2
+     },
+     "side_delta_deg": 57.5,
+     "dist_delta_px": -1.3
+    },
+    "at_marker": {
+     "ref": {
+      "side": "E",
+      "distPx": 2
+     },
+     "side_delta_deg": 71.6,
+     "dist_delta_px": 0.4
+    }
+   },
+   "sea_delta_vs_traits": {
+    "at_anchor": {
+     "ref": {
+      "side": "E",
+      "distPx": 2
+     },
+     "side_delta_deg": 57.5,
+     "dist_delta_px": -1.3
+    },
+    "at_marker": {
+     "ref": {
+      "side": "E",
+      "distPx": 2
+     },
+     "side_delta_deg": 71.6,
+     "dist_delta_px": 0.4
+    }
+   },
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": true,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": true,
+    "rule": "harbor: water within ceil(distPx/8)+1=2 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [
+     278.9,
+     136.0
+    ],
+    "land_at_marker": [
+     290.9,
+     128.2
+    ],
+    "land_shift_deg": [
+     12.0,
+     7.8
+    ],
+    "land_gained": [],
+    "land_lost": [],
+    "sea_at_anchor": [
+     308.9,
+     119.0,
+     4.8
+    ],
+    "sea_at_marker": [
+     323.4,
+     1.1
+    ]
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 1.7,
+     "poly": "way:Road that Walks with the Sun"
+    },
+    "at_marker": {
+     "dist": 6.1,
+     "poly": "way:Road that Walks with the Sun"
+    }
+   },
+   "notes_hits": [
+    "CHANGELOG.md: drives search by old-tongue gloss (\"moon\" finds Tamaron 'moon-town'), surfaces",
+    "CHANGELOG.md: stands); -(i)on 'town' simplifies to surface -on (Tamar+on → Tamaron)",
+    "CHANGELOG.md: DM-attested -(i)on 'town' behind canon Tamaron) and as fused two-root compounds",
+    "CHANGELOG.md: 'white-stone', Tamaron 'moon-town', Pharzeban 'gilt-place', Aldorūs 'the height');",
+    "CHANGELOG.md: Tamaron, Bōlkhar, Gizalīs, Ākat, Kurūgnon, and the Lash-river cities Nub-Nefer",
+    "CHANGELOG.md: - The Sun Road now follows its canon: Drāmūz to Cyrikon by Lepon, Epēshu, Tamaron,",
+    "POLISH.md: and were added (Alensis City, Sepos, Līm Haub, Tamaron, Bōlkhar, Gizalīs, Ākat,",
+    "POLISH.md: world polyline: gates open exactly where roads arrive (Tamaron's Sun-Road gate"
+   ],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": true,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": [
+    "cityCanvasSha pins Tamaron's generated plan (docs/mobile/README.md). The move shifts the sampleCityMask window by (1.1,7.7) and the land bearings by 12.0°/7.8°, so this needs the owner Q6 rebaseline."
+   ]
+  },
+  {
+   "name": "Lepon the Old",
+   "kind": "ruin",
+   "source": "city-anchors.json",
+   "matched_by": "alias:Lepon",
+   "anchor": [
+    1146.5,
+    1420.2
+   ],
+   "marker": [
+    1145,
+    1427
+   ],
+   "marker_mag": false,
+   "offset_px": 7.0,
+   "offset_vec": [
+    -1.5,
+    6.8
+   ],
+   "visual_audit": {
+    "marker_sits": "marker \"Lepon\" (alias) on the printed ring",
+    "anchor_sits": "~7 px N of the ring on a Sun Road vertex (0.5 px)"
+   },
+   "harbor": false,
+   "stored_sea": {
+    "side": "E",
+    "distPx": 2
+   },
+   "traits_entry": true,
+   "traits_sea": {
+    "side": "E",
+    "distPx": 2
+   },
+   "traits_biome": "wooded",
+   "land_frac_footR": {
+    "at_anchor": 0.424,
+    "at_marker": 0.845
+   },
+   "mask_window": {
+    "at_anchor": {
+     "frac_water_window": 0.624,
+     "water": true,
+     "bear": "NW",
+     "land_frac_footR": 0.424
+    },
+    "at_marker": {
+     "frac_water_window": 0.412,
+     "water": true,
+     "bear": "NW",
+     "land_frac_footR": 0.845
+    }
+   },
+   "colour_test_reliable_here": true,
+   "nearest_sea_8way": {
+    "at_anchor": {
+     "side8": "W",
+     "bearing_deg": 258.7,
+     "distPx": 0.3
+    },
+    "at_marker": {
+     "side8": "N",
+     "bearing_deg": 14.7,
+     "distPx": 4.9
+    }
+   },
+   "sea_delta_vs_stored": {
+    "at_anchor": {
+     "ref": {
+      "side": "E",
+      "distPx": 2
+     },
+     "side_delta_deg": 168.7,
+     "dist_delta_px": -1.7
+    },
+    "at_marker": {
+     "ref": {
+      "side": "E",
+      "distPx": 2
+     },
+     "side_delta_deg": 75.3,
+     "dist_delta_px": 2.9
+    }
+   },
+   "sea_delta_vs_traits": {
+    "at_anchor": {
+     "ref": {
+      "side": "E",
+      "distPx": 2
+     },
+     "side_delta_deg": 168.7,
+     "dist_delta_px": -1.7
+    },
+    "at_marker": {
+     "ref": {
+      "side": "E",
+      "distPx": 2
+     },
+     "side_delta_deg": 75.3,
+     "dist_delta_px": 2.9
+    }
+   },
+   "living_sea_mask_rule": {
+    "in_scope_as_written": true,
+    "at_anchor": true,
+    "at_marker_stored_distPx": true,
+    "at_marker_recomputed_distPx": null,
+    "rule": "non-harbor: land within 1 mask px"
+   },
+   "approaches": {
+    "land_at_anchor": [
+     219.6,
+     95.9
+    ],
+    "land_at_marker": [
+     228.3,
+     75.6
+    ],
+    "land_shift_deg": [
+     8.7,
+     20.3
+    ],
+    "land_gained": [
+     75.6
+    ],
+    "land_lost": [
+     95.9
+    ],
+    "sea_at_anchor": [
+     19.0,
+     345.4
+    ],
+    "sea_at_marker": []
+   },
+   "nearest_polyline_vertex": {
+    "at_anchor": {
+     "dist": 0.5,
+     "poly": "way:Road that Walks with the Sun"
+    },
+    "at_marker": {
+     "dist": 7.1,
+     "poly": "way:Road that Walks with the Sun"
+    }
+   },
+   "notes_hits": [
+    "CHANGELOG.md: settlements at atlas positions, Lepon the Old as eternal ruins, Aura-Hōth highlands,"
+   ],
+   "offDot_reason": null,
+   "generated_plan_changes": true,
+   "cityCanvasSha_pinned": false,
+   "canon_overlay": false,
+   "verdict": "move",
+   "verdict_basis": "marker sits on the printed glyph; anchor sits on label text or off-glyph; no CHANGELOG/POLISH reason for the off-dot anchor",
+   "collateral": [
+    "Matched only through the alias \"Lepon\", so the derivation needs an alias map. Land bearings shift 8.7° and 20.3° (one counted as replaced); both sea approaches (19.0°, 345.4°) are lost. The anchor sits on a Sun Road vertex (0.5 px)."
+   ]
+  }
+ ]
+}

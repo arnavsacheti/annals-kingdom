@@ -1,0 +1,5180 @@
+{
+ "id": "vector-overlays-vs-print",
+ "date": "2026-10-07",
+ "source": "HEAD export, maps-site/data/*.json|geojson vs maps-site/tiles/5 (Modern) mosaic; static, no browser",
+ "key_distinction": "REGISTRATION vs RENDERING MEDIUM. Every feature here is already vector (L.polyline / L.polygon on raw atlas-px vertices, roads/lanes/route via crSpline). The offsets below are source-registration errors of the traced vertices; the spline adds at most a few px. Vector geometry mis-registered at the source misaligns exactly as a raster would, and the error scales with zoom like any overlay: screen px = atlas px x 2^(z-4).",
+ "method": {
+  "mosaic": "z5 tiles 35x18 pasted to 8960x4608 px; atlas px = z5 px / 2 (no y flip, NZ=4).",
+  "printed_road_ink": "dots = ink (luminance<110) 8-connected components with bbox 4-11 z5 px, fill>0.55, aspect<=1.6, chained to another dot within 8 atlas px (16 z5 px). 2351 chained dots. Self-check vs banked filigree counts: band W 99 (banked ~97, q05), M 49 (banked ~49, q06), E 55 (banked 57, q07). Named-way band-W euclid median 27.9 px reproduces q05 exactly.",
+  "road_offset": "samples every 1 atlas px along raw vertices and along crSpline output (ported verbatim: centripetal CR, seg 16 for buildNamedWays/buildSeaLanes, 18 per leg for buildRoute; clampToFrame is a no-op for every shipped point, all in frame). normal_band = min |normal offset| of dots with |tangent offset|<=4 px within +-100 px; no_dot_in_band_fraction reported separately, never folded into the median. euclid_nearest_dot = plain nearest dot (uncensored). Both are lower bounds: the nearest dot may belong to a different printed road.",
+  "water_mask": "buildCityMask colour test (lum>=110 and r-b<=54, box blur r2, ratio>=0.5). Valid in Leponnia/Great Chasmous Sea; NOT valid under Alensic/Umbadic/Eastern Patrin/Pheropic tints or Emphēros grey-green land (see side_check).",
+  "realm_borders": "print draws realms only as colour washes (legend swatches sampled at legend centre); per-realm nearest-colour classifier (own swatch, overlapping realms swatches, land 195,174,125, sea 175,166,129) on blurred non-ink RGB (r=4 z5 px, Regimen r=7), opened, small parts/holes removed; offset = distance from ring sample to the wash edge.",
+  "minor_borders": "the print has NO district boundary class (regions are spaced lettering only, verified on crop of Leponnia); offset reported to nearest long thin ink (river/coast/graticule) and to the coast of the sea mask, labelled as such, not as registration.",
+  "sea_lanes": "land samples on the water mask beyond 1.35 x footR + endpoint-to-anchor distance at each port; longest land run, total land length, coast-ink crossings.",
+  "screen_px": "atlas px x 2^(z-4): x4 at z6, x9.85 at z7.3; cityMaxZ = min(11.5, 4+log2(max(w,h)/(2 footR))): procedural (GEN_SIZE 2048) capital 9.30, town 10.19, village 10.83, ruin 11.0; Epēshu overlay 3072 -> 9.88; Summarch has no city-anchors entry, so no cityMaxZ. NOTE pWay/pLane/pRouteLine/pRealm/pDistrict are opacity 0 under .map-tier-d (Z_TIER_D 7.5), so at cityMaxZ the line is not drawn; the cityMaxZ figure is the misplacement inherited by gates/quays via APPR_POLYS (raw pts), not a visible line.",
+  "appr": "buildApprPolys + segCircleHits + mergeAngles ported (2.5 x footR circle, 0.25 rad merge). printed_road_bearings = mergeAngles of dots in the annulus [R-4, R+4]. Bearings are screen angles atan2(dy,dx): 0=E, 90=S, 180=W, 270=N."
+ },
+ "summarch_coordinates": {
+  "party-route.json waypoint 2 (Summarch)": [
+   523,
+   58
+  ],
+  "party-route.json waypoint 6 (Summarch)": [
+   545,
+   80
+  ],
+  "named-ways East-West Road end": [
+   527,
+   66
+  ],
+  "maps_markers Summarch": [
+   542,
+   52
+  ],
+  "printed ring (crop estimate, +-2)": [
+   541.7,
+   50
+  ],
+  "note": "one city, three source coordinates 20-31 px apart inside the shipped data; city-anchors.json has no Summarch entry, so overlay-Summarch registered by registerCityOverlay has no world anchor"
+ },
+ "cross_ref": "Anchor offsets vs printed rings (e.g. Harney anchor 522,195 vs marker/ring 508,207 = 18 px; Stony Ford 591,183 vs 612,172 = 23 px) belong to out/anchor-correction-table.json, not repeated here.",
+ "summary": [
+  {
+   "feature": "Road that Walks with the Sun",
+   "type": "named-way",
+   "feeds_APPR_POLYS": true,
+   "metric": "normal-band distance to nearest printed dotted-road dot (|tangent|<=4 px, |normal|<=100 px)",
+   "sea_fraction_spline": 0.452,
+   "raw": {
+    "median": 31.3,
+    "p90": 64.6,
+    "max": 98.2,
+    "n": 1267
+   },
+   "spline": {
+    "median": 30.3,
+    "p90": 60.3,
+    "max": 97.9,
+    "n": 1386
+   },
+   "euclid_nearest_dot_raw": {
+    "median": 39.9,
+    "p90": 157.4,
+    "max": 215.7,
+    "n": 2307
+   },
+   "no_ink_in_band_fraction": 0.451,
+   "raw_to_spline_deviation": {
+    "median": 0.9,
+    "p90": 3.2,
+    "max": 5.8,
+    "n": 2510
+   },
+   "screen_px_raw": {
+    "z6": {
+     "median": 125.2,
+     "p90": 258.4,
+     "max": 392.8
+    },
+    "z7.3": {
+     "median": 308.3,
+     "p90": 636.3,
+     "max": 967.2
+    },
+    "cityMaxZ(max of crossed cities)=11.00": {
+     "median": 4006.4,
+     "p90": 8268.8,
+     "max": 12569.6
+    },
+    "cityMaxZ(min of crossed cities)=9.88": {
+     "median": 1843.3,
+     "p90": 3804.4,
+     "max": 5783.2
+    }
+   },
+   "appr_cities": [
+    "Epēshu",
+    "Sokundo",
+    "Kanae",
+    "Tamaron",
+    "Mago",
+    "Drāmūz",
+    "Rhup",
+    "Lepon the Old",
+    "Nhagi"
+   ]
+  },
+  {
+   "feature": "The East-West Road",
+   "type": "named-way",
+   "feeds_APPR_POLYS": true,
+   "metric": "normal-band distance to nearest printed dotted-road dot (|tangent|<=4 px, |normal|<=100 px)",
+   "sea_fraction_spline": 0.008,
+   "raw": {
+    "median": 16.6,
+    "p90": 18.8,
+    "max": 20.0,
+    "n": 136
+   },
+   "spline": {
+    "median": 17.2,
+    "p90": 20.4,
+    "max": 21.0,
+    "n": 152
+   },
+   "euclid_nearest_dot_raw": {
+    "median": 17.5,
+    "p90": 71.1,
+    "max": 93.4,
+    "n": 227
+   },
+   "no_ink_in_band_fraction": 0.401,
+   "raw_to_spline_deviation": {
+    "median": 1.7,
+    "p90": 3.1,
+    "max": 3.2,
+    "n": 249
+   },
+   "screen_px_raw": {
+    "z6": {
+     "median": 66.4,
+     "p90": 75.2,
+     "max": 80.0
+    },
+    "z7.3": {
+     "median": 163.5,
+     "p90": 185.2,
+     "max": 197.0
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 654.0,
+     "p90": 740.7,
+     "max": 787.9
+    },
+    "Z_STREET=11.5": {
+     "median": 3004.9,
+     "p90": 3403.2,
+     "max": 3620.4
+    }
+   }
+  },
+  {
+   "feature": "leg 1: East-West Road -> Summarch",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "metric": "normal-band distance to nearest printed dotted-road dot (|tangent|<=4 px, |normal|<=100 px)",
+   "sea_fraction_spline": 0.028,
+   "raw": {
+    "median": 16.6,
+    "p90": 18.7,
+    "max": 19.5,
+    "n": 114
+   },
+   "spline": {
+    "median": 17.8,
+    "p90": 19.1,
+    "max": 20.0,
+    "n": 132
+   },
+   "euclid_nearest_dot_raw": {
+    "median": 16.7,
+    "p90": 18.7,
+    "max": 19.9,
+    "n": 123
+   },
+   "no_ink_in_band_fraction": 0.073,
+   "raw_to_spline_deviation": {
+    "median": 1.0,
+    "p90": 1.3,
+    "max": 1.3,
+    "n": 143
+   },
+   "leg_medium": "land",
+   "screen_px_raw": {
+    "z6": {
+     "median": 66.4,
+     "p90": 74.8,
+     "max": 78.0
+    },
+    "z7.3": {
+     "median": 163.5,
+     "p90": 184.2,
+     "max": 192.1
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 654.0,
+     "p90": 736.7,
+     "max": 768.2
+    },
+    "Z_STREET=11.5": {
+     "median": 3004.9,
+     "p90": 3385.1,
+     "max": 3529.9
+    }
+   }
+  },
+  {
+   "feature": "leg 2: Summarch -> Watchwater",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "metric": "normal-band distance to nearest printed dotted-road dot (|tangent|<=4 px, |normal|<=100 px)",
+   "sea_fraction_spline": 0.013,
+   "raw": {
+    "median": 36.9,
+    "p90": 63.1,
+    "max": 87.0,
+    "n": 107
+   },
+   "spline": {
+    "median": 33.9,
+    "p90": 59.2,
+    "max": 84.0,
+    "n": 112
+   },
+   "euclid_nearest_dot_raw": {
+    "median": 108.9,
+    "p90": 309.3,
+    "max": 321.9,
+    "n": 659
+   },
+   "no_ink_in_band_fraction": 0.838,
+   "raw_to_spline_deviation": {
+    "median": 2.0,
+    "p90": 3.4,
+    "max": 3.6,
+    "n": 685
+   },
+   "leg_medium": "land",
+   "screen_px_raw": {
+    "z6": {
+     "median": 147.6,
+     "p90": 252.4,
+     "max": 348.0
+    },
+    "z7.3": {
+     "median": 363.4,
+     "p90": 621.5,
+     "max": 856.9
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 1453.7,
+     "p90": 2485.9,
+     "max": 3427.5
+    },
+    "Z_STREET=11.5": {
+     "median": 6679.6,
+     "p90": 11422.3,
+     "max": 15748.7
+    }
+   }
+  },
+  {
+   "feature": "leg 3: Watchwater -> Far North",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "metric": "normal-band distance to nearest printed dotted-road dot (|tangent|<=4 px, |normal|<=100 px)",
+   "sea_fraction_spline": 0.634,
+   "raw": null,
+   "spline": null,
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": {
+    "median": 0.3,
+    "p90": 0.9,
+    "max": 1.1,
+    "n": 678
+   },
+   "leg_medium": "sea"
+  },
+  {
+   "feature": "leg 4: Far North -> Fell Mountains",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "metric": "normal-band distance to nearest printed dotted-road dot (|tangent|<=4 px, |normal|<=100 px)",
+   "sea_fraction_spline": 0.363,
+   "raw": null,
+   "spline": null,
+   "euclid_nearest_dot_raw": {
+    "median": 319.7,
+    "p90": 646.6,
+    "max": 693.4,
+    "n": 1052
+   },
+   "no_ink_in_band_fraction": 1.0,
+   "raw_to_spline_deviation": {
+    "median": 2.5,
+    "p90": 4.9,
+    "max": 5.4,
+    "n": 1074
+   },
+   "leg_medium": "land"
+  },
+  {
+   "feature": "leg 5: Fell Mountains -> Summarch",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "metric": "normal-band distance to nearest printed dotted-road dot (|tangent|<=4 px, |normal|<=100 px)",
+   "sea_fraction_spline": 0.004,
+   "raw": {
+    "median": 29.4,
+    "p90": 62.8,
+    "max": 96.9,
+    "n": 70
+   },
+   "spline": {
+    "median": 30.9,
+    "p90": 66.0,
+    "max": 98.5,
+    "n": 75
+   },
+   "euclid_nearest_dot_raw": {
+    "median": 41.6,
+    "p90": 77.8,
+    "max": 89.0,
+    "n": 251
+   },
+   "no_ink_in_band_fraction": 0.721,
+   "raw_to_spline_deviation": {
+    "median": 1.4,
+    "p90": 1.8,
+    "max": 1.9,
+    "n": 268
+   },
+   "leg_medium": "land",
+   "screen_px_raw": {
+    "z6": {
+     "median": 117.6,
+     "p90": 251.2,
+     "max": 387.6
+    },
+    "z7.3": {
+     "median": 289.6,
+     "p90": 618.5,
+     "max": 954.4
+    },
+    "cityMaxZ(max of crossed cities)=10.19": {
+     "median": 2146.5,
+     "p90": 4585.0,
+     "max": 7074.6
+    },
+    "cityMaxZ(min of crossed cities)=10.19": {
+     "median": 2146.5,
+     "p90": 4585.0,
+     "max": 7074.6
+    }
+   },
+   "appr_cities": [
+    "Māmīth Māgrīn (Kingly Mickleburg)"
+   ]
+  },
+  {
+   "feature": "leg 6: Summarch -> Siege of the Seat",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "metric": "normal-band distance to nearest printed dotted-road dot (|tangent|<=4 px, |normal|<=100 px)",
+   "sea_fraction_spline": 0.0,
+   "raw": {
+    "median": 7.9,
+    "p90": 9.3,
+    "max": 9.3,
+    "n": 23
+   },
+   "spline": {
+    "median": 7.9,
+    "p90": 9.3,
+    "max": 9.3,
+    "n": 23
+   },
+   "euclid_nearest_dot_raw": {
+    "median": 8.0,
+    "p90": 9.4,
+    "max": 9.9,
+    "n": 23
+   },
+   "no_ink_in_band_fraction": 0.0,
+   "raw_to_spline_deviation": {
+    "median": 0.0,
+    "p90": 0.0,
+    "max": 0.0,
+    "n": 23
+   },
+   "leg_medium": "land",
+   "screen_px_raw": {
+    "z6": {
+     "median": 31.6,
+     "p90": 37.2,
+     "max": 37.2
+    },
+    "z7.3": {
+     "median": 77.8,
+     "p90": 91.6,
+     "max": 91.6
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 311.2,
+     "p90": 366.4,
+     "max": 366.4
+    },
+    "Z_STREET=11.5": {
+     "median": 1430.1,
+     "p90": 1683.5,
+     "max": 1683.5
+    }
+   }
+  },
+  {
+   "feature": "leg 7: Siege of the Seat -> Sepos",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "metric": "normal-band distance to nearest printed dotted-road dot (|tangent|<=4 px, |normal|<=100 px)",
+   "sea_fraction_spline": 0.0,
+   "raw": {
+    "median": 20.7,
+    "p90": 74.0,
+    "max": 76.6,
+    "n": 199
+   },
+   "spline": {
+    "median": 22.0,
+    "p90": 77.0,
+    "max": 79.1,
+    "n": 219
+   },
+   "euclid_nearest_dot_raw": {
+    "median": 18.0,
+    "p90": 36.2,
+    "max": 45.2,
+    "n": 211
+   },
+   "no_ink_in_band_fraction": 0.057,
+   "raw_to_spline_deviation": {
+    "median": 2.2,
+    "p90": 2.9,
+    "max": 3.0,
+    "n": 232
+   },
+   "leg_medium": "land",
+   "screen_px_raw": {
+    "z6": {
+     "median": 82.8,
+     "p90": 296.0,
+     "max": 306.4
+    },
+    "z7.3": {
+     "median": 203.9,
+     "p90": 728.8,
+     "max": 754.4
+    },
+    "cityMaxZ(max of crossed cities)=10.83": {
+     "median": 2355.1,
+     "p90": 8419.1,
+     "max": 8714.9
+    },
+    "cityMaxZ(min of crossed cities)=10.83": {
+     "median": 2355.1,
+     "p90": 8419.1,
+     "max": 8714.9
+    }
+   },
+   "appr_cities": [
+    "Harney"
+   ]
+  },
+  {
+   "feature": "leg 8: Sepos -> White Sea",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "metric": "normal-band distance to nearest printed dotted-road dot (|tangent|<=4 px, |normal|<=100 px)",
+   "sea_fraction_spline": 0.743,
+   "raw": null,
+   "spline": null,
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": {
+    "median": 6.1,
+    "p90": 17.3,
+    "max": 19.6,
+    "n": 1185
+   },
+   "leg_medium": "sea",
+   "appr_cities": [
+    "Pomos"
+   ]
+  },
+  {
+   "feature": "leg 9: White Sea -> Paerāndas",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "metric": "normal-band distance to nearest printed dotted-road dot (|tangent|<=4 px, |normal|<=100 px)",
+   "sea_fraction_spline": 0.988,
+   "raw": null,
+   "spline": null,
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": {
+    "median": 3.9,
+    "p90": 7.6,
+    "max": 8.3,
+    "n": 769
+   },
+   "leg_medium": "sea"
+  },
+  {
+   "feature": "leg 10: Paerāndas -> White Sea (Dagon's attack)",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "metric": "normal-band distance to nearest printed dotted-road dot (|tangent|<=4 px, |normal|<=100 px)",
+   "sea_fraction_spline": 0.989,
+   "raw": null,
+   "spline": null,
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": {
+    "median": 1.1,
+    "p90": 1.5,
+    "max": 1.6,
+    "n": 91
+   },
+   "leg_medium": "sea",
+   "appr_cities": [
+    "Epēshu"
+   ]
+  },
+  {
+   "feature": "leg 11: White Sea (Dagon's attack) -> Epēshu",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "metric": "normal-band distance to nearest printed dotted-road dot (|tangent|<=4 px, |normal|<=100 px)",
+   "sea_fraction_spline": 0.99,
+   "raw": null,
+   "spline": null,
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": {
+    "median": 2.0,
+    "p90": 3.3,
+    "max": 3.4,
+    "n": 104
+   },
+   "leg_medium": "sea"
+  },
+  {
+   "feature": "The Gulf Crossing",
+   "type": "sea-lane",
+   "feeds_APPR_POLYS": true,
+   "metric": "sea lane: land-crossing check, not an ink offset",
+   "sea_fraction_spline": 0.874,
+   "raw": null,
+   "spline": null,
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": {
+    "median": 4.2,
+    "p90": 12.2,
+    "max": 13.4,
+    "n": 491
+   },
+   "land_check_spline": {
+    "excluded_endpoint_radius_px": [
+     53.0,
+     79.0
+    ],
+    "land_length_px": 0,
+    "land_fraction_beyond_ports": 0.0,
+    "longest_land_run_px": 0,
+    "land_runs_ge5px": 0,
+    "line_ink_crossings": 4,
+    "crosses_land": false
+   },
+   "land_check_raw": {
+    "excluded_endpoint_radius_px": [
+     53.0,
+     79.0
+    ],
+    "land_length_px": 1,
+    "land_fraction_beyond_ports": 0.003,
+    "longest_land_run_px": 1,
+    "land_runs_ge5px": 0,
+    "line_ink_crossings": 4,
+    "crosses_land": false
+   },
+   "appr_cities": [
+    "Epēshu",
+    "Lepon the Old",
+    "Istīron"
+   ]
+  },
+  {
+   "feature": "The North Coast Packet",
+   "type": "sea-lane",
+   "feeds_APPR_POLYS": true,
+   "metric": "sea lane: land-crossing check, not an ink offset",
+   "sea_fraction_spline": 0.871,
+   "raw": null,
+   "spline": null,
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": {
+    "median": 1.5,
+    "p90": 3.3,
+    "max": 4.2,
+    "n": 565
+   },
+   "land_check_spline": {
+    "excluded_endpoint_radius_px": [
+     53.0,
+     25.9
+    ],
+    "land_length_px": 42,
+    "land_fraction_beyond_ports": 0.088,
+    "longest_land_run_px": 27,
+    "land_runs_ge5px": 1,
+    "line_ink_crossings": 10,
+    "crosses_land": true
+   },
+   "land_check_raw": {
+    "excluded_endpoint_radius_px": [
+     53.0,
+     25.9
+    ],
+    "land_length_px": 31,
+    "land_fraction_beyond_ports": 0.07,
+    "longest_land_run_px": 26,
+    "land_runs_ge5px": 1,
+    "line_ink_crossings": 8,
+    "crosses_land": true
+   },
+   "appr_cities": [
+    "Epēshu",
+    "Sokundo",
+    "Kanae",
+    "Tamaron",
+    "Mago"
+   ]
+  },
+  {
+   "feature": "The Strait Run",
+   "type": "sea-lane",
+   "feeds_APPR_POLYS": true,
+   "metric": "sea lane: land-crossing check, not an ink offset",
+   "sea_fraction_spline": 0.987,
+   "raw": null,
+   "spline": null,
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": {
+    "median": 1.5,
+    "p90": 2.0,
+    "max": 2.1,
+    "n": 228
+   },
+   "land_check_spline": {
+    "excluded_endpoint_radius_px": [
+     35.2,
+     39.2
+    ],
+    "land_length_px": 3,
+    "land_fraction_beyond_ports": 0.02,
+    "longest_land_run_px": 2,
+    "land_runs_ge5px": 0,
+    "line_ink_crossings": 4,
+    "crosses_land": false
+   },
+   "land_check_raw": {
+    "excluded_endpoint_radius_px": [
+     35.2,
+     39.2
+    ],
+    "land_length_px": 3,
+    "land_fraction_beyond_ports": 0.021,
+    "longest_land_run_px": 2,
+    "land_runs_ge5px": 0,
+    "line_ink_crossings": 4,
+    "crosses_land": false
+   },
+   "appr_cities": [
+    "Tamaron"
+   ]
+  },
+  {
+   "feature": "The South Lane",
+   "type": "sea-lane",
+   "feeds_APPR_POLYS": true,
+   "metric": "sea lane: land-crossing check, not an ink offset",
+   "sea_fraction_spline": 0.877,
+   "raw": null,
+   "spline": null,
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": {
+    "median": 1.6,
+    "p90": 3.2,
+    "max": 3.6,
+    "n": 243
+   },
+   "land_check_spline": {
+    "excluded_endpoint_radius_px": [
+     19.1,
+     19.3
+    ],
+    "land_length_px": 7,
+    "land_fraction_beyond_ports": 0.035,
+    "longest_land_run_px": 5,
+    "land_runs_ge5px": 1,
+    "line_ink_crossings": 0,
+    "crosses_land": true
+   },
+   "land_check_raw": {
+    "excluded_endpoint_radius_px": [
+     19.1,
+     19.3
+    ],
+    "land_length_px": 12,
+    "land_fraction_beyond_ports": 0.066,
+    "longest_land_run_px": 12,
+    "land_runs_ge5px": 1,
+    "line_ink_crossings": 0,
+    "crosses_land": true
+   },
+   "appr_cities": [
+    "Drāmūz",
+    "Kardunash"
+   ]
+  },
+  {
+   "feature": "Kgd. of Cyrikon",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "metric": "distance to the edge of the printed realm colour wash",
+   "sea_fraction_spline": null,
+   "raw": {
+    "median": 3.5,
+    "p90": 11.1,
+    "max": 20.9,
+    "n": 2092
+   },
+   "spline": {
+    "median": 3.5,
+    "p90": 11.1,
+    "max": 20.9,
+    "n": 2092
+   },
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": 0.0,
+   "raw_to_spline_deviation": null,
+   "screen_px_raw": {
+    "z6": {
+     "median": 14.0,
+     "p90": 44.4,
+     "max": 83.6
+    },
+    "z7.3": {
+     "median": 34.5,
+     "p90": 109.3,
+     "max": 205.8
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 137.9,
+     "p90": 437.3,
+     "max": 823.4
+    },
+    "Z_STREET=11.5": {
+     "median": 633.6,
+     "p90": 2009.3,
+     "max": 3783.3
+    }
+   }
+  },
+  {
+   "feature": "Umbadic Empire",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "metric": "distance to the edge of the printed realm colour wash",
+   "sea_fraction_spline": null,
+   "raw": {
+    "median": 8.5,
+    "p90": 32.2,
+    "max": 60.0,
+    "n": 4343
+   },
+   "spline": {
+    "median": 8.5,
+    "p90": 32.2,
+    "max": 60.0,
+    "n": 4343
+   },
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": 0.0,
+   "raw_to_spline_deviation": null,
+   "screen_px_raw": {
+    "z6": {
+     "median": 34.0,
+     "p90": 128.8,
+     "max": 240.0
+    },
+    "z7.3": {
+     "median": 83.7,
+     "p90": 317.1,
+     "max": 590.9
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 334.9,
+     "p90": 1268.6,
+     "max": 2363.8
+    },
+    "Z_STREET=11.5": {
+     "median": 1538.7,
+     "p90": 5828.8,
+     "max": 10861.2
+    }
+   }
+  },
+  {
+   "feature": "Pheropic Empire",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "metric": "distance to the edge of the printed realm colour wash",
+   "sea_fraction_spline": null,
+   "raw": {
+    "median": 3.5,
+    "p90": 22.5,
+    "max": 47.3,
+    "n": 1278
+   },
+   "spline": {
+    "median": 3.5,
+    "p90": 22.5,
+    "max": 47.3,
+    "n": 1278
+   },
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": 0.0,
+   "raw_to_spline_deviation": null,
+   "screen_px_raw": {
+    "z6": {
+     "median": 14.0,
+     "p90": 90.0,
+     "max": 189.2
+    },
+    "z7.3": {
+     "median": 34.5,
+     "p90": 221.6,
+     "max": 465.9
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 137.9,
+     "p90": 886.4,
+     "max": 1863.5
+    },
+    "Z_STREET=11.5": {
+     "median": 633.6,
+     "p90": 4072.9,
+     "max": 8562.2
+    }
+   }
+  },
+  {
+   "feature": "Alensic Republic",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "metric": "distance to the edge of the printed realm colour wash",
+   "sea_fraction_spline": null,
+   "raw": {
+    "median": 3.5,
+    "p90": 16.5,
+    "max": 52.4,
+    "n": 3216
+   },
+   "spline": {
+    "median": 3.5,
+    "p90": 16.5,
+    "max": 52.4,
+    "n": 3216
+   },
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": 0.0,
+   "raw_to_spline_deviation": null,
+   "screen_px_raw": {
+    "z6": {
+     "median": 14.0,
+     "p90": 66.0,
+     "max": 209.6
+    },
+    "z7.3": {
+     "median": 34.5,
+     "p90": 162.5,
+     "max": 516.1
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 137.9,
+     "p90": 650.0,
+     "max": 2064.4
+    },
+    "Z_STREET=11.5": {
+     "median": 633.6,
+     "p90": 2986.8,
+     "max": 9485.4
+    }
+   }
+  },
+  {
+   "feature": "Kgd. under the Wall",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "metric": "distance to the edge of the printed realm colour wash",
+   "sea_fraction_spline": null,
+   "raw": {
+    "median": 3.6,
+    "p90": 17.9,
+    "max": 35.6,
+    "n": 1735
+   },
+   "spline": {
+    "median": 3.6,
+    "p90": 17.9,
+    "max": 35.6,
+    "n": 1735
+   },
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": 0.0,
+   "raw_to_spline_deviation": null,
+   "screen_px_raw": {
+    "z6": {
+     "median": 14.4,
+     "p90": 71.6,
+     "max": 142.4
+    },
+    "z7.3": {
+     "median": 35.5,
+     "p90": 176.3,
+     "max": 350.6
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 141.8,
+     "p90": 705.2,
+     "max": 1402.5
+    },
+    "Z_STREET=11.5": {
+     "median": 651.7,
+     "p90": 3240.2,
+     "max": 6444.3
+    }
+   }
+  },
+  {
+   "feature": "Eastern Patrin Empire",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "metric": "distance to the edge of the printed realm colour wash",
+   "sea_fraction_spline": null,
+   "raw": {
+    "median": 5.4,
+    "p90": 19.2,
+    "max": 59.9,
+    "n": 4168
+   },
+   "spline": {
+    "median": 5.4,
+    "p90": 19.2,
+    "max": 59.9,
+    "n": 4168
+   },
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": 0.0,
+   "raw_to_spline_deviation": null,
+   "screen_px_raw": {
+    "z6": {
+     "median": 21.6,
+     "p90": 76.8,
+     "max": 239.6
+    },
+    "z7.3": {
+     "median": 53.2,
+     "p90": 189.1,
+     "max": 590.0
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 212.7,
+     "p90": 756.4,
+     "max": 2359.9
+    },
+    "Z_STREET=11.5": {
+     "median": 977.5,
+     "p90": 3475.6,
+     "max": 10843.1
+    }
+   }
+  },
+  {
+   "feature": "Once-Realm of Regimen",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "metric": "distance to the edge of the printed realm colour wash",
+   "sea_fraction_spline": null,
+   "raw": {
+    "median": 9.9,
+    "p90": 62.1,
+    "max": 99.8,
+    "n": 4802
+   },
+   "spline": {
+    "median": 9.9,
+    "p90": 62.1,
+    "max": 99.8,
+    "n": 4802
+   },
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": 0.163,
+   "raw_to_spline_deviation": null,
+   "screen_px_raw": {
+    "z6": {
+     "median": 39.6,
+     "p90": 248.4,
+     "max": 399.2
+    },
+    "z7.3": {
+     "median": 97.5,
+     "p90": 611.6,
+     "max": 982.9
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 390.0,
+     "p90": 2446.5,
+     "max": 3931.8
+    },
+    "Z_STREET=11.5": {
+     "median": 1792.1,
+     "p90": 11241.3,
+     "max": 18065.7
+    }
+   }
+  },
+  {
+   "feature": "Kgd. of the Sārmathi",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "metric": "distance to the edge of the printed realm colour wash",
+   "sea_fraction_spline": null,
+   "raw": {
+    "median": 3.5,
+    "p90": 10.8,
+    "max": 26.5,
+    "n": 1082
+   },
+   "spline": {
+    "median": 3.5,
+    "p90": 10.8,
+    "max": 26.5,
+    "n": 1082
+   },
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": 0.0,
+   "raw_to_spline_deviation": null,
+   "screen_px_raw": {
+    "z6": {
+     "median": 14.0,
+     "p90": 43.2,
+     "max": 106.0
+    },
+    "z7.3": {
+     "median": 34.5,
+     "p90": 106.4,
+     "max": 261.0
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 137.9,
+     "p90": 425.5,
+     "max": 1044.0
+    },
+    "Z_STREET=11.5": {
+     "median": 633.6,
+     "p90": 1955.0,
+     "max": 4797.0
+    }
+   }
+  },
+  {
+   "feature": "Pēshunor",
+   "type": "minor-region-border",
+   "feeds_APPR_POLYS": false,
+   "metric": "NO printed boundary class: distance to nearest long line ink (river/coast/graticule)",
+   "sea_fraction_spline": 0.362,
+   "raw": {
+    "median": 10.5,
+    "p90": 35.6,
+    "max": 42.8,
+    "n": 729
+   },
+   "spline": {
+    "median": 10.5,
+    "p90": 35.6,
+    "max": 42.8,
+    "n": 729
+   },
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": null,
+   "screen_px_raw": {
+    "z6": {
+     "median": 42.0,
+     "p90": 142.4,
+     "max": 171.2
+    },
+    "z7.3": {
+     "median": 103.4,
+     "p90": 350.6,
+     "max": 421.5
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 413.7,
+     "p90": 1402.5,
+     "max": 1686.2
+    },
+    "Z_STREET=11.5": {
+     "median": 1900.7,
+     "p90": 6444.3,
+     "max": 7747.6
+    }
+   }
+  },
+  {
+   "feature": "Lamor",
+   "type": "minor-region-border",
+   "feeds_APPR_POLYS": false,
+   "metric": "NO printed boundary class: distance to nearest long line ink (river/coast/graticule)",
+   "sea_fraction_spline": 0.51,
+   "raw": {
+    "median": 7.5,
+    "p90": 20.0,
+    "max": 31.2,
+    "n": 390
+   },
+   "spline": {
+    "median": 7.5,
+    "p90": 20.0,
+    "max": 31.2,
+    "n": 390
+   },
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": null,
+   "screen_px_raw": {
+    "z6": {
+     "median": 30.0,
+     "p90": 80.0,
+     "max": 124.8
+    },
+    "z7.3": {
+     "median": 73.9,
+     "p90": 197.0,
+     "max": 307.3
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 295.5,
+     "p90": 787.9,
+     "max": 1229.2
+    },
+    "Z_STREET=11.5": {
+     "median": 1357.6,
+     "p90": 3620.4,
+     "max": 5647.8
+    }
+   }
+  },
+  {
+   "feature": "Dranimos",
+   "type": "minor-region-border",
+   "feeds_APPR_POLYS": false,
+   "metric": "NO printed boundary class: distance to nearest long line ink (river/coast/graticule)",
+   "sea_fraction_spline": 0.09,
+   "raw": {
+    "median": 18.5,
+    "p90": 48.0,
+    "max": 51.9,
+    "n": 502
+   },
+   "spline": {
+    "median": 18.5,
+    "p90": 48.0,
+    "max": 51.9,
+    "n": 502
+   },
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": null,
+   "screen_px_raw": {
+    "z6": {
+     "median": 74.0,
+     "p90": 192.0,
+     "max": 207.6
+    },
+    "z7.3": {
+     "median": 182.2,
+     "p90": 472.8,
+     "max": 511.2
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 728.8,
+     "p90": 1891.0,
+     "max": 2044.7
+    },
+    "Z_STREET=11.5": {
+     "median": 3348.9,
+     "p90": 8688.9,
+     "max": 9394.9
+    }
+   }
+  },
+  {
+   "feature": "Rhoshkhon",
+   "type": "minor-region-border",
+   "feeds_APPR_POLYS": false,
+   "metric": "NO printed boundary class: distance to nearest long line ink (river/coast/graticule)",
+   "sea_fraction_spline": 0.265,
+   "raw": {
+    "median": 16.9,
+    "p90": 42.5,
+    "max": 47.8,
+    "n": 524
+   },
+   "spline": {
+    "median": 16.9,
+    "p90": 42.5,
+    "max": 47.8,
+    "n": 524
+   },
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": null,
+   "screen_px_raw": {
+    "z6": {
+     "median": 67.6,
+     "p90": 170.0,
+     "max": 191.2
+    },
+    "z7.3": {
+     "median": 166.5,
+     "p90": 418.6,
+     "max": 470.8
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 665.8,
+     "p90": 1674.4,
+     "max": 1883.2
+    },
+    "Z_STREET=11.5": {
+     "median": 3059.2,
+     "p90": 7693.3,
+     "max": 8652.7
+    }
+   }
+  },
+  {
+   "feature": "Sūs Gimilīn",
+   "type": "minor-region-border",
+   "feeds_APPR_POLYS": false,
+   "metric": "NO printed boundary class: distance to nearest long line ink (river/coast/graticule)",
+   "sea_fraction_spline": 0.0,
+   "raw": {
+    "median": 34.9,
+    "p90": 50.3,
+    "max": 61.6,
+    "n": 605
+   },
+   "spline": {
+    "median": 34.9,
+    "p90": 50.3,
+    "max": 61.6,
+    "n": 605
+   },
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": null,
+   "screen_px_raw": {
+    "z6": {
+     "median": 139.6,
+     "p90": 201.2,
+     "max": 246.4
+    },
+    "z7.3": {
+     "median": 343.7,
+     "p90": 495.4,
+     "max": 606.7
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 1374.9,
+     "p90": 1981.7,
+     "max": 2426.8
+    },
+    "Z_STREET=11.5": {
+     "median": 6317.6,
+     "p90": 9105.3,
+     "max": 11150.8
+    }
+   }
+  },
+  {
+   "feature": "Azrāken",
+   "type": "minor-region-border",
+   "feeds_APPR_POLYS": false,
+   "metric": "NO printed boundary class: distance to nearest long line ink (river/coast/graticule)",
+   "sea_fraction_spline": 0.414,
+   "raw": {
+    "median": 11.8,
+    "p90": 23.8,
+    "max": 27.7,
+    "n": 415
+   },
+   "spline": {
+    "median": 11.8,
+    "p90": 23.8,
+    "max": 27.7,
+    "n": 415
+   },
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": null,
+   "screen_px_raw": {
+    "z6": {
+     "median": 47.2,
+     "p90": 95.2,
+     "max": 110.8
+    },
+    "z7.3": {
+     "median": 116.2,
+     "p90": 234.4,
+     "max": 272.8
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 464.9,
+     "p90": 937.6,
+     "max": 1091.3
+    },
+    "Z_STREET=11.5": {
+     "median": 2136.0,
+     "p90": 4308.3,
+     "max": 5014.2
+    }
+   }
+  },
+  {
+   "feature": "Aura-Hōth Hanath",
+   "type": "minor-region-border",
+   "feeds_APPR_POLYS": false,
+   "metric": "NO printed boundary class: distance to nearest long line ink (river/coast/graticule)",
+   "sea_fraction_spline": 0.509,
+   "raw": {
+    "median": 14.0,
+    "p90": 35.3,
+    "max": 47.1,
+    "n": 322
+   },
+   "spline": {
+    "median": 14.0,
+    "p90": 35.3,
+    "max": 47.1,
+    "n": 322
+   },
+   "euclid_nearest_dot_raw": null,
+   "no_ink_in_band_fraction": null,
+   "raw_to_spline_deviation": null,
+   "screen_px_raw": {
+    "z6": {
+     "median": 56.0,
+     "p90": 141.2,
+     "max": 188.4
+    },
+    "z7.3": {
+     "median": 137.9,
+     "p90": 347.7,
+     "max": 463.9
+    },
+    "cityMaxZ capital/procedural=9.30": {
+     "median": 551.6,
+     "p90": 1390.7,
+     "max": 1855.6
+    },
+    "Z_STREET=11.5": {
+     "median": 2534.3,
+     "p90": 6390.0,
+     "max": 8526.0
+    }
+   }
+  }
+ ],
+ "features": [
+  {
+   "name": "Road that Walks with the Sun",
+   "type": "named-way",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "land",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 28,
+   "length_px": 2294.3,
+   "spline_seg": 16,
+   "raw_to_spline_deviation_px": {
+    "median": 0.9,
+    "p90": 3.2,
+    "max": 5.8,
+    "n": 2510
+   },
+   "sea_fraction_raw": 0.443,
+   "sea_fraction_spline": 0.452,
+   "appr_cities": [
+    {
+     "city": "Epēshu",
+     "kind": "capital",
+     "radius_px": 65.0,
+     "cityMaxZ": 9.88,
+     "feature_bearings_deg": [
+      173.1,
+      345.4
+     ],
+     "printed_road_bearings_deg": [
+      147.7,
+      33.6
+     ],
+     "bearing_error_deg": [
+      25.4,
+      48.2
+     ]
+    },
+    {
+     "city": "Sokundo",
+     "kind": "town",
+     "radius_px": 35.0,
+     "cityMaxZ": 10.19,
+     "feature_bearings_deg": [
+      154.5,
+      72.7
+     ],
+     "printed_road_bearings_deg": [
+      153.7,
+      70.1
+     ],
+     "bearing_error_deg": [
+      0.7,
+      2.6
+     ]
+    },
+    {
+     "city": "Kanae",
+     "kind": "village",
+     "radius_px": 22.5,
+     "cityMaxZ": 10.83,
+     "feature_bearings_deg": [
+      180.8,
+      55.9
+     ],
+     "printed_road_bearings_deg": [
+      99.2,
+      168.3
+     ],
+     "bearing_error_deg": [
+      12.4,
+      43.3
+     ]
+    },
+    {
+     "city": "Tamaron",
+     "kind": "town",
+     "radius_px": 35.0,
+     "cityMaxZ": 10.19,
+     "feature_bearings_deg": [
+      188.9,
+      46.0
+     ],
+     "printed_road_bearings_deg": [
+      55.6
+     ],
+     "bearing_error_deg": [
+      133.3,
+      9.6
+     ]
+    },
+    {
+     "city": "Mago",
+     "kind": "village",
+     "radius_px": 22.5,
+     "cityMaxZ": 10.83,
+     "feature_bearings_deg": [
+      223.0,
+      32.0
+     ],
+     "printed_road_bearings_deg": [
+      213.9,
+      52.8
+     ],
+     "bearing_error_deg": [
+      9.1,
+      20.7
+     ]
+    },
+    {
+     "city": "Drāmūz",
+     "kind": "town",
+     "radius_px": 35.0,
+     "cityMaxZ": 10.19,
+     "feature_bearings_deg": [
+      167.8
+     ],
+     "printed_road_bearings_deg": [
+      229.7,
+      241.9,
+      11.0
+     ],
+     "bearing_error_deg": [
+      62.0
+     ]
+    },
+    {
+     "city": "Rhup",
+     "kind": "village",
+     "radius_px": 22.5,
+     "cityMaxZ": 10.83,
+     "feature_bearings_deg": [
+      248.3,
+      351.5
+     ],
+     "printed_road_bearings_deg": [
+      188.7
+     ],
+     "bearing_error_deg": [
+      59.5,
+      162.8
+     ]
+    },
+    {
+     "city": "Lepon the Old",
+     "kind": "ruin",
+     "radius_px": 20.0,
+     "cityMaxZ": 11.0,
+     "feature_bearings_deg": [
+      129.6,
+      5.9
+     ],
+     "printed_road_bearings_deg": [
+      23.4,
+      77.3
+     ],
+     "bearing_error_deg": [
+      52.3,
+      17.4
+     ]
+    },
+    {
+     "city": "Nhagi",
+     "kind": "village",
+     "radius_px": 22.5,
+     "cityMaxZ": 10.83,
+     "feature_bearings_deg": [
+      215.4,
+      304.4
+     ],
+     "printed_road_bearings_deg": [
+      133.5,
+      144.2,
+      29.9
+     ],
+     "bearing_error_deg": [
+      71.2,
+      85.4
+     ]
+    }
+   ],
+   "offset_raw": {
+    "normal_band": {
+     "median": 31.3,
+     "p90": 64.6,
+     "max": 98.2,
+     "n": 1267
+    },
+    "euclid_nearest_dot": {
+     "median": 39.9,
+     "p90": 157.4,
+     "max": 215.7,
+     "n": 2307
+    },
+    "no_dot_in_band_fraction": 0.451,
+    "samples": 2307,
+    "share_within_6px": 0.133
+   },
+   "offset_spline": {
+    "normal_band": {
+     "median": 30.3,
+     "p90": 60.3,
+     "max": 97.9,
+     "n": 1386
+    },
+    "euclid_nearest_dot": {
+     "median": 40.0,
+     "p90": 156.3,
+     "max": 215.7,
+     "n": 2510
+    },
+    "no_dot_in_band_fraction": 0.448,
+    "samples": 2510,
+    "share_within_6px": 0.133
+   },
+   "screen_px": {
+    "raw": {
+     "z6": {
+      "median": 125.2,
+      "p90": 258.4,
+      "max": 392.8
+     },
+     "z7.3": {
+      "median": 308.3,
+      "p90": 636.3,
+      "max": 967.2
+     },
+     "cityMaxZ Epēshu (9.88)": {
+      "median": 1843.3,
+      "p90": 3804.4,
+      "max": 5783.2
+     },
+     "cityMaxZ Sokundo (10.19)": {
+      "median": 2285.2,
+      "p90": 4716.4,
+      "max": 7169.5
+     },
+     "cityMaxZ Kanae (10.83)": {
+      "median": 3561.1,
+      "p90": 7349.7,
+      "max": 11172.4
+     },
+     "cityMaxZ Tamaron (10.19)": {
+      "median": 2285.2,
+      "p90": 4716.4,
+      "max": 7169.5
+     },
+     "cityMaxZ Mago (10.83)": {
+      "median": 3561.1,
+      "p90": 7349.7,
+      "max": 11172.4
+     },
+     "cityMaxZ Drāmūz (10.19)": {
+      "median": 2285.2,
+      "p90": 4716.4,
+      "max": 7169.5
+     },
+     "cityMaxZ Rhup (10.83)": {
+      "median": 3561.1,
+      "p90": 7349.7,
+      "max": 11172.4
+     },
+     "cityMaxZ Lepon the Old (11.0)": {
+      "median": 4006.4,
+      "p90": 8268.8,
+      "max": 12569.6
+     },
+     "cityMaxZ Nhagi (10.83)": {
+      "median": 3561.1,
+      "p90": 7349.7,
+      "max": 11172.4
+     }
+    },
+    "spline": {
+     "z6": {
+      "median": 121.2,
+      "p90": 241.2,
+      "max": 391.6
+     },
+     "z7.3": {
+      "median": 298.4,
+      "p90": 593.9,
+      "max": 964.2
+     },
+     "cityMaxZ Epēshu (9.88)": {
+      "median": 1784.4,
+      "p90": 3551.2,
+      "max": 5765.5
+     },
+     "cityMaxZ Sokundo (10.19)": {
+      "median": 2212.2,
+      "p90": 4402.4,
+      "max": 7147.6
+     },
+     "cityMaxZ Kanae (10.83)": {
+      "median": 3447.3,
+      "p90": 6860.4,
+      "max": 11138.3
+     },
+     "cityMaxZ Tamaron (10.19)": {
+      "median": 2212.2,
+      "p90": 4402.4,
+      "max": 7147.6
+     },
+     "cityMaxZ Mago (10.83)": {
+      "median": 3447.3,
+      "p90": 6860.4,
+      "max": 11138.3
+     },
+     "cityMaxZ Drāmūz (10.19)": {
+      "median": 2212.2,
+      "p90": 4402.4,
+      "max": 7147.6
+     },
+     "cityMaxZ Rhup (10.83)": {
+      "median": 3447.3,
+      "p90": 6860.4,
+      "max": 11138.3
+     },
+     "cityMaxZ Lepon the Old (11.0)": {
+      "median": 3878.4,
+      "p90": 7718.4,
+      "max": 12531.2
+     },
+     "cityMaxZ Nhagi (10.83)": {
+      "median": 3447.3,
+      "p90": 6860.4,
+      "max": 11138.3
+     }
+    }
+   },
+   "per_segment_raw": [
+    {
+     "from": [
+      1335,
+      1734
+     ],
+     "to": [
+      1264,
+      1749
+     ],
+     "sea_fraction": 0.91,
+     "euclid_median": 32.0,
+     "euclid_max": 45.9
+    },
+    {
+     "from": [
+      1264,
+      1749
+     ],
+     "to": [
+      1233,
+      1692
+     ],
+     "sea_fraction": 0.94,
+     "euclid_median": 35.5,
+     "euclid_max": 45.9
+    },
+    {
+     "from": [
+      1233,
+      1692
+     ],
+     "to": [
+      1152,
+      1665
+     ],
+     "sea_fraction": 0.75,
+     "euclid_median": 54.9,
+     "euclid_max": 92.4
+    },
+    {
+     "from": [
+      1152,
+      1665
+     ],
+     "to": [
+      1118,
+      1594
+     ],
+     "sea_fraction": 0.39,
+     "euclid_median": 106.7,
+     "euclid_max": 119.1
+    },
+    {
+     "from": [
+      1118,
+      1594
+     ],
+     "to": [
+      1114,
+      1491
+     ],
+     "sea_fraction": 0.94,
+     "euclid_median": 61.6,
+     "euclid_max": 101.2
+    },
+    {
+     "from": [
+      1114,
+      1491
+     ],
+     "to": [
+      1117,
+      1457
+     ],
+     "sea_fraction": 0.0,
+     "euclid_median": 43.1,
+     "euclid_max": 51.2
+    },
+    {
+     "from": [
+      1117,
+      1457
+     ],
+     "to": [
+      1146,
+      1420
+     ],
+     "sea_fraction": 0.69,
+     "euclid_median": 16.8,
+     "euclid_max": 38.4
+    },
+    {
+     "from": [
+      1146,
+      1420
+     ],
+     "to": [
+      1173,
+      1423
+     ],
+     "sea_fraction": 0.1,
+     "euclid_median": 5.4,
+     "euclid_max": 9.7
+    },
+    {
+     "from": [
+      1173,
+      1423
+     ],
+     "to": [
+      1229,
+      1408
+     ],
+     "sea_fraction": 0.92,
+     "euclid_median": 22.4,
+     "euclid_max": 33.8
+    },
+    {
+     "from": [
+      1229,
+      1408
+     ],
+     "to": [
+      1295,
+      1398
+     ],
+     "sea_fraction": 0.37,
+     "euclid_median": 9.7,
+     "euclid_max": 32.9
+    },
+    {
+     "from": [
+      1295,
+      1398
+     ],
+     "to": [
+      1360,
+      1408
+     ],
+     "sea_fraction": 0.55,
+     "euclid_median": 37.6,
+     "euclid_max": 46.1
+    },
+    {
+     "from": [
+      1360,
+      1408
+     ],
+     "to": [
+      1434,
+      1454
+     ],
+     "sea_fraction": 0.83,
+     "euclid_median": 19.4,
+     "euclid_max": 35.2
+    },
+    {
+     "from": [
+      1434,
+      1454
+     ],
+     "to": [
+      1521,
+      1492
+     ],
+     "sea_fraction": 0.04,
+     "euclid_median": 4.6,
+     "euclid_max": 17.0
+    },
+    {
+     "from": [
+      1521,
+      1492
+     ],
+     "to": [
+      1580,
+      1534
+     ],
+     "sea_fraction": 0.84,
+     "euclid_median": 17.5,
+     "euclid_max": 22.7
+    },
+    {
+     "from": [
+      1580,
+      1534
+     ],
+     "to": [
+      1658,
+      1550
+     ],
+     "sea_fraction": 0.89,
+     "euclid_median": 25.3,
+     "euclid_max": 34.6
+    },
+    {
+     "from": [
+      1658,
+      1550
+     ],
+     "to": [
+      1691,
+      1582
+     ],
+     "sea_fraction": 0.28,
+     "euclid_median": 4.7,
+     "euclid_max": 11.6
+    },
+    {
+     "from": [
+      1691,
+      1582
+     ],
+     "to": [
+      1726,
+      1603
+     ],
+     "sea_fraction": 0.52,
+     "euclid_median": 8.3,
+     "euclid_max": 20.3
+    },
+    {
+     "from": [
+      1726,
+      1603
+     ],
+     "to": [
+      1799,
+      1646
+     ],
+     "sea_fraction": 0.97,
+     "euclid_median": 32.1,
+     "euclid_max": 39.6
+    },
+    {
+     "from": [
+      1799,
+      1646
+     ],
+     "to": [
+      1900,
+      1628
+     ],
+     "sea_fraction": 1.0,
+     "euclid_median": 22.5,
+     "euclid_max": 35.1
+    },
+    {
+     "from": [
+      1900,
+      1628
+     ],
+     "to": [
+      2000,
+      1645
+     ],
+     "sea_fraction": 0.93,
+     "euclid_median": 41.0,
+     "euclid_max": 55.4
+    },
+    {
+     "from": [
+      2000,
+      1645
+     ],
+     "to": [
+      2110,
+      1690
+     ],
+     "sea_fraction": 0.13,
+     "euclid_median": 13.5,
+     "euclid_max": 48.8
+    },
+    {
+     "from": [
+      2110,
+      1690
+     ],
+     "to": [
+      2230,
+      1755
+     ],
+     "sea_fraction": 0.02,
+     "euclid_median": 89.9,
+     "euclid_max": 125.6
+    },
+    {
+     "from": [
+      2230,
+      1755
+     ],
+     "to": [
+      2360,
+      1800
+     ],
+     "sea_fraction": 0.01,
+     "euclid_median": 134.3,
+     "euclid_max": 142.0
+    },
+    {
+     "from": [
+      2360,
+      1800
+     ],
+     "to": [
+      2480,
+      1830
+     ],
+     "sea_fraction": 0.0,
+     "euclid_median": 164.8,
+     "euclid_max": 181.8
+    },
+    {
+     "from": [
+      2480,
+      1830
+     ],
+     "to": [
+      2600,
+      1862
+     ],
+     "sea_fraction": 0.0,
+     "euclid_median": 149.1,
+     "euclid_max": 179.3
+    },
+    {
+     "from": [
+      2600,
+      1862
+     ],
+     "to": [
+      2720,
+      1900
+     ],
+     "sea_fraction": 0.0,
+     "euclid_median": 136.9,
+     "euclid_max": 154.2
+    },
+    {
+     "from": [
+      2720,
+      1900
+     ],
+     "to": [
+      2830,
+      1932
+     ],
+     "sea_fraction": 0.01,
+     "euclid_median": 179.5,
+     "euclid_max": 215.7
+    }
+   ],
+   "filigree_band_crosscheck_raw": {
+    "W": {
+     "euclid_median": 27.9,
+     "p90": 40.6,
+     "max": 46.1,
+     "n": 194
+    },
+    "M": {
+     "euclid_median": 10.2,
+     "p90": 20.9,
+     "max": 22.7,
+     "n": 208
+    },
+    "E": {
+     "euclid_median": 17.0,
+     "p90": 35.0,
+     "max": 39.6,
+     "n": 207
+    }
+   },
+   "screen_px_euclid": {
+    "raw": {
+     "z6": {
+      "median": 159.6,
+      "p90": 629.6,
+      "max": 862.8
+     },
+     "z7.3": {
+      "median": 393.0,
+      "p90": 1550.3,
+      "max": 2124.5
+     }
+    },
+    "spline": {
+     "z6": {
+      "median": 160.0,
+      "p90": 625.2,
+      "max": 862.8
+     },
+     "z7.3": {
+      "median": 394.0,
+      "p90": 1539.4,
+      "max": 2124.5
+     }
+    }
+   }
+  },
+  {
+   "name": "The East-West Road",
+   "type": "named-way",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "land",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 4,
+   "length_px": 223.1,
+   "spline_seg": 16,
+   "raw_to_spline_deviation_px": {
+    "median": 1.7,
+    "p90": 3.1,
+    "max": 3.2,
+    "n": 249
+   },
+   "sea_fraction_raw": 0.013,
+   "sea_fraction_spline": 0.008,
+   "appr_cities": [],
+   "offset_raw": {
+    "normal_band": {
+     "median": 16.6,
+     "p90": 18.8,
+     "max": 20.0,
+     "n": 136
+    },
+    "euclid_nearest_dot": {
+     "median": 17.5,
+     "p90": 71.1,
+     "max": 93.4,
+     "n": 227
+    },
+    "no_dot_in_band_fraction": 0.401,
+    "samples": 227,
+    "share_within_6px": 0.074
+   },
+   "offset_spline": {
+    "normal_band": {
+     "median": 17.2,
+     "p90": 20.4,
+     "max": 21.0,
+     "n": 152
+    },
+    "euclid_nearest_dot": {
+     "median": 19.3,
+     "p90": 71.0,
+     "max": 93.4,
+     "n": 249
+    },
+    "no_dot_in_band_fraction": 0.39,
+    "samples": 249,
+    "share_within_6px": 0.066
+   },
+   "screen_px": {
+    "raw": {
+     "z6": {
+      "median": 66.4,
+      "p90": 75.2,
+      "max": 80.0
+     },
+     "z7.3": {
+      "median": 163.5,
+      "p90": 185.2,
+      "max": 197.0
+     }
+    },
+    "spline": {
+     "z6": {
+      "median": 68.8,
+      "p90": 81.6,
+      "max": 84.0
+     },
+     "z7.3": {
+      "median": 169.4,
+      "p90": 200.9,
+      "max": 206.8
+     }
+    }
+   },
+   "per_segment_raw": [
+    {
+     "from": [
+      720,
+      155
+     ],
+     "to": [
+      610,
+      140
+     ],
+     "sea_fraction": 0.01,
+     "euclid_median": 38.0,
+     "euclid_max": 93.4
+    },
+    {
+     "from": [
+      610,
+      140
+     ],
+     "to": [
+      560,
+      105
+     ],
+     "sea_fraction": 0.03,
+     "euclid_median": 17.7,
+     "euclid_max": 19.7
+    },
+    {
+     "from": [
+      560,
+      105
+     ],
+     "to": [
+      527,
+      66
+     ],
+     "sea_fraction": 0.0,
+     "euclid_median": 13.8,
+     "euclid_max": 18.0
+    }
+   ],
+   "screen_px_euclid": {
+    "raw": {
+     "z6": {
+      "median": 70.0,
+      "p90": 284.4,
+      "max": 373.6
+     },
+     "z7.3": {
+      "median": 172.4,
+      "p90": 700.3,
+      "max": 919.9
+     }
+    },
+    "spline": {
+     "z6": {
+      "median": 77.2,
+      "p90": 284.0,
+      "max": 373.6
+     },
+     "z7.3": {
+      "median": 190.1,
+      "p90": 699.3,
+      "max": 919.9
+     }
+    }
+   }
+  },
+  {
+   "name": "leg 1: East-West Road -> Summarch",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "land",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 3,
+   "length_px": 120.8,
+   "spline_seg": 18,
+   "raw_to_spline_deviation_px": {
+    "median": 1.0,
+    "p90": 1.3,
+    "max": 1.3,
+    "n": 143
+   },
+   "sea_fraction_raw": 0.024,
+   "sea_fraction_spline": 0.028,
+   "appr_cities": [],
+   "leg_medium": "land",
+   "offset_raw": {
+    "normal_band": {
+     "median": 16.6,
+     "p90": 18.7,
+     "max": 19.5,
+     "n": 114
+    },
+    "euclid_nearest_dot": {
+     "median": 16.7,
+     "p90": 18.7,
+     "max": 19.9,
+     "n": 123
+    },
+    "no_dot_in_band_fraction": 0.073,
+    "samples": 123,
+    "share_within_6px": 0.0
+   },
+   "offset_spline": {
+    "normal_band": {
+     "median": 17.8,
+     "p90": 19.1,
+     "max": 20.0,
+     "n": 132
+    },
+    "euclid_nearest_dot": {
+     "median": 17.9,
+     "p90": 19.2,
+     "max": 20.1,
+     "n": 143
+    },
+    "no_dot_in_band_fraction": 0.077,
+    "samples": 143,
+    "share_within_6px": 0.0
+   },
+   "screen_px": {
+    "raw": {
+     "z6": {
+      "median": 66.4,
+      "p90": 74.8,
+      "max": 78.0
+     },
+     "z7.3": {
+      "median": 163.5,
+      "p90": 184.2,
+      "max": 192.1
+     }
+    },
+    "spline": {
+     "z6": {
+      "median": 71.2,
+      "p90": 76.4,
+      "max": 80.0
+     },
+     "z7.3": {
+      "median": 175.3,
+      "p90": 188.1,
+      "max": 197.0
+     }
+    }
+   },
+   "screen_px_euclid": {
+    "raw": {
+     "z6": {
+      "median": 66.8,
+      "p90": 74.8,
+      "max": 79.6
+     },
+     "z7.3": {
+      "median": 164.5,
+      "p90": 184.2,
+      "max": 196.0
+     }
+    },
+    "spline": {
+     "z6": {
+      "median": 71.6,
+      "p90": 76.8,
+      "max": 80.4
+     },
+     "z7.3": {
+      "median": 176.3,
+      "p90": 189.1,
+      "max": 198.0
+     }
+    }
+   }
+  },
+  {
+   "name": "leg 2: Summarch -> Watchwater",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "land",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 4,
+   "length_px": 655.5,
+   "spline_seg": 18,
+   "raw_to_spline_deviation_px": {
+    "median": 2.0,
+    "p90": 3.4,
+    "max": 3.6,
+    "n": 685
+   },
+   "sea_fraction_raw": 0.008,
+   "sea_fraction_spline": 0.013,
+   "appr_cities": [],
+   "leg_medium": "land",
+   "offset_raw": {
+    "normal_band": {
+     "median": 36.9,
+     "p90": 63.1,
+     "max": 87.0,
+     "n": 107
+    },
+    "euclid_nearest_dot": {
+     "median": 108.9,
+     "p90": 309.3,
+     "max": 321.9,
+     "n": 659
+    },
+    "no_dot_in_band_fraction": 0.838,
+    "samples": 659,
+    "share_within_6px": 0.084
+   },
+   "offset_spline": {
+    "normal_band": {
+     "median": 33.9,
+     "p90": 59.2,
+     "max": 84.0,
+     "n": 112
+    },
+    "euclid_nearest_dot": {
+     "median": 110.9,
+     "p90": 311.3,
+     "max": 324.2,
+     "n": 685
+    },
+    "no_dot_in_band_fraction": 0.836,
+    "samples": 685,
+    "share_within_6px": 0.08
+   },
+   "screen_px": {
+    "raw": {
+     "z6": {
+      "median": 147.6,
+      "p90": 252.4,
+      "max": 348.0
+     },
+     "z7.3": {
+      "median": 363.4,
+      "p90": 621.5,
+      "max": 856.9
+     }
+    },
+    "spline": {
+     "z6": {
+      "median": 135.6,
+      "p90": 236.8,
+      "max": 336.0
+     },
+     "z7.3": {
+      "median": 333.9,
+      "p90": 583.1,
+      "max": 827.3
+     }
+    }
+   },
+   "screen_px_euclid": {
+    "raw": {
+     "z6": {
+      "median": 435.6,
+      "p90": 1237.2,
+      "max": 1287.6
+     },
+     "z7.3": {
+      "median": 1072.6,
+      "p90": 3046.3,
+      "max": 3170.4
+     }
+    },
+    "spline": {
+     "z6": {
+      "median": 443.6,
+      "p90": 1245.2,
+      "max": 1296.8
+     },
+     "z7.3": {
+      "median": 1092.3,
+      "p90": 3066.0,
+      "max": 3193.1
+     }
+    }
+   }
+  },
+  {
+   "name": "leg 3: Watchwater -> Far North",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "land",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 4,
+   "length_px": 651.9,
+   "spline_seg": 18,
+   "raw_to_spline_deviation_px": {
+    "median": 0.3,
+    "p90": 0.9,
+    "max": 1.1,
+    "n": 678
+   },
+   "sea_fraction_raw": 0.637,
+   "sea_fraction_spline": 0.634,
+   "appr_cities": [],
+   "leg_medium": "sea",
+   "offset_raw": {
+    "normal_band": null,
+    "euclid_nearest_dot": null,
+    "skipped": "sea voyage (>50% of spline samples on print water); no printed road class applies"
+   },
+   "offset_spline": {
+    "normal_band": null,
+    "euclid_nearest_dot": null,
+    "skipped": "sea voyage (>50% of spline samples on print water); no printed road class applies"
+   },
+   "screen_px": {
+    "raw": null,
+    "spline": null
+   },
+   "screen_px_euclid": {
+    "raw": null,
+    "spline": null
+   }
+  },
+  {
+   "name": "leg 4: Far North -> Fell Mountains",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "land",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 4,
+   "length_px": 1049.3,
+   "spline_seg": 18,
+   "raw_to_spline_deviation_px": {
+    "median": 2.5,
+    "p90": 4.9,
+    "max": 5.4,
+    "n": 1074
+   },
+   "sea_fraction_raw": 0.367,
+   "sea_fraction_spline": 0.363,
+   "appr_cities": [],
+   "leg_medium": "land",
+   "offset_raw": {
+    "normal_band": null,
+    "euclid_nearest_dot": {
+     "median": 319.7,
+     "p90": 646.6,
+     "max": 693.4,
+     "n": 1052
+    },
+    "no_dot_in_band_fraction": 1.0,
+    "samples": 1052,
+    "share_within_6px": 0
+   },
+   "offset_spline": {
+    "normal_band": null,
+    "euclid_nearest_dot": {
+     "median": 315.5,
+     "p90": 646.5,
+     "max": 693.1,
+     "n": 1074
+    },
+    "no_dot_in_band_fraction": 1.0,
+    "samples": 1074,
+    "share_within_6px": 0
+   },
+   "screen_px": {
+    "raw": null,
+    "spline": null
+   },
+   "screen_px_euclid": {
+    "raw": {
+     "z6": {
+      "median": 1278.8,
+      "p90": 2586.4,
+      "max": 2773.6
+     },
+     "z7.3": {
+      "median": 3148.8,
+      "p90": 6368.5,
+      "max": 6829.4
+     }
+    },
+    "spline": {
+     "z6": {
+      "median": 1262.0,
+      "p90": 2586.0,
+      "max": 2772.4
+     },
+     "z7.3": {
+      "median": 3107.4,
+      "p90": 6367.5,
+      "max": 6826.4
+     }
+    }
+   }
+  },
+  {
+   "name": "leg 5: Fell Mountains -> Summarch",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "land",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 3,
+   "length_px": 249.0,
+   "spline_seg": 18,
+   "raw_to_spline_deviation_px": {
+    "median": 1.4,
+    "p90": 1.8,
+    "max": 1.9,
+    "n": 268
+   },
+   "sea_fraction_raw": 0.012,
+   "sea_fraction_spline": 0.004,
+   "appr_cities": [
+    {
+     "city": "Māmīth Māgrīn (Kingly Mickleburg)",
+     "kind": "town",
+     "radius_px": 35.0,
+     "cityMaxZ": 10.19,
+     "feature_bearings_deg": [
+      349.8,
+      167.1
+     ],
+     "printed_road_bearings_deg": [],
+     "bearing_error_deg": [
+      null,
+      null
+     ]
+    }
+   ],
+   "leg_medium": "land",
+   "offset_raw": {
+    "normal_band": {
+     "median": 29.4,
+     "p90": 62.8,
+     "max": 96.9,
+     "n": 70
+    },
+    "euclid_nearest_dot": {
+     "median": 41.6,
+     "p90": 77.8,
+     "max": 89.0,
+     "n": 251
+    },
+    "no_dot_in_band_fraction": 0.721,
+    "samples": 251,
+    "share_within_6px": 0.157
+   },
+   "offset_spline": {
+    "normal_band": {
+     "median": 30.9,
+     "p90": 66.0,
+     "max": 98.5,
+     "n": 75
+    },
+    "euclid_nearest_dot": {
+     "median": 42.3,
+     "p90": 77.9,
+     "max": 89.1,
+     "n": 268
+    },
+    "no_dot_in_band_fraction": 0.72,
+    "samples": 268,
+    "share_within_6px": 0.173
+   },
+   "screen_px": {
+    "raw": {
+     "z6": {
+      "median": 117.6,
+      "p90": 251.2,
+      "max": 387.6
+     },
+     "z7.3": {
+      "median": 289.6,
+      "p90": 618.5,
+      "max": 954.4
+     },
+     "cityMaxZ Māmīth Māgrīn (Kingly Mickleburg) (10.19)": {
+      "median": 2146.5,
+      "p90": 4585.0,
+      "max": 7074.6
+     }
+    },
+    "spline": {
+     "z6": {
+      "median": 123.6,
+      "p90": 264.0,
+      "max": 394.0
+     },
+     "z7.3": {
+      "median": 304.3,
+      "p90": 650.0,
+      "max": 970.1
+     },
+     "cityMaxZ Māmīth Māgrīn (Kingly Mickleburg) (10.19)": {
+      "median": 2256.0,
+      "p90": 4818.6,
+      "max": 7191.4
+     }
+    }
+   },
+   "screen_px_euclid": {
+    "raw": {
+     "z6": {
+      "median": 166.4,
+      "p90": 311.2,
+      "max": 356.0
+     },
+     "z7.3": {
+      "median": 409.7,
+      "p90": 766.3,
+      "max": 876.6
+     }
+    },
+    "spline": {
+     "z6": {
+      "median": 169.2,
+      "p90": 311.6,
+      "max": 356.4
+     },
+     "z7.3": {
+      "median": 416.6,
+      "p90": 767.2,
+      "max": 877.6
+     }
+    }
+   }
+  },
+  {
+   "name": "leg 6: Summarch -> Siege of the Seat",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "land",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 2,
+   "length_px": 21.2,
+   "spline_seg": 18,
+   "raw_to_spline_deviation_px": {
+    "median": 0.0,
+    "p90": 0.0,
+    "max": 0.0,
+    "n": 23
+   },
+   "sea_fraction_raw": 0.0,
+   "sea_fraction_spline": 0.0,
+   "appr_cities": [],
+   "leg_medium": "land",
+   "offset_raw": {
+    "normal_band": {
+     "median": 7.9,
+     "p90": 9.3,
+     "max": 9.3,
+     "n": 23
+    },
+    "euclid_nearest_dot": {
+     "median": 8.0,
+     "p90": 9.4,
+     "max": 9.9,
+     "n": 23
+    },
+    "no_dot_in_band_fraction": 0.0,
+    "samples": 23,
+    "share_within_6px": 0.0
+   },
+   "offset_spline": {
+    "normal_band": {
+     "median": 7.9,
+     "p90": 9.3,
+     "max": 9.3,
+     "n": 23
+    },
+    "euclid_nearest_dot": {
+     "median": 8.0,
+     "p90": 9.4,
+     "max": 9.9,
+     "n": 23
+    },
+    "no_dot_in_band_fraction": 0.0,
+    "samples": 23,
+    "share_within_6px": 0.0
+   },
+   "screen_px": {
+    "raw": {
+     "z6": {
+      "median": 31.6,
+      "p90": 37.2,
+      "max": 37.2
+     },
+     "z7.3": {
+      "median": 77.8,
+      "p90": 91.6,
+      "max": 91.6
+     }
+    },
+    "spline": {
+     "z6": {
+      "median": 31.6,
+      "p90": 37.2,
+      "max": 37.2
+     },
+     "z7.3": {
+      "median": 77.8,
+      "p90": 91.6,
+      "max": 91.6
+     }
+    }
+   },
+   "screen_px_euclid": {
+    "raw": {
+     "z6": {
+      "median": 32.0,
+      "p90": 37.6,
+      "max": 39.6
+     },
+     "z7.3": {
+      "median": 78.8,
+      "p90": 92.6,
+      "max": 97.5
+     }
+    },
+    "spline": {
+     "z6": {
+      "median": 32.0,
+      "p90": 37.6,
+      "max": 39.6
+     },
+     "z7.3": {
+      "median": 78.8,
+      "p90": 92.6,
+      "max": 97.5
+     }
+    }
+   }
+  },
+  {
+   "name": "leg 7: Siege of the Seat -> Sepos",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "land",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 3,
+   "length_px": 208.9,
+   "spline_seg": 18,
+   "raw_to_spline_deviation_px": {
+    "median": 2.2,
+    "p90": 2.9,
+    "max": 3.0,
+    "n": 232
+   },
+   "sea_fraction_raw": 0.005,
+   "sea_fraction_spline": 0.0,
+   "appr_cities": [
+    {
+     "city": "Harney",
+     "kind": "village",
+     "radius_px": 22.5,
+     "cityMaxZ": 10.83,
+     "feature_bearings_deg": [
+      329.4,
+      23.9
+     ],
+     "printed_road_bearings_deg": [
+      326.8,
+      118.6
+     ],
+     "bearing_error_deg": [
+      2.5,
+      57.1
+     ]
+    }
+   ],
+   "leg_medium": "land",
+   "offset_raw": {
+    "normal_band": {
+     "median": 20.7,
+     "p90": 74.0,
+     "max": 76.6,
+     "n": 199
+    },
+    "euclid_nearest_dot": {
+     "median": 18.0,
+     "p90": 36.2,
+     "max": 45.2,
+     "n": 211
+    },
+    "no_dot_in_band_fraction": 0.057,
+    "samples": 211,
+    "share_within_6px": 0.141
+   },
+   "offset_spline": {
+    "normal_band": {
+     "median": 22.0,
+     "p90": 77.0,
+     "max": 79.1,
+     "n": 219
+    },
+    "euclid_nearest_dot": {
+     "median": 18.4,
+     "p90": 36.9,
+     "max": 46.7,
+     "n": 232
+    },
+    "no_dot_in_band_fraction": 0.056,
+    "samples": 232,
+    "share_within_6px": 0.132
+   },
+   "screen_px": {
+    "raw": {
+     "z6": {
+      "median": 82.8,
+      "p90": 296.0,
+      "max": 306.4
+     },
+     "z7.3": {
+      "median": 203.9,
+      "p90": 728.8,
+      "max": 754.4
+     },
+     "cityMaxZ Harney (10.83)": {
+      "median": 2355.1,
+      "p90": 8419.1,
+      "max": 8714.9
+     }
+    },
+    "spline": {
+     "z6": {
+      "median": 88.0,
+      "p90": 308.0,
+      "max": 316.4
+     },
+     "z7.3": {
+      "median": 216.7,
+      "p90": 758.4,
+      "max": 779.1
+     },
+     "cityMaxZ Harney (10.83)": {
+      "median": 2503.0,
+      "p90": 8760.4,
+      "max": 8999.4
+     }
+    }
+   },
+   "screen_px_euclid": {
+    "raw": {
+     "z6": {
+      "median": 72.0,
+      "p90": 144.8,
+      "max": 180.8
+     },
+     "z7.3": {
+      "median": 177.3,
+      "p90": 356.5,
+      "max": 445.2
+     }
+    },
+    "spline": {
+     "z6": {
+      "median": 73.6,
+      "p90": 147.6,
+      "max": 186.8
+     },
+     "z7.3": {
+      "median": 181.2,
+      "p90": 363.4,
+      "max": 460.0
+     }
+    }
+   }
+  },
+  {
+   "name": "leg 8: Sepos -> White Sea",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "land",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 4,
+   "length_px": 1151.9,
+   "spline_seg": 18,
+   "raw_to_spline_deviation_px": {
+    "median": 6.1,
+    "p90": 17.3,
+    "max": 19.6,
+    "n": 1185
+   },
+   "sea_fraction_raw": 0.748,
+   "sea_fraction_spline": 0.743,
+   "appr_cities": [
+    {
+     "city": "Pomos",
+     "kind": "village",
+     "radius_px": 22.5,
+     "cityMaxZ": 10.83,
+     "feature_bearings_deg": [
+      266.6,
+      107.6
+     ],
+     "printed_road_bearings_deg": [],
+     "bearing_error_deg": [
+      null,
+      null
+     ]
+    }
+   ],
+   "leg_medium": "sea",
+   "offset_raw": {
+    "normal_band": null,
+    "euclid_nearest_dot": null,
+    "skipped": "sea voyage (>50% of spline samples on print water); no printed road class applies"
+   },
+   "offset_spline": {
+    "normal_band": null,
+    "euclid_nearest_dot": null,
+    "skipped": "sea voyage (>50% of spline samples on print water); no printed road class applies"
+   },
+   "screen_px": {
+    "raw": null,
+    "spline": null
+   },
+   "screen_px_euclid": {
+    "raw": null,
+    "spline": null
+   },
+   "appr_misclass": "74% sea voyage pushed as cls land by buildApprPolys; hands procedural village Pomos land (gate) bearings 266.6/107.6 deg with zero printed road dots in its annulus"
+  },
+  {
+   "name": "leg 9: White Sea -> Paerāndas",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "land",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 4,
+   "length_px": 739.5,
+   "spline_seg": 18,
+   "raw_to_spline_deviation_px": {
+    "median": 3.9,
+    "p90": 7.6,
+    "max": 8.3,
+    "n": 769
+   },
+   "sea_fraction_raw": 0.991,
+   "sea_fraction_spline": 0.988,
+   "appr_cities": [],
+   "leg_medium": "sea",
+   "offset_raw": {
+    "normal_band": null,
+    "euclid_nearest_dot": null,
+    "skipped": "sea voyage (>50% of spline samples on print water); no printed road class applies"
+   },
+   "offset_spline": {
+    "normal_band": null,
+    "euclid_nearest_dot": null,
+    "skipped": "sea voyage (>50% of spline samples on print water); no printed road class applies"
+   },
+   "screen_px": {
+    "raw": null,
+    "spline": null
+   },
+   "screen_px_euclid": {
+    "raw": null,
+    "spline": null
+   }
+  },
+  {
+   "name": "leg 10: Paerāndas -> White Sea (Dagon's attack)",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "land",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 3,
+   "length_px": 70.3,
+   "spline_seg": 18,
+   "raw_to_spline_deviation_px": {
+    "median": 1.1,
+    "p90": 1.5,
+    "max": 1.6,
+    "n": 91
+   },
+   "sea_fraction_raw": 0.945,
+   "sea_fraction_spline": 0.989,
+   "appr_cities": [
+    {
+     "city": "Epēshu",
+     "kind": "capital",
+     "radius_px": 65.0,
+     "cityMaxZ": 9.88,
+     "feature_bearings_deg": [
+      314.1
+     ],
+     "printed_road_bearings_deg": [
+      147.7,
+      33.6
+     ],
+     "bearing_error_deg": [
+      79.5
+     ]
+    }
+   ],
+   "leg_medium": "sea",
+   "offset_raw": {
+    "normal_band": null,
+    "euclid_nearest_dot": null,
+    "skipped": "sea voyage (>50% of spline samples on print water); no printed road class applies"
+   },
+   "offset_spline": {
+    "normal_band": null,
+    "euclid_nearest_dot": null,
+    "skipped": "sea voyage (>50% of spline samples on print water); no printed road class applies"
+   },
+   "screen_px": {
+    "raw": null,
+    "spline": null
+   },
+   "screen_px_euclid": {
+    "raw": null,
+    "spline": null
+   },
+   "appr_misclass": "99% sea, pushed as cls land; crosses the Epēshu 65 px circle at 314.1 deg; harmless today because Epēshu is a canon overlay and genCityCanvas never runs for it"
+  },
+  {
+   "name": "leg 11: White Sea (Dagon's attack) -> Epēshu",
+   "type": "party-route-leg",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "land",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 3,
+   "length_px": 83.5,
+   "spline_seg": 18,
+   "raw_to_spline_deviation_px": {
+    "median": 2.0,
+    "p90": 3.3,
+    "max": 3.4,
+    "n": 104
+   },
+   "sea_fraction_raw": 0.988,
+   "sea_fraction_spline": 0.99,
+   "appr_cities": [],
+   "leg_medium": "sea",
+   "offset_raw": {
+    "normal_band": null,
+    "euclid_nearest_dot": null,
+    "skipped": "sea voyage (>50% of spline samples on print water); no printed road class applies"
+   },
+   "offset_spline": {
+    "normal_band": null,
+    "euclid_nearest_dot": null,
+    "skipped": "sea voyage (>50% of spline samples on print water); no printed road class applies"
+   },
+   "screen_px": {
+    "raw": null,
+    "spline": null
+   },
+   "screen_px_euclid": {
+    "raw": null,
+    "spline": null
+   },
+   "appr_note": "lies wholly inside the Epēshu 65 px circle (start 62.9 px from anchor), yields no bearing"
+  },
+  {
+   "name": "The Gulf Crossing",
+   "type": "sea-lane",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "sea",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 5,
+   "length_px": 451.9,
+   "spline_seg": 16,
+   "raw_to_spline_deviation_px": {
+    "median": 4.2,
+    "p90": 12.2,
+    "max": 13.4,
+    "n": 491
+   },
+   "sea_fraction_raw": 0.877,
+   "sea_fraction_spline": 0.874,
+   "appr_cities": [
+    {
+     "city": "Epēshu",
+     "kind": "capital",
+     "radius_px": 65.0,
+     "cityMaxZ": 9.88,
+     "feature_bearings_deg": [
+      191.5
+     ]
+    },
+    {
+     "city": "Lepon the Old",
+     "kind": "ruin",
+     "radius_px": 20.0,
+     "cityMaxZ": 11.0,
+     "feature_bearings_deg": [
+      289.0,
+      255.4
+     ]
+    },
+    {
+     "city": "Istīron",
+     "kind": "village",
+     "radius_px": 22.5,
+     "cityMaxZ": 10.83,
+     "feature_bearings_deg": [
+      256.4,
+      57.5
+     ]
+    }
+   ],
+   "endpoint_anchors": [
+    {
+     "anchor": "Epēshu",
+     "dist_px": 17.9
+    },
+    {
+     "anchor": "Hordon",
+     "dist_px": 60.1
+    }
+   ],
+   "land_check_raw": {
+    "excluded_endpoint_radius_px": [
+     53.0,
+     79.0
+    ],
+    "land_length_px": 1,
+    "land_fraction_beyond_ports": 0.003,
+    "longest_land_run_px": 1,
+    "land_runs_ge5px": 0,
+    "line_ink_crossings": 4,
+    "crosses_land": false
+   },
+   "land_check_spline": {
+    "excluded_endpoint_radius_px": [
+     53.0,
+     79.0
+    ],
+    "land_length_px": 0,
+    "land_fraction_beyond_ports": 0.0,
+    "longest_land_run_px": 0,
+    "land_runs_ge5px": 0,
+    "line_ink_crossings": 4,
+    "crosses_land": false
+   },
+   "screen_px_longest_land_run_spline": {
+    "z6": 0,
+    "z7.3": 0.0
+   },
+   "realm_tint_bbox_overlap": [],
+   "land_run_locations": "no land run beyond ports"
+  },
+  {
+   "name": "The North Coast Packet",
+   "type": "sea-lane",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "sea",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 7,
+   "length_px": 517.8,
+   "spline_seg": 16,
+   "raw_to_spline_deviation_px": {
+    "median": 1.5,
+    "p90": 3.3,
+    "max": 4.2,
+    "n": 565
+   },
+   "sea_fraction_raw": 0.885,
+   "sea_fraction_spline": 0.871,
+   "appr_cities": [
+    {
+     "city": "Epēshu",
+     "kind": "capital",
+     "radius_px": 65.0,
+     "cityMaxZ": 9.88,
+     "feature_bearings_deg": [
+      346.0
+     ]
+    },
+    {
+     "city": "Sokundo",
+     "kind": "town",
+     "radius_px": 35.0,
+     "cityMaxZ": 10.19,
+     "feature_bearings_deg": [
+      216.3,
+      24.0
+     ]
+    },
+    {
+     "city": "Kanae",
+     "kind": "village",
+     "radius_px": 22.5,
+     "cityMaxZ": 10.83,
+     "feature_bearings_deg": [
+      252.1,
+      355.6
+     ]
+    },
+    {
+     "city": "Tamaron",
+     "kind": "town",
+     "radius_px": 35.0,
+     "cityMaxZ": 10.19,
+     "feature_bearings_deg": [
+      218.9,
+      29.0
+     ]
+    },
+    {
+     "city": "Mago",
+     "kind": "village",
+     "radius_px": 22.5,
+     "cityMaxZ": 10.83,
+     "feature_bearings_deg": [
+      251.2
+     ]
+    }
+   ],
+   "endpoint_anchors": [
+    {
+     "anchor": "Epēshu",
+     "dist_px": 17.9
+    },
+    {
+     "anchor": "Mago",
+     "dist_px": 13.7
+    }
+   ],
+   "land_check_raw": {
+    "excluded_endpoint_radius_px": [
+     53.0,
+     25.9
+    ],
+    "land_length_px": 31,
+    "land_fraction_beyond_ports": 0.07,
+    "longest_land_run_px": 26,
+    "land_runs_ge5px": 1,
+    "line_ink_crossings": 8,
+    "crosses_land": true
+   },
+   "land_check_spline": {
+    "excluded_endpoint_radius_px": [
+     53.0,
+     25.9
+    ],
+    "land_length_px": 42,
+    "land_fraction_beyond_ports": 0.088,
+    "longest_land_run_px": 27,
+    "land_runs_ge5px": 1,
+    "line_ink_crossings": 10,
+    "crosses_land": true
+   },
+   "screen_px_longest_land_run_spline": {
+    "z6": 108,
+    "z7.3": 265.9
+   },
+   "realm_tint_bbox_overlap": [],
+   "land_run_locations": "land run 27 px at x1311-1336, y~1398 crosses the Paerāndas islets; a second 31 px run at x1240-1269 lies inside the Epēshu port exclusion (Epēshu headland)"
+  },
+  {
+   "name": "The Strait Run",
+   "type": "sea-lane",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "sea",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 3,
+   "length_px": 213.7,
+   "spline_seg": 16,
+   "raw_to_spline_deviation_px": {
+    "median": 1.5,
+    "p90": 2.0,
+    "max": 2.1,
+    "n": 228
+   },
+   "sea_fraction_raw": 0.986,
+   "sea_fraction_spline": 0.987,
+   "appr_cities": [
+    {
+     "city": "Tamaron",
+     "kind": "town",
+     "radius_px": 35.0,
+     "cityMaxZ": 10.19,
+     "feature_bearings_deg": [
+      274.8
+     ]
+    }
+   ],
+   "endpoint_anchors": [
+    {
+     "anchor": "Tamaron",
+     "dist_px": 16.3
+    },
+    {
+     "anchor": "Leshes",
+     "dist_px": 27.0
+    }
+   ],
+   "land_check_raw": {
+    "excluded_endpoint_radius_px": [
+     35.2,
+     39.2
+    ],
+    "land_length_px": 3,
+    "land_fraction_beyond_ports": 0.021,
+    "longest_land_run_px": 2,
+    "land_runs_ge5px": 0,
+    "line_ink_crossings": 4,
+    "crosses_land": false
+   },
+   "land_check_spline": {
+    "excluded_endpoint_radius_px": [
+     35.2,
+     39.2
+    ],
+    "land_length_px": 3,
+    "land_fraction_beyond_ports": 0.02,
+    "longest_land_run_px": 2,
+    "land_runs_ge5px": 0,
+    "line_ink_crossings": 4,
+    "crosses_land": false
+   },
+   "screen_px_longest_land_run_spline": {
+    "z6": 8,
+    "z7.3": 19.7
+   },
+   "realm_tint_bbox_overlap": [
+    "Umbadic Empire"
+   ],
+   "land_run_locations": "no land run beyond ports"
+  },
+  {
+   "name": "The South Lane",
+   "type": "sea-lane",
+   "feeds_APPR_POLYS": true,
+   "appr_class": "sea",
+   "appr_uses": "raw pts (buildApprPolys), not the spline",
+   "n_vertices": 4,
+   "length_px": 219.6,
+   "spline_seg": 16,
+   "raw_to_spline_deviation_px": {
+    "median": 1.6,
+    "p90": 3.2,
+    "max": 3.6,
+    "n": 243
+   },
+   "sea_fraction_raw": 0.847,
+   "sea_fraction_spline": 0.877,
+   "appr_cities": [
+    {
+     "city": "Drāmūz",
+     "kind": "town",
+     "radius_px": 35.0,
+     "cityMaxZ": 10.19,
+     "feature_bearings_deg": [
+      46.7
+     ]
+    },
+    {
+     "city": "Kardunash",
+     "kind": "town",
+     "radius_px": 35.0,
+     "cityMaxZ": 10.19,
+     "feature_bearings_deg": [
+      182.1
+     ]
+    }
+   ],
+   "endpoint_anchors": [
+    {
+     "anchor": "Drāmūz",
+     "dist_px": 0.2
+    },
+    {
+     "anchor": "Kardunash",
+     "dist_px": 0.4
+    }
+   ],
+   "land_check_raw": {
+    "excluded_endpoint_radius_px": [
+     19.1,
+     19.3
+    ],
+    "land_length_px": 12,
+    "land_fraction_beyond_ports": 0.066,
+    "longest_land_run_px": 12,
+    "land_runs_ge5px": 1,
+    "line_ink_crossings": 0,
+    "crosses_land": true
+   },
+   "land_check_spline": {
+    "excluded_endpoint_radius_px": [
+     19.1,
+     19.3
+    ],
+    "land_length_px": 7,
+    "land_fraction_beyond_ports": 0.035,
+    "longest_land_run_px": 5,
+    "land_runs_ge5px": 1,
+    "line_ink_crossings": 0,
+    "crosses_land": true
+   },
+   "screen_px_longest_land_run_spline": {
+    "z6": 20,
+    "z7.3": 49.2
+   },
+   "realm_tint_bbox_overlap": [],
+   "land_run_locations": "land runs at x1487-1525, y~1820 are the last ~35 px of the approach into Kardunash over land; 7 px at the Drāmūz end"
+  },
+  {
+   "name": "Kgd. of Cyrikon",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "printed_class": "colour wash (legend swatch (191, 142, 101)); the print draws no border line",
+   "classes_used": [
+    "Kgd. of Cyrikon",
+    "Eastern Patrin Empire",
+    "land",
+    "sea"
+   ],
+   "polygon_vs_print_tint_IoU": 0.697,
+   "polygon_area_on_print_tint": 0.763,
+   "print_tint_area_inside_polygon": 0.889,
+   "rings": [
+    {
+     "vertices": 19,
+     "offset": {
+      "median": 2.8,
+      "p90": 7.9,
+      "max": 20.9,
+      "n": 1378
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    },
+    {
+     "vertices": 15,
+     "offset": {
+      "median": 5.0,
+      "p90": 12.7,
+      "max": 19.2,
+      "n": 714
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    }
+   ],
+   "offset_raw": {
+    "nearest_print_tint_edge": {
+     "median": 3.5,
+     "p90": 11.1,
+     "max": 20.9,
+     "n": 2092
+    },
+    "no_boundary_within_100px_fraction": 0.0
+   },
+   "note_spline": "buildRealms draws L.polygon on the raw ring vertices; no crSpline, so raw == shipped geometry",
+   "screen_px": {
+    "z6": {
+     "median": 14.0,
+     "p90": 44.4,
+     "max": 83.6
+    },
+    "z7.3": {
+     "median": 34.5,
+     "p90": 109.3,
+     "max": 205.8
+    },
+    "cityMaxZ_capital_9.30": {
+     "median": 137.9,
+     "p90": 437.3,
+     "max": 823.4
+    },
+    "cityMaxZ_Epeshu_9.88": {
+     "median": 206.8,
+     "p90": 656.0,
+     "max": 1235.1
+    },
+    "Z_STREET_11.5": {
+     "median": 633.6,
+     "p90": 2009.3,
+     "max": 3783.3
+    }
+   },
+   "confidence": "high",
+   "caveat": "salmon wash cleanly separable; mask visually matches print"
+  },
+  {
+   "name": "Umbadic Empire",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "printed_class": "colour wash (legend swatch (160, 156, 110)); the print draws no border line",
+   "classes_used": [
+    "Umbadic Empire",
+    "Once-Realm of Regimen",
+    "land",
+    "sea"
+   ],
+   "polygon_vs_print_tint_IoU": 0.492,
+   "polygon_area_on_print_tint": 0.903,
+   "print_tint_area_inside_polygon": 0.52,
+   "rings": [
+    {
+     "vertices": 43,
+     "offset": {
+      "median": 7.3,
+      "p90": 31.7,
+      "max": 60.0,
+      "n": 2549
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    },
+    {
+     "vertices": 31,
+     "offset": {
+      "median": 10.9,
+      "p90": 34.0,
+      "max": 50.8,
+      "n": 1677
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    },
+    {
+     "vertices": 4,
+     "offset": {
+      "median": 2.0,
+      "p90": 5.6,
+      "max": 7.8,
+      "n": 117
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    }
+   ],
+   "offset_raw": {
+    "nearest_print_tint_edge": {
+     "median": 8.5,
+     "p90": 32.2,
+     "max": 60.0,
+     "n": 4343
+    },
+    "no_boundary_within_100px_fraction": 0.0
+   },
+   "note_spline": "buildRealms draws L.polygon on the raw ring vertices; no crSpline, so raw == shipped geometry",
+   "screen_px": {
+    "z6": {
+     "median": 34.0,
+     "p90": 128.8,
+     "max": 240.0
+    },
+    "z7.3": {
+     "median": 83.7,
+     "p90": 317.1,
+     "max": 590.9
+    },
+    "cityMaxZ_capital_9.30": {
+     "median": 334.9,
+     "p90": 1268.6,
+     "max": 2363.8
+    },
+    "cityMaxZ_Epeshu_9.88": {
+     "median": 502.3,
+     "p90": 1902.9,
+     "max": 3545.8
+    },
+    "Z_STREET_11.5": {
+     "median": 1538.7,
+     "p90": 5828.8,
+     "max": 10861.2
+    }
+   },
+   "confidence": "low",
+   "caveat": "print green tint spreads across Emphēros far beyond the polygon and the mask has texture holes inside Bībūnor; median is a lower bound"
+  },
+  {
+   "name": "Pheropic Empire",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "printed_class": "colour wash (legend swatch (162, 157, 102)); the print draws no border line",
+   "classes_used": [
+    "Pheropic Empire",
+    "Alensic Republic",
+    "Once-Realm of Regimen",
+    "land",
+    "sea"
+   ],
+   "polygon_vs_print_tint_IoU": 0.57,
+   "polygon_area_on_print_tint": 0.617,
+   "print_tint_area_inside_polygon": 0.881,
+   "rings": [
+    {
+     "vertices": 14,
+     "offset": {
+      "median": 4.3,
+      "p90": 26.9,
+      "max": 47.3,
+      "n": 949
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    },
+    {
+     "vertices": 4,
+     "offset": {
+      "median": 2.5,
+      "p90": 6.8,
+      "max": 10.0,
+      "n": 329
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    }
+   ],
+   "offset_raw": {
+    "nearest_print_tint_edge": {
+     "median": 3.5,
+     "p90": 22.5,
+     "max": 47.3,
+     "n": 1278
+    },
+    "no_boundary_within_100px_fraction": 0.0
+   },
+   "note_spline": "buildRealms draws L.polygon on the raw ring vertices; no crSpline, so raw == shipped geometry",
+   "screen_px": {
+    "z6": {
+     "median": 14.0,
+     "p90": 90.0,
+     "max": 189.2
+    },
+    "z7.3": {
+     "median": 34.5,
+     "p90": 221.6,
+     "max": 465.9
+    },
+    "cityMaxZ_capital_9.30": {
+     "median": 137.9,
+     "p90": 886.4,
+     "max": 1863.5
+    },
+    "cityMaxZ_Epeshu_9.88": {
+     "median": 206.8,
+     "p90": 1329.7,
+     "max": 2795.3
+    },
+    "Z_STREET_11.5": {
+     "median": 633.6,
+     "p90": 4072.9,
+     "max": 8562.2
+    }
+   },
+   "confidence": "medium",
+   "caveat": "green wash 8 RGB from Umbadic swatch; small realm; polygon interior 60% reads water-coloured"
+  },
+  {
+   "name": "Alensic Republic",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "printed_class": "colour wash (legend swatch (165, 142.5, 111)); the print draws no border line",
+   "classes_used": [
+    "Alensic Republic",
+    "Pheropic Empire",
+    "Once-Realm of Regimen",
+    "land",
+    "sea"
+   ],
+   "polygon_vs_print_tint_IoU": 0.805,
+   "polygon_area_on_print_tint": 0.859,
+   "print_tint_area_inside_polygon": 0.929,
+   "rings": [
+    {
+     "vertices": 35,
+     "offset": {
+      "median": 3.5,
+      "p90": 22.6,
+      "max": 52.4,
+      "n": 1941
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    },
+    {
+     "vertices": 18,
+     "offset": {
+      "median": 3.2,
+      "p90": 10.5,
+      "max": 27.1,
+      "n": 915
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    },
+    {
+     "vertices": 6,
+     "offset": {
+      "median": 3.9,
+      "p90": 20.0,
+      "max": 27.0,
+      "n": 241
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    },
+    {
+     "vertices": 4,
+     "offset": {
+      "median": 3.0,
+      "p90": 5.4,
+      "max": 6.7,
+      "n": 119
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    }
+   ],
+   "offset_raw": {
+    "nearest_print_tint_edge": {
+     "median": 3.5,
+     "p90": 16.5,
+     "max": 52.4,
+     "n": 3216
+    },
+    "no_boundary_within_100px_fraction": 0.0
+   },
+   "note_spline": "buildRealms draws L.polygon on the raw ring vertices; no crSpline, so raw == shipped geometry",
+   "screen_px": {
+    "z6": {
+     "median": 14.0,
+     "p90": 66.0,
+     "max": 209.6
+    },
+    "z7.3": {
+     "median": 34.5,
+     "p90": 162.5,
+     "max": 516.1
+    },
+    "cityMaxZ_capital_9.30": {
+     "median": 137.9,
+     "p90": 650.0,
+     "max": 2064.4
+    },
+    "cityMaxZ_Epeshu_9.88": {
+     "median": 206.8,
+     "p90": 975.1,
+     "max": 3096.7
+    },
+    "Z_STREET_11.5": {
+     "median": 633.6,
+     "p90": 2986.8,
+     "max": 9485.4
+    }
+   },
+   "confidence": "medium",
+   "caveat": "wash close to sea colour (r-b 49 vs 45) but separable by luminance"
+  },
+  {
+   "name": "Kgd. under the Wall",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "printed_class": "colour wash (legend swatch (159, 141, 99)); the print draws no border line",
+   "classes_used": [
+    "Kgd. under the Wall",
+    "land",
+    "sea"
+   ],
+   "polygon_vs_print_tint_IoU": 0.848,
+   "polygon_area_on_print_tint": 0.871,
+   "print_tint_area_inside_polygon": 0.969,
+   "rings": [
+    {
+     "vertices": 24,
+     "offset": {
+      "median": 3.6,
+      "p90": 17.9,
+      "max": 35.6,
+      "n": 1735
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    }
+   ],
+   "offset_raw": {
+    "nearest_print_tint_edge": {
+     "median": 3.6,
+     "p90": 17.9,
+     "max": 35.6,
+     "n": 1735
+    },
+    "no_boundary_within_100px_fraction": 0.0
+   },
+   "note_spline": "buildRealms draws L.polygon on the raw ring vertices; no crSpline, so raw == shipped geometry",
+   "screen_px": {
+    "z6": {
+     "median": 14.4,
+     "p90": 71.6,
+     "max": 142.4
+    },
+    "z7.3": {
+     "median": 35.5,
+     "p90": 176.3,
+     "max": 350.6
+    },
+    "cityMaxZ_capital_9.30": {
+     "median": 141.8,
+     "p90": 705.2,
+     "max": 1402.5
+    },
+    "cityMaxZ_Epeshu_9.88": {
+     "median": 212.7,
+     "p90": 1057.8,
+     "max": 2103.8
+    },
+    "Z_STREET_11.5": {
+     "median": 651.7,
+     "p90": 3240.2,
+     "max": 6444.3
+    }
+   },
+   "confidence": "medium",
+   "caveat": "dark olive wash; separable from land"
+  },
+  {
+   "name": "Eastern Patrin Empire",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "printed_class": "colour wash (legend swatch (163, 149, 122)); the print draws no border line",
+   "classes_used": [
+    "Eastern Patrin Empire",
+    "Kgd. of Cyrikon",
+    "Kgd. of the Sārmathi",
+    "land",
+    "sea"
+   ],
+   "polygon_vs_print_tint_IoU": 0.699,
+   "polygon_area_on_print_tint": 0.737,
+   "print_tint_area_inside_polygon": 0.93,
+   "rings": [
+    {
+     "vertices": 59,
+     "offset": {
+      "median": 5.7,
+      "p90": 19.8,
+      "max": 59.9,
+      "n": 4047
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    },
+    {
+     "vertices": 4,
+     "offset": {
+      "median": 2.0,
+      "p90": 4.5,
+      "max": 6.0,
+      "n": 121
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    }
+   ],
+   "offset_raw": {
+    "nearest_print_tint_edge": {
+     "median": 5.4,
+     "p90": 19.2,
+     "max": 59.9,
+     "n": 4168
+    },
+    "no_boundary_within_100px_fraction": 0.0
+   },
+   "note_spline": "buildRealms draws L.polygon on the raw ring vertices; no crSpline, so raw == shipped geometry",
+   "screen_px": {
+    "z6": {
+     "median": 21.6,
+     "p90": 76.8,
+     "max": 239.6
+    },
+    "z7.3": {
+     "median": 53.2,
+     "p90": 189.1,
+     "max": 590.0
+    },
+    "cityMaxZ_capital_9.30": {
+     "median": 212.7,
+     "p90": 756.4,
+     "max": 2359.9
+    },
+    "cityMaxZ_Epeshu_9.88": {
+     "median": 319.1,
+     "p90": 1134.7,
+     "max": 3539.9
+    },
+    "Z_STREET_11.5": {
+     "median": 977.5,
+     "p90": 3475.6,
+     "max": 10843.1
+    }
+   },
+   "confidence": "medium",
+   "caveat": "grey wash close to sea; edges along coast rely on luminance"
+  },
+  {
+   "name": "Once-Realm of Regimen",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "printed_class": "colour wash (legend swatch (185, 152, 101)); the print draws no border line",
+   "classes_used": [
+    "Once-Realm of Regimen",
+    "Umbadic Empire",
+    "Alensic Republic",
+    "Pheropic Empire",
+    "land",
+    "sea"
+   ],
+   "polygon_vs_print_tint_IoU": 0.487,
+   "polygon_area_on_print_tint": 0.514,
+   "print_tint_area_inside_polygon": 0.905,
+   "rings": [
+    {
+     "vertices": 67,
+     "offset": {
+      "median": 9.9,
+      "p90": 59.7,
+      "max": 99.8,
+      "n": 4582
+     },
+     "no_boundary_within_100px_fraction": 0.089
+    },
+    {
+     "vertices": 5,
+     "offset": {
+      "median": 86.1,
+      "p90": 96.9,
+      "max": 99.2,
+      "n": 60
+     },
+     "no_boundary_within_100px_fraction": 0.752
+    },
+    {
+     "vertices": 7,
+     "offset": null,
+     "no_boundary_within_100px_fraction": 1.0
+    },
+    {
+     "vertices": 5,
+     "offset": {
+      "median": 5.0,
+      "p90": 21.5,
+      "max": 29.0,
+      "n": 160
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    }
+   ],
+   "offset_raw": {
+    "nearest_print_tint_edge": {
+     "median": 9.9,
+     "p90": 62.1,
+     "max": 99.8,
+     "n": 4802
+    },
+    "no_boundary_within_100px_fraction": 0.163
+   },
+   "note_spline": "buildRealms draws L.polygon on the raw ring vertices; no crSpline, so raw == shipped geometry",
+   "screen_px": {
+    "z6": {
+     "median": 39.6,
+     "p90": 248.4,
+     "max": 399.2
+    },
+    "z7.3": {
+     "median": 97.5,
+     "p90": 611.6,
+     "max": 982.9
+    },
+    "cityMaxZ_capital_9.30": {
+     "median": 390.0,
+     "p90": 2446.5,
+     "max": 3931.8
+    },
+    "cityMaxZ_Epeshu_9.88": {
+     "median": 585.1,
+     "p90": 3669.9,
+     "max": 5897.8
+    },
+    "Z_STREET_11.5": {
+     "median": 1792.1,
+     "p90": 11241.3,
+     "max": 18065.7
+    }
+   },
+   "confidence": "low",
+   "caveat": "print shows the realm as diagonal hatching plus partial tint; colour classifier does not capture hatch, so the 0.163 no-boundary fraction is a classifier miss, not a trace fact"
+  },
+  {
+   "name": "Kgd. of the Sārmathi",
+   "type": "realm-border",
+   "feeds_APPR_POLYS": false,
+   "printed_class": "colour wash (legend swatch (193, 163, 83)); the print draws no border line",
+   "classes_used": [
+    "Kgd. of the Sārmathi",
+    "Eastern Patrin Empire",
+    "land",
+    "sea"
+   ],
+   "polygon_vs_print_tint_IoU": 0.6,
+   "polygon_area_on_print_tint": 0.915,
+   "print_tint_area_inside_polygon": 0.636,
+   "rings": [
+    {
+     "vertices": 12,
+     "offset": {
+      "median": 4.0,
+      "p90": 20.7,
+      "max": 26.5,
+      "n": 737
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    },
+    {
+     "vertices": 7,
+     "offset": {
+      "median": 2.5,
+      "p90": 6.0,
+      "max": 10.8,
+      "n": 345
+     },
+     "no_boundary_within_100px_fraction": 0.0
+    }
+   ],
+   "offset_raw": {
+    "nearest_print_tint_edge": {
+     "median": 3.5,
+     "p90": 10.8,
+     "max": 26.5,
+     "n": 1082
+    },
+    "no_boundary_within_100px_fraction": 0.0
+   },
+   "note_spline": "buildRealms draws L.polygon on the raw ring vertices; no crSpline, so raw == shipped geometry",
+   "screen_px": {
+    "z6": {
+     "median": 14.0,
+     "p90": 43.2,
+     "max": 106.0
+    },
+    "z7.3": {
+     "median": 34.5,
+     "p90": 106.4,
+     "max": 261.0
+    },
+    "cityMaxZ_capital_9.30": {
+     "median": 137.9,
+     "p90": 425.5,
+     "max": 1044.0
+    },
+    "cityMaxZ_Epeshu_9.88": {
+     "median": 206.8,
+     "p90": 638.2,
+     "max": 1566.1
+    },
+    "Z_STREET_11.5": {
+     "median": 633.6,
+     "p90": 1955.0,
+     "max": 4797.0
+    }
+   },
+   "confidence": "high",
+   "caveat": "gold wash cleanly separable"
+  },
+  {
+   "name": "Pēshunor",
+   "type": "minor-region-border",
+   "feeds_APPR_POLYS": false,
+   "prov": "trace",
+   "printed_class": "NONE: the print draws no district boundary (regions are spaced lettering only); distances below are to the nearest river/coast/graticule line ink, not to a boundary",
+   "offset_raw": {
+    "nearest_line_ink": {
+     "median": 10.5,
+     "p90": 35.6,
+     "max": 42.8,
+     "n": 729
+    },
+    "no_line_ink_within_100px_fraction": 0.0,
+    "nearest_coast_edge_of_print_sea_mask_(components>=5000_atlas_px2)": {
+     "median": 9.6,
+     "p90": 43.9,
+     "max": 55.1,
+     "n": 729
+    },
+    "nearest_dotted_road_dot": {
+     "median": 22.0,
+     "p90": 39.3,
+     "max": 48.7,
+     "n": 729
+    }
+   },
+   "ring_sea_fraction": 0.362,
+   "note_spline": "buildDistricts draws L.polygon on the raw ring vertices; no crSpline, so raw == shipped geometry",
+   "screen_px": {
+    "z6": {
+     "median": 42.0,
+     "p90": 142.4,
+     "max": 171.2
+    },
+    "z7.3": {
+     "median": 103.4,
+     "p90": 350.6,
+     "max": 421.5
+    },
+    "cityMaxZ_capital_9.30": {
+     "median": 413.7,
+     "p90": 1402.5,
+     "max": 1686.2
+    },
+    "cityMaxZ_Epeshu_9.88": {
+     "median": 620.5,
+     "p90": 2103.8,
+     "max": 2529.3
+    },
+    "Z_STREET_11.5": {
+     "median": 1900.7,
+     "p90": 6444.3,
+     "max": 7747.6
+    }
+   },
+   "interior_water_fraction": 0.2,
+   "interior_water_note": "fraction of non-ink pixels inside the 10-atlas-px-eroded polygon passing the r-b<=54 water test"
+  },
+  {
+   "name": "Lamor",
+   "type": "minor-region-border",
+   "feeds_APPR_POLYS": false,
+   "prov": "trace",
+   "printed_class": "NONE: the print draws no district boundary (regions are spaced lettering only); distances below are to the nearest river/coast/graticule line ink, not to a boundary",
+   "offset_raw": {
+    "nearest_line_ink": {
+     "median": 7.5,
+     "p90": 20.0,
+     "max": 31.2,
+     "n": 390
+    },
+    "no_line_ink_within_100px_fraction": 0.0,
+    "nearest_coast_edge_of_print_sea_mask_(components>=5000_atlas_px2)": {
+     "median": 10.5,
+     "p90": 35.0,
+     "max": 48.4,
+     "n": 390
+    },
+    "nearest_dotted_road_dot": {
+     "median": 15.4,
+     "p90": 37.4,
+     "max": 44.0,
+     "n": 390
+    }
+   },
+   "ring_sea_fraction": 0.51,
+   "note_spline": "buildDistricts draws L.polygon on the raw ring vertices; no crSpline, so raw == shipped geometry",
+   "screen_px": {
+    "z6": {
+     "median": 30.0,
+     "p90": 80.0,
+     "max": 124.8
+    },
+    "z7.3": {
+     "median": 73.9,
+     "p90": 197.0,
+     "max": 307.3
+    },
+    "cityMaxZ_capital_9.30": {
+     "median": 295.5,
+     "p90": 787.9,
+     "max": 1229.2
+    },
+    "cityMaxZ_Epeshu_9.88": {
+     "median": 443.2,
+     "p90": 1181.9,
+     "max": 1843.8
+    },
+    "Z_STREET_11.5": {
+     "median": 1357.6,
+     "p90": 3620.4,
+     "max": 5647.8
+    }
+   },
+   "interior_water_fraction": 0.17,
+   "interior_water_note": "fraction of non-ink pixels inside the 10-atlas-px-eroded polygon passing the r-b<=54 water test"
+  },
+  {
+   "name": "Dranimos",
+   "type": "minor-region-border",
+   "feeds_APPR_POLYS": false,
+   "prov": "trace",
+   "printed_class": "NONE: the print draws no district boundary (regions are spaced lettering only); distances below are to the nearest river/coast/graticule line ink, not to a boundary",
+   "offset_raw": {
+    "nearest_line_ink": {
+     "median": 18.5,
+     "p90": 48.0,
+     "max": 51.9,
+     "n": 502
+    },
+    "no_line_ink_within_100px_fraction": 0.0,
+    "nearest_coast_edge_of_print_sea_mask_(components>=5000_atlas_px2)": {
+     "median": 45.4,
+     "p90": 82.5,
+     "max": 99.5,
+     "n": 371
+    },
+    "nearest_dotted_road_dot": {
+     "median": 44.3,
+     "p90": 122.0,
+     "max": 135.0,
+     "n": 502
+    }
+   },
+   "ring_sea_fraction": 0.09,
+   "note_spline": "buildDistricts draws L.polygon on the raw ring vertices; no crSpline, so raw == shipped geometry",
+   "screen_px": {
+    "z6": {
+     "median": 74.0,
+     "p90": 192.0,
+     "max": 207.6
+    },
+    "z7.3": {
+     "median": 182.2,
+     "p90": 472.8,
+     "max": 511.2
+    },
+    "cityMaxZ_capital_9.30": {
+     "median": 728.8,
+     "p90": 1891.0,
+     "max": 2044.7
+    },
+    "cityMaxZ_Epeshu_9.88": {
+     "median": 1093.3,
+     "p90": 2836.6,
+     "max": 3067.1
+    },
+    "Z_STREET_11.5": {
+     "median": 3348.9,
+     "p90": 8688.9,
+     "max": 9394.9
+    }
+   },
+   "interior_water_fraction": 0.04,
+   "interior_water_note": "fraction of non-ink pixels inside the 10-atlas-px-eroded polygon passing the r-b<=54 water test"
+  },
+  {
+   "name": "Rhoshkhon",
+   "type": "minor-region-border",
+   "feeds_APPR_POLYS": false,
+   "prov": "trace",
+   "printed_class": "NONE: the print draws no district boundary (regions are spaced lettering only); distances below are to the nearest river/coast/graticule line ink, not to a boundary",
+   "offset_raw": {
+    "nearest_line_ink": {
+     "median": 16.9,
+     "p90": 42.5,
+     "max": 47.8,
+     "n": 524
+    },
+    "no_line_ink_within_100px_fraction": 0.0,
+    "nearest_coast_edge_of_print_sea_mask_(components>=5000_atlas_px2)": {
+     "median": 39.8,
+     "p90": 90.0,
+     "max": 98.5,
+     "n": 524
+    },
+    "nearest_dotted_road_dot": {
+     "median": 35.4,
+     "p90": 83.9,
+     "max": 92.9,
+     "n": 524
+    }
+   },
+   "ring_sea_fraction": 0.265,
+   "note_spline": "buildDistricts draws L.polygon on the raw ring vertices; no crSpline, so raw == shipped geometry",
+   "screen_px": {
+    "z6": {
+     "median": 67.6,
+     "p90": 170.0,
+     "max": 191.2
+    },
+    "z7.3": {
+     "median": 166.5,
+     "p90": 418.6,
+     "max": 470.8
+    },
+    "cityMaxZ_capital_9.30": {
+     "median": 665.8,
+     "p90": 1674.4,
+     "max": 1883.2
+    },
+    "cityMaxZ_Epeshu_9.88": {
+     "median": 998.7,
+     "p90": 2511.6,
+     "max": 2824.8
+    },
+    "Z_STREET_11.5": {
+     "median": 3059.2,
+     "p90": 7693.3,
+     "max": 8652.7
+    }
+   },
+   "interior_water_fraction": 0.11,
+   "interior_water_note": "fraction of non-ink pixels inside the 10-atlas-px-eroded polygon passing the r-b<=54 water test"
+  },
+  {
+   "name": "Sūs Gimilīn",
+   "type": "minor-region-border",
+   "feeds_APPR_POLYS": false,
+   "prov": "trace",
+   "printed_class": "NONE: the print draws no district boundary (regions are spaced lettering only); distances below are to the nearest river/coast/graticule line ink, not to a boundary",
+   "offset_raw": {
+    "nearest_line_ink": {
+     "median": 34.9,
+     "p90": 50.3,
+     "max": 61.6,
+     "n": 605
+    },
+    "no_line_ink_within_100px_fraction": 0.0,
+    "nearest_coast_edge_of_print_sea_mask_(components>=5000_atlas_px2)": {
+     "median": 57.4,
+     "p90": 92.6,
+     "max": 99.9,
+     "n": 445
+    },
+    "nearest_dotted_road_dot": {
+     "median": 69.2,
+     "p90": 112.3,
+     "max": 125.6,
+     "n": 605
+    }
+   },
+   "ring_sea_fraction": 0.0,
+   "note_spline": "buildDistricts draws L.polygon on the raw ring vertices; no crSpline, so raw == shipped geometry",
+   "screen_px": {
+    "z6": {
+     "median": 139.6,
+     "p90": 201.2,
+     "max": 246.4
+    },
+    "z7.3": {
+     "median": 343.7,
+     "p90": 495.4,
+     "max": 606.7
+    },
+    "cityMaxZ_capital_9.30": {
+     "median": 1374.9,
+     "p90": 1981.7,
+     "max": 2426.8
+    },
+    "cityMaxZ_Epeshu_9.88": {
+     "median": 2062.5,
+     "p90": 2972.6,
+     "max": 3640.3
+    },
+    "Z_STREET_11.5": {
+     "median": 6317.6,
+     "p90": 9105.3,
+     "max": 11150.8
+    }
+   },
+   "interior_water_fraction": 0.02,
+   "interior_water_note": "fraction of non-ink pixels inside the 10-atlas-px-eroded polygon passing the r-b<=54 water test"
+  },
+  {
+   "name": "Azrāken",
+   "type": "minor-region-border",
+   "feeds_APPR_POLYS": false,
+   "prov": "trace",
+   "printed_class": "NONE: the print draws no district boundary (regions are spaced lettering only); distances below are to the nearest river/coast/graticule line ink, not to a boundary",
+   "offset_raw": {
+    "nearest_line_ink": {
+     "median": 11.8,
+     "p90": 23.8,
+     "max": 27.7,
+     "n": 415
+    },
+    "no_line_ink_within_100px_fraction": 0.0,
+    "nearest_coast_edge_of_print_sea_mask_(components>=5000_atlas_px2)": {
+     "median": 8.9,
+     "p90": 21.9,
+     "max": 26.4,
+     "n": 415
+    },
+    "nearest_dotted_road_dot": {
+     "median": 103.6,
+     "p90": 137.7,
+     "max": 142.5,
+     "n": 415
+    }
+   },
+   "ring_sea_fraction": 0.414,
+   "note_spline": "buildDistricts draws L.polygon on the raw ring vertices; no crSpline, so raw == shipped geometry",
+   "screen_px": {
+    "z6": {
+     "median": 47.2,
+     "p90": 95.2,
+     "max": 110.8
+    },
+    "z7.3": {
+     "median": 116.2,
+     "p90": 234.4,
+     "max": 272.8
+    },
+    "cityMaxZ_capital_9.30": {
+     "median": 464.9,
+     "p90": 937.6,
+     "max": 1091.3
+    },
+    "cityMaxZ_Epeshu_9.88": {
+     "median": 697.3,
+     "p90": 1406.5,
+     "max": 1637.0
+    },
+    "Z_STREET_11.5": {
+     "median": 2136.0,
+     "p90": 4308.3,
+     "max": 5014.2
+    }
+   },
+   "interior_water_fraction": 0.8,
+   "interior_water_note": "fraction of non-ink pixels inside the 10-atlas-px-eroded polygon passing the r-b<=54 water test"
+  },
+  {
+   "name": "Aura-Hōth Hanath",
+   "type": "minor-region-border",
+   "feeds_APPR_POLYS": false,
+   "prov": "trace",
+   "printed_class": "NONE: the print draws no district boundary (regions are spaced lettering only); distances below are to the nearest river/coast/graticule line ink, not to a boundary",
+   "offset_raw": {
+    "nearest_line_ink": {
+     "median": 14.0,
+     "p90": 35.3,
+     "max": 47.1,
+     "n": 322
+    },
+    "no_line_ink_within_100px_fraction": 0.0,
+    "nearest_coast_edge_of_print_sea_mask_(components>=5000_atlas_px2)": {
+     "median": 10.2,
+     "p90": 36.0,
+     "max": 47.5,
+     "n": 322
+    },
+    "nearest_dotted_road_dot": {
+     "median": 18.8,
+     "p90": 38.9,
+     "max": 47.0,
+     "n": 322
+    }
+   },
+   "ring_sea_fraction": 0.509,
+   "note_spline": "buildDistricts draws L.polygon on the raw ring vertices; no crSpline, so raw == shipped geometry",
+   "screen_px": {
+    "z6": {
+     "median": 56.0,
+     "p90": 141.2,
+     "max": 188.4
+    },
+    "z7.3": {
+     "median": 137.9,
+     "p90": 347.7,
+     "max": 463.9
+    },
+    "cityMaxZ_capital_9.30": {
+     "median": 551.6,
+     "p90": 1390.7,
+     "max": 1855.6
+    },
+    "cityMaxZ_Epeshu_9.88": {
+     "median": 827.4,
+     "p90": 2086.1,
+     "max": 2783.4
+    },
+    "Z_STREET_11.5": {
+     "median": 2534.3,
+     "p90": 6390.0,
+     "max": 8526.0
+    }
+   },
+   "interior_water_fraction": 0.38,
+   "interior_water_note": "fraction of non-ink pixels inside the 10-atlas-px-eroded polygon passing the r-b<=54 water test"
+  }
+ ],
+ "side_check_buildCityMask": {
+  "scope": "outside the polyline brief; bears on registration; sampleCityMask/buildCityMask are hash-pinned by the mobile track: flag only",
+  "finding": "The r-b<=54 water test fires on realm tints and Emphēros grey-green land: 70 of 115 inland anchors with no sea entry read >50% border-connected water (median by realm polygon: Eastern Patrin 0.999 n9, Umbadic 0.99 n3, Alensic 0.862 n8, Pheropic 0.569 n2; untinted Leponnia/Rubea ~0). Impact today is limited: genCityCanvas only uses the mask coast when drawWater (sv non-null: harbor or sea.side with distPx<=25); 16 anchors qualify and none of them exceeds 0.8. For the others the mask feeds only the land hue (LT/GREEN surround and wash re-tone). Latent trap for any registration step that trusts mask.water inland.",
+  "over_half_water_not_harbor": [
+   {
+    "city": "Lepon the Old",
+    "kind": "ruin",
+    "harbor": false,
+    "sea": {
+     "side": "E",
+     "distPx": 2
+    },
+    "realm": null,
+    "mask_water_frac": 0.627
+   },
+   {
+    "city": "Mākor",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.718
+   },
+   {
+    "city": "Damoklir",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.993
+   },
+   {
+    "city": "Kamīdo",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.674
+   },
+   {
+    "city": "Zor Barāndo",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Pheropic Empire",
+    "mask_water_frac": 0.63
+   },
+   {
+    "city": "Phumkha",
+    "kind": "town",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.75
+   },
+   {
+    "city": "Lendānak",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.948
+   },
+   {
+    "city": "Zhomphek",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 1.0
+   },
+   {
+    "city": "Permūr",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Alensic Republic",
+    "mask_water_frac": 0.99
+   },
+   {
+    "city": "Dargan",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Pheropic Empire",
+    "mask_water_frac": 0.508
+   },
+   {
+    "city": "Aldrakhar",
+    "kind": "town",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.994
+   },
+   {
+    "city": "Ītor Hāspira",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.999
+   },
+   {
+    "city": "Hemdok Laego",
+    "kind": "town",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.974
+   },
+   {
+    "city": "Atauk",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.594
+   },
+   {
+    "city": "Ilongazoro",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.542
+   },
+   {
+    "city": "Pomos",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Alensic Republic",
+    "mask_water_frac": 0.928
+   },
+   {
+    "city": "Iet Ford",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.95
+   },
+   {
+    "city": "Bash Dargis",
+    "kind": "town",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.998
+   },
+   {
+    "city": "Ishin",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.758
+   },
+   {
+    "city": "Palagnon",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.981
+   },
+   {
+    "city": "Paga",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 1.0
+   },
+   {
+    "city": "Rūbril",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Alensic Republic",
+    "mask_water_frac": 0.753
+   },
+   {
+    "city": "Sau Taran",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Alensic Republic",
+    "mask_water_frac": 0.965
+   },
+   {
+    "city": "Lek Zagrok",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Umbadic Empire",
+    "mask_water_frac": 0.99
+   },
+   {
+    "city": "Hordon Mopher",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Alensic Republic",
+    "mask_water_frac": 0.85
+   },
+   {
+    "city": "Nembros",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Alensic Republic",
+    "mask_water_frac": 0.873
+   },
+   {
+    "city": "Lōt",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.994
+   },
+   {
+    "city": "Leprekhōr",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Alensic Republic",
+    "mask_water_frac": 0.74
+   },
+   {
+    "city": "Karaphon",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.939
+   },
+   {
+    "city": "Abila",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.961
+   },
+   {
+    "city": "Ion Semthen",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.844
+   },
+   {
+    "city": "Mishimbril",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.997
+   },
+   {
+    "city": "Philider",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.989
+   },
+   {
+    "city": "Zōr Iket",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.955
+   },
+   {
+    "city": "Bēgroth Amar",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.97
+   },
+   {
+    "city": "Gel",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Alensic Republic",
+    "mask_water_frac": 0.851
+   },
+   {
+    "city": "Thūkhon",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.957
+   },
+   {
+    "city": "Bash Nena",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Umbadic Empire",
+    "mask_water_frac": 0.99
+   },
+   {
+    "city": "Hazad",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.961
+   },
+   {
+    "city": "Sember",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.88
+   },
+   {
+    "city": "Īngomes",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.943
+   },
+   {
+    "city": "Gehon Iepīr",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Umbadic Empire",
+    "mask_water_frac": 0.975
+   },
+   {
+    "city": "Kezren",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.98
+   },
+   {
+    "city": "Azrīnet",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Eastern Patrin Empire",
+    "mask_water_frac": 0.999
+   },
+   {
+    "city": "Gehon Or",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.76
+   },
+   {
+    "city": "Rohodakos",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.689
+   },
+   {
+    "city": "Graes",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 1.0
+   },
+   {
+    "city": "Lokri",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Eastern Patrin Empire",
+    "mask_water_frac": 0.994
+   },
+   {
+    "city": "Ierem",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.981
+   },
+   {
+    "city": "Gārmīt",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 1.0
+   },
+   {
+    "city": "Malagnon",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.985
+   },
+   {
+    "city": "Ludo",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.994
+   },
+   {
+    "city": "Pel",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.987
+   },
+   {
+    "city": "Tamaron Mopher",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.984
+   },
+   {
+    "city": "Leshes",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.953
+   },
+   {
+    "city": "Darā",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Eastern Patrin Empire",
+    "mask_water_frac": 0.995
+   },
+   {
+    "city": "Aenid",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Eastern Patrin Empire",
+    "mask_water_frac": 1.0
+   },
+   {
+    "city": "Pontoron",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.99
+   },
+   {
+    "city": "Authīr",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 1.0
+   },
+   {
+    "city": "Nāron",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Eastern Patrin Empire",
+    "mask_water_frac": 0.993
+   },
+   {
+    "city": "Mhēlzi",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Eastern Patrin Empire",
+    "mask_water_frac": 0.999
+   },
+   {
+    "city": "Sārūmeron",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Eastern Patrin Empire",
+    "mask_water_frac": 1.0
+   },
+   {
+    "city": "Haedi",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.994
+   },
+   {
+    "city": "Urip",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.995
+   },
+   {
+    "city": "Daeskhon",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Eastern Patrin Empire",
+    "mask_water_frac": 0.998
+   },
+   {
+    "city": "Ion Nenīn",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": "Eastern Patrin Empire",
+    "mask_water_frac": 1.0
+   },
+   {
+    "city": "Gakapē",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.905
+   },
+   {
+    "city": "Malau",
+    "kind": "town",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.995
+   },
+   {
+    "city": "Līrider",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 1.0
+   },
+   {
+    "city": "Maeges",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.566
+   },
+   {
+    "city": "Nīs Garnata",
+    "kind": "village",
+    "harbor": false,
+    "sea": null,
+    "realm": null,
+    "mask_water_frac": 0.873
+   }
+  ],
+  "by_realm_median_frac": {
+   "Kgd. under the Wall": [
+    0.166,
+    2
+   ],
+   "Once-Realm of Regimen": [
+    0.012,
+    5
+   ],
+   "Pheropic Empire": [
+    0.569,
+    2
+   ],
+   "Alensic Republic": [
+    0.862,
+    8
+   ],
+   "Umbadic Empire": [
+    0.99,
+    3
+   ],
+   "Eastern Patrin Empire": [
+    0.999,
+    9
+   ],
+   "Kgd. of Cyrikon": [
+    0.115,
+    5
+   ]
+  }
+ }
+}

@@ -1,0 +1,903 @@
+{
+ "_meta": {
+  "task": "reference-anchoring-answer",
+  "compiled": "2026-10-07",
+  "source": "findings.json (anchoring research; status and votes copied verbatim, never changed) plus re-verification of disputed rows on hosts that resolved earlier (raw.githubusercontent.com, registry.npmjs.org) and repo docs in the HEAD export. Egress-blocked hosts (x.com, swisstopo.admin.ch, bayatlas.vercel.app, azlen.me, itch.io, ckan.opendata.swiss, groups.google.com) were not fetched.",
+  "key_distinction": "REGISTRATION (where art or geometry sits relative to the atlas coast, rivers and roads) fixes misalignment. The RENDERING MEDIUM (raster vs vector) brings crispness, interactivity and shared road vertices. A vector city placed through the same cityBox misaligns exactly as the raster does.",
+  "status_rule": "Only survived and disputed items are findings. Refuted items are listed for the record only. In each item, corrected (verifier text) overrides proposer text.",
+  "reverified_rule": "reverified records what a 2026-10-07 re-fetch found; where the dissenting verifier was right, the row wording is corrected but status and votes stay as findings.json records them.",
+  "collison_azlen_bayatlas": "Rows ref-collison-bayatlas and ref-azlen-flyover are OWNER'S BRIEF (docs/filigree/research-dossier.md §1), not verified web facts.",
+  "code_citations": "Atlas code is cited by pattern in maps-site/index.html (cityBox, FOOT_R, makeBase('tiles-war/',5), sampleCityMask, worldPOICoord, cityMaxZ)."
+ },
+ "principle": "Every reference that stays anchored on zoom does so because its detail is authored in, or registered upstream into, one frame: swisstopo's LV95 tile grid (every WMTS layer, the 1864 sheets included, builds its grid from the same projection and only the Time dimension changes), the 3D Tiles transform chain (each tile's transform maps to its parent's frame; Tokyo uses one metric frame), or OSM-derived vector tiles whose decoder already knows the frame. None stays anchored because it is vector: swisstopo enables its vector base only where the renderer supports the frame, and Leaflet's L.svgOverlay extends L.ImageOverlay. The atlas has the frame (CRS.Simple atlas px, NZ=4; the era pyramids already share it), but cityBox(a,w,h) does not register city art into it: it centres a FOOT_R[kind] box (capital 26, town 14, village 9, ruin 8 world px) on the anchor and reads nothing the art depicts. So the vectorised city the owner proposes must be built in, or registered into, atlas coordinates (control points on coast, river mouths, road exits and the ring-dot, one stored transform used by the overlay, the POIs and any vector geometry), not placed through cityBox; built that way, it then adds crispness past cityMaxZ, hover/tap interactivity and shared road vertices.",
+ "rows": [
+  {
+   "id": "ref-collison-bayatlas",
+   "group": "owner reference",
+   "reference": "Patrick Collison X post (2026-09-29) and its demo, Bay Atlas (Sonoma coast after swisstopo)",
+   "provenance": "OWNER'S BRIEF (docs/filigree/research-dossier.md §1). x.com and bayatlas.vercel.app are egress-blocked; nothing here was re-verified as a web fact.",
+   "findings_note": "No refs-lens claim covers the post itself; the listed findings cover the stack the brief attributes to Bay Atlas, which is itself unverified.",
+   "mechanism": "Conditional on the briefed, UNVERIFIED stack (MapLibre GL + PMTiles + Mapzen terrain + OSM): every feature is OSM-derived data cut into one Web Mercator vector-tile grid; the decoder already knows each tile's frame (VL7), styling is a function of zoom (VL5) and buildings are generalised by a zoom ladder (VL6). Its density is a medium/style property; its alignment comes from all data sharing one frame upstream.",
+   "tag": "[both] (registration by shared OSM frame upstream; the filigree density is medium)",
+   "sources": [
+    "X post id 2104949645197910404 (URL handle not recorded in the repo; x.com egress-blocked, not fetched)",
+    "https://bayatlas.vercel.app (not fetched; egress-blocked)",
+    "docs/filigree/research-dossier.md §1",
+    "docs/research/cartographic-filigree.md (\"Bay Atlas = MapLibre + PMTiles + Mapzen terrain + OSM | **Unverified.**\")"
+   ],
+   "reverified": {
+    "outcome": "not re-verifiable",
+    "note": "Hosts egress-blocked; dossier §1 says \"Everything below about post text, replies, Bay Atlas visuals and the Azlen flyover is **owner's brief**\". The stack row in cartographic-filigree.md is marked Unverified."
+   },
+   "transfers": "The filigree look the owner admires sits on data authored in one frame; for the atlas that frame is CRS.Simple atlas px, so city detail must be drawn in or registered into atlas px, never placed by cityBox.",
+   "status_and_votes": [
+    {
+     "id": "vlod:VL5",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "low"
+      }
+     ]
+    },
+    {
+     "id": "vlod:VL6",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    },
+    {
+     "id": "vlod:VL7",
+     "status": "survived",
+     "holds": "2/2",
+     "votes": [
+      {
+       "holds": true,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref-azlen-flyover",
+   "group": "owner reference",
+   "reference": "Azlen Elza X post (2026-10-01): thirteen-second painted flyover of San Francisco",
+   "provenance": "OWNER'S BRIEF (docs/filigree/research-dossier.md §1); x.com and azlen.me egress-blocked.",
+   "findings_note": "No findings.json claim; facts from the dossier §1 owner's brief only.",
+   "mechanism": "One painted sheet with a camera moving over it (\"a camera move over a painted sheet, not a live map\", the brief's own reading). Everything is authored in one picture, so there is no second layer to register and nothing can slide.",
+   "tag": "[medium] (anchoring is trivial: a single authored frame)",
+   "sources": [
+    "X post id 2105540576200581601 (URL handle not recorded in the repo; x.com egress-blocked, not fetched)",
+    "docs/filigree/research-dossier.md §1"
+   ],
+   "reverified": {
+    "outcome": "not re-verifiable",
+    "note": "Owner's brief only; the dossier says the research task for this link \"found nothing\"."
+   },
+   "transfers": "A painted city is a fine medium (filigree slice C), but the atlas has two pictures (atlas sheet plus city art); they only behave like one painted sheet once the city is painted in, or warped into, atlas px.",
+   "status_and_votes": []
+  },
+  {
+   "id": "ref-swisstopo-time",
+   "group": "owner reference",
+   "reference": "map.geo.admin.ch (swisstopo): Journey Through Time, ch.swisstopo.zeitreihen@year=1864",
+   "provenance": "Owner's shared URL (decoded in docs/filigree/research-dossier.md §1); mechanism code-read from geoadmin/web-mapviewer on raw.githubusercontent.com.",
+   "mechanism": "Every WMTS layer, the time series included, builds its WMTSTileGrid from the projection's resolution steps, tile origin and extent (truncated per layer at its maxResolution), on an LV95 View with fixed resolutions. Changing the year only calls updateDimensions({Time}) on the same source; the client never re-fits or re-places a sheet. That the old sheets are georeferenced upstream into LV95 with control points is inference plus search summaries (swisstopo pages blocked).",
+   "tag": "[registration] (one frame = shared tile grid, not a shared medium)",
+   "sources": [
+    "https://raw.githubusercontent.com/geoadmin/web-mapviewer/develop/packages/mapviewer/src/modules/map/components/openlayers/OpenLayersWMTSLayer.vue",
+    "https://raw.githubusercontent.com/geoadmin/web-mapviewer/develop/packages/mapviewer/src/modules/map/components/openlayers/utils/useViewBasedOnProjection.composable.js",
+    "https://raw.githubusercontent.com/geoadmin/web-mapviewer/develop/packages/mapviewer/src/api/layers/GeoAdminWMTSLayer.class.js",
+    "https://raw.githubusercontent.com/geoadmin/web-mapviewer/develop/packages/mapviewer/src/modules/map/components/cesium/CesiumWMTSLayer.vue",
+    "https://www.swisstopo.admin.ch/en/a-journey-through-time-maps (egress-blocked)"
+   ],
+   "reverified": {
+    "outcome": "confirmed with wording fix (VL1, C5); not re-verifiable (VL3, C6)",
+    "note": "Re-fetched 2026-10-07. OpenLayersWMTSLayer.vue: \"return new WMTSTileGrid({ resolutions: resolutionSteps.map((step) => step.resolution), origin: projection.value.getTileOrigin(), ... extent: projection.value.bounds.flatten\" and \"layer.getSource().updateDimensions(wmtsTimeConfig.value.dimensions)\"; createTileGridForProjection slices resolutionSteps at indexOfMaxResolution, so it is \"same grid, truncated per layer\", not \"same grid at every zoom\" (dissent upheld on wording). useViewBasedOnProjection: \"resolutions: constants.LV95_RESOLUTIONS, projection: LV95.epsg\". GeoAdminWMTSLayer.class.js checks constants.SWISSTOPO_TILEGRID_RESOLUTIONS.includes(maxResolution). CesiumWMTSLayer.vue calls getWmtsXyzUrl(... addTimestamp: true). The upstream georeferencing method, sheet counts, datum-shift fix and the Siegfried 0.7 mm tolerance (VL3, C6) rest on blocked hosts and stay unverified."
+   },
+   "transfers": "The atlas already does this for its eras (makeBase('tiles-war/',5) and makeBase('tiles-imperial/',5) share the live base's z0-5 grid, so setEra lines up); city art should join the same way: register each DM chart once, offline, into atlas px, store the result, and at runtime only place or fade it.",
+   "status_and_votes": [
+    {
+     "id": "vlod:VL1",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    },
+    {
+     "id": "refs:C5",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    },
+    {
+     "id": "vlod:VL3",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "low"
+      }
+     ]
+    },
+    {
+     "id": "refs:C6",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "low"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref-swisstopo-buildings",
+   "group": "owner reference",
+   "reference": "map.geo.admin.ch: building register ch.bfs.gebaeude_wohnungs_register",
+   "provenance": "Owner's shared URL; config constants code-read; layer form from a search summary (ckan.opendata.swiss blocked).",
+   "mechanism": "Building detail is a server-rendered layer in the same grid (WMS/WMTS form unverified). Clicking does not hit-test client geometry: the viewer sends the clicked coordinate to the identify backend with a 10 px tolerance and a 10-feature cap.",
+   "tag": "[both] (alignment from data already in the frame; interactivity from a coordinate lookup)",
+   "sources": [
+    "https://raw.githubusercontent.com/geoadmin/web-mapviewer/develop/packages/mapviewer/src/config/map.config.js",
+    "https://ckan.opendata.swiss/... (egress-blocked)"
+   ],
+   "reverified": {
+    "outcome": "confirmed (constants); not re-verifiable (layer form)",
+    "note": "map.config.js re-fetched: \"DEFAULT_FEATURE_COUNT_SINGLE_POINT = 10\" and \"DEFAULT_FEATURE_IDENTIFICATION_TOLERANCE = 10\". The WMS/WMTS form and \"stays aligned because it is raster in the frame\" are not shown by any fetched source."
+   },
+   "transfers": "Interactivity does not require a vector city: a registered raster can stay the painted surface while hover/tap looks up a footprint list in atlas px, but both must share one registration transform, and this does nothing for the misalignment by itself.",
+   "status_and_votes": [
+    {
+     "id": "vlod:VL4",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref-swisstopo-overlays-in-reach",
+   "group": "owner reference",
+   "reference": "map.geo.admin.ch: transit stops (ch.bav.haltestellen-oev), trails (ch.swisstopo.swisstlm3d-wanderwege) and the other shared overlays; swipe compare",
+   "provenance": "Owner's shared URL decoded in docs/filigree/research-dossier.md §1 (URL grammar code-read); compare mechanics from docs/research/cartographic-filigree.md.",
+   "mechanism": "As shared, all six overlays are \",f\" (loaded but hidden): they wait in the layer list, already in the frame, rather than being drawn onto the base. Comparison is a swipe (compareRatio 0-1) or the time slider. The Swiss crossfade itself was never code-read.",
+   "tag": "[both] (overlays already registered; swipe/fade is presentation)",
+   "sources": [
+    "docs/filigree/research-dossier.md §1 (correction to the brief)",
+    "docs/research/cartographic-filigree.md"
+   ],
+   "reverified": {
+    "outcome": "confirmed with wording fix",
+    "note": "Repo docs re-read: cartographic-filigree.md has \"`compareRatio` (0–1 swipe) is dropped when inactive\" and \"Leaflet fades per tile within one layer, **never between two sheets**. The atlas does that by hand\"; research-dossier.md marks \"Swiss raster sheets crossfade (not verified in the geoadmin code)\". \"A fade between layers that are already registered\" is not supported for the Swiss viewer (dissent upheld on wording)."
+   },
+   "transfers": "A swipe or opacity toggle between DM chart and atlas base at fixed zoom is the cheapest debug-only audit of registration residual; the baseOpacity/overlayOpacity fade only hides error, it anchors nothing.",
+   "status_and_votes": [
+    {
+     "id": "refs:C13",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref-swisstopo-vector-base",
+   "group": "owner reference (same viewer)",
+   "reference": "map.geo.admin.ch: vector light base map (ch.swisstopo.leichte-basiskarte_world.vt)",
+   "provenance": "Code-read from geoadmin/web-mapviewer.",
+   "mechanism": "A vector base map drawn by MapLibre inside OpenLayers exists, but the viewer only enables it in Web Mercator; in the LV95 frame the viewer uses its raster layers. The vector medium appears only where the renderer supports the authoritative frame.",
+   "tag": "[medium] (medium follows frame, never replaces it)",
+   "sources": [
+    "https://raw.githubusercontent.com/geoadmin/web-mapviewer/develop/packages/mapviewer/src/modules/map/components/openlayers/OpenLayersInternalLayer.vue",
+    "https://raw.githubusercontent.com/geoadmin/web-mapviewer/develop/packages/mapviewer/src/config/vectortiles.config.js"
+   ],
+   "reverified": {
+    "outcome": "confirmed with wording fix",
+    "note": "OpenLayersInternalLayer.vue re-fetched: \"Vector layers are only allowed whenever we use the WebMercator projection (won't work on LV95 yet, as MapLibre doesn't support other projection systems yet)\" and v-if=\"projection.epsg === WEBMERCATOR.epsg && layerConfig.type === LayerTypes.VECTOR\". vectortiles.config.js: VECTOR_LIGHT_BASE_MAP_STYLE_ID = 'ch.swisstopo.leichte-basiskarte_world.vt'. \"Mapbox vector tiles\" is not stated in the source and is dropped."
+   },
+   "transfers": "Even swisstopo's own vector layer is gated on the frame: a vectorised city is only worth having once it lives in atlas px (Leaflet L.Path works natively in CRS.Simple; MapLibre would break single-file).",
+   "status_and_votes": [
+    {
+     "id": "vlod:VL2",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "low"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref-swisstopo-3d-handoff",
+   "group": "owner reference (same viewer)",
+   "reference": "map.geo.admin.ch: 2D to 3D (Cesium) camera hand-off",
+   "provenance": "Code-read from geoadmin/web-mapviewer.",
+   "mechanism": "The Cesium camera starts at the 2D centre with a height from the 2D resolution and canvas width and a top-down pitch; leaving 3D ray-casts the camera target and makes it the new 2D centre. View state is transferred, not a picture.",
+   "tag": "[registration] (one shared coordinate for the view)",
+   "sources": [
+    "https://raw.githubusercontent.com/geoadmin/web-mapviewer/develop/packages/mapviewer/src/modules/map/components/cesium/CesiumCamera.vue"
+   ],
+   "reverified": {
+    "outcome": "confirmed (survived; spot-checked)",
+    "note": "CesiumCamera.vue re-fetched: centerEpsg4326, \"calculateHeight(store.getters.resolution, viewer.canvas.clientWidth)\", \"pitch: -CesiumMath.PI_OVER_TWO\", setCenterToCameraTarget. The return carries the centre only, not the zoom."
+   },
+   "transfers": "The atlas-to-sim zoom-through (living H2/H2z) should carry an atlas-px centre plus scale through the existing Epēshu atlas-sim transform; it is a separate registration problem from the cityBox overlay.",
+   "status_and_votes": [
+    {
+     "id": "refs:C12",
+     "status": "survived",
+     "holds": "2/2",
+     "votes": [
+      {
+       "holds": true,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref-tokyo-streamed",
+   "group": "owner reference",
+   "reference": "Tokyo 3D streamed-city post (best candidate github.com/jeantimex/tokyo \"Procedural Tokyo\", not confirmed as the post) and the 3D Tiles model it echoes",
+   "provenance": "Post is owner's paraphrase (docs/research/streamed-streets.md); repo and spec read on raw.githubusercontent.com.",
+   "mechanism": "Tokyo uses one metric world frame with its origin at the area centre and 256 m tiles. In 3D Tiles each tile's transform maps its local frame to its parent's, and child content lies inside the parent's bounding volume, so refinement swaps happen inside one transform chain. The chain preserves registration that was authored in; it does not create it (\"cannot move content\" is inference).",
+   "tag": "[registration] (3D Tiles transform chain into one frame)",
+   "sources": [
+    "https://raw.githubusercontent.com/jeantimex/tokyo/main/README.md",
+    "https://raw.githubusercontent.com/CesiumGS/3d-tiles/main/specification/README.adoc"
+   ],
+   "reverified": {
+    "outcome": "confirmed with wording fix",
+    "note": "Tokyo README: \"World frame: metres, x east, y up (Tokyo Peil height), z south; the origin is the area's centre.\" and \"Tiles are 256 m squares meshed in Web Workers.\" 3D Tiles README.adoc: \"The `transform` property is a 4x4 affine transformation matrix, stored in column-major order, that transforms from the tile's local coordinate system to the parent tile's coordinate system\" and \"the content for child tiles are completely inside the parent's bounding volume\". The spec guarantees the chain and containment, not cross-level registration (dissent upheld on wording)."
+   },
+   "transfers": "A city detail level should be a child of the atlas frame (atlas px plus one fitted chart-to-atlas transform), nesting inside the coarser sheet, not a separately fitted picture; cityBox is a parent-relative transform whose scale comes from FOOT_R, not from the art.",
+   "status_and_votes": [
+    {
+     "id": "refs:C11",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref-lombard",
+   "group": "owner reference",
+   "reference": "Interactive Lombard Street exhibits",
+   "provenance": "OWNER RECOLLECTION; no verifiable source (docs/living/research-dossier.md §1).",
+   "mechanism": "None verifiable. Nearest verified pattern: Mapbox storytelling, where a chapter is a camera pose plus layer toggles in the same map (dossier §2).",
+   "tag": "[both] (no precedent)",
+   "sources": [
+    "docs/living/research-dossier.md §1, §2",
+    "docs/research/living-chart.md"
+   ],
+   "reverified": {
+    "outcome": "confirmed (absence)",
+    "note": "Repo docs re-read: \"**Lombard Street exhibit.** Four searches turned up no three.js or 3D Lombard Street exhibit (high). It is **owner-recalled and unverified**.\" and \"**Mapbox storytelling** (high): a chapter = camera pose + layer toggles + callback.\" The web-search part of C16 is non-reproducible and not re-run."
+   },
+   "transfers": "Not a precedent: an atlas exhibit is centre plus zoom plus layer toggles in atlas px, and its POIs go through worldPOICoord and cityBox, so it inherits whatever registration the city layer has.",
+   "status_and_votes": [
+    {
+     "id": "refs:C16",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref-httyd",
+   "group": "owner reference",
+   "reference": "How to Train Your Dragon style living maps",
+   "provenance": "OWNER'S DESIGN WISH; no source found (docs/living/research-dossier.md; docs/research/living-chart.md).",
+   "findings_note": "No findings.json claim; the anchoring research did not cover it.",
+   "mechanism": "None sourced. Recorded as a mood (\"moving dragons, water patterns\"), owned by the living-chart track (motion).",
+   "tag": "n/a (motion, not anchoring)",
+   "sources": [
+    "docs/living/research-dossier.md",
+    "docs/research/living-chart.md"
+   ],
+   "reverified": {
+    "outcome": "confirmed (absence)",
+    "note": "living-chart.md: \"**How to Train Your Dragon** (\"moving dragons, water patterns\") is a mood, with no map source found.\" living dossier: \"No source was found for any HTTYD map UI, animated map, dragon flight or water staging.\""
+   },
+   "transfers": "Nothing for anchoring; any motion layer drawn over a city inherits the city layer's registration, so it waits on the same fix.",
+   "status_and_votes": []
+  },
+  {
+   "id": "tool-leaflet-imageoverlay",
+   "group": "tool (our stack)",
+   "reference": "Leaflet 1.9.4 L.ImageOverlay (the atlas's own overlay)",
+   "provenance": "Leaflet v1.9.4 source on raw.githubusercontent.com plus the vendored build in the HEAD export.",
+   "mechanism": "Overlay corners and base tiles go through the same map.project(); _reset runs on every zoom event and rounds corners via latLngToLayerPoint, so Leaflet itself adds about 1 screen px at most, at rest as well as during animation. Placement input is an axis-aligned LatLngBounds only.",
+   "tag": "[registration] (Leaflet pins the box; the box is where the error is)",
+   "sources": [
+    "https://raw.githubusercontent.com/Leaflet/Leaflet/v1.9.4/src/layer/ImageOverlay.js",
+    "https://raw.githubusercontent.com/Leaflet/Leaflet/v1.9.4/src/map/Map.js"
+   ],
+   "reverified": {
+    "outcome": "confirmed with wording fix",
+    "note": "ImageOverlay.js: \"zoom: this._reset\" and \"this._map.latLngToLayerPoint(this._bounds.getNorthWest())\"; Map.js: \"var projectedPoint = this.project(toLatLng(latlng))._round();\". C1's \"only during the 250 ms animation\" is wrong: rounding also happens at rest (dissent upheld on wording)."
+   },
+   "transfers": "The shift is not Leaflet drift: a fixed error of d atlas px shows as d*2^(z-4) screen px, so the fix belongs in what cityBox(a,w,h) feeds the bounds, not in the zoom animation.",
+   "status_and_votes": [
+    {
+     "id": "refs:C1",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "low"
+      }
+     ]
+    },
+    {
+     "id": "vlod:VL10",
+     "status": "survived",
+     "holds": "2/2",
+     "votes": [
+      {
+       "holds": true,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "high"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tool-leaflet-crs-simple",
+   "group": "tool (our stack)",
+   "reference": "Leaflet CRS.Simple game-map tutorial; L.ImageOverlay.Rotated",
+   "provenance": "Leaflet docs at v1.9.4 on raw.githubusercontent.com; npm registry README.",
+   "mechanism": "A map has one CRS; \"think in map units\" and derive an image's bounds by measuring known coordinates in the image and extrapolating, after the tutorial shows approximate bounds failing. Rotated places an image by three corner points (rotate and skew).",
+   "tag": "[registration]",
+   "sources": [
+    "https://raw.githubusercontent.com/Leaflet/Leaflet/v1.9.4/docs/examples/crs-simple/crs-simple.md",
+    "https://registry.npmjs.org/leaflet-imageoverlay-rotated"
+   ],
+   "reverified": {
+    "outcome": "confirmed with wording fix",
+    "note": "crs-simple.md: \"A Leaflet map has one CRS (and *one* CRS *only*)\", \"**Think in map units**\", \"Measuring how many pixels there are between the 0 and 1000 coordinates, and extrapolating, we can have the right coordinate bounds for this image\". npm README: \"defined by **three** points\". npm maintainers field lists ivansanchez only; \"by a Leaflet maintainer\" is in neither source and is dropped."
+   },
+   "transfers": "cityBox is the tutorial's \"approximate bounds\" case: replace it with bounds measured from control points (coast, river mouths, road exits, the ring-dot) fitted to atlas px.",
+   "status_and_votes": [
+    {
+     "id": "vlod:VL13",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tool-svgoverlay",
+   "group": "tool (our stack)",
+   "reference": "Leaflet 1.9.4 L.svgOverlay",
+   "provenance": "Leaflet v1.9.4 source.",
+   "mechanism": "SVGOverlay = ImageOverlay.extend(...): an SVG overlay shares ImageOverlay's bounds-box positioning and zoom-animation scaling.",
+   "tag": "[medium] (source proof of the key distinction)",
+   "sources": [
+    "https://raw.githubusercontent.com/Leaflet/Leaflet/v1.9.4/src/layer/SVGOverlay.js"
+   ],
+   "reverified": {
+    "outcome": "confirmed (survived; spot-checked)",
+    "note": "SVGOverlay.js: \"export var SVGOverlay = ImageOverlay.extend({\"."
+   },
+   "transfers": "A vectorised city dropped into cityBox is a crisp image at the same misplacement; vectors help only when authored in, or transformed into, atlas px.",
+   "status_and_votes": [
+    {
+     "id": "refs:C9",
+     "status": "survived",
+     "holds": "2/2",
+     "votes": [
+      {
+       "holds": true,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "medium"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tool-allmaps",
+   "group": "tool (registration method)",
+   "reference": "Allmaps (@allmaps/transform, @allmaps/leaflet, IIIF Georeference Annotation)",
+   "provenance": "npm registry READMEs; IIIF georef spec on raw.githubusercontent.com.",
+   "mechanism": "Ground control points (image px to map coordinates) solve one transform: straight and Helmert need 2 GCPs, polynomial1 3, polynomial2 6, polynomial3 10, thin-plate spline 3 (exact at GCPs), projective 4. The same transform warps rasters (WebGL2, triangle by triangle) and vectors vertex by vertex, with optional midpoint refinement (off by default).",
+   "tag": "[registration] (one transform applied to raster and vector alike)",
+   "sources": [
+    "https://registry.npmjs.org/@allmaps/transform",
+    "https://registry.npmjs.org/@allmaps/leaflet",
+    "https://raw.githubusercontent.com/IIIF/api/main/source/extension/georef/index.md"
+   ],
+   "reverified": {
+    "outcome": "confirmed with wording fix",
+    "note": "@allmaps/transform 1.0.0-beta.53 README table re-read: helmert \"Applies translation, scaling and rotation. Preserves shapes and angles. | 2\"; thinPlateSpline \"Transformation is 'exact' at GPCs. | 3\"; \"By default, `maxDepth = 0` and no refinement is applied.\" @allmaps/leaflet 1.0.0-beta.55: \"uses WebGL to transform images\", \"works in browsers and in Node.js as an ESM or an UMD module\" (so not ESM-only), and the zoomAnimationThreshold: 1 comment. \"EPSG:3857\" is not named in either README and is dropped."
+   },
+   "transfers": "Port the method, not the library: an offline, deterministic chart-px to atlas-px fit (translation plus scale first, Helmert if rotation matters) stored as data, used by the raster overlay, the POIs and any future vector city alike; TPS bends canon art and needs an owner ruling.",
+   "status_and_votes": [
+    {
+     "id": "refs:C7",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    },
+    {
+     "id": "reg:R11",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    },
+    {
+     "id": "vec:V4",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tool-rotated-distortable",
+   "group": "tool (registration method)",
+   "reference": "Leaflet.ImageOverlay.Rotated and Leaflet.DistortableImage (Public Lab, MapKnitter)",
+   "provenance": "npm registry READMEs; DistortableImage source on raw.githubusercontent.com.",
+   "mechanism": "Runtime registration without WebGL: three corners (affine) or four corners (perspective, CSS matrix3d). DistortableImage writes only the end-state matrix on zoomanim and lets the CSS transition interpolate, which need not follow the tiles' path.",
+   "tag": "[registration]",
+   "sources": [
+    "https://registry.npmjs.org/leaflet-imageoverlay-rotated",
+    "https://registry.npmjs.org/leaflet-distortableimage",
+    "https://raw.githubusercontent.com/publiclab/Leaflet.DistortableImage/main/src/DistortableImageOverlay.js"
+   ],
+   "reverified": {
+    "outcome": "confirmed (survived; spot-checked)",
+    "note": "npm READMEs: \"This plugin has been tested only with Leaflet 1.0.0-beta and 1.0.0-rc1.\"; \"allows for perspectival distortions of images, client-side, using CSS3 transformations in the DOM\"; \"It can handle over 100 images smoothly, even on a smartphone\" (self-reported)."
+   },
+   "transfers": "If a fit needs rotation, either pre-warp offline into a plain axis-aligned overlay or use a small in-file corner-placed layer; do not vendor either plugin, and keep the POIs and wash on the same transform.",
+   "status_and_votes": [
+    {
+     "id": "refs:C8",
+     "status": "survived",
+     "holds": "2/2",
+     "votes": [
+      {
+       "holds": true,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    },
+    {
+     "id": "reg:R9",
+     "status": "survived",
+     "holds": "2/2",
+     "votes": [
+      {
+       "holds": true,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "low"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tool-vector-tile-spec",
+   "group": "tool (vector medium)",
+   "reference": "Mapbox Vector Tile spec 2.1",
+   "provenance": "raw.githubusercontent.com/mapbox/vector-tile-spec.",
+   "mechanism": "A vector tile carries no frame of its own: geometry is integers in a tile-local extent and the decoder must already know the tile's bounds and projection.",
+   "tag": "[registration] (vectors align only because the frame is agreed before encoding)",
+   "sources": [
+    "https://raw.githubusercontent.com/mapbox/vector-tile-spec/master/2.1/README.md"
+   ],
+   "reverified": {
+    "outcome": "not re-fetched (survived 2/2)",
+    "note": "Quote recorded by both verifiers: \"A Vector Tile SHOULD NOT contain information about its bounds and projection.\""
+   },
+   "transfers": "A city plan in its own local frame (genCityCanvas's 2048 canvas, a traced DM chart, an MFCG export) needs an explicit local-to-atlas transform before any layer draws it; choosing vector gives no alignment for free.",
+   "status_and_votes": [
+    {
+     "id": "vlod:VL7",
+     "status": "survived",
+     "holds": "2/2",
+     "votes": [
+      {
+       "holds": true,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tool-osm-vector-ladder",
+   "group": "tool (vector medium)",
+   "reference": "MapLibre style spec zoom rules; OpenMapTiles / OSM Bright / OSM Carto building ladder",
+   "provenance": "npm tarball @maplibre/maplibre-gl-style-spec 26.4.4; raw.githubusercontent.com (openmaptiles, osm-bright-gl-style, maplibre-gl-js, openstreetmap-carto).",
+   "mechanism": "[\"zoom\"] may drive only a top-level step or interpolate; layers have minzoom gates; source maxzoom data is reused at deeper zooms. Buildings arrive as merged blocks at z13 (DBSCAN cluster, buffer-union, VW simplify) and individual polygons from z14.",
+   "tag": "[medium] (detail by zoom; nothing about placement)",
+   "sources": [
+    "https://registry.npmjs.org/@maplibre/maplibre-gl-style-spec/-/maplibre-gl-style-spec-26.4.4.tgz",
+    "https://raw.githubusercontent.com/openmaptiles/openmaptiles/master/layers/building/building.sql",
+    "https://raw.githubusercontent.com/openmaptiles/openmaptiles/master/layers/building/update_building.sql",
+    "https://raw.githubusercontent.com/openmaptiles/osm-bright-gl-style/master/style.json"
+   ],
+   "reverified": {
+    "outcome": "confirmed with wording fix",
+    "note": "latest.json: \"`[\"zoom\"]` may only appear as the input to a top-level `\"step\"` or `\"interpolate\"` expression\"; minzoom \"At zoom levels less than the minzoom, the layer will be hidden.\"; source maxzoom \"Data from tiles at the maxzoom are used when displaying the map at higher zoom levels.\" building.sql: \"<z13> z13 | <z14_> z14+\"; update_building.sql: ST_ClusterDBSCAN(... eps := zres14 ...) and ST_SimplifyVW. Wording: step is not continuous, and only OSM Bright's building-top layer has the 13-16 opacity ramp (dissent upheld on wording)."
+   },
+   "transfers": "If a vector city is built, band it (block hulls first, footprints later, thresholds chosen with filigree), but banding is rendering density and does nothing for the anchoring the owner asked about.",
+   "status_and_votes": [
+    {
+     "id": "vlod:VL5",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "low"
+      }
+     ]
+    },
+    {
+     "id": "vlod:VL6",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tool-azgaar-watabou-link",
+   "group": "tool (fantasy-map precedent)",
+   "reference": "Azgaar Fantasy Map Generator burg link to Watabou MFCG",
+   "provenance": "raw.githubusercontent.com/Azgaar/Fantasy-Map-Generator.",
+   "mechanism": "Parameter-only: FMG builds an MFCG URL from seed, size, population, river/coast/walls flags and a sea direction angle; no world coordinates, scale or road geometry pass, and the city opens in another window.",
+   "tag": "[registration] (none: the plan is never registered to the world map)",
+   "sources": [
+    "https://raw.githubusercontent.com/Azgaar/Fantasy-Map-Generator/master/src/generators/burgs-generator.ts"
+   ],
+   "reverified": {
+    "outcome": "not re-fetched (survived 2/2)",
+    "note": "Quotes recorded verbatim by both verifiers, e.g. \"const url = new URL(\"https://watabou.github.io/city-generator/\"); url.search = new URLSearchParams({ ... seed: burgSeed, river: river.toString(), coast: coast.toString(),\"."
+   },
+   "transfers": "city-anchors.json (kind, harbor, sea) feeding genCityCanvas has the same parameter-only shape; a zoom-through inside one map needs world-px coast and road exits, which sampleCityMask provides for the coast only.",
+   "status_and_votes": [
+    {
+     "id": "vlod:VL14",
+     "status": "survived",
+     "holds": "2/2",
+     "votes": [
+      {
+       "holds": true,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tool-watabou",
+   "group": "tool (fantasy-map precedent)",
+   "reference": "Watabou TownGeneratorOS and Medieval Fantasy City Generator (GeoJSON export)",
+   "provenance": "raw.githubusercontent.com/watabou/TownGeneratorOS; MFCG devlog on itch.io is egress-blocked.",
+   "mechanism": "The generator works in its own local frame around (0,0): Voronoi seeds on a spiral with a random start angle, plaza placement random, size from patch count, no world input. MFCG reportedly exports GeoJSON in world units around zero (unverified).",
+   "tag": "[registration] (local frame, needs a fitted transform)",
+   "sources": [
+    "https://raw.githubusercontent.com/watabou/TownGeneratorOS/master/Source/com/watabou/towngenerator/building/Model.hx",
+    "https://raw.githubusercontent.com/watabou/TownGeneratorOS/master/README.md",
+    "https://watabou.itch.io/medieval-fantasy-city-generator/devlog/112574/073-bug-fixes-geojson-export (egress-blocked)"
+   ],
+   "reverified": {
+    "outcome": "confirmed with wording fix (VL15); not re-verifiable (V17 export, VL15 MFCG units)",
+    "note": "Model.hx: \"var sa = Random.float() * 2 * Math.PI;\", \"var a = sa + Math.sqrt( i ) * 5;\", \"new Point( Math.cos( a ) * r, Math.sin( a ) * r );\", \"plazaNeeded = Random.bool();\" so the spiral start and the plaza are random (dissent upheld on wording). README: \"lacks some of the latest features, namely waterbodies, options UI and some smaller ones.\" The Summarch art's MFCG look is a visual reading by one verifier, not a sourced fact."
+   },
+   "transfers": "A DM chart exported from MFCG as GeoJSON would still need the same chart-to-atlas fit before it lines up; it would also be an outside, non-seeded source, frozen as data only with the owner's say.",
+   "status_and_votes": [
+    {
+     "id": "vlod:VL15",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    },
+    {
+     "id": "vec:V17",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "medium"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tool-inkarnate",
+   "group": "tool (fantasy-map precedent)",
+   "reference": "Inkarnate world/region/city maps",
+   "provenance": "Search summary only; source host unreachable.",
+   "mechanism": "Separate canvases with no built-in linking, merging or continuous zoom (unverified).",
+   "tag": "[medium]",
+   "sources": [
+    "https://grandavehousing.calpoly.edu/news/combine-inkarnate-maps-a-step (unreachable)"
+   ],
+   "reverified": {
+    "outcome": "not re-verifiable",
+    "note": "Host failed DNS and the proxy refused it in the original pass; not re-fetched under the blocked-host rule."
+   },
+   "transfers": "Context only: the DM's charts are this kind of separate canvas, and registering them is our own offline tool step.",
+   "status_and_votes": [
+    {
+     "id": "vlod:VL16",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "low"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tool-streetview3d-jsthree",
+   "group": "tool (3D-over-2D caution)",
+   "reference": "StreetView3DOverlay (rbejar) and Google js-three",
+   "provenance": "GitHub READMEs on raw.githubusercontent.com; docs/living/research-dossier.md §2.",
+   "mechanism": "StreetView3DOverlay's placement was tuned by trial and error and is \"not very precise\"; js-three sets an anchor origin near the content because GPU float32 holds about 7 digits.",
+   "tag": "[registration] (hand-tuned placement fails; precision needs a local origin)",
+   "sources": [
+    "https://raw.githubusercontent.com/rbejar/StreetView3DOverlay/master/README.md",
+    "https://raw.githubusercontent.com/googlemaps/js-three/master/README.md"
+   ],
+   "reverified": {
+    "outcome": "confirmed with wording fix",
+    "note": "StreetView3DOverlay README: \"There are a number of parameters related to the Street View Panoramas which have been established by trial-and-error. This means that both the position and orientation of the ferris wheel is not very precise.\" js-three README: \"All computations on the GPU related to the position use float32 numbers, which limits the possible precision to about 7 decimal digits.\" The anchor is set by setAnchor(), not fixed, and the source says \"not very precise\", not \"drifts\" (dissent upheld on wording)."
+   },
+   "transfers": "Do not hand-nudge city bounds until they look right: fit control points and report the residual in atlas px; the float32 point matters only for a future WebGL layer (living H1), since Leaflet overlays use float64.",
+   "status_and_votes": [
+    {
+     "id": "refs:C14",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tool-rumsey-nls",
+   "group": "tool (comparison UI)",
+   "reference": "David Rumsey and NLS transparency sliders over georeferenced sheets",
+   "provenance": "docs/filigree/research-dossier.md finding 31 (sites not reached directly).",
+   "mechanism": "Each old map sits over a current map with a transparency slider; the sheets are georeferenced first (an inference not stated in the quoted text).",
+   "tag": "[both]",
+   "sources": [
+    "docs/filigree/research-dossier.md finding 31"
+   ],
+   "reverified": {
+    "outcome": "confirmed (repo quote)",
+    "note": "research-dossier.md: \"**David Rumsey** overlays each old map on a current world map with a transparency slider (1680–1930).\" Medium-confidence dossier finding with split lens votes."
+   },
+   "transfers": "Same lesson as the Swiss swipe: a slider is the audit tool for registration, not the registration.",
+   "status_and_votes": [
+    {
+     "id": "refs:C13",
+     "status": "disputed",
+     "holds": "1/2",
+     "votes": [
+      {
+       "holds": false,
+       "severity": "minor"
+      },
+      {
+       "holds": true,
+       "severity": "minor"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

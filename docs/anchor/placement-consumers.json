@@ -1,0 +1,680 @@
+{
+ "_readme": "downstream-consumers-of-placement: static grep of the HEAD export (docs/filigree, docs/living, docs/street, docs/mobile, POLISH.md, tools/*.js) for city anchor coordinates (Epēshu 1236.1/1415; Summarch 523/58 literal and its ◉ 542/52; the top-10 off-dot names Penthelon, Damoklir, Paga, Pontoron, Zhomphek, Philider, Permūr, Hordon, Līrider, Dargan), FOOT_R-derived numbers (48.46, 52, 26, 14, 80.77, cityMaxZ), chart-pois, overlay-Epeshu, overlay-Summarch, cityBox, city-anchors and cityLabels, plus the cells and gates they feed. Verdict per hit: yes = the scenario changes the number/gate; no = it does not; conditional = depends on how/where it is implemented (reason given). (a) = an entry of maps-site/data/city-anchors.json (or the meshedWorldInit Summarch/Penthelon literals) moves; (b) = a canon translate+scale override changes the bounds of a canon overlay (Epēshu/Summarch) away from cityBox(anchor, FOOT_R) while the anchor stays; (c) = a seam clip (coast/land mask clip of the overlay or wash edge). REGISTRATION (where art/geometry sits vs the atlas) is what (a)/(b) change; the RENDERING MEDIUM (raster vs vector) changes none of these numbers by itself: a vector city placed through the same cityBox leaves every row below unchanged except byte/shot keys.",
+ "status_legend": {
+  "frozen": "a committed measurement/baseline exists at HEAD and would need a rebase",
+  "prospective": "the consumer is a rule/spec that will freeze whatever placement exists when its job runs; zero rebase cost if registration lands first",
+  "record": "a done/descriptive claim that becomes stale, not a gate"
+ },
+ "sequencing_facts": {
+  "frozen_now": [
+   "docs/mobile/baseline.json (B0) and docs/mobile/captures/R1.json + rebase-*.json (Mobile atlas lane 5-9 mid-flight)",
+   "docs/filigree/gates/1-research.json + gates/1-hex-answers.json + density-bible.{md,json} (Filigree 1 passed 2026-10-05)"
+  ],
+  "not_yet_frozen": [
+   "docs/filigree/gates/2-*.json absent (Filigree 2 views V1-V7 and probes not frozen)",
+   "docs/living/gates/ absent (Living 1 has not frozen LV1-LV8 views.json/still_sha)",
+   "docs/street/gates/ absent (Street 1 not run)"
+  ],
+  "implication": "If the registration item lands before Filigree 2, Living 1 and Street 1, every prospective row below costs nothing; only Mobile B0/R1 and Filigree 1 artefacts carry rebase cost."
+ },
+ "tracks": {
+  "filigree": [
+   {
+    "file": "docs/filigree/research/q08.json",
+    "pattern": "cityBox / 1236.1,1415 / 48.46 / 80.77",
+    "locator": "claim q08-c01 (text 'Epēshu's world footprint is cityBox(anchor 1236.1,1415; capital r=26; overlay 2863x3072) = atlas x 1211.87..1260.33, y 1389..1441 (48.46x52)')",
+    "measures_or_gates": "Maps chart quarter Q1 to atlas [1215.04,1240.40)x[1404.85,1430.20) and its hex overlap (84.3% in F10 cell 38,44); 80.77 chart px per atlas px",
+    "status": "frozen (Filigree 1 trusted research, cited by the bible)",
+    "a_anchor_move": {
+     "verdict": "conditional",
+     "why": "Epēshu is in the within-3px set of out/anchor-correction-table.json (no move verdict), so (a) bites only if the registration item also nudges the Epēshu anchor; if moved, every Q1 atlas coordinate shifts by the move vector"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "yes",
+     "why": "the footprint box, the 80.77 ratio and Q1's atlas window are cityBox outputs; any translate or scale rewrites them and the per-cell overlap percentages"
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": "a clip hides pixels; it does not move the box or the ratio"
+    }
+   },
+   {
+    "file": "docs/filigree/research/q08.json",
+    "pattern": "cityBox transform vs DEM coast",
+    "locator": "claim q08-c08 ('The DEM coast does not follow the chart coast in the southern half of Q1 ... 1.0 and 0.8 atlas px ... the transform looks right and the gap is in the DEM')",
+    "measures_or_gates": "The only quantified chart-vs-atlas REGISTRATION error in the bible chain (north within one DEM cell; south up to ~10 atlas px, echoed in density-bible.json city_grain.contour_hill.gap)",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "conditional",
+     "why": "Epēshu is in the within-3px set of out/anchor-correction-table.json (no move verdict), so (a) bites only if the registration item also nudges the Epēshu anchor"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "yes",
+     "why": "measured through y=1389+cy/4200*52 (the cityBox mapping); a translate+scale override is exactly the fix this residual measures, so the numbers and the 'clip to the chart coast' gap must be re-measured"
+    },
+    "c_seam_clip": {
+     "verdict": "conditional",
+     "why": "the bible's gap text asks for a 'clip to the chart coast' for relief; a seam clip that clips the overlay to the atlas coast satisfies a different edge and leaves the DEM residual unchanged"
+    }
+   },
+   {
+    "file": "docs/filigree/research/q03.json",
+    "pattern": "48.46 / 52 / FOOT_R / 80.77 / cityMaxZ 10.336",
+    "locator": "claim q03-c05 ('footprint box of 48.46x52.0 atlas px (FOOT_R capital 26), so 80.77 chart px = 1 atlas px, and cityMaxZ = 4 + log2(4200/52) = 10.336')",
+    "measures_or_gates": "Scale conversion every city-grain proxy (P1 block grain textile band z8.3-9.3, P3 arterial 1 screen px at z8.34) is sampled at; also q03-c09 uses 1211.87 and 80.77",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "no",
+     "why": "translation only; ratio and zooms unchanged (Epēshu not on the move list)"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "yes",
+     "why": "scale enters 2r=52 directly: screen-px-per-chart-px = 2^(z - cityMaxZ) and all sampling zooms (8, 9, 10, 10.34) shift by log2(scale)"
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": "no scale or zoom change"
+    }
+   },
+   {
+    "file": "docs/filigree/research/q03.json + q08.json",
+    "pattern": "chart-pois",
+    "locator": "q03-c06/c11, q08-c05/c07/c10/c11/c18 (chart-pois.json#Epēshu n=1..19 in chart px; 12 inside Q1)",
+    "measures_or_gates": "Park-void, pins-at-rest and POI-in-quarter counts; all in CHART px",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "no",
+     "why": "chart-px data is placement-independent"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "conditional",
+     "why": "the counts stay (chart px); their atlas positions move with the overlay only if buildWorldPOIs/worldPOICoord share the override (both call cityBox(a,reg.w,reg.h) today) — an override applied to the imageOverlay bounds alone would split halos from printed badges"
+    },
+    "c_seam_clip": {
+     "verdict": "conditional",
+     "why": "a clip that cuts into the chart could hide printed badges (Mount Mastery 246,121 and Bangeph Rock lie outside Q1, near the chart edge)"
+    }
+   },
+   {
+    "file": "docs/filigree/density-bible.md / density-bible.json",
+    "pattern": "city-anchors (ground classification)",
+    "locator": "rules B-02 'Anchor tests read maps-site/data/city-anchors.json atlasX,atlasY inside the hex's half-open bbox with no margin'; ground_classes Tests 3,4,5,9; Calibration line 'the whole window grid (676 hexes, cells 33-58 x 38-63) as ... settlement 3, ruin 1, river_town 1, painted_city 1'",
+    "measures_or_gates": "Hex ground class per 32-px z7 hex (decides which six classes the blank-hex rule demands)",
+    "status": "frozen (bible) / prospective (Filigree 2-3 apply it)",
+    "a_anchor_move": {
+     "verdict": "yes",
+     "why": "cell shifts for move-verdict anchors inside or entering the window: Hordon 35,54->35,52; Gehon Or 47,38->48,39; Gehon Iepīr 45,37 (outside) -> 46,38 (inside); Tamaron 51,48 and Lepon the Old 35,44 keep their cells. Sheet one (bbox 1216..1760 x 1376..1664) is unaffected: none of these lies in it. The window calibration counts may change"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": "tests read anchor points, not overlay bounds"
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": "tests read anchors and DEM only"
+    }
+   },
+   {
+    "file": "docs/filigree/density-bible.md / .json",
+    "pattern": "city-anchors (instance sources)",
+    "locator": "B-19 town_name 'At a city-anchors.json anchor inside the hex'; B-20 town_shield at data:city-anchors.json#Aldorūs; B-40 old_survey at data:city-anchors.json#<ruin>; B-57 city_tone 'its source is the city's anchor in city-anchors.json'; B-05 'chart POIs count at their city's anchor'",
+    "measures_or_gates": "Where each anchor-sourced instance sits and which hex it counts in (blank-hex rule, ±16 px)",
+    "status": "frozen (bible text) / prospective (instances)",
+    "a_anchor_move": {
+     "verdict": "yes",
+     "why": "instance coordinates follow the anchor; an anchor crossing a hex edge moves its town_name/old_survey/city_tone instance and its counted chart POIs to another hex"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "conditional",
+     "why": "B-57 says city_tone lies 'under the plan on the overlay opacity ramp': text unchanged, but the tone's footprint follows the override; B-05 counts POIs at the anchor, not at their registered position, so no count change"
+    },
+    "c_seam_clip": {
+     "verdict": "conditional",
+     "why": "B-57's wash/tone under the plan is the washMake disc; a clip implemented inside washMake changes it (and mobile atlas_fn_sha)"
+    }
+   },
+   {
+    "file": "docs/filigree/density-bible.md",
+    "pattern": "footprint (city sheet band, R7)",
+    "locator": "sheets: 'city = z >= 7.5 (Z_TIER_D) inside a painted city's footprint, down to its chart's deepest zoom'; rulings.json R7 'census pins are suppressed inside the city footprint at the city band'; 'a tap on its footprint reveals it'",
+    "measures_or_gates": "The spatial extent of the city sheet, census-pin suppression and touch halo hit area",
+    "status": "frozen (rulings) / prospective (build)",
+    "a_anchor_move": {
+     "verdict": "conditional",
+     "why": "Epēshu is in the within-3px set of out/anchor-correction-table.json (no move verdict), so (a) bites only if the registration item also nudges the Epēshu anchor; for other cities the footprint moves with the anchor"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "yes",
+     "why": "footprint = cityBox; an override redefines the city-sheet region, the suppression zone and the chart's deepest zoom (cityMaxZ)"
+    },
+    "c_seam_clip": {
+     "verdict": "conditional",
+     "why": "if the clip defines a new non-rectangular footprint, R7's 'inside the footprint' must say which (box or clipped)"
+    }
+   },
+   {
+    "file": "docs/filigree/gates/1-hex-answers.json",
+    "pattern": "1236.1,1415 / city-anchors.json#Epēshu / #Lepon the Old / #Aldorūs / chart-pois.json#Mount Mastery",
+    "locator": "hexes[9] (F10) items city_tone, town_name at x 1236.1 y 1415; hexes[10] (F11) old_survey/town_name at 1146.5,1420.2; hexes[8] (F09) town_shield/town_name at 1448.6,1527.5",
+    "measures_or_gates": "Gate G1.3-G1.5 inputs: both appliers' instance coordinates and sources per fixture hex",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "yes",
+     "why": "Lepon the Old has a move verdict (1146.5,1420.2 -> 1145,1427, offset 7.0 px, same cell 35,44): recorded instance coordinates go stale, though the instance stays inside F11 ±16 px so G1.5 would still pass on re-run"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": "instances cite the anchor, not overlay bounds"
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": "no instance depends on a clip"
+    }
+   },
+   {
+    "file": "docs/filigree/gates/1-research.json",
+    "pattern": "1236.1,1415 (fixture notes)",
+    "locator": "fixtures F10 'Epēshu ◉ (1236.1,1415): painted-city control' and F11 'Lepon the Old ruin coast (1146.5,1420.2): old-survey control'",
+    "measures_or_gates": "Fixture definitions (R17: 'changing them needs a Job 1 re-run'); G1.1 'validator sha256 = integrator sha256 (64-hex) for both bible files'",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "conditional",
+     "why": "fixture cells are literal constants; Lepon's 7 px move stays in cell 35,44 so the fixture holds, but the note text is stale"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": "fixtures are cells, not overlay bounds"
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   },
+   {
+    "file": "docs/filigree/design/workflow-2-plan.md",
+    "pattern": "1236.1,1415",
+    "locator": "VIEWS_SEED row 'V6 | city | 1236.1,1415 (Epēshu)'; masks 'Settlement disc: radius max(96, 1.5 × footprint)'",
+    "measures_or_gates": "Filigree 2 view centres and settlement masks",
+    "status": "prospective (docs/filigree/gates/2-*.json absent)",
+    "a_anchor_move": {
+     "verdict": "conditional",
+     "why": "Epēshu is in the within-3px set of out/anchor-correction-table.json (no move verdict), so (a) bites only if the registration item also nudges the Epēshu anchor; V2/V3/V7 centre on Aldorūs 1448.6,1527.5 and V4 on Sokundo, neither on the move list"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "yes",
+     "why": "1.5 × footprint mask radius and what V6 frames depend on the overlay bounds"
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   },
+   {
+    "file": "docs/filigree/density-bible.json",
+    "pattern": "prerequisites",
+    "locator": "prerequisites[] items 'Filigree data — Drāmūz marker 35 px off its anchor', 'Filigree data — Hordon/Maeges anchor' (blocks F3-B, status missing)",
+    "measures_or_gates": "Which data items block slice B",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "yes",
+     "why": "Hordon is a top-10 move (42.7 px); fixing it closes this item, but a status flip is a bible edit (see bible_question)"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": ""
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   },
+   {
+    "file": "docs/filigree/research/q05.json, q06.json, q07.json, q12.json, q13.json, q15.json",
+    "pattern": "city-anchors (band inventories)",
+    "locator": "q05-c14 (four anchors in band W incl. Epēshu 1236.1,1415), q06-c12, q07-c13 (Tamaron 1657.9,1548.3), q12-c01/c02 (F10/F11 counts), q13-c02 ('Epēshu gridX169/gridZ168 -> 1236.0,1415.0 equals city-anchors Epēshu 1236.1,1415; Lepon ruin grid 83,173 -> 1146.5,1420.2 equals city-anchors Lepon the Old'), q15-c12/c15 (12 sheet-one places, nearest spacing 45.9 px)",
+    "measures_or_gates": "Per-band named-thing counts, spacing, and the sim<->atlas identity check",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "yes",
+     "why": "Tamaron (7.8 px) and Lepon the Old (7.0 px) are move verdicts: q07-c13 coordinates, q15-c12 spacing and q13-c02's equality (sim grid == anchor) all break; counts per band hold (no band crossing)"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": ""
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   },
+   {
+    "file": "docs/filigree/research/q11.json",
+    "pattern": "Pontoron",
+    "locator": "q11-c04 (minted-name collision with atlas place names)",
+    "measures_or_gates": "Name-mint blocklist, not placement",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "no",
+     "why": "name only"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": ""
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   },
+   {
+    "file": "docs/filigree/research/q10.json",
+    "pattern": "Summarch",
+    "locator": "q10-c20 ('the Stony River at Summarch')",
+    "measures_or_gates": "River naming, not placement",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "no",
+     "why": ""
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": ""
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   }
+  ],
+  "living": [
+   {
+    "file": "docs/living/README.md + todo-inputs.json + design/workflows/living-1-research.js",
+    "pattern": "city-anchors (LV5, LV6)",
+    "locator": "LV5 'Epēshu at the city band | city-anchors.json Epēshu, midway between Z_TIER_D and Z_OPEN_MAX'; LV6 'Epēshu at Z_OPEN_MAX + 0.5'; RULE_DATA {anchor: 'city-anchors.json'}; --check-views reports 'moved: [ids whose zoom, bbox or centre moved]'",
+    "measures_or_gates": "Frozen measurement views and their still_sha for the flat-chart gate (G4.1 on LV5/LV6, Living 4z)",
+    "status": "prospective (docs/living/gates absent)",
+    "a_anchor_move": {
+     "verdict": "conditional",
+     "why": "Epēshu is in the within-3px set of out/anchor-correction-table.json (no move verdict), so (a) bites only if the registration item also nudges the Epēshu anchor; the rule re-resolves from city-anchors.json at run time, so a moved anchor shows up in --check-views 'moved'"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "yes",
+     "why": "LV5 (z7.75, overlay ~0.95) and LV6 (z8.5) frame the overlay: still_sha and every scored living-vs-flat comparison change"
+    },
+    "c_seam_clip": {
+     "verdict": "yes",
+     "why": "the clip changes the pixels both views capture"
+    }
+   },
+   {
+    "file": "POLISH.md + docs/living/design/polish-entries.md",
+    "pattern": "city-anchors (sea-mask check)",
+    "locator": "'Living · the sheet-wide sea mask' Done-when: 'every city-anchors.json settlement without harbor:true reads land within 1 mask px and every harbor:true anchor has water within ceil(sea.distPx/8)+1 mask px'",
+    "measures_or_gates": "Pass/fail of tools/living-sea-mask.js --check (tool not yet built)",
+    "status": "prospective",
+    "a_anchor_move": {
+     "verdict": "yes",
+     "why": "pass set depends on anchor positions; out/anchor-correction-table.json approximates it: 14 of 38 in-scope rows pass at the anchor vs 21 at the marker; 16 fail at both"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": "reads anchors only; the item also says washMake/sampleCityMask 'are never called or changed'"
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   },
+   {
+    "file": "docs/living/rulings.json",
+    "pattern": "overlay (LC7 zoom-through)",
+    "locator": "LC7 'zooming past the city band crossfades the city overlay into a Street frozen-view poster ... then offers the step into the street (... #s=epeshu&goto=<place>&street=1)'",
+    "measures_or_gates": "Visual continuity of the overlay -> poster -> sim handoff (Living 3z/4z, blocked on 'Sim ↔ atlas continuity')",
+    "status": "prospective",
+    "a_anchor_move": {
+     "verdict": "yes",
+     "why": "the sim places settlements on its grid (index.html settlements gridX/gridZ; Tamaron 574/296 -> 1657.9,1548.3 = the anchor via q13-c02's transform); moving an atlas anchor desyncs the handoff unless the sim moves too"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "yes",
+     "why": "the crossfade registers the overlay to a sim poster; the override changes where the overlay's districts sit relative to the sim's cityLabels {dx,dz}"
+    },
+    "c_seam_clip": {
+     "verdict": "conditional",
+     "why": "only if the clip edge is visible during the crossfade"
+    }
+   },
+   {
+    "file": "docs/living/README.md, todo-inputs.json, research-dossier.md",
+    "pattern": "chart-pois / city-anchors (data lists)",
+    "locator": "data list '... city-anchors.json (harbor:true, sea.distPx), maps_markers.json, wiki-places.json, chart-pois.json ...'; exhibits 'chart-pois.json (Epēshu 19, Summarch 9; chart-pixel coords)'; '11 harbor:true with sea{side,distPx}'",
+    "measures_or_gates": "Inputs to living layers (ship ports, plumes, exhibits)",
+    "status": "prospective",
+    "a_anchor_move": {
+     "verdict": "yes",
+     "why": "ports/plumes sit at anchors"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "conditional",
+     "why": "exhibit posters keyed to chart-px POIs move with the overlay only if POI placement shares the override"
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   }
+  ],
+  "street": [
+   {
+    "file": "docs/street/design/workflow-1-research.md",
+    "pattern": "cityLabels",
+    "locator": "FOCUS_RULES 'label:<name> = Epēshu centre (s.x, s.z) + the cityLabels entry {dx, dz} of that name'; SV2 'gate:Epēshu>Tamaron'",
+    "measures_or_gates": "Street frozen views SV1-SV9 focus points",
+    "status": "prospective (docs/street/gates absent)",
+    "a_anchor_move": {
+     "verdict": "conditional",
+     "why": "cityLabels is SIM-space (index.html: s.cityLabels.forEach(c => addLabelRaw(s.x + c.dx, s.z + c.dz, ...))): an atlas-only anchor move changes nothing here; a matching sim move (to keep q13-c02 identity) moves s.x/s.z and SV2's bearing to Tamaron"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": "not an atlas consumer"
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   },
+   {
+    "file": "docs/street/README.md / rulings.json",
+    "pattern": "continuity",
+    "locator": "ST1 'the atlas-to-sim link belongs to \"Sim ↔ atlas continuity\"'; ST12 'stone-tier buildings inside Epēshu's footprint'",
+    "measures_or_gates": "Scope boundary; ST12 footprint is sim-space",
+    "status": "prospective",
+    "a_anchor_move": {
+     "verdict": "conditional",
+     "why": "only via a sim edit"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": ""
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   }
+  ],
+  "mobile": [
+   {
+    "file": "docs/mobile/baseline.json + captures/R1.json, rebase-*.json; tools/mobile-capture.js",
+    "pattern": "cityCanvasSha / city_canvas",
+    "locator": "R.city_canvas for ['Tamaron','Sokundo','Kanae'] via ATLAS.descend, hashing only reg.prov==='invented' data: URLs; UG3 'cityCanvasSha is equal to B0 and equal across all five profiles'",
+    "measures_or_gates": "Seeded-plan determinism gate (UG3) on every atlas unit",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "yes",
+     "why": "Tamaron is a move verdict (1657.9,1548.3 -> 1659,1556): the sampleCityMask window shifts (1.1,7.7) and bearings 12.0°/7.8°, so its hash and cityCanvasSha change on all profiles (owner Q6 rebaseline). Sokundo/Kanae have no marker and no verdict"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": "only prov 'invented' canvases are hashed; Epēshu/Summarch are canon"
+    },
+    "c_seam_clip": {
+     "verdict": "conditional",
+     "why": "a clip inside genCityCanvas/washMake/sampleCityMask changes the hashed bytes; a clip on the overlay element outside them (CSS clip-path) leaves it; any clip baked into the canvas before toDataURL changes reg.url, which is what is hashed"
+    }
+   },
+   {
+    "file": "docs/mobile/gates.md (UG3) + tools/mobile-capture.js",
+    "pattern": "atlas_fn_sha",
+    "locator": "R.atlas_fn_sha over ['xmur3','mulberry32','genCityCanvas','washMake','sampleCityMask']; UG3 'the diff touches none of xmur3, mulberry32, genCityCanvas, washMake or sampleCityMask'",
+    "measures_or_gates": "Source-hash pin of the generator functions",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "no",
+     "why": "anchors are data, not function source"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "conditional",
+     "why": "an override implemented in cityBox/registerCityOverlay/meshedWorldInit leaves the pin; touching washMake (whose disc is sized from the footprint) breaks it"
+    },
+    "c_seam_clip": {
+     "verdict": "conditional",
+     "why": "breaks UG3 iff the clip is written inside any pinned function"
+    }
+   },
+   {
+    "file": "docs/mobile/gates.md (UG7)",
+    "pattern": "createPane",
+    "locator": "UG7 'no unit calls createPane (Filigree 2 freezes pre_filigree_panes)'; living LC13 pane scheme",
+    "measures_or_gates": "Pane-list freeze",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "no",
+     "why": ""
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": "bounds change only"
+    },
+    "c_seam_clip": {
+     "verdict": "conditional",
+     "why": "a clip or vector layer on a NEW pane breaks UG7 and the Filigree 2 freeze; a clip on the existing pCity overlay element does not"
+    }
+   },
+   {
+    "file": "docs/mobile/units.json",
+    "pattern": "overlay-Epeshu / overlay-Summarch",
+    "locator": "A-U11 files 'maps-site/art/overlay-Epeshu-720.jpg', 'overlay-Summarch-720.jpg'; acceptance 'after load the full image is the same file and the final shot equals R1 at max zoom; registerCityOverlay literal kept'",
+    "measures_or_gates": "Mobile 6 preview unit acceptance",
+    "status": "prospective (accept/A-U11.json not yet authored)",
+    "a_anchor_move": {
+     "verdict": "conditional",
+     "why": "Epēshu is in the within-3px set of out/anchor-correction-table.json (no move verdict), so (a) bites only if the registration item also nudges the Epēshu anchor; Summarch's literal 523,58 is a move verdict (to 542,52) and moves its max-zoom frame"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "yes",
+     "why": "bounds and cityMaxZ (NZ+log2(3072/52)=9.885 for Epēshu today) change the max-zoom shot; 'registerCityOverlay literal kept' constrains where an override may be written"
+    },
+    "c_seam_clip": {
+     "verdict": "conditional",
+     "why": "changes the shot if the clip is visible at max zoom; a baked clip in the art changes the preview bytes"
+    }
+   },
+   {
+    "file": "docs/mobile/inputs/atlas-capture-metrics.json, inputs.json, inputs/brief.md",
+    "pattern": "overlay-Epeshu",
+    "locator": "bigImages ['art/overlay-Epeshu.jpg', 2863, 3072] at '#chart=Epēshu'; streetSettleMs 5174; '2,171,881 B'",
+    "measures_or_gates": "Byte/settle metrics behind defect A7",
+    "status": "frozen (inputs)",
+    "a_anchor_move": {
+     "verdict": "no",
+     "why": ""
+    },
+    "b_canon_translate_scale": {
+     "verdict": "conditional",
+     "why": "bytes unchanged unless the art is re-cut; settle time may move with cityMaxZ"
+    },
+    "c_seam_clip": {
+     "verdict": "conditional",
+     "why": "a baked clip re-encodes the JPEG and changes bytes"
+    }
+   },
+   {
+    "file": "docs/mobile/baseline.json, captures/*.json, controls.json",
+    "pattern": "Penthelon, Damoklir, Paga, Pontoron, Zhomphek, Philider, Permūr, Hordon, Līrider, Dargan, Summarch",
+    "locator": "control ids 'button:<name> — lesser settle…' (marker:true, 16x16) and tap_fixture rows ('name':'Summarch','opened':'East-West Road'); tapAtZoom centres on m._mk.getLatLng()",
+    "measures_or_gates": "Reach/size of marker controls and the tap fixture (UG5/R7, A-U3 'wrong_card = 0')",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "no",
+     "why": "ids and positions come from maps_markers.json markers, not anchors"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": ""
+    },
+    "c_seam_clip": {
+     "verdict": "conditional",
+     "why": "only if a clip/vector layer becomes interactive over glyphs at city_z6.15"
+    }
+   },
+   {
+    "file": "docs/mobile/baseline.json, captures/*.json",
+    "pattern": "1236,1417",
+    "locator": "tap_epeshu opened_hash '#view=1236,1417,3.30'",
+    "measures_or_gates": "Epēshu card deep link (marker 1236,1417, not the anchor)",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "no",
+     "why": "marker coordinate"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": ""
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   },
+   {
+    "file": "docs/mobile/baseline.json (UG3 sim lane)",
+    "pattern": "simDays(400) fingerprint",
+    "locator": "UG3 'The simDays(400) fingerprint for epeshu and tamar1374 ... equals B0 on all five profiles'",
+    "measures_or_gates": "Sim determinism",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "conditional",
+     "why": "only if the registration item also edits CUSTOM_MAP_DATA settlements to keep sim==atlas (q13-c02): then the epeshu fingerprint and Street baselines move"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": ""
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   }
+  ],
+  "polish": [
+   {
+    "file": "POLISH.md",
+    "pattern": "Summarch / Penthelon / Hordon / Epēshu (done items)",
+    "locator": "'five known capitals snapped exactly to their printed ◉ (Epēshu, Summarch, Penthelon, Hordon, Cyrikon)' (v0.9.12); 'Lake biome — Penthelon's footprint anchor ... snapped to the charted shore' (v0.9.7); 'Route continuity ... control cities bit-identical to baseline'; 'Epēshu roundel doubling — all 19 POI coords corrected to the true printed badge centers'",
+    "measures_or_gates": "Recorded claims (not gates)",
+    "status": "record",
+    "a_anchor_move": {
+     "verdict": "yes",
+     "why": "the snap claim was about MARKERS; anchors for Summarch (523,58 literal) and Hordon still sit 19.9/42.7 px off; moving them reverses 'bit-identical' route/terrain baselines for those cities"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "conditional",
+     "why": "the roundel fix holds iff POIs move with the overlay"
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   },
+   {
+    "file": "POLISH.md",
+    "pattern": "continuity / Region-chart zoom-through",
+    "locator": "'Sim ↔ atlas continuity' (blocks F3-C, Living 3z); 'Region-chart zoom-through — evaluate footprint-anchoring the REGION MapArt'",
+    "measures_or_gates": "Open items that consume placement",
+    "status": "prospective",
+    "a_anchor_move": {
+     "verdict": "yes",
+     "why": "deep links land on anchors"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "yes",
+     "why": "the region item would reuse the same footprint-anchoring"
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   }
+  ],
+  "tools": [
+   {
+    "file": "tools/build-gazetteer.js",
+    "pattern": "city-anchors",
+    "locator": "markers.forEach(m => add(...)) then anchors added only when fold(name) is unseen",
+    "measures_or_gates": "maps-site/data/gazetteer.json coordinates (cited by B-19/B-40)",
+    "status": "frozen (generated file)",
+    "a_anchor_move": {
+     "verdict": "conditional",
+     "why": "top-10 all have markers, so no change; 'Lepon the Old' (fold differs from marker 'Lepon') and the 16 marker-less anchors pass through, so Lepon's move changes gazetteer.json; regenerate per CLAUDE.md"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": ""
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   },
+   {
+    "file": "tools/mobile-capture.js",
+    "pattern": "TAP_VIEWS / tapAtZoom",
+    "locator": "TAP_VIEWS [['city_z6.15','Epēshu',6.15], ...]; tapAtZoom uses window.ATLAS.find(n)._mk.getLatLng()",
+    "measures_or_gates": "Tap fixture centring",
+    "status": "frozen",
+    "a_anchor_move": {
+     "verdict": "no",
+     "why": "marker-centred"
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": "z6.15 is below overlayOpacity's 6.8 start"
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   },
+   {
+    "file": "tools/living-drift.js, street-drift.js, filigree-dem.js, lint-deploy.js, build-offline-manifest.js, mobile-tree.js, mobile-loop-check.js",
+    "pattern": "(none)",
+    "locator": "0 hits for city-anchors, chart-pois, overlay-, cityBox, FOOT_R, cityLabels",
+    "measures_or_gates": "—",
+    "status": "—",
+    "a_anchor_move": {
+     "verdict": "no",
+     "why": ""
+    },
+    "b_canon_translate_scale": {
+     "verdict": "no",
+     "why": ""
+    },
+    "c_seam_clip": {
+     "verdict": "no",
+     "why": ""
+    }
+   }
+  ]
+ },
+ "negatives": [
+  "No literal Summarch coordinate (523, 58, 542, 52) occurs in any in-scope doc or tool: every grep hit for 523/542 is a substring of a hash, byte count or another coordinate (e.g. q07 '1542.1'); a word-bounded search returns 0. The Summarch anchor literal lives only in maps-site/index.html (CITY_ANCHORS['Summarch']={atlasX:523,atlasY:58,...} in meshedWorldInit), so (a) for Summarch has no doc consumer besides the mobile A-U11 max-zoom shot and party-route.json (outside scope).",
+  "Of the top-10 off-dot names only Hordon appears outside mobile marker inventories (bible R21/B-32 'Hordon/Maeges anchor', q15-c16); Damoklir, Paga, Pontoron (except a q11 name collision), Zhomphek, Philider, Permūr, Līrider, Dargan and Penthelon appear only as marker-derived button ids in docs/mobile and as POLISH records (Penthelon).",
+  "'cityBox' appears in exactly one in-scope doc (docs/filigree/research/q08.json); 'FOOT_R' and '48.46' only in q03/q08; 'cityLabels' only in docs/street/design/workflow-1-research.md and it is sim-space.",
+  "A pure rendering-medium change (vector city through the same cityBox) changes none of the rows above except shot/byte keys (mobile UG8 shot diffs, A-U11, LV still_sha)."
+ ],
+ "bible_question": {
+  "finding": "Any edit to density-bible.md/.json re-opens the Filigree 1 gate: gates/1-research.json G1.1 requires 'validator sha256 = integrator sha256 (64-hex) for both bible files', and README says a rerun returns pass:true only 'on a bible that still re-hashes'; Job 2 rewrites its Sections when 'the bible sha ... changed'.",
+  "path_amend": "Adding 'Filigree data — city art registration' to density-bible prerequisites (or rewriting city_grain.contour_hill.gap / q08-c08 numbers) = Filigree 1 re-run (re-integration) before Filigree 2.",
+  "path_no_amend": "Queue the item only in POLISH.md, directly above Filigree 3 per R21; Job 2 skips any item 'if POLISH.md already has \"Filigree data — <item>\"', so it is honoured without touching the bible. The stale q08-c01/c08 and q03-c05 numbers then stay as dated research, superseded by a registration doc outside docs/filigree.",
+  "which_triggers_amend": "(b) on Epēshu necessarily invalidates q08-c01, q08-c08, q03-c05 (cited by bible rules B-33/B-38 city_grain); (a) on Hordon/Gehon Or/Gehon Iepīr may change the window calibration counts in the bible's Calibration line; (c) touches only B-57's wash if implemented in washMake."
+ },
+ "open_questions": [
+  "Do the target hexes of the in-window moves (Hordon 35,52; Gehon Or 48,39; Gehon Iepīr 46,38) classify as coast/sea before the anchor tests under the ten-test order? Run node tools/filigree-dem.js --bbox on each to see if the bible's window calibration counts change.",
+  "Will the registration item move Epēshu's anchor at all (it is within 3 px)? If not, every Epēshu row is (b)/(c)-only.",
+  "Will the override be applied in one place that both the imageOverlay bounds and buildWorldPOIs/worldPOICoord/cityMaxZ read (keeping POI halos on printed badges), or only to the image?",
+  "If an atlas anchor moves (Tamaron, Lepon the Old), does the sim's CUSTOM_MAP_DATA move too (keeping q13-c02 identity, but moving the UG3 simDays fingerprint and Street baselines) or does the sim stay (breaking LC7/continuity)?",
+  "q03-c05's cityMaxZ 10.336 uses the 4200-px detail chart; live cityMaxZ for the Epēshu overlay is NZ+log2(3072/52)=9.885. Which one do Filigree 2 sampling zooms adopt?"
+ ]
+}

@@ -38,3 +38,11 @@ those counts.
   still-chart control (WCAG 2.2.2), canon backed vs invented, and the 3D detail layer as a zoom-through into the
   sim's street view (H3 + H2z; WebGL in the atlas an owner-gated spike); verified 2026-10-05 by two lenses per claim,
   outside the counts above; full dossier in `../living/research-dossier.md`, feeds `docs/living/`
+- `zoom-anchoring.md` — the owner's "things shift when we zoom; anchor everything and maybe draw the city as vectors"
+  ask: the shift is registration, not Leaflet or the raster (anchors on labels, the Summarch literal, Hordon on
+  Maeges, the DM charts placed by a class-sized box, a two-sided seam, the setMaxZoom ease-down); the fix is data
+  (anchor re-derivation, a per-city translate+scale record, a print-land clip and sea fill); a vector city placed
+  through the same box misaligns identically, so it comes after registration (crispness past the chart's zoom, hit
+  geometry, shared road vertices); verified 2026-10-07 by two lenses per item (354 items: 112 survived, 184
+  disputed, 58 refuted), outside the counts above; full dossier in `../anchor/research-dossier.md`, owner answers in
+  `../anchor/owner-answers.json`

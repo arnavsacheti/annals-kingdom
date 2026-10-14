@@ -1,0 +1,2670 @@
+{
+ "id": "generated-plan-vector-budget",
+ "date": "2026-10-07",
+ "question": "What would a vector (GeoJSON / Leaflet path) form of the seeded generated city plans cost per city and map-wide, and does that pick SVG or a per-pane L.canvas? RENDERING MEDIUM only.",
+ "registrationNote": "This measures the rendering medium, not registration. The GeoJSON here is placed by the same mapping genCityCanvas itself uses for its stubs (\"var scl=S/(2*footR(a.kind))\", atlas = anchor + (canvasPx - S/2)/scl), i.e. the cityBox square centred on the anchor dot. A vector city emitted this way misaligns with atlas coast/rivers/roads exactly as the raster overlay does; only a registration step (bending the plan to atlas features) fixes alignment.",
+ "notCityCanvasShaComparable": "The stub records draw calls only: no pixels, no text rasterization, nearest-neighbour resampling in place of smoothed drawImage, a synthetic mask instead of sampleCityMask tile readback. Its opLogSha256 values are NOT comparable to the mobile track cityCanvasSha (sha256 of real canvas bytes) and must not be used as or against a UG3 baseline.",
+ "method": {
+  "source": "HEAD export maps-site/index.html (read only; never edited)",
+  "sourceSha256": "4f9757bfac2319b74735e21abfc324447fff9717eed77464142a1a6590ba19e8",
+  "extractedBlock": {
+   "startLine": 2165,
+   "endLine": 2967,
+   "sha256": "c19d9640bdbb0a51bfcaba295c6f84ba82cf12466b2bd24cb41468d6780f4126",
+   "startLiteral": "  var GEN_SIZE=2048;",
+   "endBefore": "  // ---- atlas-derived land/water mask"
+  },
+  "extractedFunctionSha256": {
+   "xmur3": {
+    "sha256": "aa5dba1f3bc99cb962693dc3a9aebbd6adfa0ccaa254a7f189744953964d9a25",
+    "bytes": 257
+   },
+   "mulberry32": {
+    "sha256": "5c6206458f3930b36d23c1049a42114353dad286be69be8b54ae43ababd028b1",
+    "bytes": 171
+   },
+   "genCityCanvas": {
+    "sha256": "e02f117c31ef6dd03d6a7d927c345115176a48123824bfaac0ad33479bc56366",
+    "bytes": 48739
+   }
+  },
+  "extractionNote": "Block = verbatim text from \"var GEN_SIZE=2048;\" up to (not incl.) \"// ---- atlas-derived land/water mask\"; covers xmur3, mulberry32, COMPASS, INN_ADJ/INN_NOUN, compassVec, dirName, buildApprPolys, segCircleHits, angDelta, mergeAngles, cityApproaches, genCityCanvas. FOOT_R, footR and LAND_TAN lines copied verbatim from the same file; CITY_ANCHORS filled from data/city-anchors.json plus the Summarch/Penthelon injections of meshedWorldInit; buildApprPolys fed party-route.json, named-ways.json, sea-lanes.json exactly as the load chain does; traits from city-traits.json with the traitsFor fallback {kind,harbor,sea}. These function hashes use brace-matched text from \"function NAME(\" and are not the UG3 atlas_fn_sha extraction (its boundaries were not checked).",
+  "stub": "document.createElement returns a recording canvas. Main-canvas ops are logged with the transform tracked (save/restore/translate/rotate) so every vertex is in absolute 2048-canvas px. Canvases whose context is requested with willReadFrequently (s4, wla, river bands) plus putImageData sources get a real RGBA buffer with nearest-neighbour drawImage, get/putImageData and an even-odd scanline fill, so WD/RD predicates (shoreHit, quays, river setbacks) behave. Each op is classified by the generator source line it came from (V8 stack frame of the vm-loaded block, lineOffset = file line) against the section-header comments listed in sectionHeaders. Math.random and Date.now were replaced by throwing functions during every generation: none fired.",
+  "masks": {
+   "all-land": "buildCityMask-shaped object with water:false (same branch as mask=null except mask.land=LAND_TAN): harbour cities fall back to the synthetic compass shoreline polygon.",
+   "half-sea": "water where dot(atlasPx - anchor, compassVec(sea.side)) > min(distPx,25) atlas px over the 5.4·rW z5 patch; bear = that compass vector; side \"S\" if a harbour has sea:null. Exercises the WD (mask-driven coast) branch."
+  },
+  "sectionHeaders": [
+   {
+    "section": "ground",
+    "literal": "// ===== paint order ====="
+   },
+   {
+    "section": "fields",
+    "literal": "// outlying gridded fields"
+   },
+   {
+    "section": "biomeTexture",
+    "literal": "// --- biome ground texture"
+   },
+   {
+    "section": "nodes",
+    "literal": "// --- nodes: market square"
+   },
+   {
+    "section": "ruinInfill",
+    "literal": "// --- building infill"
+   },
+   {
+    "section": "frontageBuildings",
+    "literal": "// buildings snap to lane frontages"
+   },
+   {
+    "section": "trees",
+    "literal": "// --- tree clusters ---"
+   },
+   {
+    "section": "lanes",
+    "literal": "// --- minor lanes"
+   },
+   {
+    "section": "roads",
+    "literal": "// --- main roads"
+   },
+   {
+    "section": "hinterland",
+    "literal": "// --- hinterland market-road"
+   },
+   {
+    "section": "walls",
+    "literal": "// --- wall + towers + gates"
+   },
+   {
+    "section": "riverRaster",
+    "literal": "// --- river band + ink rim"
+   },
+   {
+    "section": "water",
+    "literal": "// --- water on top"
+   },
+   {
+    "section": "bridges",
+    "literal": "// --- bridges:"
+   },
+   {
+    "section": "temple",
+    "literal": "// --- temple precinct"
+   },
+   {
+    "section": "square",
+    "literal": "// --- market square paving"
+   },
+   {
+    "section": "pois",
+    "literal": "// ===== POIs"
+   },
+   {
+    "section": "vignette",
+    "literal": "// --- seeded irregular edge vignette"
+   },
+   {
+    "section": "cartouche",
+    "literal": "// --- title cartouche"
+   },
+   {
+    "section": "stubs",
+    "literal": "// street-tier stubs"
+   }
+  ],
+  "dedupe": "fill+stroke (or fillRect+strokeRect) of one geometry = one feature; a street lane stroked twice (ROAD corridor + INK centre) = one polyline; building = first geometry inside each save/restore group of the placeBld / ruin-infill sections, later ones in that group (the 30% second roof rect, burrow door) = buildingDecoration; wall = raw 2-vertex 0.02-rad strokes, merged into runs where consecutive endpoints lie within 3 canvas px (gates/breaches break runs).",
+  "vertexConvention": "vertices = distinct path vertices (rect = 4); GeoJSON byte counts include the closing ring vertex. Circles/ellipses (towers, tree blobs, boats, colonnade dots, island) count 1 vertex each and are emitted as GeoJSON Point + r.",
+  "encodings": {
+   "geojson": "FeatureCollection in atlas px, coordinates toFixed(3) (1 atlas px = 2^(11.5-4) ~ 181 screen px at Z_STREET), properties {c:class, r for points}; bytes = JSON.stringify length; gzip level 9.",
+   "deltaInt": "per feature: 1 class byte + varint vertex count + zigzag-varint deltas of canvas coords quantised at q (q1 = 1 canvas px ~ 2.5 screen px for a town / ~4.5 for a capital at Z_STREET; q0.25 = quarter px); points = class + x,y + radius. Raw and gzip bytes."
+  },
+  "tiers": {
+   "core": "building + laneStreet + laneAlley + road + wallRun",
+   "vectorWorthy": "core + tower, field, treeBlob, seaPolygon, quayOrPier, boat, islandFortress, bridge, templePrecinct, templeColonnadeDot, marketSquare, steadBuilding, ruinWallArc, fallenStone, settledLand. Excluded: rubble/scrub/snow stipple, field furrows, ground rect, cartouche chrome, the destination-out vignette, the WD coast and river band (drawImage of raster masks)."
+  }
+ },
+ "headlineSingleCity": {
+  "capital": {
+   "city": "Epēshu",
+   "mask": "half-sea",
+   "buildingPolygons": 1864,
+   "lanePolylines": 28,
+   "primaryRoads": 9,
+   "wallSegmentsRaw": 558,
+   "wallRunsMerged": 10,
+   "coreVertices": 8232,
+   "vectorWorthyFeatures": 2065,
+   "vectorWorthyVertices": 8462,
+   "geojsonBytes": 405527,
+   "geojsonGzip": 59862,
+   "deltaInt_q0_25": {
+    "bytes": 25514,
+    "gzip": 21535
+   },
+   "deltaInt_q1": {
+    "bytes": 25290,
+    "gzip": 15769
+   },
+   "svgPathsOnePerFeature": 2065,
+   "svgPathsMergedByClassAndStyle": 24
+  },
+  "town": {
+   "city": "Tamaron",
+   "mask": "half-sea",
+   "buildingPolygons": 1223,
+   "lanePolylines": 25,
+   "primaryRoads": 7,
+   "wallSegmentsRaw": 288,
+   "wallRunsMerged": 4,
+   "coreVertices": 5374,
+   "vectorWorthyFeatures": 1360,
+   "vectorWorthyVertices": 5560,
+   "geojsonBytes": 266903,
+   "geojsonGzip": 37001,
+   "deltaInt_q0_25": {
+    "bytes": 16783,
+    "gzip": 14062
+   },
+   "deltaInt_q1": {
+    "bytes": 16650,
+    "gzip": 10462
+   },
+   "svgPathsOnePerFeature": 1360,
+   "svgPathsMergedByClassAndStyle": 24
+  },
+  "village": {
+   "city": "Kanae",
+   "mask": "half-sea",
+   "buildingPolygons": 549,
+   "lanePolylines": 19,
+   "primaryRoads": 7,
+   "wallSegmentsRaw": 0,
+   "wallRunsMerged": 0,
+   "coreVertices": 2311,
+   "vectorWorthyFeatures": 715,
+   "vectorWorthyVertices": 2581,
+   "geojsonBytes": 132419,
+   "geojsonGzip": 16701,
+   "deltaInt_q0_25": {
+    "bytes": 8178,
+    "gzip": 6898
+   },
+   "deltaInt_q1": {
+    "bytes": 8058,
+    "gzip": 5203
+   },
+   "svgPathsOnePerFeature": 715,
+   "svgPathsMergedByClassAndStyle": 29
+  },
+  "villageModalTraitless": {
+   "city": "Feldspar",
+   "mask": "all-land",
+   "buildingPolygons": 602,
+   "lanePolylines": 20,
+   "primaryRoads": 4,
+   "wallSegmentsRaw": 0,
+   "wallRunsMerged": 0,
+   "coreVertices": 2522,
+   "vectorWorthyFeatures": 668,
+   "vectorWorthyVertices": 2640,
+   "geojsonBytes": 125996,
+   "geojsonGzip": 16909,
+   "deltaInt_q0_25": {
+    "bytes": 8093,
+    "gzip": 6843
+   },
+   "deltaInt_q1": {
+    "bytes": 7983,
+    "gzip": 5105
+   },
+   "svgPathsOnePerFeature": 668,
+   "svgPathsMergedByClassAndStyle": 16
+  },
+  "ruin": {
+   "city": "Lepon the Old",
+   "mask": "half-sea",
+   "buildingPolygons": 1324,
+   "lanePolylines": 0,
+   "primaryRoads": 1,
+   "wallSegmentsRaw": 0,
+   "wallRunsMerged": 0,
+   "coreVertices": 5299,
+   "vectorWorthyFeatures": 1437,
+   "vectorWorthyVertices": 5555,
+   "geojsonBytes": 276278,
+   "geojsonGzip": 35448,
+   "deltaInt_q0_25": {
+    "bytes": 17046,
+    "gzip": 13644
+   },
+   "deltaInt_q1": {
+    "bytes": 16928,
+    "gzip": 9635
+   },
+   "svgPathsOnePerFeature": 1437,
+   "svgPathsMergedByClassAndStyle": 15
+  }
+ },
+ "perKind": {
+  "capital": [
+   {
+    "city": "Epēshu",
+    "maskVariant": "all-land",
+    "role": "capital (COUNTERFACTUAL: ships canon art art/overlay-Epeshu.jpg; ensureCityGen never generates it)",
+    "traitsSource": "city-traits.json",
+    "rDraws": 24409,
+    "determinism": {
+     "runTwiceSameOpLog": true,
+     "runTwiceSameRDraws": true
+    },
+    "canvasPxPerAtlasPx": 39.385,
+    "buildingPolygons": 1805,
+    "buildingDecorations_secondRoofRect_or_door": 530,
+    "steadBuildings": 0,
+    "streetPolylines": 7,
+    "alleyPolylines": 15,
+    "primaryRoadPolylines": 9,
+    "laneVertices": 111,
+    "primaryRoadVertices": 70,
+    "wallSegmentsRaw": 558,
+    "wallSegmentRawVertices": 1116,
+    "wallRunsMerged": 10,
+    "wallRunVertices": 568,
+    "towers": 13,
+    "ruinWallArcs": 0,
+    "treeBlobCircles": 144,
+    "textureStippleNotVector": {
+     "rubble": 0,
+     "biomeScrubOrSnow": 0,
+     "fieldFurrows": 13
+    },
+    "rasterOnlyOps": {
+     "riverRasterDrawImage": 0,
+     "coastRasterDrawImage": 0,
+     "vignetteDrawImage": 1,
+     "fillText": 3
+    },
+    "stubDrawCalls": {
+     "fillRect": 2027,
+     "strokeRect": 1495,
+     "fill": 513,
+     "stroke": 949,
+     "arcs": 200,
+     "ellipses": 6,
+     "roundRects": 636,
+     "pathVertices": 1583,
+     "drawImage": 1,
+     "fillText": 3,
+     "save": 1819,
+     "translate": 1817
+    },
+    "core_buildings_lanes_roads_walls": {
+     "features": 1846,
+     "vertices": 7969,
+     "svgPathsOnePerFeature": 1846,
+     "svgPathsMergedByClassAndStyle": 12,
+     "circlePrimitives": 0,
+     "geojsonBytes": 372483,
+     "geojsonGzip": 55591,
+     "deltaInt": {
+      "q1": {
+       "bytes": 23344,
+       "gzip": 14351
+      },
+      "q0.25": {
+       "bytes": 23494,
+       "gzip": 19734
+      }
+     }
+    },
+    "vectorWorthy_all_geometry_minus_textures_and_chrome": {
+     "features": 2048,
+     "vertices": 8345,
+     "svgPathsOnePerFeature": 2048,
+     "svgPathsMergedByClassAndStyle": 27,
+     "circlePrimitives": 193,
+     "geojsonBytes": 400691,
+     "geojsonGzip": 59383,
+     "deltaInt": {
+      "q1": {
+       "bytes": 25078,
+       "gzip": 15834
+      },
+      "q0.25": {
+       "bytes": 25380,
+       "gzip": 21512
+      }
+     }
+    },
+    "byClass": {
+     "groundRect": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "settledLand": {
+      "features": 1,
+      "vertices": 65,
+      "circles": 0
+     },
+     "field": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "fieldFurrow": {
+      "features": 13,
+      "vertices": 26,
+      "circles": 0
+     },
+     "building": {
+      "features": 1805,
+      "vertices": 7220,
+      "circles": 0
+     },
+     "buildingDecoration": {
+      "features": 530,
+      "vertices": 2120,
+      "circles": 0
+     },
+     "treeBlob": {
+      "features": 144,
+      "vertices": 144,
+      "circles": 144
+     },
+     "laneAlley": {
+      "features": 15,
+      "vertices": 76,
+      "circles": 0
+     },
+     "laneStreet": {
+      "features": 7,
+      "vertices": 35,
+      "circles": 0
+     },
+     "road": {
+      "features": 9,
+      "vertices": 70,
+      "circles": 0
+     },
+     "tower": {
+      "features": 13,
+      "vertices": 13,
+      "circles": 13
+     },
+     "seaPolygon": {
+      "features": 1,
+      "vertices": 90,
+      "circles": 0
+     },
+     "quayOrPier": {
+      "features": 3,
+      "vertices": 12,
+      "circles": 0
+     },
+     "boat": {
+      "features": 6,
+      "vertices": 6,
+      "circles": 6
+     },
+     "templePrecinct": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "templeColonnadeDot": {
+      "features": 30,
+      "vertices": 30,
+      "circles": 30
+     },
+     "marketSquare": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "cartoucheChrome": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "wallRun": {
+      "features": 10,
+      "vertices": 568,
+      "circles": 0
+     },
+     "wallSegment": {
+      "rawSegments": 558,
+      "rawVertices": 1116
+     }
+    }
+   },
+   {
+    "city": "Epēshu",
+    "maskVariant": "half-sea",
+    "role": "capital (COUNTERFACTUAL: ships canon art art/overlay-Epeshu.jpg; ensureCityGen never generates it)",
+    "traitsSource": "city-traits.json",
+    "rDraws": 25565,
+    "determinism": {
+     "runTwiceSameOpLog": true,
+     "runTwiceSameRDraws": true
+    },
+    "canvasPxPerAtlasPx": 39.385,
+    "buildingPolygons": 1864,
+    "buildingDecorations_secondRoofRect_or_door": 587,
+    "steadBuildings": 0,
+    "streetPolylines": 9,
+    "alleyPolylines": 19,
+    "primaryRoadPolylines": 9,
+    "laneVertices": 138,
+    "primaryRoadVertices": 70,
+    "wallSegmentsRaw": 558,
+    "wallSegmentRawVertices": 1116,
+    "wallRunsMerged": 10,
+    "wallRunVertices": 568,
+    "towers": 18,
+    "ruinWallArcs": 0,
+    "treeBlobCircles": 101,
+    "textureStippleNotVector": {
+     "rubble": 0,
+     "biomeScrubOrSnow": 0,
+     "fieldFurrows": 13
+    },
+    "rasterOnlyOps": {
+     "riverRasterDrawImage": 0,
+     "coastRasterDrawImage": 9,
+     "vignetteDrawImage": 1,
+     "fillText": 3
+    },
+    "stubDrawCalls": {
+     "fillRect": 2231,
+     "strokeRect": 1642,
+     "fill": 377,
+     "stroke": 871,
+     "arcs": 167,
+     "ellipses": 0,
+     "roundRects": 454,
+     "pathVertices": 1530,
+     "drawImage": 10,
+     "fillText": 3,
+     "save": 1869,
+     "translate": 1867
+    },
+    "core_buildings_lanes_roads_walls": {
+     "features": 1911,
+     "vertices": 8232,
+     "svgPathsOnePerFeature": 1911,
+     "svgPathsMergedByClassAndStyle": 12,
+     "circlePrimitives": 0,
+     "geojsonBytes": 385121,
+     "geojsonGzip": 57491,
+     "deltaInt": {
+      "q1": {
+       "bytes": 24131,
+       "gzip": 14832
+      },
+      "q0.25": {
+       "bytes": 24302,
+       "gzip": 20410
+      }
+     }
+    },
+    "vectorWorthy_all_geometry_minus_textures_and_chrome": {
+     "features": 2065,
+     "vertices": 8462,
+     "svgPathsOnePerFeature": 2065,
+     "svgPathsMergedByClassAndStyle": 24,
+     "circlePrimitives": 149,
+     "geojsonBytes": 405527,
+     "geojsonGzip": 59862,
+     "deltaInt": {
+      "q1": {
+       "bytes": 25290,
+       "gzip": 15769
+      },
+      "q0.25": {
+       "bytes": 25514,
+       "gzip": 21535
+      }
+     }
+    },
+    "byClass": {
+     "groundRect": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "settledLand": {
+      "features": 1,
+      "vertices": 65,
+      "circles": 0
+     },
+     "field": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "fieldFurrow": {
+      "features": 13,
+      "vertices": 26,
+      "circles": 0
+     },
+     "building": {
+      "features": 1864,
+      "vertices": 7456,
+      "circles": 0
+     },
+     "buildingDecoration": {
+      "features": 587,
+      "vertices": 2348,
+      "circles": 0
+     },
+     "treeBlob": {
+      "features": 101,
+      "vertices": 101,
+      "circles": 101
+     },
+     "laneAlley": {
+      "features": 19,
+      "vertices": 93,
+      "circles": 0
+     },
+     "laneStreet": {
+      "features": 9,
+      "vertices": 45,
+      "circles": 0
+     },
+     "road": {
+      "features": 9,
+      "vertices": 70,
+      "circles": 0
+     },
+     "tower": {
+      "features": 18,
+      "vertices": 18,
+      "circles": 18
+     },
+     "templePrecinct": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "templeColonnadeDot": {
+      "features": 30,
+      "vertices": 30,
+      "circles": 30
+     },
+     "marketSquare": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "cartoucheChrome": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "wallRun": {
+      "features": 10,
+      "vertices": 568,
+      "circles": 0
+     },
+     "wallSegment": {
+      "rawSegments": 558,
+      "rawVertices": 1116
+     }
+    }
+   }
+  ],
+  "town": [
+   {
+    "city": "Tamaron",
+    "maskVariant": "all-land",
+    "role": "town",
+    "traitsSource": "city-traits.json",
+    "rDraws": 16195,
+    "determinism": {
+     "runTwiceSameOpLog": true,
+     "runTwiceSameRDraws": true
+    },
+    "canvasPxPerAtlasPx": 73.143,
+    "buildingPolygons": 1133,
+    "buildingDecorations_secondRoofRect_or_door": 348,
+    "steadBuildings": 0,
+    "streetPolylines": 8,
+    "alleyPolylines": 11,
+    "primaryRoadPolylines": 7,
+    "laneVertices": 95,
+    "primaryRoadVertices": 65,
+    "wallSegmentsRaw": 288,
+    "wallSegmentRawVertices": 576,
+    "wallRunsMerged": 4,
+    "wallRunVertices": 292,
+    "towers": 9,
+    "ruinWallArcs": 0,
+    "treeBlobCircles": 54,
+    "textureStippleNotVector": {
+     "rubble": 0,
+     "biomeScrubOrSnow": 0,
+     "fieldFurrows": 12
+    },
+    "rasterOnlyOps": {
+     "riverRasterDrawImage": 0,
+     "coastRasterDrawImage": 0,
+     "vignetteDrawImage": 1,
+     "fillText": 3
+    },
+    "stubDrawCalls": {
+     "fillRect": 1493,
+     "strokeRect": 1143,
+     "fill": 101,
+     "stroke": 350,
+     "arcs": 96,
+     "ellipses": 12,
+     "roundRects": 0,
+     "pathVertices": 1019,
+     "drawImage": 1,
+     "fillText": 3,
+     "save": 1155,
+     "translate": 1153
+    },
+    "core_buildings_lanes_roads_walls": {
+     "features": 1163,
+     "vertices": 4984,
+     "svgPathsOnePerFeature": 1163,
+     "svgPathsMergedByClassAndStyle": 11,
+     "circlePrimitives": 0,
+     "geojsonBytes": 233786,
+     "geojsonGzip": 32630,
+     "deltaInt": {
+      "q1": {
+       "bytes": 14637,
+       "gzip": 9031
+      },
+      "q0.25": {
+       "bytes": 14715,
+       "gzip": 12263
+      }
+     }
+    },
+    "vectorWorthy_all_geometry_minus_textures_and_chrome": {
+     "features": 1273,
+     "vertices": 5274,
+     "svgPathsOnePerFeature": 1273,
+     "svgPathsMergedByClassAndStyle": 25,
+     "circlePrimitives": 99,
+     "geojsonBytes": 250825,
+     "geojsonGzip": 35024,
+     "deltaInt": {
+      "q1": {
+       "bytes": 15821,
+       "gzip": 9961
+      },
+      "q0.25": {
+       "bytes": 15970,
+       "gzip": 13423
+      }
+     }
+    },
+    "byClass": {
+     "groundRect": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "settledLand": {
+      "features": 1,
+      "vertices": 65,
+      "circles": 0
+     },
+     "field": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "fieldFurrow": {
+      "features": 12,
+      "vertices": 24,
+      "circles": 0
+     },
+     "building": {
+      "features": 1133,
+      "vertices": 4532,
+      "circles": 0
+     },
+     "buildingDecoration": {
+      "features": 348,
+      "vertices": 1392,
+      "circles": 0
+     },
+     "treeBlob": {
+      "features": 54,
+      "vertices": 54,
+      "circles": 54
+     },
+     "laneAlley": {
+      "features": 11,
+      "vertices": 56,
+      "circles": 0
+     },
+     "laneStreet": {
+      "features": 8,
+      "vertices": 39,
+      "circles": 0
+     },
+     "road": {
+      "features": 7,
+      "vertices": 65,
+      "circles": 0
+     },
+     "tower": {
+      "features": 9,
+      "vertices": 9,
+      "circles": 9
+     },
+     "seaPolygon": {
+      "features": 1,
+      "vertices": 90,
+      "circles": 0
+     },
+     "quayOrPier": {
+      "features": 5,
+      "vertices": 20,
+      "circles": 0
+     },
+     "boat": {
+      "features": 12,
+      "vertices": 12,
+      "circles": 12
+     },
+     "templePrecinct": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "templeColonnadeDot": {
+      "features": 24,
+      "vertices": 24,
+      "circles": 24
+     },
+     "marketSquare": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "cartoucheChrome": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "wallRun": {
+      "features": 4,
+      "vertices": 292,
+      "circles": 0
+     },
+     "wallSegment": {
+      "rawSegments": 288,
+      "rawVertices": 576
+     }
+    }
+   },
+   {
+    "city": "Tamaron",
+    "maskVariant": "half-sea",
+    "role": "town",
+    "traitsSource": "city-traits.json",
+    "rDraws": 17289,
+    "determinism": {
+     "runTwiceSameOpLog": true,
+     "runTwiceSameRDraws": true
+    },
+    "canvasPxPerAtlasPx": 73.143,
+    "buildingPolygons": 1223,
+    "buildingDecorations_secondRoofRect_or_door": 383,
+    "steadBuildings": 0,
+    "streetPolylines": 10,
+    "alleyPolylines": 15,
+    "primaryRoadPolylines": 7,
+    "laneVertices": 125,
+    "primaryRoadVertices": 65,
+    "wallSegmentsRaw": 288,
+    "wallSegmentRawVertices": 576,
+    "wallRunsMerged": 4,
+    "wallRunVertices": 292,
+    "towers": 8,
+    "ruinWallArcs": 0,
+    "treeBlobCircles": 56,
+    "textureStippleNotVector": {
+     "rubble": 0,
+     "biomeScrubOrSnow": 0,
+     "fieldFurrows": 12
+    },
+    "rasterOnlyOps": {
+     "riverRasterDrawImage": 0,
+     "coastRasterDrawImage": 9,
+     "vignetteDrawImage": 1,
+     "fillText": 3
+    },
+    "stubDrawCalls": {
+     "fillRect": 1616,
+     "strokeRect": 1231,
+     "fill": 94,
+     "stroke": 357,
+     "arcs": 96,
+     "ellipses": 5,
+     "roundRects": 0,
+     "pathVertices": 970,
+     "drawImage": 10,
+     "fillText": 3,
+     "save": 1236,
+     "translate": 1234
+    },
+    "core_buildings_lanes_roads_walls": {
+     "features": 1259,
+     "vertices": 5374,
+     "svgPathsOnePerFeature": 1259,
+     "svgPathsMergedByClassAndStyle": 11,
+     "circlePrimitives": 0,
+     "geojsonBytes": 252691,
+     "geojsonGzip": 35213,
+     "deltaInt": {
+      "q1": {
+       "bytes": 15801,
+       "gzip": 9742
+      },
+      "q0.25": {
+       "bytes": 15876,
+       "gzip": 13211
+      }
+     }
+    },
+    "vectorWorthy_all_geometry_minus_textures_and_chrome": {
+     "features": 1360,
+     "vertices": 5560,
+     "svgPathsOnePerFeature": 1360,
+     "svgPathsMergedByClassAndStyle": 24,
+     "circlePrimitives": 93,
+     "geojsonBytes": 266903,
+     "geojsonGzip": 37001,
+     "deltaInt": {
+      "q1": {
+       "bytes": 16650,
+       "gzip": 10462
+      },
+      "q0.25": {
+       "bytes": 16783,
+       "gzip": 14062
+      }
+     }
+    },
+    "byClass": {
+     "groundRect": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "settledLand": {
+      "features": 1,
+      "vertices": 65,
+      "circles": 0
+     },
+     "field": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "fieldFurrow": {
+      "features": 12,
+      "vertices": 24,
+      "circles": 0
+     },
+     "building": {
+      "features": 1223,
+      "vertices": 4892,
+      "circles": 0
+     },
+     "buildingDecoration": {
+      "features": 383,
+      "vertices": 1532,
+      "circles": 0
+     },
+     "treeBlob": {
+      "features": 56,
+      "vertices": 56,
+      "circles": 56
+     },
+     "laneAlley": {
+      "features": 15,
+      "vertices": 75,
+      "circles": 0
+     },
+     "laneStreet": {
+      "features": 10,
+      "vertices": 50,
+      "circles": 0
+     },
+     "road": {
+      "features": 7,
+      "vertices": 65,
+      "circles": 0
+     },
+     "tower": {
+      "features": 8,
+      "vertices": 8,
+      "circles": 8
+     },
+     "quayOrPier": {
+      "features": 3,
+      "vertices": 12,
+      "circles": 0
+     },
+     "boat": {
+      "features": 5,
+      "vertices": 5,
+      "circles": 5
+     },
+     "templePrecinct": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "templeColonnadeDot": {
+      "features": 24,
+      "vertices": 24,
+      "circles": 24
+     },
+     "marketSquare": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "cartoucheChrome": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "wallRun": {
+      "features": 4,
+      "vertices": 292,
+      "circles": 0
+     },
+     "wallSegment": {
+      "rawSegments": 288,
+      "rawVertices": 576
+     }
+    }
+   },
+   {
+    "city": "Sokundo",
+    "maskVariant": "all-land",
+    "role": "town",
+    "traitsSource": "city-traits.json",
+    "rDraws": 17902,
+    "determinism": {
+     "runTwiceSameOpLog": true,
+     "runTwiceSameRDraws": true
+    },
+    "canvasPxPerAtlasPx": 73.143,
+    "buildingPolygons": 984,
+    "buildingDecorations_secondRoofRect_or_door": 266,
+    "steadBuildings": 0,
+    "streetPolylines": 7,
+    "alleyPolylines": 14,
+    "primaryRoadPolylines": 8,
+    "laneVertices": 105,
+    "primaryRoadVertices": 68,
+    "wallSegmentsRaw": 258,
+    "wallSegmentRawVertices": 516,
+    "wallRunsMerged": 5,
+    "wallRunVertices": 263,
+    "towers": 10,
+    "ruinWallArcs": 0,
+    "treeBlobCircles": 107,
+    "textureStippleNotVector": {
+     "rubble": 0,
+     "biomeScrubOrSnow": 0,
+     "fieldFurrows": 21
+    },
+    "rasterOnlyOps": {
+     "riverRasterDrawImage": 0,
+     "coastRasterDrawImage": 0,
+     "vignetteDrawImage": 1,
+     "fillText": 3
+    },
+    "stubDrawCalls": {
+     "fillRect": 1139,
+     "strokeRect": 996,
+     "fill": 148,
+     "stroke": 333,
+     "arcs": 147,
+     "ellipses": 9,
+     "roundRects": 0,
+     "pathVertices": 988,
+     "drawImage": 1,
+     "fillText": 3,
+     "save": 1006,
+     "translate": 1004
+    },
+    "core_buildings_lanes_roads_walls": {
+     "features": 1018,
+     "vertices": 4372,
+     "svgPathsOnePerFeature": 1018,
+     "svgPathsMergedByClassAndStyle": 13,
+     "circlePrimitives": 0,
+     "geojsonBytes": 204777,
+     "geojsonGzip": 28878,
+     "deltaInt": {
+      "q1": {
+       "bytes": 12837,
+       "gzip": 8103
+      },
+      "q0.25": {
+       "bytes": 12916,
+       "gzip": 10975
+      }
+     }
+    },
+    "vectorWorthy_all_geometry_minus_textures_and_chrome": {
+     "features": 1180,
+     "vertices": 4729,
+     "svgPathsOnePerFeature": 1180,
+     "svgPathsMergedByClassAndStyle": 28,
+     "circlePrimitives": 146,
+     "geojsonBytes": 228616,
+     "geojsonGzip": 32171,
+     "deltaInt": {
+      "q1": {
+       "bytes": 14367,
+       "gzip": 9349
+      },
+      "q0.25": {
+       "bytes": 14611,
+       "gzip": 12588
+      }
+     }
+    },
+    "byClass": {
+     "groundRect": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "settledLand": {
+      "features": 1,
+      "vertices": 65,
+      "circles": 0
+     },
+     "field": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "fieldFurrow": {
+      "features": 21,
+      "vertices": 42,
+      "circles": 0
+     },
+     "building": {
+      "features": 984,
+      "vertices": 3936,
+      "circles": 0
+     },
+     "buildingDecoration": {
+      "features": 266,
+      "vertices": 1064,
+      "circles": 0
+     },
+     "treeBlob": {
+      "features": 107,
+      "vertices": 107,
+      "circles": 107
+     },
+     "laneStreet": {
+      "features": 7,
+      "vertices": 34,
+      "circles": 0
+     },
+     "laneAlley": {
+      "features": 14,
+      "vertices": 71,
+      "circles": 0
+     },
+     "road": {
+      "features": 8,
+      "vertices": 68,
+      "circles": 0
+     },
+     "tower": {
+      "features": 10,
+      "vertices": 10,
+      "circles": 10
+     },
+     "fallenStone": {
+      "features": 4,
+      "vertices": 16,
+      "circles": 0
+     },
+     "seaPolygon": {
+      "features": 1,
+      "vertices": 90,
+      "circles": 0
+     },
+     "quayOrPier": {
+      "features": 5,
+      "vertices": 20,
+      "circles": 0
+     },
+     "boat": {
+      "features": 9,
+      "vertices": 9,
+      "circles": 9
+     },
+     "templePrecinct": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "templeColonnadeDot": {
+      "features": 20,
+      "vertices": 20,
+      "circles": 20
+     },
+     "marketSquare": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "cartoucheChrome": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "wallRun": {
+      "features": 5,
+      "vertices": 263,
+      "circles": 0
+     },
+     "wallSegment": {
+      "rawSegments": 258,
+      "rawVertices": 516
+     }
+    }
+   },
+   {
+    "city": "Sokundo",
+    "maskVariant": "half-sea",
+    "role": "town",
+    "traitsSource": "city-traits.json",
+    "rDraws": 17294,
+    "determinism": {
+     "runTwiceSameOpLog": true,
+     "runTwiceSameRDraws": true
+    },
+    "canvasPxPerAtlasPx": 73.143,
+    "buildingPolygons": 1025,
+    "buildingDecorations_secondRoofRect_or_door": 284,
+    "steadBuildings": 0,
+    "streetPolylines": 7,
+    "alleyPolylines": 8,
+    "primaryRoadPolylines": 8,
+    "laneVertices": 75,
+    "primaryRoadVertices": 68,
+    "wallSegmentsRaw": 259,
+    "wallSegmentRawVertices": 518,
+    "wallRunsMerged": 5,
+    "wallRunVertices": 264,
+    "towers": 8,
+    "ruinWallArcs": 0,
+    "treeBlobCircles": 51,
+    "textureStippleNotVector": {
+     "rubble": 0,
+     "biomeScrubOrSnow": 0,
+     "fieldFurrows": 12
+    },
+    "rasterOnlyOps": {
+     "riverRasterDrawImage": 0,
+     "coastRasterDrawImage": 9,
+     "vignetteDrawImage": 1,
+     "fillText": 3
+    },
+    "stubDrawCalls": {
+     "fillRect": 1177,
+     "strokeRect": 1034,
+     "fill": 87,
+     "stroke": 317,
+     "arcs": 89,
+     "ellipses": 5,
+     "roundRects": 0,
+     "pathVertices": 853,
+     "drawImage": 10,
+     "fillText": 3,
+     "save": 1039,
+     "translate": 1037
+    },
+    "core_buildings_lanes_roads_walls": {
+     "features": 1053,
+     "vertices": 4507,
+     "svgPathsOnePerFeature": 1053,
+     "svgPathsMergedByClassAndStyle": 13,
+     "circlePrimitives": 0,
+     "geojsonBytes": 211566,
+     "geojsonGzip": 29881,
+     "deltaInt": {
+      "q1": {
+       "bytes": 13248,
+       "gzip": 8328
+      },
+      "q0.25": {
+       "bytes": 13323,
+       "gzip": 11272
+      }
+     }
+    },
+    "vectorWorthy_all_geometry_minus_textures_and_chrome": {
+     "features": 1150,
+     "vertices": 4698,
+     "svgPathsOnePerFeature": 1150,
+     "svgPathsMergedByClassAndStyle": 27,
+     "circlePrimitives": 86,
+     "geojsonBytes": 225505,
+     "geojsonGzip": 31657,
+     "deltaInt": {
+      "q1": {
+       "bytes": 14091,
+       "gzip": 9034
+      },
+      "q0.25": {
+       "bytes": 14227,
+       "gzip": 12113
+      }
+     }
+    },
+    "byClass": {
+     "groundRect": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "settledLand": {
+      "features": 1,
+      "vertices": 65,
+      "circles": 0
+     },
+     "field": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "fieldFurrow": {
+      "features": 12,
+      "vertices": 24,
+      "circles": 0
+     },
+     "building": {
+      "features": 1025,
+      "vertices": 4100,
+      "circles": 0
+     },
+     "buildingDecoration": {
+      "features": 284,
+      "vertices": 1136,
+      "circles": 0
+     },
+     "treeBlob": {
+      "features": 51,
+      "vertices": 51,
+      "circles": 51
+     },
+     "laneAlley": {
+      "features": 8,
+      "vertices": 40,
+      "circles": 0
+     },
+     "laneStreet": {
+      "features": 7,
+      "vertices": 35,
+      "circles": 0
+     },
+     "road": {
+      "features": 8,
+      "vertices": 68,
+      "circles": 0
+     },
+     "tower": {
+      "features": 8,
+      "vertices": 8,
+      "circles": 8
+     },
+     "fallenStone": {
+      "features": 4,
+      "vertices": 16,
+      "circles": 0
+     },
+     "quayOrPier": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "boat": {
+      "features": 5,
+      "vertices": 5,
+      "circles": 5
+     },
+     "templePrecinct": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "templeColonnadeDot": {
+      "features": 22,
+      "vertices": 22,
+      "circles": 22
+     },
+     "marketSquare": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "cartoucheChrome": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "wallRun": {
+      "features": 5,
+      "vertices": 264,
+      "circles": 0
+     },
+     "wallSegment": {
+      "rawSegments": 259,
+      "rawVertices": 518
+     }
+    }
+   }
+  ],
+  "village": [
+   {
+    "city": "Kanae",
+    "maskVariant": "all-land",
+    "role": "village",
+    "traitsSource": "city-traits.json",
+    "rDraws": 10144,
+    "determinism": {
+     "runTwiceSameOpLog": true,
+     "runTwiceSameRDraws": true
+    },
+    "canvasPxPerAtlasPx": 113.778,
+    "buildingPolygons": 495,
+    "buildingDecorations_secondRoofRect_or_door": 137,
+    "steadBuildings": 13,
+    "streetPolylines": 5,
+    "alleyPolylines": 12,
+    "primaryRoadPolylines": 7,
+    "laneVertices": 88,
+    "primaryRoadVertices": 19,
+    "wallSegmentsRaw": 0,
+    "wallSegmentRawVertices": 0,
+    "wallRunsMerged": 0,
+    "wallRunVertices": 0,
+    "towers": 0,
+    "ruinWallArcs": 0,
+    "treeBlobCircles": 50,
+    "textureStippleNotVector": {
+     "rubble": 0,
+     "biomeScrubOrSnow": 0,
+     "fieldFurrows": 35
+    },
+    "rasterOnlyOps": {
+     "riverRasterDrawImage": 0,
+     "coastRasterDrawImage": 0,
+     "vignetteDrawImage": 1,
+     "fillText": 3
+    },
+    "stubDrawCalls": {
+     "fillRect": 594,
+     "strokeRect": 517,
+     "fill": 78,
+     "stroke": 71,
+     "arcs": 68,
+     "ellipses": 8,
+     "roundRects": 0,
+     "pathVertices": 377,
+     "drawImage": 1,
+     "fillText": 3,
+     "save": 527,
+     "translate": 525
+    },
+    "core_buildings_lanes_roads_walls": {
+     "features": 519,
+     "vertices": 2087,
+     "svgPathsOnePerFeature": 519,
+     "svgPathsMergedByClassAndStyle": 12,
+     "circlePrimitives": 0,
+     "geojsonBytes": 101493,
+     "geojsonGzip": 13330,
+     "deltaInt": {
+      "q1": {
+       "bytes": 6267,
+       "gzip": 3903
+      },
+      "q0.25": {
+       "bytes": 6271,
+       "gzip": 5271
+      }
+     }
+    },
+    "vectorWorthy_all_geometry_minus_textures_and_chrome": {
+     "features": 620,
+     "vertices": 2410,
+     "svgPathsOnePerFeature": 620,
+     "svgPathsMergedByClassAndStyle": 30,
+     "circlePrimitives": 76,
+     "geojsonBytes": 118510,
+     "geojsonGzip": 15793,
+     "deltaInt": {
+      "q1": {
+       "bytes": 7426,
+       "gzip": 4805
+      },
+      "q0.25": {
+       "bytes": 7543,
+       "gzip": 6409
+      }
+     }
+    },
+    "byClass": {
+     "groundRect": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "settledLand": {
+      "features": 1,
+      "vertices": 65,
+      "circles": 0
+     },
+     "field": {
+      "features": 3,
+      "vertices": 12,
+      "circles": 0
+     },
+     "fieldFurrow": {
+      "features": 35,
+      "vertices": 70,
+      "circles": 0
+     },
+     "building": {
+      "features": 495,
+      "vertices": 1980,
+      "circles": 0
+     },
+     "buildingDecoration": {
+      "features": 137,
+      "vertices": 548,
+      "circles": 0
+     },
+     "treeBlob": {
+      "features": 50,
+      "vertices": 50,
+      "circles": 50
+     },
+     "laneAlley": {
+      "features": 12,
+      "vertices": 62,
+      "circles": 0
+     },
+     "laneStreet": {
+      "features": 5,
+      "vertices": 26,
+      "circles": 0
+     },
+     "road": {
+      "features": 7,
+      "vertices": 19,
+      "circles": 0
+     },
+     "steadBuilding": {
+      "features": 13,
+      "vertices": 52,
+      "circles": 0
+     },
+     "seaPolygon": {
+      "features": 1,
+      "vertices": 90,
+      "circles": 0
+     },
+     "quayOrPier": {
+      "features": 4,
+      "vertices": 16,
+      "circles": 0
+     },
+     "boat": {
+      "features": 8,
+      "vertices": 8,
+      "circles": 8
+     },
+     "templePrecinct": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "templeColonnadeDot": {
+      "features": 18,
+      "vertices": 18,
+      "circles": 18
+     },
+     "marketSquare": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "cartoucheChrome": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "wallSegment": {
+      "rawSegments": 0,
+      "rawVertices": 0
+     }
+    }
+   },
+   {
+    "city": "Kanae",
+    "maskVariant": "half-sea",
+    "role": "village",
+    "traitsSource": "city-traits.json",
+    "rDraws": 11713,
+    "determinism": {
+     "runTwiceSameOpLog": true,
+     "runTwiceSameRDraws": true
+    },
+    "canvasPxPerAtlasPx": 113.778,
+    "buildingPolygons": 549,
+    "buildingDecorations_secondRoofRect_or_door": 143,
+    "steadBuildings": 10,
+    "streetPolylines": 7,
+    "alleyPolylines": 12,
+    "primaryRoadPolylines": 7,
+    "laneVertices": 96,
+    "primaryRoadVertices": 19,
+    "wallSegmentsRaw": 0,
+    "wallSegmentRawVertices": 0,
+    "wallRunsMerged": 0,
+    "wallRunVertices": 0,
+    "towers": 0,
+    "ruinWallArcs": 0,
+    "treeBlobCircles": 94,
+    "textureStippleNotVector": {
+     "rubble": 0,
+     "biomeScrubOrSnow": 0,
+     "fieldFurrows": 43
+    },
+    "rasterOnlyOps": {
+     "riverRasterDrawImage": 0,
+     "coastRasterDrawImage": 9,
+     "vignetteDrawImage": 1,
+     "fillText": 3
+    },
+    "stubDrawCalls": {
+     "fillRect": 631,
+     "strokeRect": 569,
+     "fill": 118,
+     "stroke": 83,
+     "arcs": 110,
+     "ellipses": 7,
+     "roundRects": 0,
+     "pathVertices": 321,
+     "drawImage": 10,
+     "fillText": 3,
+     "save": 579,
+     "translate": 577
+    },
+    "core_buildings_lanes_roads_walls": {
+     "features": 575,
+     "vertices": 2311,
+     "svgPathsOnePerFeature": 575,
+     "svgPathsMergedByClassAndStyle": 12,
+     "circlePrimitives": 0,
+     "geojsonBytes": 112427,
+     "geojsonGzip": 14388,
+     "deltaInt": {
+      "q1": {
+       "bytes": 6937,
+       "gzip": 4254
+      },
+      "q0.25": {
+       "bytes": 6942,
+       "gzip": 5749
+      }
+     }
+    },
+    "vectorWorthy_all_geometry_minus_textures_and_chrome": {
+     "features": 715,
+     "vertices": 2581,
+     "svgPathsOnePerFeature": 715,
+     "svgPathsMergedByClassAndStyle": 29,
+     "circlePrimitives": 117,
+     "geojsonBytes": 132419,
+     "geojsonGzip": 16701,
+     "deltaInt": {
+      "q1": {
+       "bytes": 8058,
+       "gzip": 5203
+      },
+      "q0.25": {
+       "bytes": 8178,
+       "gzip": 6898
+      }
+     }
+    },
+    "byClass": {
+     "groundRect": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "settledLand": {
+      "features": 1,
+      "vertices": 65,
+      "circles": 0
+     },
+     "field": {
+      "features": 4,
+      "vertices": 16,
+      "circles": 0
+     },
+     "fieldFurrow": {
+      "features": 43,
+      "vertices": 86,
+      "circles": 0
+     },
+     "building": {
+      "features": 549,
+      "vertices": 2196,
+      "circles": 0
+     },
+     "buildingDecoration": {
+      "features": 143,
+      "vertices": 572,
+      "circles": 0
+     },
+     "treeBlob": {
+      "features": 94,
+      "vertices": 94,
+      "circles": 94
+     },
+     "laneAlley": {
+      "features": 12,
+      "vertices": 60,
+      "circles": 0
+     },
+     "laneStreet": {
+      "features": 7,
+      "vertices": 36,
+      "circles": 0
+     },
+     "road": {
+      "features": 7,
+      "vertices": 19,
+      "circles": 0
+     },
+     "steadBuilding": {
+      "features": 10,
+      "vertices": 40,
+      "circles": 0
+     },
+     "quayOrPier": {
+      "features": 5,
+      "vertices": 20,
+      "circles": 0
+     },
+     "boat": {
+      "features": 7,
+      "vertices": 7,
+      "circles": 7
+     },
+     "templePrecinct": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "templeColonnadeDot": {
+      "features": 16,
+      "vertices": 16,
+      "circles": 16
+     },
+     "marketSquare": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "cartoucheChrome": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "wallSegment": {
+      "rawSegments": 0,
+      "rawVertices": 0
+     }
+    }
+   },
+   {
+    "city": "Feldspar",
+    "maskVariant": "all-land",
+    "role": "village",
+    "traitsSource": "traitsFor fallback {kind,harbor,sea}",
+    "rDraws": 7120,
+    "determinism": {
+     "runTwiceSameOpLog": true,
+     "runTwiceSameRDraws": true
+    },
+    "canvasPxPerAtlasPx": 113.778,
+    "buildingPolygons": 602,
+    "buildingDecorations_secondRoofRect_or_door": 185,
+    "steadBuildings": 0,
+    "streetPolylines": 6,
+    "alleyPolylines": 14,
+    "primaryRoadPolylines": 4,
+    "laneVertices": 102,
+    "primaryRoadVertices": 12,
+    "wallSegmentsRaw": 0,
+    "wallSegmentRawVertices": 0,
+    "wallRunsMerged": 0,
+    "wallRunVertices": 0,
+    "towers": 0,
+    "ruinWallArcs": 0,
+    "treeBlobCircles": 37,
+    "textureStippleNotVector": {
+     "rubble": 0,
+     "biomeScrubOrSnow": 0,
+     "fieldFurrows": 37
+    },
+    "rasterOnlyOps": {
+     "riverRasterDrawImage": 0,
+     "coastRasterDrawImage": 0,
+     "vignetteDrawImage": 1,
+     "fillText": 3
+    },
+    "stubDrawCalls": {
+     "fillRect": 794,
+     "strokeRect": 605,
+     "fill": 38,
+     "stroke": 71,
+     "arcs": 37,
+     "ellipses": 0,
+     "roundRects": 0,
+     "pathVertices": 295,
+     "drawImage": 1,
+     "fillText": 3,
+     "save": 608,
+     "translate": 606
+    },
+    "core_buildings_lanes_roads_walls": {
+     "features": 626,
+     "vertices": 2522,
+     "svgPathsOnePerFeature": 626,
+     "svgPathsMergedByClassAndStyle": 10,
+     "circlePrimitives": 0,
+     "geojsonBytes": 119492,
+     "geojsonGzip": 15849,
+     "deltaInt": {
+      "q1": {
+       "bytes": 7558,
+       "gzip": 4642
+      },
+      "q0.25": {
+       "bytes": 7562,
+       "gzip": 6293
+      }
+     }
+    },
+    "vectorWorthy_all_geometry_minus_textures_and_chrome": {
+     "features": 668,
+     "vertices": 2640,
+     "svgPathsOnePerFeature": 668,
+     "svgPathsMergedByClassAndStyle": 16,
+     "circlePrimitives": 37,
+     "geojsonBytes": 125996,
+     "geojsonGzip": 16909,
+     "deltaInt": {
+      "q1": {
+       "bytes": 7983,
+       "gzip": 5105
+      },
+      "q0.25": {
+       "bytes": 8093,
+       "gzip": 6843
+      }
+     }
+    },
+    "byClass": {
+     "groundRect": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "settledLand": {
+      "features": 1,
+      "vertices": 65,
+      "circles": 0
+     },
+     "field": {
+      "features": 3,
+      "vertices": 12,
+      "circles": 0
+     },
+     "fieldFurrow": {
+      "features": 37,
+      "vertices": 74,
+      "circles": 0
+     },
+     "building": {
+      "features": 602,
+      "vertices": 2408,
+      "circles": 0
+     },
+     "buildingDecoration": {
+      "features": 185,
+      "vertices": 740,
+      "circles": 0
+     },
+     "treeBlob": {
+      "features": 37,
+      "vertices": 37,
+      "circles": 37
+     },
+     "laneStreet": {
+      "features": 6,
+      "vertices": 30,
+      "circles": 0
+     },
+     "laneAlley": {
+      "features": 14,
+      "vertices": 72,
+      "circles": 0
+     },
+     "road": {
+      "features": 4,
+      "vertices": 12,
+      "circles": 0
+     },
+     "marketSquare": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "cartoucheChrome": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "wallSegment": {
+      "rawSegments": 0,
+      "rawVertices": 0
+     }
+    }
+   }
+  ],
+  "ruin": [
+   {
+    "city": "Lepon the Old",
+    "maskVariant": "all-land",
+    "role": "ruin",
+    "traitsSource": "city-traits.json",
+    "rDraws": 21664,
+    "determinism": {
+     "runTwiceSameOpLog": true,
+     "runTwiceSameRDraws": true
+    },
+    "canvasPxPerAtlasPx": 128,
+    "buildingPolygons": 1159,
+    "buildingDecorations_secondRoofRect_or_door": 0,
+    "steadBuildings": 0,
+    "streetPolylines": 0,
+    "alleyPolylines": 0,
+    "primaryRoadPolylines": 1,
+    "laneVertices": 0,
+    "primaryRoadVertices": 3,
+    "wallSegmentsRaw": 0,
+    "wallSegmentRawVertices": 0,
+    "wallRunsMerged": 0,
+    "wallRunVertices": 0,
+    "towers": 0,
+    "ruinWallArcs": 5,
+    "treeBlobCircles": 75,
+    "textureStippleNotVector": {
+     "rubble": 796,
+     "biomeScrubOrSnow": 0,
+     "fieldFurrows": 19
+    },
+    "rasterOnlyOps": {
+     "riverRasterDrawImage": 0,
+     "coastRasterDrawImage": 0,
+     "vignetteDrawImage": 1,
+     "fillText": 3
+    },
+    "stubDrawCalls": {
+     "fillRect": 1177,
+     "strokeRect": 1169,
+     "fill": 878,
+     "stroke": 27,
+     "arcs": 878,
+     "ellipses": 4,
+     "roundRects": 0,
+     "pathVertices": 199,
+     "drawImage": 1,
+     "fillText": 3,
+     "save": 1175,
+     "translate": 1173
+    },
+    "core_buildings_lanes_roads_walls": {
+     "features": 1160,
+     "vertices": 4639,
+     "svgPathsOnePerFeature": 1160,
+     "svgPathsMergedByClassAndStyle": 2,
+     "circlePrimitives": 0,
+     "geojsonBytes": 227289,
+     "geojsonGzip": 29243,
+     "deltaInt": {
+      "q1": {
+       "bytes": 13920,
+       "gzip": 7668
+      },
+      "q0.25": {
+       "bytes": 13922,
+       "gzip": 11000
+      }
+     }
+    },
+    "vectorWorthy_all_geometry_minus_textures_and_chrome": {
+     "features": 1267,
+     "vertices": 4989,
+     "svgPathsOnePerFeature": 1267,
+     "svgPathsMergedByClassAndStyle": 19,
+     "circlePrimitives": 80,
+     "geojsonBytes": 245195,
+     "geojsonGzip": 31994,
+     "deltaInt": {
+      "q1": {
+       "bytes": 15205,
+       "gzip": 8771
+      },
+      "q0.25": {
+       "bytes": 15336,
+       "gzip": 12336
+      }
+     }
+    },
+    "byClass": {
+     "groundRect": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "settledLand": {
+      "features": 1,
+      "vertices": 65,
+      "circles": 0
+     },
+     "field": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "fieldFurrow": {
+      "features": 19,
+      "vertices": 38,
+      "circles": 0
+     },
+     "building": {
+      "features": 1159,
+      "vertices": 4636,
+      "circles": 0
+     },
+     "treeBlob": {
+      "features": 75,
+      "vertices": 75,
+      "circles": 75
+     },
+     "road": {
+      "features": 1,
+      "vertices": 3,
+      "circles": 0
+     },
+     "ruinWallArc": {
+      "features": 5,
+      "vertices": 35,
+      "circles": 0
+     },
+     "fallenStone": {
+      "features": 10,
+      "vertices": 40,
+      "circles": 0
+     },
+     "rubbleStipple": {
+      "features": 796,
+      "vertices": 796,
+      "circles": 796
+     },
+     "seaPolygon": {
+      "features": 1,
+      "vertices": 90,
+      "circles": 0
+     },
+     "islandFortress": {
+      "features": 1,
+      "vertices": 1,
+      "circles": 1
+     },
+     "quayOrPier": {
+      "features": 7,
+      "vertices": 28,
+      "circles": 0
+     },
+     "boat": {
+      "features": 4,
+      "vertices": 4,
+      "circles": 4
+     },
+     "marketSquare": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "cartoucheChrome": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "wallSegment": {
+      "rawSegments": 0,
+      "rawVertices": 0
+     }
+    }
+   },
+   {
+    "city": "Lepon the Old",
+    "maskVariant": "half-sea",
+    "role": "ruin",
+    "traitsSource": "city-traits.json",
+    "rDraws": 22765,
+    "determinism": {
+     "runTwiceSameOpLog": true,
+     "runTwiceSameRDraws": true
+    },
+    "canvasPxPerAtlasPx": 128,
+    "buildingPolygons": 1324,
+    "buildingDecorations_secondRoofRect_or_door": 0,
+    "steadBuildings": 0,
+    "streetPolylines": 0,
+    "alleyPolylines": 0,
+    "primaryRoadPolylines": 1,
+    "laneVertices": 0,
+    "primaryRoadVertices": 3,
+    "wallSegmentsRaw": 0,
+    "wallSegmentRawVertices": 0,
+    "wallRunsMerged": 0,
+    "wallRunVertices": 0,
+    "towers": 0,
+    "ruinWallArcs": 4,
+    "treeBlobCircles": 90,
+    "textureStippleNotVector": {
+     "rubble": 890,
+     "biomeScrubOrSnow": 0,
+     "fieldFurrows": 19
+    },
+    "rasterOnlyOps": {
+     "riverRasterDrawImage": 0,
+     "coastRasterDrawImage": 9,
+     "vignetteDrawImage": 1,
+     "fillText": 3
+    },
+    "stubDrawCalls": {
+     "fillRect": 1339,
+     "strokeRect": 1331,
+     "fill": 982,
+     "stroke": 26,
+     "arcs": 986,
+     "ellipses": 0,
+     "roundRects": 0,
+     "pathVertices": 109,
+     "drawImage": 10,
+     "fillText": 3,
+     "save": 1333,
+     "translate": 1331
+    },
+    "core_buildings_lanes_roads_walls": {
+     "features": 1325,
+     "vertices": 5299,
+     "svgPathsOnePerFeature": 1325,
+     "svgPathsMergedByClassAndStyle": 2,
+     "circlePrimitives": 0,
+     "geojsonBytes": 259592,
+     "geojsonGzip": 33157,
+     "deltaInt": {
+      "q1": {
+       "bytes": 15902,
+       "gzip": 8665
+      },
+      "q0.25": {
+       "bytes": 15902,
+       "gzip": 12509
+      }
+     }
+    },
+    "vectorWorthy_all_geometry_minus_textures_and_chrome": {
+     "features": 1437,
+     "vertices": 5555,
+     "svgPathsOnePerFeature": 1437,
+     "svgPathsMergedByClassAndStyle": 15,
+     "circlePrimitives": 91,
+     "geojsonBytes": 276278,
+     "geojsonGzip": 35448,
+     "deltaInt": {
+      "q1": {
+       "bytes": 16928,
+       "gzip": 9635
+      },
+      "q0.25": {
+       "bytes": 17046,
+       "gzip": 13644
+      }
+     }
+    },
+    "byClass": {
+     "groundRect": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "settledLand": {
+      "features": 1,
+      "vertices": 65,
+      "circles": 0
+     },
+     "field": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "fieldFurrow": {
+      "features": 19,
+      "vertices": 38,
+      "circles": 0
+     },
+     "building": {
+      "features": 1324,
+      "vertices": 5296,
+      "circles": 0
+     },
+     "treeBlob": {
+      "features": 90,
+      "vertices": 90,
+      "circles": 90
+     },
+     "road": {
+      "features": 1,
+      "vertices": 3,
+      "circles": 0
+     },
+     "ruinWallArc": {
+      "features": 4,
+      "vertices": 36,
+      "circles": 0
+     },
+     "fallenStone": {
+      "features": 8,
+      "vertices": 32,
+      "circles": 0
+     },
+     "rubbleStipple": {
+      "features": 890,
+      "vertices": 890,
+      "circles": 890
+     },
+     "islandFortress": {
+      "features": 1,
+      "vertices": 1,
+      "circles": 1
+     },
+     "quayOrPier": {
+      "features": 5,
+      "vertices": 20,
+      "circles": 0
+     },
+     "marketSquare": {
+      "features": 1,
+      "vertices": 4,
+      "circles": 0
+     },
+     "cartoucheChrome": {
+      "features": 2,
+      "vertices": 8,
+      "circles": 0
+     },
+     "wallSegment": {
+      "rawSegments": 0,
+      "rawVertices": 0
+     }
+    }
+   }
+  ]
+ },
+ "population": {
+  "scope": "Every anchor the atlas would generate: data/city-anchors.json + Penthelon, minus the two canon-art cities (Epēshu, Summarch registered with prov canon; ensureCityGen only generates when !reg||reg.prov==='invented'). Mask: half-sea where traits give a sea side or harbor, else all-land.",
+  "counts": {
+   "town": 17,
+   "village": 116,
+   "ruin": 3,
+   "total": 136,
+   "capitalGenerated": 0
+  },
+  "stats": {
+   "town": {
+    "cities": 17,
+    "buildings": {
+     "n": 17,
+     "min": 553,
+     "median": 894,
+     "p90": 1257,
+     "max": 1418,
+     "sum": 15554
+    },
+    "coreFeatures": {
+     "n": 17,
+     "min": 566,
+     "median": 918,
+     "p90": 1293,
+     "max": 1457,
+     "sum": 15977
+    },
+    "coreVertices": {
+     "n": 17,
+     "min": 2231,
+     "median": 3678,
+     "p90": 5500,
+     "max": 6186,
+     "sum": 64606
+    },
+    "vwFeatures": {
+     "n": 17,
+     "min": 635,
+     "median": 997,
+     "p90": 1390,
+     "max": 1493,
+     "sum": 17127
+    },
+    "vwVertices": {
+     "n": 17,
+     "min": 2389,
+     "median": 3838,
+     "p90": 5691,
+     "max": 6301,
+     "sum": 67120
+    },
+    "mergedPaths": {
+     "n": 17,
+     "min": 16,
+     "median": 16,
+     "p90": 24,
+     "max": 27,
+     "sum": 312
+    },
+    "geojsonBytes": {
+     "n": 17,
+     "min": 114952,
+     "median": 186199,
+     "p90": 272760,
+     "max": 297806,
+     "sum": 3256308
+    },
+    "geojsonGzip": {
+     "n": 17,
+     "min": 16447,
+     "median": 25967,
+     "p90": 38013,
+     "max": 41604,
+     "sum": 453454
+    },
+    "deltaQ025Gzip": {
+     "n": 17,
+     "min": 6491,
+     "median": 10015,
+     "p90": 14522,
+     "max": 15782,
+     "sum": 174389
+    },
+    "deltaQ1Gzip": {
+     "n": 17,
+     "min": 4881,
+     "median": 7391,
+     "p90": 10722,
+     "max": 11622,
+     "sum": 129944
+    },
+    "textureStipple": {
+     "n": 17,
+     "min": 0,
+     "median": 0,
+     "p90": 403,
+     "max": 463,
+     "sum": 866
+    }
+   },
+   "village": {
+    "cities": 116,
+    "buildings": {
+     "n": 116,
+     "min": 391,
+     "median": 602,
+     "p90": 658,
+     "max": 698,
+     "sum": 65531
+    },
+    "coreFeatures": {
+     "n": 116,
+     "min": 409,
+     "median": 626,
+     "p90": 683,
+     "max": 728,
+     "sum": 68036
+    },
+    "coreVertices": {
+     "n": 116,
+     "min": 1644,
+     "median": 2522,
+     "p90": 2750,
+     "max": 2932,
+     "sum": 273992
+    },
+    "vwFeatures": {
+     "n": 116,
+     "min": 499,
+     "median": 690,
+     "p90": 754,
+     "max": 861,
+     "sum": 76504
+    },
+    "vwVertices": {
+     "n": 116,
+     "min": 1856,
+     "median": 2648,
+     "p90": 2895,
+     "max": 3189,
+     "sum": 291782
+    },
+    "mergedPaths": {
+     "n": 116,
+     "min": 16,
+     "median": 16,
+     "p90": 19,
+     "max": 29,
+     "sum": 1956
+    },
+    "geojsonBytes": {
+     "n": 116,
+     "min": 94181,
+     "median": 129756,
+     "p90": 141563,
+     "max": 161339,
+     "sum": 14288837
+    },
+    "geojsonGzip": {
+     "n": 116,
+     "min": 12372,
+     "median": 17176,
+     "p90": 18624,
+     "max": 20727,
+     "sum": 1895810
+    },
+    "deltaQ025Gzip": {
+     "n": 116,
+     "min": 5038,
+     "median": 6952,
+     "p90": 7514,
+     "max": 8422,
+     "sum": 769484
+    },
+    "deltaQ1Gzip": {
+     "n": 116,
+     "min": 3789,
+     "median": 5203,
+     "p90": 5625,
+     "max": 6340,
+     "sum": 576945
+    },
+    "textureStipple": {
+     "n": 116,
+     "min": 0,
+     "median": 0,
+     "p90": 0,
+     "max": 498,
+     "sum": 498
+    }
+   },
+   "ruin": {
+    "cities": 3,
+    "buildings": {
+     "n": 3,
+     "min": 1324,
+     "median": 1364,
+     "p90": 1524,
+     "max": 1524,
+     "sum": 4212
+    },
+    "coreFeatures": {
+     "n": 3,
+     "min": 1325,
+     "median": 1365,
+     "p90": 1524,
+     "max": 1524,
+     "sum": 4214
+    },
+    "coreVertices": {
+     "n": 3,
+     "min": 5299,
+     "median": 5459,
+     "p90": 6096,
+     "max": 6096,
+     "sum": 16854
+    },
+    "vwFeatures": {
+     "n": 3,
+     "min": 1437,
+     "median": 1446,
+     "p90": 1570,
+     "max": 1570,
+     "sum": 4453
+    },
+    "vwVertices": {
+     "n": 3,
+     "min": 5555,
+     "median": 5675,
+     "p90": 6249,
+     "max": 6249,
+     "sum": 17479
+    },
+    "mergedPaths": {
+     "n": 3,
+     "min": 11,
+     "median": 15,
+     "p90": 16,
+     "max": 16,
+     "sum": 42
+    },
+    "geojsonBytes": {
+     "n": 3,
+     "min": 276278,
+     "median": 280112,
+     "p90": 290794,
+     "max": 290794,
+     "sum": 847184
+    },
+    "geojsonGzip": {
+     "n": 3,
+     "min": 35448,
+     "median": 36145,
+     "p90": 39630,
+     "max": 39630,
+     "sum": 111223
+    },
+    "deltaQ025Gzip": {
+     "n": 3,
+     "min": 13644,
+     "median": 13823,
+     "p90": 17147,
+     "max": 17147,
+     "sum": 44614
+    },
+    "deltaQ1Gzip": {
+     "n": 3,
+     "min": 9635,
+     "median": 9659,
+     "p90": 12265,
+     "max": 12265,
+     "sum": 31559
+    },
+    "textureStipple": {
+     "n": 3,
+     "min": 888,
+     "median": 890,
+     "p90": 1298,
+     "max": 1298,
+     "sum": 3076
+    }
+   },
+   "all": {
+    "cities": 136,
+    "buildings": {
+     "n": 136,
+     "min": 391,
+     "median": 622,
+     "p90": 875,
+     "max": 1524,
+     "sum": 85297
+    },
+    "coreFeatures": {
+     "n": 136,
+     "min": 409,
+     "median": 645,
+     "p90": 898,
+     "max": 1524,
+     "sum": 88227
+    },
+    "coreVertices": {
+     "n": 136,
+     "min": 1644,
+     "median": 2596,
+     "p90": 2945,
+     "max": 6186,
+     "sum": 355452
+    },
+    "vwFeatures": {
+     "n": 136,
+     "min": 499,
+     "median": 707,
+     "p90": 970,
+     "max": 1570,
+     "sum": 98084
+    },
+    "vwVertices": {
+     "n": 136,
+     "min": 1856,
+     "median": 2730,
+     "p90": 3189,
+     "max": 6301,
+     "sum": 376381
+    },
+    "mergedPaths": {
+     "n": 136,
+     "min": 11,
+     "median": 16,
+     "p90": 20,
+     "max": 29,
+     "sum": 2310
+    },
+    "geojsonBytes": {
+     "n": 136,
+     "min": 94181,
+     "median": 132579,
+     "p90": 161339,
+     "max": 297806,
+     "sum": 18392329
+    },
+    "geojsonGzip": {
+     "n": 136,
+     "min": 12372,
+     "median": 17643,
+     "p90": 21158,
+     "max": 41604,
+     "sum": 2460487
+    },
+    "deltaQ025Gzip": {
+     "n": 136,
+     "min": 5038,
+     "median": 7091,
+     "p90": 8422,
+     "max": 17147,
+     "sum": 988487
+    },
+    "deltaQ1Gzip": {
+     "n": 136,
+     "min": 3789,
+     "median": 5316,
+     "p90": 6340,
+     "max": 12265,
+     "sum": 738448
+    },
+    "textureStipple": {
+     "n": 136,
+     "min": 0,
+     "median": 0,
+     "p90": 0,
+     "max": 1298,
+     "sum": 4440
+    }
+   }
+  },
+  "largestSingleCity": {
+   "key": "Sjefenhold",
+   "kind": "ruin",
+   "variant": "all-land",
+   "buildings": 1524,
+   "coreFeatures": 1524,
+   "coreVertices": 6096,
+   "vwFeatures": 1570,
+   "vwVertices": 6249,
+   "mergedPaths": 11,
+   "geojsonGzip": 39630,
+   "geojsonBytes": 290794,
+   "deltaQ025Gzip": 17147,
+   "deltaQ1Gzip": 12265,
+   "textureStipple": 1298
+  },
+  "note": "worldCityUpdate shows one city at a time, so the live render N is a single city (median ~700 features / ~2.7k vertices; worst generated ~1.57k features / ~6.3k vertices; the counterfactual capital ~2.07k / ~8.5k). The map-wide sums only matter for a precomputed/shipped payload; because the plans are a pure function of the seed they can be built client-side on demand and need not ship at all."
+ },
+ "rendererImplications": {
+  "svg": "Leaflet 1.9.4 SVG renderer makes one <path> per L.Path layer (_initPath: qi(\"path\")), rebuilds the d string per layer on moveend (_update -> _updatePoly -> _setPath) and re-projects every layer on zoomend (_onZoomEnd: this._layers[t]._project()); during zoom animation it only CSS-transforms the container (_onAnimZoom -> _updateTransform). One path per feature = 500-2,100 DOM paths per city. Merged per class+style (L.polygon accepts multi-ring latlngs) = 11-30 paths per city regardless of N, which R4 (never label blocks) and R7 (nothing at rest; halos on hover only) permit because blocks need no per-feature hit target.",
+  "canvas": "L.canvas redraws all layers in its pane on each _redraw; same per-vertex projection cost, no DOM growth. Per-feature canvas is the safe default if per-building hover is ever wanted.",
+  "p11Inputs": "P11 sweep values N = 300 / 1,000 / 3,000 bracket the measured single-city range: village median 690, town median 997, worst generated 1,570, counterfactual capital 2,065 features; vertices per city 1.9k-8.5k. Add a vertex-weighted case (~8.5k vertices, rects of 4) and the merged-paths case (~30 paths, same vertices).",
+  "inference": "No frame-time was measured here (no browser by rule); SVG-vs-canvas viability at these N is for P11 to measure.",
+  "scale": "Inference (no frame times): buildings are rr(5,11) canvas px and a town plan is 73.1 canvas px per atlas px (capital 39.4, village 113.8). In the fade-in band (overlayOpacity z6.8-7.8) one atlas px is ~2^(7.8-4)=14 screen px, so a town building is ~1-2 screen px; at Z_STREET 11.5 one canvas px is ~2.5 screen px and a building 12-27 px. Leaflet Polyline defaults smoothFactor:1,noClip:!1 and _update runs this._clipPoints() then this._simplifyPoints on every moveend, so at the fade band 1-2 px rings get simplified/collapsed and hairline strokes alias where the raster just downsamples. P11 should sweep zoom (z7.8 and z11.5) as well as N, and smoothFactor 0 vs default.",
+  "multiPolygonNote": "Merged paths must use L.polygon 3-level MultiPolygon nesting ([[[ring]],[[ring2]]]); a 2-level array is outer+holes semantics."
+ },
+ "caveats": [
+  "Stub output is not cityCanvasSha-comparable (see notCityCanvasShaComparable).",
+  "Synthetic masks: a real tile-sampled coast is irregular; the half-sea straight shore shifts building counts by roughly 5-15% (Tamaron 1133 all-land vs 1223 half-sea; Lepon 1159 vs 1324).",
+  "Nearest-neighbour resampling of the 512->2048 mask field differs from the browser's smoothed drawImage; it moves individual shore tests, not the order of magnitude.",
+  "measureText is stubbed (22 px/char): only the cartouche box width depends on it, which is excluded from the vector tiers.",
+  "River cities (Kolens, Ion Ephel): the river band is drawn by drawImage of a raster and is not in the counts; as vector it is one band polygon of 2 x 116 rvPts = ~232 vertices plus up to 2 bridge decks.",
+  "Epēshu is a counterfactual capital (canon art ships); no generated capital exists on the map today.",
+  "Wall runs count up to one wrap-split per ring (the angle loop runs 0..2pi, so the run ending at 2pi and the one starting at 0 are counted separately when no gate sits at 0): honest vector wall count ~ runs - rings (Tamaron 3, Epēshu 8).",
+  "Island-fortress stone rects of a coastal ruin are classified quayOrPier by the water-section classifier; totals unaffected.",
+  "Circle primitives are counted as 1 vertex; polygonised they add ~16 vertices each (Tamaron half-sea: 93 circles -> ~+1.5k vertices)."
+ ]
+}

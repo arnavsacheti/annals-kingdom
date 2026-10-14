@@ -1,0 +1,2135 @@
+{
+ "_readme": "Gap research G1-anchors-outside-table, static, HEAD export. Scope: every key in maps-site/data/city-anchors.json (136) plus the two meshedWorldInit literals CITY_ANCHORS['Summarch']={atlasX:523,atlasY:58,...} and CITY_ANCHORS['Penthelon']={atlasX:1962,atlasY:644,...} = 138; minus the 40 names in out/anchor-correction-table.json (both literals are among them) = 98 anchors. Ring detector (enclosed-component centroid method of marker-anchor-pixel-bias): z5 tiles mosaicked with no y-flip (atlas (x,y) = z5 (2x,2y), tile floor(2x/256)), missing tiles filled rgb(198,178,128); ink = luma<100; every enclosed non-ink component is hole-filled and its centroid mapped to atlas as (i+0.5)/2. ○ = 7-9 px box, area 40-60, no dark core, circularity>=0.88; ◉ = 10-14 px box, dark core>=25 px; a candidate counts as a printed ring when >=97% of a 3 px annulus around it is ink. Calibration: Epēshu ◉ 0.05 px from its anchor, Lepon ○ (1146,1427) and Tamaron ◉ (1659,1554) fall on integer atlas coordinates; exactly 15 ◉ found (the canon count). 175 candidates, 161 strong. Miss mode: a ring whose hole is broken by a label stroke or road dot is invisible to the detector, so every off-print verdict was read by eye on z5 contact-sheet crops (anchor, markers, rings overlaid). One strong false positive was discarded by eye: the 'o' of 'Heron's House' at (2469,291). Weak candidates (<97%) inside catchments (Bard's Hollow 795,216; Hazad 1388,1074; Haedi 3050,1445; Lepon 1128,1413) are letter bowls by eye. Approaches: segCircleHits, angDelta, mergeAngles, cityApproaches, buildApprPolys and footR extracted verbatim from maps-site/index.html and run in node over party-route.json, named-ways.json (land) and sea-lanes.json (sea) at R=2.5*FOOT_R; compass degrees (0=N, clockwise); calibrated against the table's Drāmūz row (land 257.8, sea 136.7 reproduced). Verdict vocabulary from gap-anchor:C2 (move / keep / owner call); 'keep' here is qualified per row. No data file was edited.",
+ "summary": {
+  "anchors_in_scope": 98,
+  "within_3px_of_a_ring": 88,
+  "over_3px_or_no_ring_within_3FOOT_R": 10,
+  "over_3px": [
+   "Sjefenhold",
+   "Kolens",
+   "Shengo",
+   "Ūmak-nūs-Ion",
+   "Ītor Hāspira",
+   "Pomos",
+   "Ishin",
+   "Pish",
+   "Kanae",
+   "Sokundo"
+  ],
+  "no_ring_within_3FOOT_R": [
+   "Sjefenhold",
+   "Kolens",
+   "Shengo",
+   "Ūmak-nūs-Ion",
+   "Ītor Hāspira",
+   "Pomos",
+   "Ishin"
+  ],
+  "note_pish": "Pish has a ring within 27 px (25.4) but it is Paril's dot, not its own",
+  "flagged_inside_threshold": {
+   "Paril": "0.0 px but on Mūmakon's ring (wrong town)",
+   "Tarap": "2.79 px to (1249,1672): keep; the marker-less Leponnia sim towns (Āglaz, Tarap, Thalbaen, Rēketis, Pharzeban, Medem, Aldorūs, Sardil, Rhup, Perōna, Mago, Kardunash) sit 1-3 px E/SE of their rings, not on the (-1,-1) convention the other on-ring anchors share"
+  },
+  "verdicts": {
+   "move": [
+    "Sokundo",
+    "Kanae",
+    "Shengo",
+    "Pomos",
+    "Ishin",
+    "Pish",
+    "Ītor Hāspira",
+    "Paril"
+   ],
+   "keep (uncharted, offDot reason)": [
+    "Sjefenhold"
+   ],
+   "owner call": [
+    "Ūmak-nūs-Ion (duplicate of Iimak-nūs-Ion)",
+    "Kolens (uncharted riverside town: keep vs register to the printed river)"
+   ]
+  },
+  "snap_by_label_not_distance": [
+   "Ishin (nearest ring is Tōron's)",
+   "Pish (nearest ring is Paril's)",
+   "Ītor Hāspira (nearest ring is Eldae's)",
+   "Ūmak-nūs-Ion (nearest ring is Iimak-nūs-Ion's)",
+   "Paril (sits on Mūmakon's ring)"
+  ],
+  "trace_records_off_print": "Six prov:'trace' records have marker == anchor and are themselves off-print (Pomos, Ishin, Pish, Ītor Hāspira, Ūmak-nūs-Ion, Paril). A by-name anchor=marker derivation perpetuates them; the fix belongs in maps_markers.json (census), then the derivation follows.",
+  "census_cross_reference": {
+   "off_print_anchors_with_a_nearby_unclaimed_printed_dot": {
+    "Sokundo": [
+     1478,
+     1450
+    ],
+    "Kanae": [
+     1523,
+     1490
+    ],
+    "Shengo": [
+     1419,
+     1779
+    ],
+    "Pomos": [
+     514,
+     718
+    ],
+    "Ishin": [
+     947,
+     677
+    ],
+    "Pish": [
+     1073,
+     752
+    ],
+    "Ītor Hāspira": [
+     660,
+     634
+    ],
+    "Paril": [
+     846,
+     732
+    ]
+   },
+   "orphan_dots_found": [
+    {
+     "name": "Ernbury",
+     "at": [
+      2631,
+      329
+     ],
+     "note": "on a road; named on the Mountain Wall wiki page",
+     "catchment": []
+    },
+    {
+     "name": "Ūgdon",
+     "at": [
+      1065,
+      647
+     ],
+     "note": "Census orphan",
+     "catchment": []
+    },
+    {
+     "name": "Herītor",
+     "at": [
+      969,
+      667
+     ],
+     "note": "canon (Sargāzat: Major Cities); label '…Heritor' ends at ring",
+     "catchment": [
+      "inside a MOVED Ishin's catchment (24.2 px of (947,677))"
+     ]
+    },
+    {
+     "name": "Tōron",
+     "at": [
+      1014,
+      778
+     ],
+     "note": "Census orphan",
+     "catchment": [
+      "32 px from the current Ishin point (outside its 27 px catchment)"
+     ]
+    },
+    {
+     "name": "Hauk",
+     "at": [
+      3390,
+      1142
+     ],
+     "note": "",
+     "catchment": []
+    },
+    {
+     "name": "Tolēmi",
+     "at": [
+      2284,
+      1187
+     ],
+     "note": "",
+     "catchment": []
+    },
+    {
+     "name": "Therel",
+     "at": [
+      3795,
+      1222
+     ],
+     "note": "",
+     "catchment": []
+    },
+    {
+     "name": "Nīs",
+     "at": [
+      3665,
+      1410
+     ],
+     "note": "",
+     "catchment": []
+    },
+    {
+     "name": "Guzhub",
+     "at": [
+      2670,
+      1439
+     ],
+     "note": "",
+     "catchment": []
+    },
+    {
+     "name": "Tasta",
+     "at": [
+      2791,
+      1614
+     ],
+     "note": "Census orphan (by Gizalīs)",
+     "catchment": []
+    },
+    {
+     "name": "Nhandar",
+     "at": [
+      2877,
+      1622
+     ],
+     "note": "Census orphan (by Gizalīs); label 'Nhan…' E of the ring. NOT 'Nhandar Khezīn' (marker 2516,1632; 361 px W)",
+     "catchment": [
+      "inside Malau's 42 px town catchment (35.2 px): today a view centred on the Nhandar dot gets Malau's plan"
+     ]
+    },
+    {
+     "name": "Hemer",
+     "at": [
+      2476,
+      1642
+     ],
+     "note": "",
+     "catchment": []
+    },
+    {
+     "name": "Kroton",
+     "at": [
+      2633,
+      1697
+     ],
+     "note": "Census orphan (label 'Krot…')",
+     "catchment": []
+    },
+    {
+     "name": "Auloron",
+     "at": [
+      2676,
+      1743
+     ],
+     "note": "",
+     "catchment": []
+    },
+    {
+     "name": "Mānūs",
+     "at": [
+      2735,
+      1743
+     ],
+     "note": "",
+     "catchment": []
+    },
+    {
+     "name": "Rābamīth",
+     "at": [
+      1373,
+      1882
+     ],
+     "note": "",
+     "catchment": []
+    },
+    {
+     "name": "Mūmakon",
+     "at": [
+      889,
+      735
+     ],
+     "note": "Census orphan; its ring is currently held by the Paril record",
+     "catchment": [
+      "is the current Paril anchor point"
+     ]
+    },
+    {
+     "name": "Paril ('Parli' in POLISH)",
+     "at": [
+      846,
+      732
+     ],
+     "note": "own dot of the existing Paril record",
+     "catchment": [
+      "inside Ilongazoro's catchment (26.0) and the current Pish catchment (25.4)"
+     ]
+    },
+    {
+     "name": "Pomos/Ishin/Pish/Ītor Hāspira/Shengo/Sokundo/Kanae own dots",
+     "at": null,
+     "note": "see rows",
+     "catchment": []
+    },
+    {
+     "name": "Paga's own dot",
+     "at": [
+      2074,
+      809
+     ],
+     "note": "already in anchor-correction-table.json (owner call)",
+     "catchment": []
+    }
+   ],
+   "orphans_inside_existing_catchments_today": [
+    "Nhandar (2877,1622) in Malau's (35.2 of 42)",
+    "Paril's own dot (846,732) in Ilongazoro's (26.0 of 27) and Pish's (25.4 of 27)",
+    "Mūmakon (889,735) is the Paril anchor itself"
+   ],
+   "orphans_inside_catchments_after_the_moves": [
+    "Herītor (969,667) in the moved Ishin's (24.2 of 27)",
+    "Nhandar in Malau's (unchanged)"
+   ],
+   "trio_effect": "No orphan dot lies inside the Tamaron, Sokundo or Kanae catchments apart from their own dots. Adding census markers or anchors cannot change those three plans: genCityCanvas reads only its own anchor, the approach polylines, the sampled tiles and CITY_ANCHORS[t.hinterlandOf.name] (Epēshu for Sokundo and Kanae, on its ring, not moving).",
+   "matches_to_POLISH_names": {
+    "Parli": "= Paril's own dot (846,732)",
+    "Mūmakon": "(889,735), held by the Paril record",
+    "Ilongazoro": "already added (marker and anchor on its ring)",
+    "Ūgdon": [
+     1065,
+     647
+    ],
+    "Kroton": [
+     2633,
+     1697
+    ],
+    "Tōron": [
+     1014,
+     778
+    ],
+    "Tasta": [
+     2791,
+     1614
+    ],
+    "Nhandar": [
+     2877,
+     1622
+    ],
+    "Pish": "resolved: printed at (1073,752)"
+   }
+  },
+  "cityCanvasSha_rebaseline": {
+   "scope": "Unchanged: tools/mobile-capture.js descends exactly ['Tamaron','Sokundo','Kanae'] and every docs/mobile/captures baseline hashes city_canvas keys Kanae, Sokundo, Tamaron only. None of the eight new off-print verdicts (Shengo, Pomos, Ishin, Pish, Ītor Hāspira, Ūmak-nūs-Ion, Kolens, Sjefenhold, plus Paril) is hashed, and none feeds the trio's plans. All three hashed cities now have verified 'move' verdicts with coordinates: Tamaron (table, ◉ ring (1659,1554), marker (1659,1556)), Sokundo (1478,1450), Kanae (1523,1490).",
+   "precondition_1_convention": "Pick ONE point convention before the B0 cut. sampleCityMask does Math.round((a.atlasX-1.35*rW)*2), so ring centre, census-marker (ring-(1,0), ◉ ring+(0,2)) and anchor (ring-(1,1)) conventions each give a different window and hash. The choice also changes visible gates: Tamaron sea set is [319.3,1.6] at the ring centre, [323.4,1.1] at the marker, but [317.7,113.6,3.5] at ring-(1,1); Shengo (not hashed) gets two sea gates or none on a 0.2-0.4 px graze of lane:The South Lane. Cutting B0 before the marker-anchor-pixel-bias convention ruling means a re-cut.",
+   "precondition_2_sea_fields": "Sokundo sea {WSW,2}, Kanae {E,5} (city-anchors and city-traits) were recorded at the old points; genCityCanvas biases the waterfront to the lane bearing nearest the stored sea side and falls back to the compass side. If the sea fields are re-measured after the move, that is a further hash change: re-measure in the same edit as the move, or freeze them explicitly.",
+   "precondition_3_markers": "Sokundo and Kanae (and Shengo) have no maps_markers.json entry, so a by-name derivation tool cannot move them. Either the census adds their markers first or the tool carries hand overrides.",
+   "ordering": "Census second pass should land BEFORE or WITH the anchor tool, not after: (a) it supplies the markers that let the tool derive Sokundo, Kanae and Shengo; (b) it corrects six off-print trace markers the tool would otherwise copy; (c) its additions do not touch the hashed trio, so landing it does not force a second B0 rebaseline. Only the trio's moves plus the convention choice need the single owner-approved cityCanvasSha recapture (dpr>1 class and the 1x desktop class), held until the Mobile 5-9 atlas lane closes or cut centrally as a declared B0 recapture."
+  }
+ },
+ "rows": [
+  {
+   "name": "Sokundo",
+   "kind": "town",
+   "source": "city-anchors.json",
+   "anchor": [
+    1477.7,
+    1444.2
+   ],
+   "nearestRing": {
+    "at": [
+     1478,
+     1450
+    ],
+    "glyph": "○",
+    "label_by_eye": "Sokundo (label directly N of the ring)",
+    "claimed_by": null
+   },
+   "dist": 5.81,
+   "anchor_sits": "on the coastline ink between the 'Sokundo' label and its ○, ~6 px N of the ring",
+   "verdict": "move",
+   "target": {
+    "ring_centre": [
+     1478,
+     1450
+    ],
+    "census_marker_conv_ring_minus_1_0": [
+     1477,
+     1450
+    ],
+    "anchor_conv_ring_minus_1_1": [
+     1477,
+     1449
+    ]
+   },
+   "verdict_basis": "The ○ at (1478,1450) is Sokundo's own printed dot (label above it); no maps_markers.json entry exists, so a by-name derivation cannot move it. The 5.8 px offset is within its 42 px catchment, so the plan fades in, but off the dot.",
+   "censusDot": {
+    "class": "unmarkered printed town (own dot)",
+    "at": [
+     1478,
+     1450
+    ],
+    "note": "Belongs to the Census second pass's 'unmarkered towns' class; needs a Settlements marker (census convention (1477,1450)) for the anchor tool to derive it."
+   },
+   "approachChange": {
+    "R": 35,
+    "at_old": {
+     "land": [
+      244.5,
+      162.7
+     ],
+     "sea": [
+      306.3,
+      114.0
+     ]
+    },
+    "at_ring_centre": {
+     "land": [
+      256.2,
+      151.0
+     ],
+     "sea": [
+      314.4,
+      105.9
+     ]
+    },
+    "at_census_conv": {
+     "land": [
+      257.0,
+      150.2
+     ],
+     "sea": [
+      315.2,
+      105.0
+     ]
+    },
+    "at_anchor_conv": {
+     "land": [
+      255.1,
+      152.1
+     ],
+     "sea": [
+      313.7,
+      106.5
+     ]
+    },
+    "shift_deg": {
+     "land": [
+      11.7,
+      11.7
+     ],
+     "sea": [
+      8.1,
+      8.1
+     ]
+    },
+    "gained": [],
+    "lost": [],
+    "polylines": "land = way:Road that Walks with the Sun (26.5 -> 21.3 px from the point); sea = lane:The North Coast Packet (3.7 -> 8.6 px)"
+   },
+   "cityCanvasSha_pinned": true,
+   "hinterlandOf": "Epēshu (anchor on its ◉ ring centre, not moving)"
+  },
+  {
+   "name": "Kanae",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "anchor": [
+    1521.5,
+    1482.7
+   ],
+   "nearestRing": {
+    "at": [
+     1523,
+     1490
+    ],
+    "glyph": "○",
+    "label_by_eye": "Kanae (label immediately E of the ring)",
+    "claimed_by": null
+   },
+   "dist": 7.45,
+   "anchor_sits": "on land ~7 px NW of its ○, no glyph",
+   "verdict": "move",
+   "target": {
+    "ring_centre": [
+     1523,
+     1490
+    ],
+    "census_marker_conv_ring_minus_1_0": [
+     1522,
+     1490
+    ],
+    "anchor_conv_ring_minus_1_1": [
+     1522,
+     1489
+    ]
+   },
+   "verdict_basis": "The ○ at (1523,1490) carries the 'Kanae' label; no maps_markers.json entry, so derivation cannot move it without a census marker.",
+   "censusDot": {
+    "class": "unmarkered printed town (own dot)",
+    "at": [
+     1523,
+     1490
+    ]
+   },
+   "approachChange": {
+    "R": 22.5,
+    "at_old": {
+     "land": [
+      270.8,
+      145.9
+     ],
+     "sea": [
+      342.1,
+      85.6
+     ]
+    },
+    "at_ring_centre": {
+     "land": [
+      286.9,
+      132.6
+     ],
+     "sea": [
+      4.3,
+      65.4
+     ]
+    },
+    "at_census_conv": {
+     "land": [
+      287.9,
+      131.1
+     ],
+     "sea": [
+      7.3,
+      62.4
+     ]
+    },
+    "at_anchor_conv": {
+     "land": [
+      285.5,
+      133.2
+     ],
+     "sea": [
+      3.1,
+      66.6
+     ]
+    },
+    "shift_deg": {
+     "land": [
+      16.1,
+      13.3
+     ],
+     "sea": [
+      22.2,
+      20.2
+     ]
+    },
+    "gained": [],
+    "lost": [],
+    "note": "Both sea bearings move by just over the anchor-correction table's 20 deg gained/lost threshold; reported here as continuous shifts (same lanes, same count), not as gain/loss pairs. Under that table's rule they would read as 2 lost + 2 gained.",
+    "polylines": "land = way:Road that Walks with the Sun (8.7 -> 2.8 px); sea = lane:The North Coast Packet (14.2 -> 19.4 px)"
+   },
+   "cityCanvasSha_pinned": true,
+   "hinterlandOf": "Epēshu"
+  },
+  {
+   "name": "Shengo",
+   "kind": "village",
+   "source": "city-anchors.json",
+   "anchor": [
+    1453,
+    1735
+   ],
+   "nearestRing": {
+    "at": [
+     1419,
+     1779
+    ],
+    "glyph": "○",
+    "label_by_eye": "Shengo (label directly above the ring)",
+    "claimed_by": null
+   },
+   "dist": 55.61,
+   "anchor_sits": "on the 'O' of a region lettering ('R H O ...') above the Shengo label; no glyph",
+   "verdict": "move",
+   "target": {
+    "ring_centre": [
+     1419,
+     1779
+    ],
+    "census_marker_conv_ring_minus_1_0": [
+     1418,
+     1779
+    ],
+    "anchor_conv_ring_minus_1_1": [
+     1418,
+     1778
+    ]
+   },
+   "verdict_basis": "Printed ○ labelled Shengo, unclaimed. 55.6 px > 3*FOOT_R (27), so a view centred on the printed dot gets no plan today (nearestCity returns null) and the wash/plan appear over region lettering.",
+   "censusDot": {
+    "class": "unmarkered printed town (own dot)",
+    "at": [
+     1419,
+     1779
+    ]
+   },
+   "approachChange": {
+    "R": 22.5,
+    "at_old": {
+     "land": [],
+     "sea": []
+    },
+    "at_ring_centre": {
+     "land": [],
+     "sea": [
+      208.3,
+      192.4
+     ]
+    },
+    "at_census_conv": {
+     "land": [],
+     "sea": [
+      213.2,
+      187.5
+     ]
+    },
+    "at_anchor_conv": {
+     "land": [],
+     "sea": []
+    },
+    "gained": "two sea approaches at ring centre or census convention; none at the anchor convention",
+    "lost": [],
+    "note": "KNIFE-EDGE: lane:The South Lane passes 22.3 px (ring centre) / 22.9 px (ring-(1,1)) from the point against R=22.5, so a 1 px convention choice decides whether the plan gets a sea gate. Shengo is not in the cityCanvasSha trio; the flip is visible in its plan only.",
+    "polylines": "lane:The South Lane (75.4 -> 22.3 px)"
+   },
+   "cityCanvasSha_pinned": false
+  },
+  {
+   "name": "Pomos",
+   "kind": "village",
+   "source": "city-anchors.json (prov trace); maps_markers marker at the same point (481,725)",
+   "anchor": [
+    481,
+    725
+   ],
+   "nearestRing": {
+    "at": [
+     514,
+     718
+    ],
+    "glyph": "○",
+    "label_by_eye": "Pomos (label below-left, ending under the ring)",
+    "claimed_by": null
+   },
+   "dist": 33.73,
+   "anchor_sits": "on the 'P' of its own label (marker too)",
+   "verdict": "move",
+   "target": {
+    "ring_centre": [
+     514,
+     718
+    ],
+    "census_marker_conv_ring_minus_1_0": [
+     513,
+     718
+    ],
+    "anchor_conv_ring_minus_1_1": [
+     513,
+     717
+    ]
+   },
+   "verdict_basis": "Marker and anchor both on label text; the printed ○ is unclaimed and outside the 27 px catchment of the current anchor. Fix the marker (census) and the anchor follows.",
+   "censusDot": {
+    "class": "own dot, unclaimed (record transcribed from the label start)",
+    "at": [
+     514,
+     718
+    ]
+   },
+   "approachChange": {
+    "R": 22.5,
+    "at_old": {
+     "land": [
+      356.6,
+      197.6
+     ],
+     "sea": []
+    },
+    "at_ring_centre": {
+     "land": [],
+     "sea": []
+    },
+    "lost": [
+     356.6,
+     197.6
+    ],
+    "gained": [],
+    "polylines": "route leg Sepos -> White Sea passes 4.1 px from the label point and 36.0 px from the ring: both land gates disappear"
+   },
+   "cityCanvasSha_pinned": false
+  },
+  {
+   "name": "Ishin",
+   "kind": "village",
+   "source": "city-anchors.json (prov trace); marker at the same point",
+   "anchor": [
+    1015,
+    746
+   ],
+   "nearestRing": {
+    "at": [
+     1014,
+     778
+    ],
+    "glyph": "○",
+    "label_by_eye": "'…ōron' = Tōron (Census orphan), NOT Ishin",
+    "claimed_by": null
+   },
+   "dist": 32.0,
+   "anchor_sits": "on a small islet in the gulf, no glyph, no label",
+   "verdict": "move",
+   "target": {
+    "ring_centre": [
+     947,
+     677
+    ],
+    "census_marker_conv_ring_minus_1_0": [
+     946,
+     677
+    ],
+    "anchor_conv_ring_minus_1_1": [
+     946,
+     676
+    ]
+   },
+   "target_dist": 97.3,
+   "verdict_basis": "The printed 'Ishin' ○ is at (947,677): the label runs SE from that ring (checked on a wide crop). The nearest ring to the old point is Tōron's orphan dot, so a nearest-ring snap would be WRONG here; snap by label, not by distance. Ishin is canon (Sargāzat wiki page: Major Cities … Herītor, Ishin).",
+   "censusDot": {
+    "class": "own dot unclaimed at (947,677); nearest dot to the old point is the orphan Tōron (1014,778), 32 px (outside the 27 px catchment)"
+   },
+   "approachChange": {
+    "R": 22.5,
+    "at_old": {
+     "land": [],
+     "sea": []
+    },
+    "at_ring_centre": {
+     "land": [],
+     "sea": []
+    },
+    "change": "none"
+   },
+   "catchment_after_move": "orphan Herītor ○ (969,667) lies 24.2 px from the new Ishin point, inside its 27 px catchment",
+   "cityCanvasSha_pinned": false
+  },
+  {
+   "name": "Pish",
+   "kind": "village",
+   "source": "city-anchors.json (prov trace); marker at the same point",
+   "anchor": [
+    864,
+    750
+   ],
+   "nearestRing": {
+    "at": [
+     846.1,
+     732.0
+    ],
+    "glyph": "○",
+    "label_by_eye": "Paril (label 'Paril' ends at this ring); currently unclaimed",
+    "claimed_by": null
+   },
+   "dist": 25.36,
+   "anchor_sits": "on the 'k' of the 'Mūmakon' label",
+   "verdict": "move",
+   "target": {
+    "ring_centre": [
+     1073,
+     752
+    ],
+    "census_marker_conv_ring_minus_1_0": [
+     1072,
+     752
+    ],
+    "anchor_conv_ring_minus_1_1": [
+     1072,
+     751
+    ]
+   },
+   "target_dist": 209.0,
+   "verdict_basis": "Census: 'one marker whose label is unfindable at its coords (Pish)'. The printed 'Pish' ○ is at (1073,752), label immediately E of the ring, 209 px E. The nearest ring (Paril's) must not be used.",
+   "censusDot": {
+    "class": "own dot unclaimed at (1073,752); Paril's orphan dot (846,732) lies 25.4 px from the old point, inside the old Pish catchment (27) and inside Ilongazoro's (26.0)"
+   },
+   "approachChange": {
+    "R": 22.5,
+    "at_old": {
+     "land": [],
+     "sea": []
+    },
+    "at_ring_centre": {
+     "land": [],
+     "sea": []
+    },
+    "change": "none"
+   },
+   "cityCanvasSha_pinned": false
+  },
+  {
+   "name": "Ītor Hāspira",
+   "kind": "village",
+   "source": "city-anchors.json (prov trace); marker (579,635)",
+   "anchor": [
+    579,
+    634
+   ],
+   "nearestRing": {
+    "at": [
+     550.9,
+     605.9
+    ],
+    "glyph": "○",
+    "label_by_eye": "Eldae (claimed by the Eldae marker/anchor)",
+    "claimed_by": "Eldae"
+   },
+   "dist": 39.71,
+   "anchor_sits": "on the 't/o' of its own label, over the gulf",
+   "verdict": "move",
+   "target": {
+    "ring_centre": [
+     660,
+     634
+    ],
+    "census_marker_conv_ring_minus_1_0": [
+     659,
+     634
+    ],
+    "anchor_conv_ring_minus_1_1": [
+     659,
+     633
+    ]
+   },
+   "target_dist": 81.0,
+   "verdict_basis": "The label 'Ītor Hāspira' ends at an unclaimed ○ (660,634) on the far shore (wide crop). Same y; the record was transcribed from the label start.",
+   "censusDot": {
+    "class": "own dot unclaimed at (660,634)"
+   },
+   "approachChange": {
+    "R": 22.5,
+    "at_old": {
+     "land": [],
+     "sea": []
+    },
+    "at_ring_centre": {
+     "land": [],
+     "sea": []
+    },
+    "change": "none"
+   },
+   "cityCanvasSha_pinned": false
+  },
+  {
+   "name": "Ūmak-nūs-Ion",
+   "kind": "village",
+   "source": "city-anchors.json (prov trace); marker (1126,323)",
+   "anchor": [
+    1126,
+    323
+   ],
+   "nearestRing": {
+    "at": [
+     1166,
+     336
+    ],
+    "glyph": "○",
+    "label_by_eye": "'Iimak-nūs-Ion' (label runs E from the anchor point and the ring sits under its end)",
+    "claimed_by": "Iimak-nūs-Ion (anchor 1165,335; marker 1165,336)"
+   },
+   "dist": 42.03,
+   "anchor_sits": "on the first letter of the 'Iimak-nūs-Ion' label",
+   "verdict": "owner call",
+   "target": null,
+   "verdict_basis": "Duplicate transcription of one printed town: the only ring is already Iimak-nūs-Ion's. Moving onto it would stack two anchors on one dot (the Hordon/Maeges pattern, where nearestCity's strict d<bd lets the first key win). wiki-places.json (Sargāzat: 'Major Cities Sepos, Līm Haub, Zor Barāndo, Iimak-nūs-Ion, Herītor, Ishin') supports the 'Iimak' spelling; owner confirms retiring the Ūmak record (marker, anchor, gazetteer entry).",
+   "censusDot": null,
+   "approachChange": {
+    "R": 22.5,
+    "at_old": {
+     "land": [],
+     "sea": []
+    },
+    "change": "none (record removal)"
+   },
+   "cityCanvasSha_pinned": false
+  },
+  {
+   "name": "Kolens",
+   "kind": "town",
+   "source": "city-anchors.json; marker at the same point",
+   "anchor": [
+    2162,
+    54
+   ],
+   "nearestRing": {
+    "at": [
+     2456.94,
+     302.08
+    ],
+    "glyph": "○",
+    "claimed_by": "Heron's House"
+   },
+   "dist": 385.4,
+   "anchor_sits": "blank parchment near the top edge; the printed river (solid line) crosses row y=54 at x≈2104-2105, 57 px W",
+   "verdict": "owner call",
+   "target": {
+    "keep_option": [
+     2162,
+     54
+    ],
+    "riverbank_option": "on the printed river at about (2105,54) or the nearest bank point; exact point needs owner choice"
+   },
+   "verdict_basis": "No printed glyph within 3*FOOT_R (42) or anywhere near. city-traits canonNote: 'A bustling riverside city in Diapremon, a country the atlas does not chart — its place here is approximate'; traits river mode 'through'. Today genCityCanvas draws a river through a town 57 px from any printed river, so the plan's river cannot meet the atlas river at zoom (registration). Options: keep with an explicit offDot:'uncharted' reason, or register to the printed river bank. Either way the anchor tool needs an override, since the marker equals the anchor.",
+   "censusDot": null,
+   "approachChange": {
+    "R": 35,
+    "at_old": {
+     "land": [],
+     "sea": []
+    },
+    "change": "none at either option (no polyline within R)"
+   },
+   "cityCanvasSha_pinned": false
+  },
+  {
+   "name": "Sjefenhold",
+   "kind": "ruin",
+   "source": "city-anchors.json; marker at the same point",
+   "anchor": [
+    2050,
+    30
+   ],
+   "nearestRing": {
+    "at": [
+     2456.94,
+     302.08
+    ],
+    "glyph": "○",
+    "claimed_by": "Heron's House"
+   },
+   "dist": 489.5,
+   "anchor_sits": "blank parchment at the top edge; printed river at x≈2109-2111 on row y=30, 59 px E",
+   "verdict": "keep",
+   "verdict_qualifier": "keep = uncharted canon place, kept with an explicit offDot reason (NOT gap-anchor:C2's 'keep', which meant 'anchor on the glyph, fix the marker')",
+   "verdict_basis": "No glyph within 3*FOOT_R (24). city-traits canonNote: 'Its place on the chart is approximate'; destroyed village, no river or sea fact to register to. Nothing printed to bend the art to.",
+   "censusDot": null,
+   "approachChange": {
+    "R": 20,
+    "at_old": {
+     "land": [],
+     "sea": []
+    },
+    "change": "none"
+   },
+   "cityCanvasSha_pinned": false
+  },
+  {
+   "name": "Paril",
+   "kind": "village",
+   "source": "city-anchors.json (prov trace); marker (889,736)",
+   "anchor": [
+    889,
+    735
+   ],
+   "nearestRing": {
+    "at": [
+     889,
+     735
+    ],
+    "glyph": "○",
+    "label_by_eye": "Mūmakon (the 'Mūmakon' label ends at this ring)",
+    "claimed_by": "Paril (wrongly)"
+   },
+   "dist": 0.0,
+   "in_threshold_scope": false,
+   "flag": "ON THE WRONG RING: within 3 px of a ring, but by eye that ring is Mūmakon's (Census orphan name). Found while auditing the on-ring set.",
+   "verdict": "move",
+   "target": {
+    "ring_centre": [
+     846,
+     732
+    ],
+    "census_marker_conv_ring_minus_1_0": [
+     845,
+     732
+    ],
+    "anchor_conv_ring_minus_1_1": [
+     845,
+     731
+    ]
+   },
+   "target_dist": 43.1,
+   "verdict_basis": "The label 'Paril' ends at the unclaimed ○ (846,732) (Census wrote it 'Parli'). After the move Mūmakon's dot (889,735) becomes the orphan it really is. A distance-only lint (anchor within 3 px of a ring) passes this record, so the lint must also check the label.",
+   "censusDot": {
+    "class": "own dot unclaimed at (846,732); the current point holds the Census orphan Mūmakon's dot"
+   },
+   "approachChange": {
+    "R": 22.5,
+    "at_old": {
+     "land": [],
+     "sea": []
+    },
+    "at_ring_centre": {
+     "land": [],
+     "sea": []
+    },
+    "change": "none"
+   },
+   "cityCanvasSha_pinned": false
+  }
+ ],
+ "on_print_within_3px": [
+  {
+   "name": "Tarap",
+   "kind": "village",
+   "anchor": [
+    1251.7,
+    1671.3
+   ],
+   "nearestRing": [
+    1249.0,
+    1672.0
+   ],
+   "dist": 2.79
+  },
+  {
+   "name": "Tamaron Mopher",
+   "kind": "village",
+   "anchor": [
+    1774,
+    1306
+   ],
+   "nearestRing": [
+    1775.0,
+    1308.0
+   ],
+   "dist": 2.24
+  },
+  {
+   "name": "Kamīdo",
+   "kind": "village",
+   "anchor": [
+    974,
+    516
+   ],
+   "nearestRing": [
+    974.93,
+    518.0
+   ],
+   "dist": 2.21
+  },
+  {
+   "name": "Thūkhon",
+   "kind": "village",
+   "anchor": [
+    1310,
+    1011
+   ],
+   "nearestRing": [
+    1310.01,
+    1013.03
+   ],
+   "dist": 2.03
+  },
+  {
+   "name": "Mago",
+   "kind": "village",
+   "anchor": [
+    1691.3,
+    1581.7
+   ],
+   "nearestRing": [
+    1690.0,
+    1583.0
+   ],
+   "dist": 1.84
+  },
+  {
+   "name": "Āglaz",
+   "kind": "village",
+   "anchor": [
+    1234,
+    1554.6
+   ],
+   "nearestRing": [
+    1235.0,
+    1556.0
+   ],
+   "dist": 1.72
+  },
+  {
+   "name": "Aldorūs",
+   "kind": "village",
+   "anchor": [
+    1448.6,
+    1527.5
+   ],
+   "nearestRing": [
+    1447.0,
+    1527.0
+   ],
+   "dist": 1.68
+  },
+  {
+   "name": "Thalbaen",
+   "kind": "village",
+   "anchor": [
+    1275.6,
+    1702.5
+   ],
+   "nearestRing": [
+    1275.0,
+    1704.0
+   ],
+   "dist": 1.62
+  },
+  {
+   "name": "Mhēlzi",
+   "kind": "village",
+   "anchor": [
+    3442,
+    1439
+   ],
+   "nearestRing": [
+    3443.08,
+    1440.08
+   ],
+   "dist": 1.53
+  },
+  {
+   "name": "Bash Nena",
+   "kind": "village",
+   "anchor": [
+    1950,
+    1011
+   ],
+   "nearestRing": [
+    1951.09,
+    1012.04
+   ],
+   "dist": 1.51
+  },
+  {
+   "name": "Sember",
+   "kind": "village",
+   "anchor": [
+    3428,
+    1114
+   ],
+   "nearestRing": [
+    3429.04,
+    1115.07
+   ],
+   "dist": 1.49
+  },
+  {
+   "name": "Atauk",
+   "kind": "village",
+   "anchor": [
+    1084,
+    697
+   ],
+   "nearestRing": [
+    1085.03,
+    698.01
+   ],
+   "dist": 1.44
+  },
+  {
+   "name": "Paril",
+   "kind": "village",
+   "anchor": [
+    889,
+    735
+   ],
+   "nearestRing": [
+    890.02,
+    736.02
+   ],
+   "dist": 1.44
+  },
+  {
+   "name": "Nembros",
+   "kind": "village",
+   "anchor": [
+    931,
+    847
+   ],
+   "nearestRing": [
+    932.0,
+    848.03
+   ],
+   "dist": 1.44
+  },
+  {
+   "name": "Mishimbril",
+   "kind": "village",
+   "anchor": [
+    1659,
+    904
+   ],
+   "nearestRing": [
+    1660.01,
+    905.03
+   ],
+   "dist": 1.44
+  },
+  {
+   "name": "Īngomes",
+   "kind": "village",
+   "anchor": [
+    1792,
+    1164
+   ],
+   "nearestRing": [
+    1793.02,
+    1165.02
+   ],
+   "dist": 1.44
+  },
+  {
+   "name": "Graes",
+   "kind": "village",
+   "anchor": [
+    3617,
+    1264
+   ],
+   "nearestRing": [
+    3617.99,
+    1265.04
+   ],
+   "dist": 1.44
+  },
+  {
+   "name": "Ierem",
+   "kind": "village",
+   "anchor": [
+    3458,
+    1279
+   ],
+   "nearestRing": [
+    3459.03,
+    1280.0
+   ],
+   "dist": 1.44
+  },
+  {
+   "name": "Authīr",
+   "kind": "village",
+   "anchor": [
+    3554,
+    1394
+   ],
+   "nearestRing": [
+    3554.99,
+    1395.04
+   ],
+   "dist": 1.44
+  },
+  {
+   "name": "Nāron",
+   "kind": "village",
+   "anchor": [
+    3367,
+    1427
+   ],
+   "nearestRing": [
+    3368.02,
+    1428.02
+   ],
+   "dist": 1.44
+  },
+  {
+   "name": "Nhin",
+   "kind": "village",
+   "anchor": [
+    2632,
+    1729
+   ],
+   "nearestRing": [
+    2633.01,
+    1730.03
+   ],
+   "dist": 1.44
+  },
+  {
+   "name": "Bard's Hollow",
+   "kind": "village",
+   "anchor": [
+    784,
+    200
+   ],
+   "nearestRing": [
+    784.99,
+    201.03
+   ],
+   "dist": 1.43
+  },
+  {
+   "name": "Heron's House",
+   "kind": "village",
+   "anchor": [
+    2456,
+    301
+   ],
+   "nearestRing": [
+    2456.94,
+    302.08
+   ],
+   "dist": 1.43
+  },
+  {
+   "name": "Karaphon",
+   "kind": "village",
+   "anchor": [
+    1875,
+    876
+   ],
+   "nearestRing": [
+    1876.03,
+    876.99
+   ],
+   "dist": 1.43
+  },
+  {
+   "name": "Māmīth Māgrīn (Kingly Mickleburg)",
+   "kind": "town",
+   "anchor": [
+    734,
+    17
+   ],
+   "nearestRing": [
+    734.95,
+    18.05
+   ],
+   "dist": 1.42
+  },
+  {
+   "name": "Azrīnet",
+   "kind": "village",
+   "anchor": [
+    3357,
+    1241
+   ],
+   "nearestRing": [
+    3357.95,
+    1242.05
+   ],
+   "dist": 1.42
+  },
+  {
+   "name": "Rhup",
+   "kind": "village",
+   "anchor": [
+    1566,
+    1539
+   ],
+   "nearestRing": [
+    1567.0,
+    1540.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Feldspar",
+   "kind": "village",
+   "anchor": [
+    1103,
+    113
+   ],
+   "nearestRing": [
+    1104.0,
+    114.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Karkōgael",
+   "kind": "village",
+   "anchor": [
+    1117,
+    365
+   ],
+   "nearestRing": [
+    1118.0,
+    366.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Iorundo",
+   "kind": "village",
+   "anchor": [
+    1178,
+    504
+   ],
+   "nearestRing": [
+    1179.0,
+    505.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Zor Barāndo",
+   "kind": "village",
+   "anchor": [
+    819,
+    519
+   ],
+   "nearestRing": [
+    820.0,
+    520.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Phumkha",
+   "kind": "town",
+   "anchor": [
+    836,
+    570
+   ],
+   "nearestRing": [
+    837.0,
+    571.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Mīthrabash",
+   "kind": "village",
+   "anchor": [
+    1288,
+    595
+   ],
+   "nearestRing": [
+    1289.0,
+    596.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Kash Ītor",
+   "kind": "village",
+   "anchor": [
+    3022,
+    691
+   ],
+   "nearestRing": [
+    3023.0,
+    692.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Ilongazoro",
+   "kind": "village",
+   "anchor": [
+    839,
+    707
+   ],
+   "nearestRing": [
+    840.0,
+    708.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Tobit",
+   "kind": "village",
+   "anchor": [
+    3211,
+    756
+   ],
+   "nearestRing": [
+    3212.0,
+    757.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Lōt",
+   "kind": "village",
+   "anchor": [
+    1967,
+    861
+   ],
+   "nearestRing": [
+    1968.0,
+    862.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Ion Semthen",
+   "kind": "village",
+   "anchor": [
+    757,
+    901
+   ],
+   "nearestRing": [
+    758.0,
+    902.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Taemon",
+   "kind": "village",
+   "anchor": [
+    2828,
+    929
+   ],
+   "nearestRing": [
+    2829.0,
+    930.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Kezren",
+   "kind": "village",
+   "anchor": [
+    2212,
+    1226
+   ],
+   "nearestRing": [
+    2212.99,
+    1227.01
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Lokri",
+   "kind": "village",
+   "anchor": [
+    3834,
+    1272
+   ],
+   "nearestRing": [
+    3835.02,
+    1272.98
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Malagnon",
+   "kind": "village",
+   "anchor": [
+    1631,
+    1287
+   ],
+   "nearestRing": [
+    1632.0,
+    1288.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Aegban",
+   "kind": "village",
+   "anchor": [
+    2606,
+    1343
+   ],
+   "nearestRing": [
+    2607.0,
+    1344.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Nūmeron",
+   "kind": "village",
+   "anchor": [
+    2555,
+    1424
+   ],
+   "nearestRing": [
+    2556.0,
+    1425.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Urip",
+   "kind": "village",
+   "anchor": [
+    3005,
+    1504
+   ],
+   "nearestRing": [
+    3006.0,
+    1503.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Arbezmara",
+   "kind": "village",
+   "anchor": [
+    2288,
+    1609
+   ],
+   "nearestRing": [
+    2289.0,
+    1610.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Sāzhram",
+   "kind": "village",
+   "anchor": [
+    2105,
+    1612
+   ],
+   "nearestRing": [
+    2106.0,
+    1613.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Malau",
+   "kind": "town",
+   "anchor": [
+    2843,
+    1631
+   ],
+   "nearestRing": [
+    2844.0,
+    1632.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Istīron",
+   "kind": "village",
+   "anchor": [
+    1071,
+    1632
+   ],
+   "nearestRing": [
+    1072.0,
+    1633.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Bēgil",
+   "kind": "village",
+   "anchor": [
+    1170,
+    1635
+   ],
+   "nearestRing": [
+    1171.0,
+    1636.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Nhagi",
+   "kind": "village",
+   "anchor": [
+    1868,
+    1650
+   ],
+   "nearestRing": [
+    1869.02,
+    1650.98
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Thārban",
+   "kind": "village",
+   "anchor": [
+    2175,
+    1674
+   ],
+   "nearestRing": [
+    2176.0,
+    1675.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Ghirīs",
+   "kind": "village",
+   "anchor": [
+    2086,
+    1723
+   ],
+   "nearestRing": [
+    2087.0,
+    1724.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Maeges",
+   "kind": "village",
+   "anchor": [
+    1139,
+    1730
+   ],
+   "nearestRing": [
+    1140.0,
+    1731.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Gīr",
+   "kind": "village",
+   "anchor": [
+    2398,
+    1745
+   ],
+   "nearestRing": [
+    2399.0,
+    1746.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Molider",
+   "kind": "village",
+   "anchor": [
+    1209,
+    1769
+   ],
+   "nearestRing": [
+    1210.0,
+    1770.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Nagash",
+   "kind": "village",
+   "anchor": [
+    2769,
+    1816
+   ],
+   "nearestRing": [
+    2770.0,
+    1817.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Mhikel Or",
+   "kind": "village",
+   "anchor": [
+    2227,
+    1834
+   ],
+   "nearestRing": [
+    2228.0,
+    1835.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Netho",
+   "kind": "village",
+   "anchor": [
+    2896,
+    987
+   ],
+   "nearestRing": [
+    2897.0,
+    988.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Nīs Garnata",
+   "kind": "village",
+   "anchor": [
+    3333,
+    1146
+   ],
+   "nearestRing": [
+    3334.0,
+    1147.0
+   ],
+   "dist": 1.41
+  },
+  {
+   "name": "Rūbril",
+   "kind": "village",
+   "anchor": [
+    704,
+    793
+   ],
+   "nearestRing": [
+    705.0,
+    793.98
+   ],
+   "dist": 1.4
+  },
+  {
+   "name": "Laem",
+   "kind": "town",
+   "anchor": [
+    2722,
+    1653
+   ],
+   "nearestRing": [
+    2722.97,
+    1654.01
+   ],
+   "dist": 1.4
+  },
+  {
+   "name": "Iimak-nūs-Ion",
+   "kind": "village",
+   "anchor": [
+    1165,
+    335
+   ],
+   "nearestRing": [
+    1165.98,
+    335.98
+   ],
+   "dist": 1.39
+  },
+  {
+   "name": "Mākor",
+   "kind": "village",
+   "anchor": [
+    984,
+    487
+   ],
+   "nearestRing": [
+    984.99,
+    487.97
+   ],
+   "dist": 1.39
+  },
+  {
+   "name": "Rohodakos",
+   "kind": "village",
+   "anchor": [
+    3157,
+    1257
+   ],
+   "nearestRing": [
+    3157.98,
+    1257.98
+   ],
+   "dist": 1.39
+  },
+  {
+   "name": "Aenid",
+   "kind": "village",
+   "anchor": [
+    3312,
+    1340
+   ],
+   "nearestRing": [
+    3312.96,
+    1341.01
+   ],
+   "dist": 1.39
+  },
+  {
+   "name": "Ludo",
+   "kind": "village",
+   "anchor": [
+    3552,
+    1287
+   ],
+   "nearestRing": [
+    3552.91,
+    1288.04
+   ],
+   "dist": 1.38
+  },
+  {
+   "name": "Sau Taran",
+   "kind": "village",
+   "anchor": [
+    191,
+    812
+   ],
+   "nearestRing": [
+    191.95,
+    812.99
+   ],
+   "dist": 1.37
+  },
+  {
+   "name": "Gārmīt",
+   "kind": "village",
+   "anchor": [
+    3366,
+    1285
+   ],
+   "nearestRing": [
+    3366.93,
+    1286.0
+   ],
+   "dist": 1.37
+  },
+  {
+   "name": "Ion Nenīn",
+   "kind": "village",
+   "anchor": [
+    3084,
+    1547
+   ],
+   "nearestRing": [
+    3084.9,
+    1548.0
+   ],
+   "dist": 1.35
+  },
+  {
+   "name": "Sārūmeron",
+   "kind": "village",
+   "anchor": [
+    3257,
+    1442
+   ],
+   "nearestRing": [
+    3257.95,
+    1442.95
+   ],
+   "dist": 1.34
+  },
+  {
+   "name": "Nhandar Khezīn",
+   "kind": "village",
+   "anchor": [
+    2516,
+    1631
+   ],
+   "nearestRing": [
+    2516.95,
+    1631.95
+   ],
+   "dist": 1.34
+  },
+  {
+   "name": "Abila",
+   "kind": "village",
+   "anchor": [
+    1211,
+    883
+   ],
+   "nearestRing": [
+    1211.96,
+    883.9
+   ],
+   "dist": 1.32
+  },
+  {
+   "name": "Eldae",
+   "kind": "village",
+   "anchor": [
+    550,
+    605
+   ],
+   "nearestRing": [
+    550.92,
+    605.92
+   ],
+   "dist": 1.3
+  },
+  {
+   "name": "Palagnon",
+   "kind": "village",
+   "anchor": [
+    1528,
+    764
+   ],
+   "nearestRing": [
+    1528.92,
+    764.92
+   ],
+   "dist": 1.3
+  },
+  {
+   "name": "Mīth Mirdānak",
+   "kind": "village",
+   "anchor": [
+    1164.2,
+    1509.8
+   ],
+   "nearestRing": [
+    1164.0,
+    1511.0
+   ],
+   "dist": 1.22
+  },
+  {
+   "name": "Daeskhon",
+   "kind": "village",
+   "anchor": [
+    2962,
+    1536
+   ],
+   "nearestRing": [
+    2962.04,
+    1537.09
+   ],
+   "dist": 1.09
+  },
+  {
+   "name": "Sardil",
+   "kind": "town",
+   "anchor": [
+    1484,
+    1636.9
+   ],
+   "nearestRing": [
+    1483.0,
+    1637.0
+   ],
+   "dist": 1.0
+  },
+  {
+   "name": "Hazad",
+   "kind": "village",
+   "anchor": [
+    1406,
+    1082
+   ],
+   "nearestRing": [
+    1406.0,
+    1083.0
+   ],
+   "dist": 1.0
+  },
+  {
+   "name": "Leshes",
+   "kind": "village",
+   "anchor": [
+    1687,
+    1321
+   ],
+   "nearestRing": [
+    1687.0,
+    1322.0
+   ],
+   "dist": 1.0
+  },
+  {
+   "name": "Haedi",
+   "kind": "village",
+   "anchor": [
+    3038,
+    1444
+   ],
+   "nearestRing": [
+    3039.0,
+    1443.97
+   ],
+   "dist": 1.0
+  },
+  {
+   "name": "Azrūmil",
+   "kind": "village",
+   "anchor": [
+    2415,
+    1629
+   ],
+   "nearestRing": [
+    2416.0,
+    1629.0
+   ],
+   "dist": 1.0
+  },
+  {
+   "name": "Pharzeban",
+   "kind": "village",
+   "anchor": [
+    1306.9,
+    1621.3
+   ],
+   "nearestRing": [
+    1306.0,
+    1621.0
+   ],
+   "dist": 0.95
+  },
+  {
+   "name": "Kardunash",
+   "kind": "town",
+   "anchor": [
+    1524.6,
+    1820.2
+   ],
+   "nearestRing": [
+    1524.0,
+    1820.0
+   ],
+   "dist": 0.63
+  },
+  {
+   "name": "Perōna",
+   "kind": "village",
+   "anchor": [
+    1647.5,
+    1631.7
+   ],
+   "nearestRing": [
+    1648.0,
+    1632.0
+   ],
+   "dist": 0.58
+  },
+  {
+   "name": "Rēketis",
+   "kind": "village",
+   "anchor": [
+    1279.8,
+    1551.5
+   ],
+   "nearestRing": [
+    1280.0,
+    1551.0
+   ],
+   "dist": 0.54
+  },
+  {
+   "name": "Medem",
+   "kind": "village",
+   "anchor": [
+    1396.5,
+    1711.9
+   ],
+   "nearestRing": [
+    1396.0,
+    1712.0
+   ],
+   "dist": 0.51
+  },
+  {
+   "name": "Epēshu",
+   "kind": "capital",
+   "anchor": [
+    1236.1,
+    1415
+   ],
+   "nearestRing": [
+    1235.96,
+    1415.03
+   ],
+   "dist": 0.14
+  }
+ ]
+}

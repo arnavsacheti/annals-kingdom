@@ -1,0 +1,2442 @@
+{
+ "id": "dm-chart-vector-budget",
+ "date": "2026-10-07",
+ "gap": "G4-dm-chart-vector-cost",
+ "question": "What would a traced vector form of the two DM canon city charts (Epēshu, Summarch) cost in features, vertices and bytes, at what fidelity, and does a skeleton-only trace fit the live budget derived for generated plans? RENDERING MEDIUM only.",
+ "registrationNote": "This measures the rendering medium, not registration. Tracing fixes shape, not placement (vec:V16 refuted for treating tracing as an alignment fix). The traced GeoJSON here is placed by the cityBox formula (function cityBox: \"var hw=r*w/mx, hh=r*h/mx\", centred on the anchor dot) applied to the chart pyramid size, purely so byte counts are comparable with out/generated-plan-vector-budget.json. A traced chart placed this way misaligns with atlas coast/rivers/roads exactly as the raster overlay does; only a registration step (bending the traced geometry to atlas features) fixes alignment. Note: cityBox today receives the overlay art (art/overlay-Epeshu.jpg 2863x3072, art/overlay-Summarch.jpg 3072x2859, the same drawings at 0.73x), not this pyramid; the nominal mapping is identical in atlas units because the aspect ratios match.",
+ "inputs": {
+  "Epēshu": {
+   "source": "maps-site/charts/epeshu/3/{x}/{y}.jpg (HEAD export), 16x17 tiles of 256 px, cropped to 3914x4200 per data/detail-charts.json",
+   "mosaicPixelSha256": "50c35539b55eee4116e4879ee8077da611eda454cca34fa463d6a54e0722a69a",
+   "detailChartsEntry": "\"Epēshu\": {\"kind\": \"tiles\", \"path\": \"charts/epeshu\", \"w\": 3914, \"h\": 4200, \"maxz\": 3, \"label\": \"CITY CHART\"}"
+  },
+  "Summarch": {
+   "source": "maps-site/charts/summarch/3/{x}/{y}.jpg (HEAD export), 17x16 tiles of 256 px, cropped to 4245x3951",
+   "mosaicPixelSha256": "c5557e3dc171d8f19a54f09721725f4f5c461ddd426589811f1130e440278954",
+   "detailChartsEntry": "\"Summarch\": {\"kind\": \"tiles\", \"path\": \"charts/summarch\", \"w\": 4245, \"h\": 3951, \"maxz\": 3, \"label\": \"CITY CHART\"}"
+  },
+  "note": "z3 is the native chart resolution: enterChart uses \"var atZoom=def.kind==='tiles'?def.maxz:0\" so 1 chart px = 1 CRS unit at z3. Tiles are JPEG (chroma-subsampled), which is the fidelity ceiling of any trace from them."
+ },
+ "method": {
+  "tools": "python3 numpy 2.4.6 / scipy 1.17.1 / PIL 12.3.0 (no skimage, cv2 or potrace). Scripts ran in a mktemp -d dir (sources embedded under scripts).",
+  "classification": "Each pixel -> nearest hand-picked semantic centroid in CIELAB (dE76). Centroids picked by eye on native-resolution crops and k-means modes (listed per chart under semanticClasses.centroidsRGB).",
+  "cleaning": {
+   "minComponentAreaPx": {
+    "building": 6,
+    "water": 5000,
+    "field": 50,
+    "hinterland": 50000,
+    "tree": 20,
+    "wall": 150,
+    "ground": 20
+   },
+   "water": "holes < 500 px filled (JPEG specks)",
+   "connectivity": "4-connected components (diagonal pixels are separate features)",
+   "hinterlandVsTree": "Epēshu only: the hinterland and the tree blobs are ONE colour (olive); split only by component size (>= 50,000 px = hinterland, 20-50,000 = tree)",
+   "summarchWall": "ink class opened morphologically (EDT >= 4 px, then dilated back by 4): keeps strokes >= ~8 px wide. Surviving components classified by shape/position: area < 150 speck; inside legend box (40,40)-(1165,1645) legendTitleText; inside compass box (3400,3100)-(4245,3951) compassRose; EDT max >= 20 badgeDisc; else wall."
+  },
+  "tracer": "Boundary tracer on the 4-connected label image: every pixel edge between a feature and anything else becomes a directed unit edge (feature on one consistent side); edges are linked per (label, vertex) so features never mix; at a same-label saddle corner the walk continues along the edge owned by the same pixel (keeps 4-connected parts separate). The marching-squares (iso 0.5) contour is taken as the midpoints of those unit edges, then collinear points dropped. Rings are grouped by label: largest |area| = outer, rest = holes.",
+  "simplification": "Douglas-Peucker on closed rings (split at vertex 0 and the vertex farthest from it), tolerance 0 / 0.5 / 1 / 2 chart px. Rings left with < 3 vertices or zero area are dropped and counted (ringsDroppedBelow3Vertices): a fidelity loss, not hidden.",
+  "rasterCheck": "Re-rasterised per feature with PIL ImageDraw.polygon at 4x supersampling (outer fill 1, holes fill 0, pixel centres at x*4-0.5), block-sum >= 8 of 16 per pixel. Calibration: the unsimplified crack-edge rings re-rasterise to IoU 1.0 on random masks and test shapes (holes, islands in holes, diagonal saddles); the marching-squares midpoint ring at tolerance 0 gives 0.997-1.0 on the charts (corner chamfers on tiny buildings).",
+  "iouDefinitions": {
+   "iouVsTracedMask": "re-rasterised trace vs the cleaned mask that was traced (pure simplification + tracing loss)",
+   "iouVsRawClassMask": "re-rasterised trace vs the raw per-pixel class (adds cleaning loss). For field and tree the raw class is dominated by JPEG blend pixels (ink/roof/cream mixtures that land nearest the light-green or olive centroid), so its low IoU measures speckle in the classifier, not tracing."
+  },
+  "encodings": {
+   "geojson": "Same as the sibling: FeatureCollection, one Feature per traced polygon, properties {c:class}, geometry Polygon (outer + holes) in atlas px through the nominal cityBox mapping, coordinates rounded to 3 decimals (Python json float repr, equivalent to JS +toFixed(3)), closing vertex included, compact separators; gzip level 9.",
+   "deltaInt": "Same as the sibling except one addition: per feature 1 class byte + varint RING COUNT (deviation: the generated plans had no holes) + per ring varint vertex count + zigzag-varint deltas of chart px quantised at q (q0.25 and q1), delta chain continuous across features. Vertices lie on the 0.5 px grid, so q0.25 is lossless; q1 rounds.",
+   "vertexConvention": "vertices = distinct ring vertices (closing vertex not counted), summed over outer rings and holes.",
+   "atlasUnits": "Epēshu 1 chart px = 52/4200 = 0.012381 atlas px (80.77 chart px per atlas px); Summarch 1 chart px = 28/4245 = 0.006596 atlas px (151.6 per atlas px). Summarch anchor (523,58) gives shorter coordinate strings than Epēshu (1236.1,1415), so its GeoJSON bytes per vertex are ~1-2 bytes lower; deltaInt is unaffected."
+  },
+  "svgPathsMergedByClass": "one merged multipolygon path per traced class present in the variant (fill style per class), as in the sibling svgPathsMergedByClassAndStyle."
+ },
+ "palette": {
+  "Epēshu": {
+   "pixels": 16438800,
+   "distinct5bitBins": 3245,
+   "distinctExact24bit": 189573,
+   "rgbEuclidGreedy": {
+    "20": {
+     "mergedColours": 147,
+     "coloursFor90_95_99pct": [
+      15,
+      24,
+      40
+     ]
+    },
+    "30": {
+     "mergedColours": 51,
+     "coloursFor90_95_99pct": [
+      10,
+      15,
+      21
+     ],
+     "top": [
+      {
+       "rgb": [
+        100,
+        116,
+        84
+       ],
+       "pct": 30.02,
+       "class": "olive",
+       "dE76ToClassCentroid": 0.9
+      },
+      {
+       "rgb": [
+        252,
+        244,
+        204
+       ],
+       "pct": 28.49,
+       "class": "ground",
+       "dE76ToClassCentroid": 1.0
+      },
+      {
+       "rgb": [
+        116,
+        156,
+        140
+       ],
+       "pct": 15.95,
+       "class": "sea",
+       "dE76ToClassCentroid": 2.7
+      },
+      {
+       "rgb": [
+        228,
+        172,
+        116
+       ],
+       "pct": 3.9,
+       "class": "roof",
+       "dE76ToClassCentroid": 4.8
+      },
+      {
+       "rgb": [
+        60,
+        60,
+        44
+       ],
+       "pct": 3.83,
+       "class": "ink",
+       "dE76ToClassCentroid": 1.7
+      },
+      {
+       "rgb": [
+        76,
+        84,
+        68
+       ],
+       "pct": 2.53,
+       "class": "ink",
+       "dE76ToClassCentroid": 9.6
+      },
+      {
+       "rgb": [
+        252,
+        252,
+        236
+       ],
+       "pct": 2.01,
+       "class": "ground (blend/edge)",
+       "dE76ToClassCentroid": 13.7
+      },
+      {
+       "rgb": [
+        140,
+        124,
+        92
+       ],
+       "pct": 1.44,
+       "class": "olive (blend/edge)",
+       "dE76ToClassCentroid": 14.8
+      },
+      {
+       "rgb": [
+        36,
+        44,
+        28
+       ],
+       "pct": 1.29,
+       "class": "ink",
+       "dE76ToClassCentroid": 9.3
+      },
+      {
+       "rgb": [
+        228,
+        188,
+        148
+       ],
+       "pct": 1.14,
+       "class": "roof",
+       "dE76ToClassCentroid": 8.6
+      },
+      {
+       "rgb": [
+        196,
+        164,
+        124
+       ],
+       "pct": 1.07,
+       "class": "roof (blend/edge)",
+       "dE76ToClassCentroid": 10.6
+      },
+      {
+       "rgb": [
+        44,
+        60,
+        76
+       ],
+       "pct": 1.06,
+       "class": "badge",
+       "dE76ToClassCentroid": 4.3
+      }
+     ]
+    },
+    "40": {
+     "mergedColours": 30,
+     "coloursFor90_95_99pct": [
+      8,
+      10,
+      14
+     ]
+    }
+   },
+   "deltaE76Greedy": {
+    "5": {
+     "mergedColours": 827,
+     "coloursFor90_95_99pct": [
+      65,
+      113,
+      231
+     ]
+    },
+    "10": {
+     "mergedColours": 145,
+     "coloursFor90_95_99pct": [
+      12,
+      19,
+      34
+     ],
+     "top": [
+      {
+       "rgb": [
+        252,
+        244,
+        204
+       ],
+       "pct": 28.48,
+       "class": "ground",
+       "dE76ToClassCentroid": 1.0
+      },
+      {
+       "rgb": [
+        100,
+        116,
+        84
+       ],
+       "pct": 28.38,
+       "class": "olive",
+       "dE76ToClassCentroid": 0.9
+      },
+      {
+       "rgb": [
+        116,
+        156,
+        140
+       ],
+       "pct": 15.92,
+       "class": "sea",
+       "dE76ToClassCentroid": 2.7
+      },
+      {
+       "rgb": [
+        60,
+        60,
+        44
+       ],
+       "pct": 3.42,
+       "class": "ink",
+       "dE76ToClassCentroid": 1.7
+      },
+      {
+       "rgb": [
+        228,
+        172,
+        116
+       ],
+       "pct": 3.04,
+       "class": "roof",
+       "dE76ToClassCentroid": 4.8
+      },
+      {
+       "rgb": [
+        76,
+        84,
+        68
+       ],
+       "pct": 2.41,
+       "class": "ink",
+       "dE76ToClassCentroid": 9.6
+      },
+      {
+       "rgb": [
+        252,
+        252,
+        236
+       ],
+       "pct": 2.09,
+       "class": "ground (blend/edge)",
+       "dE76ToClassCentroid": 13.7
+      },
+      {
+       "rgb": [
+        228,
+        188,
+        140
+       ],
+       "pct": 1.79,
+       "class": "roof",
+       "dE76ToClassCentroid": 6.0
+      },
+      {
+       "rgb": [
+        140,
+        124,
+        92
+       ],
+       "pct": 1.27,
+       "class": "olive (blend/edge)",
+       "dE76ToClassCentroid": 14.8
+      },
+      {
+       "rgb": [
+        196,
+        164,
+        124
+       ],
+       "pct": 1.25,
+       "class": "roof (blend/edge)",
+       "dE76ToClassCentroid": 10.6
+      },
+      {
+       "rgb": [
+        108,
+        116,
+        100
+       ],
+       "pct": 1.04,
+       "class": "olive (blend/edge)",
+       "dE76ToClassCentroid": 10.5
+      },
+      {
+       "rgb": [
+        108,
+        100,
+        76
+       ],
+       "pct": 0.99,
+       "class": "olive (blend/edge)",
+       "dE76ToClassCentroid": 12.6
+      }
+     ]
+    },
+    "20": {
+     "mergedColours": 25,
+     "coloursFor90_95_99pct": [
+      4,
+      6,
+      9
+     ]
+    }
+   },
+   "note": "class = nearest semantic centroid in CIELAB (centroids picked by eye on native crops); \"(blend/edge)\" = farther than dE10 from it, i.e. a JPEG mixture on a class boundary"
+  },
+  "Summarch": {
+   "pixels": 16771995,
+   "distinct5bitBins": 1461,
+   "distinctExact24bit": 70113,
+   "rgbEuclidGreedy": {
+    "20": {
+     "mergedColours": 57,
+     "coloursFor90_95_99pct": [
+      5,
+      9,
+      18
+     ]
+    },
+    "30": {
+     "mergedColours": 27,
+     "coloursFor90_95_99pct": [
+      3,
+      6,
+      10
+     ],
+     "top": [
+      {
+       "rgb": [
+        252,
+        244,
+        204
+       ],
+       "pct": 76.97,
+       "class": "ground",
+       "dE76ToClassCentroid": 2.5
+      },
+      {
+       "rgb": [
+        212,
+        164,
+        108
+       ],
+       "pct": 8.72,
+       "class": "roof",
+       "dE76ToClassCentroid": 2.6
+      },
+      {
+       "rgb": [
+        76,
+        92,
+        84
+       ],
+       "pct": 4.73,
+       "class": "ink",
+       "dE76ToClassCentroid": 3.3
+      },
+      {
+       "rgb": [
+        116,
+        156,
+        140
+       ],
+       "pct": 1.95,
+       "class": "river",
+       "dE76ToClassCentroid": 3.4
+      },
+      {
+       "rgb": [
+        108,
+        100,
+        76
+       ],
+       "pct": 1.65,
+       "class": "ink (blend/edge)",
+       "dE76ToClassCentroid": 12.5
+      },
+      {
+       "rgb": [
+        164,
+        164,
+        116
+       ],
+       "pct": 1.46,
+       "class": "field (blend/edge)",
+       "dE76ToClassCentroid": 16.2
+      },
+      {
+       "rgb": [
+        204,
+        196,
+        164
+       ],
+       "pct": 1.19,
+       "class": "field",
+       "dE76ToClassCentroid": 2.6
+      },
+      {
+       "rgb": [
+        156,
+        132,
+        100
+       ],
+       "pct": 0.85,
+       "class": "roof (blend/edge)",
+       "dE76ToClassCentroid": 19.9
+      },
+      {
+       "rgb": [
+        228,
+        228,
+        180
+       ],
+       "pct": 0.79,
+       "class": "ground",
+       "dE76ToClassCentroid": 8.6
+      },
+      {
+       "rgb": [
+        124,
+        124,
+        100
+       ],
+       "pct": 0.71,
+       "class": "river (blend/edge)",
+       "dE76ToClassCentroid": 15.3
+      },
+      {
+       "rgb": [
+        172,
+        172,
+        148
+       ],
+       "pct": 0.53,
+       "class": "field (blend/edge)",
+       "dE76ToClassCentroid": 12.1
+      },
+      {
+       "rgb": [
+        92,
+        84,
+        52
+       ],
+       "pct": 0.33,
+       "class": "ink (blend/edge)",
+       "dE76ToClassCentroid": 15.2
+      }
+     ]
+    },
+    "40": {
+     "mergedColours": 15,
+     "coloursFor90_95_99pct": [
+      3,
+      5,
+      7
+     ]
+    }
+   },
+   "deltaE76Greedy": {
+    "5": {
+     "mergedColours": 349,
+     "coloursFor90_95_99pct": [
+      11,
+      29,
+      70
+     ]
+    },
+    "10": {
+     "mergedColours": 63,
+     "coloursFor90_95_99pct": [
+      4,
+      8,
+      13
+     ],
+     "top": [
+      {
+       "rgb": [
+        252,
+        244,
+        204
+       ],
+       "pct": 77.11,
+       "class": "ground",
+       "dE76ToClassCentroid": 2.5
+      },
+      {
+       "rgb": [
+        212,
+        164,
+        108
+       ],
+       "pct": 7.53,
+       "class": "roof",
+       "dE76ToClassCentroid": 2.6
+      },
+      {
+       "rgb": [
+        76,
+        92,
+        84
+       ],
+       "pct": 3.46,
+       "class": "ink",
+       "dE76ToClassCentroid": 3.3
+      },
+      {
+       "rgb": [
+        92,
+        84,
+        60
+       ],
+       "pct": 2.25,
+       "class": "ink (blend/edge)",
+       "dE76ToClassCentroid": 11.5
+      },
+      {
+       "rgb": [
+        116,
+        156,
+        140
+       ],
+       "pct": 1.86,
+       "class": "river",
+       "dE76ToClassCentroid": 3.4
+      },
+      {
+       "rgb": [
+        196,
+        164,
+        124
+       ],
+       "pct": 1.55,
+       "class": "roof",
+       "dE76ToClassCentroid": 9.7
+      },
+      {
+       "rgb": [
+        132,
+        116,
+        84
+       ],
+       "pct": 1.2,
+       "class": "ink (blend/edge)",
+       "dE76ToClassCentroid": 21.1
+      },
+      {
+       "rgb": [
+        204,
+        196,
+        164
+       ],
+       "pct": 1.16,
+       "class": "field",
+       "dE76ToClassCentroid": 2.6
+      },
+      {
+       "rgb": [
+        164,
+        140,
+        108
+       ],
+       "pct": 0.86,
+       "class": "roof (blend/edge)",
+       "dE76ToClassCentroid": 18.1
+      },
+      {
+       "rgb": [
+        148,
+        148,
+        124
+       ],
+       "pct": 0.82,
+       "class": "river (blend/edge)",
+       "dE76ToClassCentroid": 12.7
+      },
+      {
+       "rgb": [
+        164,
+        164,
+        116
+       ],
+       "pct": 0.6,
+       "class": "field (blend/edge)",
+       "dE76ToClassCentroid": 16.2
+      },
+      {
+       "rgb": [
+        220,
+        220,
+        172
+       ],
+       "pct": 0.47,
+       "class": "field",
+       "dE76ToClassCentroid": 9.0
+      }
+     ]
+    },
+    "20": {
+     "mergedColours": 8,
+     "coloursFor90_95_99pct": [
+      3,
+      4,
+      6
+     ]
+    }
+   },
+   "note": "class = nearest semantic centroid in CIELAB (centroids picked by eye on native crops); \"(blend/edge)\" = farther than dE10 from it, i.e. a JPEG mixture on a class boundary"
+  }
+ },
+ "semanticClasses": {
+  "Epēshu": {
+   "centroidsRGB": {
+    "sea": [
+     119,
+     152,
+     135
+    ],
+    "olive": [
+     102,
+     118,
+     85
+    ],
+    "field": [
+     214,
+     212,
+     176
+    ],
+    "ground": [
+     253,
+     243,
+     202
+    ],
+    "roof": [
+     223,
+     175,
+     124
+    ],
+    "ink": [
+     60,
+     62,
+     44
+    ],
+    "badge": [
+     41,
+     58,
+     68
+    ]
+   },
+   "pixelFractionPct": {
+    "sea": 17.53,
+    "olive": 32.473,
+    "field": 3.295,
+    "ground": 30.59,
+    "roof": 6.582,
+    "ink": 7.808,
+    "badge": 1.724
+   },
+   "pctPixelsFartherThan_dE76_fromNearestCentroid": {
+    "5": 28.82,
+    "10": 14.24,
+    "20": 0.82
+   },
+   "meaning": {
+    "sea": "sea (Ep coast); traced as water",
+    "olive": "hinterland AND tree blobs (same colour; split by size)",
+    "field": "light-green parks/fields",
+    "ground": "cream: open ground AND every street/lane (streets are not painted as a colour; the whiter cream on narrow lanes is JPEG chroma subsampling, folded into ground)",
+    "roof": "building roof fill (tan)",
+    "ink": "one dark ink: building outlines (~2 px), the main road's grey double casing (~4 px per line), tree outlines, wall/road strokes - not separable by width (opened ink at EDT>=1.9 keeps only 18,853 px of junction blobs, 1.5% of ink; at >=3.5 nothing)",
+    "badge": "navy POI badge discs (19, 92 px diameter) + the legend frame"
+   },
+   "fidelityCeilingNote": "pixels > dE10 from every centroid are JPEG blends on class boundaries; they bound how well any tracer can reproduce edges (Epēshu 14.2%, Summarch 5.9%)"
+  },
+  "Summarch": {
+   "centroidsRGB": {
+    "ground": [
+     255,
+     241,
+     200
+    ],
+    "roof": [
+     211,
+     163,
+     112
+    ],
+    "ink": [
+     78,
+     89,
+     77
+    ],
+    "river": [
+     120,
+     151,
+     135
+    ],
+    "field": [
+     205,
+     201,
+     166
+    ]
+   },
+   "pixelFractionPct": {
+    "ground": 77.281,
+    "roof": 9.842,
+    "ink": 7.124,
+    "river": 2.999,
+    "field": 2.753
+   },
+   "pctPixelsFartherThan_dE76_fromNearestCentroid": {
+    "5": 12.16,
+    "10": 5.93,
+    "20": 0.67
+   },
+   "meaning": {
+    "ground": "cream: open ground AND every street/lane (lanes are unpainted ground)",
+    "roof": "building roof fill (tan)",
+    "ink": "one ink for building outlines + drop shadows (half-width 1-3 px), the town wall (half-width 6.5-7 px), POI badge discs, legend/title text, compass rose and scale bar",
+    "river": "river (teal); traced as water",
+    "field": "light-green farm plots, their hatching, and the thin road lines outside the wall"
+   },
+   "fidelityCeilingNote": "pixels > dE10 from every centroid are JPEG blends on class boundaries; they bound how well any tracer can reproduce edges (Epēshu 14.2%, Summarch 5.9%)"
+  }
+ },
+ "streetsAndWalls": {
+  "finding": "Neither chart paints streets as a colour: lanes and main streets are the unpainted cream ground between buildings. Summarch's only wide ink line is the town wall circuit (+ the Seat enclosure): 18 wall components, 83,165 px after the EDT>=4 opening. Epēshu has no stroke wider than ~4 px except badges: its main road is a grey double casing the same colour and width as building outlines, so walls/main streets cannot be extracted by colour or width at all.",
+  "consequence": "A street layer from these charts is either (a) the negative space of the ground class (traced below as \"ground\": Epēshu 5,089 polygons / 105,656 vertices at DP 1, as costly as the buildings) or (b) a centreline graph that needs a thinning/medial-axis step or hand tracing (not measured here). The skeleton variant therefore holds water + wall (Summarch) and water + hinterland edge (Epēshu); \"main streets\" is empty in both.",
+  "summarchThickInkOpening": {
+   "edtThresholdPx": 4.0,
+   "components": {
+    "wall": {
+     "components": 18,
+     "px": 83165
+    },
+    "legendTitleText": {
+     "components": 15,
+     "px": 7501
+    },
+    "badgeDisc": {
+     "components": 9,
+     "px": 93434
+    },
+    "speck": {
+     "components": 104,
+     "px": 7733
+    },
+    "compassRose": {
+     "components": 10,
+     "px": 59241
+    }
+   }
+  }
+ },
+ "buildingCount": {
+  "Epēshu": {
+   "conn4": {
+    "1": 30913,
+    "6": 25371,
+    "12": 23184,
+    "25": 17931,
+    "50": 8343
+   },
+   "conn8_minA6": 25218,
+   "medianSqrtAreaPx_minA6": 6.08,
+   "p10_p90_SqrtAreaPx_minA6": [
+    3.46,
+    8.89
+   ],
+   "roofPxInComponentsBelow6": 11420,
+   "roofPxTotal": 1081959
+  },
+  "Summarch": {
+   "conn4": {
+    "1": 3945,
+    "6": 3772,
+    "12": 3770,
+    "25": 3770,
+    "50": 3752
+   },
+   "conn8_minA6": 3770,
+   "medianSqrtAreaPx_minA6": 19.85,
+   "p10_p90_SqrtAreaPx_minA6": [
+    11.62,
+    28.03
+   ],
+   "roofPxInComponentsBelow6": 199,
+   "roofPxTotal": 1650760
+  },
+  "note": "Epēshu's count is threshold-sensitive: 30,913 roof components at >= 1 px, 25,371 at >= 6 (used for tracing), 23,184 at >= 12, 17,931 at >= 25, 8,343 at >= 50. The \"~17k buildings\" figure matches only a >= 25 px cut. Median Epēshu roof interior is sqrt(area) 6.1 px (p10-p90 3.5-8.9) because the ~2 px outline is ink, not roof; Summarch 19.9 px (11.6-28.0) with 3,772 buildings, stable across cuts. Adjacent roofs separated only by a 1-2 px outline can merge under JPEG; not measurable without a vector master."
+ },
+ "perClass": {
+  "Epēshu": {
+   "building": {
+    "0": {
+     "polygons": 25371,
+     "rings": 25371,
+     "vertices": 402822,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 10890669,
+     "geojsonGzip": 1562292,
+     "deltaInt_q0_25": {
+      "bytes": 906171,
+      "gzip": 322141
+     },
+     "deltaInt_q1": {
+      "bytes": 900334,
+      "gzip": 305159
+     },
+     "iouVsTracedMask": 0.9969,
+     "iouVsRawClassMask": 0.9864
+    },
+    "0.5": {
+     "polygons": 25368,
+     "rings": 25368,
+     "vertices": 234121,
+     "ringsDroppedBelow3Vertices": 3,
+     "geojsonBytes": 7569446,
+     "geojsonGzip": 1047842,
+     "deltaInt_q0_25": {
+      "bytes": 568834,
+      "gzip": 297928
+     },
+     "deltaInt_q1": {
+      "bytes": 562982,
+      "gzip": 259065
+     },
+     "iouVsTracedMask": 0.9661,
+     "iouVsRawClassMask": 0.9561
+    },
+    "1": {
+     "polygons": 25365,
+     "rings": 25365,
+     "vertices": 146334,
+     "ringsDroppedBelow3Vertices": 6,
+     "geojsonBytes": 5840708,
+     "geojsonGzip": 748509,
+     "deltaInt_q0_25": {
+      "bytes": 393404,
+      "gzip": 236072
+     },
+     "deltaInt_q1": {
+      "bytes": 387443,
+      "gzip": 206287
+     },
+     "iouVsTracedMask": 0.8833,
+     "iouVsRawClassMask": 0.8745
+    },
+    "2": {
+     "polygons": 23539,
+     "rings": 23539,
+     "vertices": 95212,
+     "ringsDroppedBelow3Vertices": 1832,
+     "geojsonBytes": 4621151,
+     "geojsonGzip": 541692,
+     "deltaInt_q0_25": {
+      "bytes": 284148,
+      "gzip": 178070
+     },
+     "deltaInt_q1": {
+      "bytes": 278789,
+      "gzip": 157910
+     },
+     "iouVsTracedMask": 0.749,
+     "iouVsRawClassMask": 0.7415
+    }
+   },
+   "water": {
+    "0": {
+     "polygons": 1,
+     "rings": 4,
+     "vertices": 4202,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 82940,
+     "geojsonGzip": 17355,
+     "deltaInt_q0_25": {
+      "bytes": 8427,
+      "gzip": 2127
+     },
+     "deltaInt_q1": {
+      "bytes": 8423,
+      "gzip": 2240
+     },
+     "iouVsTracedMask": 1.0,
+     "iouVsRawClassMask": 0.9086
+    },
+    "0.5": {
+     "polygons": 1,
+     "rings": 4,
+     "vertices": 2328,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 46079,
+     "geojsonGzip": 11164,
+     "deltaInt_q0_25": {
+      "bytes": 4678,
+      "gzip": 1976
+     },
+     "deltaInt_q1": {
+      "bytes": 4674,
+      "gzip": 1790
+     },
+     "iouVsTracedMask": 0.9998,
+     "iouVsRawClassMask": 0.9085
+    },
+    "1": {
+     "polygons": 1,
+     "rings": 4,
+     "vertices": 1317,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 26152,
+     "geojsonGzip": 6921,
+     "deltaInt_q0_25": {
+      "bytes": 2683,
+      "gzip": 1420
+     },
+     "deltaInt_q1": {
+      "bytes": 2649,
+      "gzip": 1220
+     },
+     "iouVsTracedMask": 0.9994,
+     "iouVsRawClassMask": 0.9082
+    },
+    "2": {
+     "polygons": 1,
+     "rings": 4,
+     "vertices": 121,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 2600,
+     "geojsonGzip": 942,
+     "deltaInt_q0_25": {
+      "bytes": 397,
+      "gzip": 381
+     },
+     "deltaInt_q1": {
+      "bytes": 285,
+      "gzip": 305
+     },
+     "iouVsTracedMask": 0.9987,
+     "iouVsRawClassMask": 0.9076
+    }
+   },
+   "field": {
+    "0": {
+     "polygons": 1443,
+     "rings": 1553,
+     "vertices": 56501,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 1278506,
+     "geojsonGzip": 198617,
+     "deltaInt_q0_25": {
+      "bytes": 120676,
+      "gzip": 27414
+     },
+     "deltaInt_q1": {
+      "bytes": 118306,
+      "gzip": 27659
+     },
+     "iouVsTracedMask": 0.998,
+     "iouVsRawClassMask": 0.2784
+    },
+    "0.5": {
+     "polygons": 1443,
+     "rings": 1547,
+     "vertices": 31565,
+     "ringsDroppedBelow3Vertices": 6,
+     "geojsonBytes": 787711,
+     "geojsonGzip": 122044,
+     "deltaInt_q0_25": {
+      "bytes": 71067,
+      "gzip": 27694
+     },
+     "deltaInt_q1": {
+      "bytes": 68419,
+      "gzip": 26087
+     },
+     "iouVsTracedMask": 0.9418,
+     "iouVsRawClassMask": 0.2722
+    },
+    "1": {
+     "polygons": 1443,
+     "rings": 1529,
+     "vertices": 9896,
+     "ringsDroppedBelow3Vertices": 24,
+     "geojsonBytes": 360739,
+     "geojsonGzip": 49480,
+     "deltaInt_q0_25": {
+      "bytes": 28992,
+      "gzip": 18098
+     },
+     "deltaInt_q1": {
+      "bytes": 25156,
+      "gzip": 15900
+     },
+     "iouVsTracedMask": 0.7481,
+     "iouVsRawClassMask": 0.2434
+    },
+    "2": {
+     "polygons": 962,
+     "rings": 986,
+     "vertices": 4280,
+     "ringsDroppedBelow3Vertices": 567,
+     "geojsonBytes": 194153,
+     "geojsonGzip": 24277,
+     "deltaInt_q0_25": {
+      "bytes": 14742,
+      "gzip": 9655
+     },
+     "deltaInt_q1": {
+      "bytes": 12216,
+      "gzip": 8450
+     },
+     "iouVsTracedMask": 0.4777,
+     "iouVsRawClassMask": 0.1447
+    }
+   },
+   "ground": {
+    "0": {
+     "polygons": 5089,
+     "rings": 6749,
+     "vertices": 408914,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 8669473,
+     "geojsonGzip": 1553219,
+     "deltaInt_q0_25": {
+      "bytes": 846209,
+      "gzip": 252497
+     },
+     "deltaInt_q1": {
+      "bytes": 841717,
+      "gzip": 245039
+     },
+     "iouVsTracedMask": 0.9987,
+     "iouVsRawClassMask": 0.9823
+    },
+    "0.5": {
+     "polygons": 5086,
+     "rings": 6711,
+     "vertices": 215716,
+     "ringsDroppedBelow3Vertices": 38,
+     "geojsonBytes": 4864896,
+     "geojsonGzip": 942980,
+     "deltaInt_q0_25": {
+      "bytes": 460445,
+      "gzip": 240889
+     },
+     "deltaInt_q1": {
+      "bytes": 455262,
+      "gzip": 212125
+     },
+     "iouVsTracedMask": 0.9859,
+     "iouVsRawClassMask": 0.9699
+    },
+    "1": {
+     "polygons": 5079,
+     "rings": 6703,
+     "vertices": 105656,
+     "ringsDroppedBelow3Vertices": 46,
+     "geojsonBytes": 2697247,
+     "geojsonGzip": 533669,
+     "deltaInt_q0_25": {
+      "bytes": 244582,
+      "gzip": 172437
+     },
+     "deltaInt_q1": {
+      "bytes": 235293,
+      "gzip": 147759
+     },
+     "iouVsTracedMask": 0.9606,
+     "iouVsRawClassMask": 0.9451
+    },
+    "2": {
+     "polygons": 4747,
+     "rings": 6223,
+     "vertices": 68880,
+     "ringsDroppedBelow3Vertices": 526,
+     "geojsonBytes": 1932171,
+     "geojsonGzip": 372151,
+     "deltaInt_q0_25": {
+      "bytes": 171343,
+      "gzip": 128763
+     },
+     "deltaInt_q1": {
+      "bytes": 160144,
+      "gzip": 109668
+     },
+     "iouVsTracedMask": 0.9325,
+     "iouVsRawClassMask": 0.9178
+    }
+   },
+   "hinterland": {
+    "0": {
+     "polygons": 4,
+     "rings": 27,
+     "vertices": 10288,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 203653,
+     "geojsonGzip": 41476,
+     "deltaInt_q0_25": {
+      "bytes": 20686,
+      "gzip": 6919
+     },
+     "deltaInt_q1": {
+      "bytes": 20675,
+      "gzip": 6515
+     },
+     "iouVsTracedMask": 0.9999,
+     "iouVsRawClassMask": 0.9999
+    },
+    "0.5": {
+     "polygons": 4,
+     "rings": 9,
+     "vertices": 5853,
+     "ringsDroppedBelow3Vertices": 18,
+     "geojsonBytes": 115863,
+     "geojsonGzip": 27129,
+     "deltaInt_q0_25": {
+      "bytes": 11762,
+      "gzip": 6221
+     },
+     "deltaInt_q1": {
+      "bytes": 11756,
+      "gzip": 5278
+     },
+     "iouVsTracedMask": 0.9996,
+     "iouVsRawClassMask": 0.9996
+    },
+    "1": {
+     "polygons": 4,
+     "rings": 8,
+     "vertices": 3307,
+     "ringsDroppedBelow3Vertices": 19,
+     "geojsonBytes": 65724,
+     "geojsonGzip": 17084,
+     "deltaInt_q0_25": {
+      "bytes": 6678,
+      "gzip": 4394
+     },
+     "deltaInt_q1": {
+      "bytes": 6660,
+      "gzip": 3715
+     },
+     "iouVsTracedMask": 0.9987,
+     "iouVsRawClassMask": 0.9987
+    },
+    "2": {
+     "polygons": 4,
+     "rings": 7,
+     "vertices": 1745,
+     "ringsDroppedBelow3Vertices": 20,
+     "geojsonBytes": 34976,
+     "geojsonGzip": 9980,
+     "deltaInt_q0_25": {
+      "bytes": 3692,
+      "gzip": 2841
+     },
+     "deltaInt_q1": {
+      "bytes": 3531,
+      "gzip": 2345
+     },
+     "iouVsTracedMask": 0.9974,
+     "iouVsRawClassMask": 0.9974
+    }
+   },
+   "tree": {
+    "0": {
+     "polygons": 954,
+     "rings": 1384,
+     "vertices": 48890,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 1079349,
+     "geojsonGzip": 188650,
+     "deltaInt_q0_25": {
+      "bytes": 102422,
+      "gzip": 35963
+     },
+     "deltaInt_q1": {
+      "bytes": 101983,
+      "gzip": 34372
+     },
+     "iouVsTracedMask": 0.9939,
+     "iouVsRawClassMask": 0.3224
+    },
+    "0.5": {
+     "polygons": 951,
+     "rings": 1091,
+     "vertices": 27406,
+     "ringsDroppedBelow3Vertices": 293,
+     "geojsonBytes": 649837,
+     "geojsonGzip": 121828,
+     "deltaInt_q0_25": {
+      "bytes": 58938,
+      "gzip": 32170
+     },
+     "deltaInt_q1": {
+      "bytes": 58668,
+      "gzip": 27587
+     },
+     "iouVsTracedMask": 0.9756,
+     "iouVsRawClassMask": 0.3195
+    },
+    "1": {
+     "polygons": 950,
+     "rings": 1058,
+     "vertices": 16371,
+     "ringsDroppedBelow3Vertices": 326,
+     "geojsonBytes": 431766,
+     "geojsonGzip": 81795,
+     "deltaInt_q0_25": {
+      "bytes": 36816,
+      "gzip": 24591
+     },
+     "deltaInt_q1": {
+      "bytes": 36559,
+      "gzip": 21083
+     },
+     "iouVsTracedMask": 0.9449,
+     "iouVsRawClassMask": 0.3124
+    },
+    "2": {
+     "polygons": 928,
+     "rings": 955,
+     "vertices": 8815,
+     "ringsDroppedBelow3Vertices": 429,
+     "geojsonBytes": 278775,
+     "geojsonGzip": 49970,
+     "deltaInt_q0_25": {
+      "bytes": 21612,
+      "gzip": 16255
+     },
+     "deltaInt_q1": {
+      "bytes": 21282,
+      "gzip": 14004
+     },
+     "iouVsTracedMask": 0.8898,
+     "iouVsRawClassMask": 0.2969
+    }
+   }
+  },
+  "Summarch": {
+   "building": {
+    "0": {
+     "polygons": 3772,
+     "rings": 3782,
+     "vertices": 150264,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 2950862,
+     "geojsonGzip": 551800,
+     "deltaInt_q0_25": {
+      "bytes": 316258,
+      "gzip": 101183
+     },
+     "deltaInt_q1": {
+      "bytes": 315314,
+      "gzip": 97039
+     },
+     "iouVsTracedMask": 0.9991,
+     "iouVsRawClassMask": 0.999
+    },
+    "0.5": {
+     "polygons": 3772,
+     "rings": 3772,
+     "vertices": 81535,
+     "ringsDroppedBelow3Vertices": 10,
+     "geojsonBytes": 1797438,
+     "geojsonGzip": 341142,
+     "deltaInt_q0_25": {
+      "bytes": 179012,
+      "gzip": 95260
+     },
+     "deltaInt_q1": {
+      "bytes": 177848,
+      "gzip": 83697
+     },
+     "iouVsTracedMask": 0.9878,
+     "iouVsRawClassMask": 0.9876
+    },
+    "1": {
+     "polygons": 3772,
+     "rings": 3772,
+     "vertices": 34665,
+     "ringsDroppedBelow3Vertices": 10,
+     "geojsonBytes": 1010905,
+     "geojsonGzip": 172964,
+     "deltaInt_q0_25": {
+      "bytes": 88761,
+      "gzip": 63196
+     },
+     "deltaInt_q1": {
+      "bytes": 84126,
+      "gzip": 53837
+     },
+     "iouVsTracedMask": 0.9594,
+     "iouVsRawClassMask": 0.9593
+    },
+    "2": {
+     "polygons": 3770,
+     "rings": 3770,
+     "vertices": 20118,
+     "ringsDroppedBelow3Vertices": 12,
+     "geojsonBytes": 766595,
+     "geojsonGzip": 114066,
+     "deltaInt_q0_25": {
+      "bytes": 62069,
+      "gzip": 44823
+     },
+     "deltaInt_q1": {
+      "bytes": 55037,
+      "gzip": 38608
+     },
+     "iouVsTracedMask": 0.9235,
+     "iouVsRawClassMask": 0.9234
+    }
+   },
+   "water": {
+    "0": {
+     "polygons": 5,
+     "rings": 7,
+     "vertices": 7067,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 119262,
+     "geojsonGzip": 27012,
+     "deltaInt_q0_25": {
+      "bytes": 14290,
+      "gzip": 2494
+     },
+     "deltaInt_q1": {
+      "bytes": 14169,
+      "gzip": 2495
+     },
+     "iouVsTracedMask": 1.0,
+     "iouVsRawClassMask": 0.6146
+    },
+    "0.5": {
+     "polygons": 5,
+     "rings": 7,
+     "vertices": 4246,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 71914,
+     "geojsonGzip": 17446,
+     "deltaInt_q0_25": {
+      "bytes": 8710,
+      "gzip": 2796
+     },
+     "deltaInt_q1": {
+      "bytes": 8527,
+      "gzip": 2722
+     },
+     "iouVsTracedMask": 0.9963,
+     "iouVsRawClassMask": 0.613
+    },
+    "1": {
+     "polygons": 5,
+     "rings": 7,
+     "vertices": 432,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 7885,
+     "geojsonGzip": 2602,
+     "deltaInt_q0_25": {
+      "bytes": 1342,
+      "gzip": 1110
+     },
+     "deltaInt_q1": {
+      "bytes": 981,
+      "gzip": 909
+     },
+     "iouVsTracedMask": 0.9857,
+     "iouVsRawClassMask": 0.608
+    },
+    "2": {
+     "polygons": 5,
+     "rings": 7,
+     "vertices": 287,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 5448,
+     "geojsonGzip": 1855,
+     "deltaInt_q0_25": {
+      "bytes": 952,
+      "gzip": 834
+     },
+     "deltaInt_q1": {
+      "bytes": 727,
+      "gzip": 699
+     },
+     "iouVsTracedMask": 0.9748,
+     "iouVsRawClassMask": 0.6021
+    }
+   },
+   "field": {
+    "0": {
+     "polygons": 557,
+     "rings": 568,
+     "vertices": 64147,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 1138509,
+     "geojsonGzip": 228879,
+     "deltaInt_q0_25": {
+      "bytes": 132125,
+      "gzip": 18564
+     },
+     "deltaInt_q1": {
+      "bytes": 130670,
+      "gzip": 18896
+     },
+     "iouVsTracedMask": 0.9989,
+     "iouVsRawClassMask": 0.5744
+    },
+    "0.5": {
+     "polygons": 532,
+     "rings": 533,
+     "vertices": 25280,
+     "ringsDroppedBelow3Vertices": 35,
+     "geojsonBytes": 483329,
+     "geojsonGzip": 104581,
+     "deltaInt_q0_25": {
+      "bytes": 54839,
+      "gzip": 18719
+     },
+     "deltaInt_q1": {
+      "bytes": 52657,
+      "gzip": 18266
+     },
+     "iouVsTracedMask": 0.9269,
+     "iouVsRawClassMask": 0.543
+    },
+    "1": {
+     "polygons": 530,
+     "rings": 531,
+     "vertices": 3865,
+     "ringsDroppedBelow3Vertices": 37,
+     "geojsonBytes": 123620,
+     "geojsonGzip": 22185,
+     "deltaInt_q0_25": {
+      "bytes": 12170,
+      "gzip": 8559
+     },
+     "deltaInt_q1": {
+      "bytes": 10718,
+      "gzip": 7693
+     },
+     "iouVsTracedMask": 0.8309,
+     "iouVsRawClassMask": 0.5045
+    },
+    "2": {
+     "polygons": 525,
+     "rings": 526,
+     "vertices": 2449,
+     "ringsDroppedBelow3Vertices": 42,
+     "geojsonBytes": 99295,
+     "geojsonGzip": 15719,
+     "deltaInt_q0_25": {
+      "bytes": 9080,
+      "gzip": 6525
+     },
+     "deltaInt_q1": {
+      "bytes": 7981,
+      "gzip": 5928
+     },
+     "iouVsTracedMask": 0.7553,
+     "iouVsRawClassMask": 0.4496
+    }
+   },
+   "ground": {
+    "0": {
+     "polygons": 749,
+     "rings": 1405,
+     "vertices": 157122,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 2732502,
+     "geojsonGzip": 585814,
+     "deltaInt_q0_25": {
+      "bytes": 321440,
+      "gzip": 71001
+     },
+     "deltaInt_q1": {
+      "bytes": 319103,
+      "gzip": 69059
+     },
+     "iouVsTracedMask": 0.9999,
+     "iouVsRawClassMask": 0.9991
+    },
+    "0.5": {
+     "polygons": 749,
+     "rings": 1405,
+     "vertices": 74988,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 1354474,
+     "geojsonGzip": 320235,
+     "deltaInt_q0_25": {
+      "bytes": 158143,
+      "gzip": 70021
+     },
+     "deltaInt_q1": {
+      "bytes": 154653,
+      "gzip": 64029
+     },
+     "iouVsTracedMask": 0.9978,
+     "iouVsRawClassMask": 0.9969
+    },
+    "1": {
+     "polygons": 749,
+     "rings": 1405,
+     "vertices": 19864,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 429368,
+     "geojsonGzip": 104373,
+     "deltaInt_q0_25": {
+      "bytes": 50994,
+      "gzip": 39080
+     },
+     "deltaInt_q1": {
+      "bytes": 45549,
+      "gzip": 33144
+     },
+     "iouVsTracedMask": 0.9929,
+     "iouVsRawClassMask": 0.992
+    },
+    "2": {
+     "polygons": 712,
+     "rings": 1368,
+     "vertices": 12887,
+     "ringsDroppedBelow3Vertices": 37,
+     "geojsonBytes": 308112,
+     "geojsonGzip": 72892,
+     "deltaInt_q0_25": {
+      "bytes": 37063,
+      "gzip": 29686
+     },
+     "deltaInt_q1": {
+      "bytes": 31631,
+      "gzip": 24837
+     },
+     "iouVsTracedMask": 0.9885,
+     "iouVsRawClassMask": 0.9877
+    }
+   },
+   "wall": {
+    "0": {
+     "polygons": 18,
+     "rings": 18,
+     "vertices": 4707,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 80973,
+     "geojsonGzip": 18217,
+     "deltaInt_q0_25": {
+      "bytes": 9558,
+      "gzip": 2123
+     },
+     "deltaInt_q1": {
+      "bytes": 9504,
+      "gzip": 2123
+     },
+     "iouVsTracedMask": 0.9998,
+     "iouVsRawClassMask": 0.9998
+    },
+    "0.5": {
+     "polygons": 18,
+     "rings": 18,
+     "vertices": 2421,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 42622,
+     "geojsonGzip": 10810,
+     "deltaInt_q0_25": {
+      "bytes": 5039,
+      "gzip": 2215
+     },
+     "deltaInt_q1": {
+      "bytes": 4931,
+      "gzip": 2057
+     },
+     "iouVsTracedMask": 0.9892,
+     "iouVsRawClassMask": 0.9892
+    },
+    "1": {
+     "polygons": 18,
+     "rings": 18,
+     "vertices": 499,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 10385,
+     "geojsonGzip": 2795,
+     "deltaInt_q0_25": {
+      "bytes": 1242,
+      "gzip": 1073
+     },
+     "deltaInt_q1": {
+      "bytes": 1146,
+      "gzip": 897
+     },
+     "iouVsTracedMask": 0.967,
+     "iouVsRawClassMask": 0.967
+    },
+    "2": {
+     "polygons": 18,
+     "rings": 18,
+     "vertices": 347,
+     "ringsDroppedBelow3Vertices": 0,
+     "geojsonBytes": 7842,
+     "geojsonGzip": 2143,
+     "deltaInt_q0_25": {
+      "bytes": 935,
+      "gzip": 865
+     },
+     "deltaInt_q1": {
+      "bytes": 842,
+      "gzip": 720
+     },
+     "iouVsTracedMask": 0.9509,
+     "iouVsRawClassMask": 0.9509
+    }
+   }
+  }
+ },
+ "variants": {
+  "Epēshu": {
+   "skeleton": {
+    "classes": [
+     "water",
+     "hinterland"
+    ],
+    "0": {
+     "polygons": 5,
+     "vertices": 14490,
+     "geojsonBytes": 286552,
+     "geojsonGzip": 58908,
+     "deltaInt_q0_25": {
+      "bytes": 29114,
+      "gzip": 8881
+     },
+     "deltaInt_q1": {
+      "bytes": 29099,
+      "gzip": 8644
+     },
+     "svgPathsMergedByClass": 2
+    },
+    "0.5": {
+     "polygons": 5,
+     "vertices": 8181,
+     "geojsonBytes": 161901,
+     "geojsonGzip": 38370,
+     "deltaInt_q0_25": {
+      "bytes": 16441,
+      "gzip": 8122
+     },
+     "deltaInt_q1": {
+      "bytes": 16431,
+      "gzip": 6999
+     },
+     "svgPathsMergedByClass": 2
+    },
+    "1": {
+     "polygons": 5,
+     "vertices": 4624,
+     "geojsonBytes": 91835,
+     "geojsonGzip": 24015,
+     "deltaInt_q0_25": {
+      "bytes": 9362,
+      "gzip": 5824
+     },
+     "deltaInt_q1": {
+      "bytes": 9310,
+      "gzip": 4928
+     },
+     "svgPathsMergedByClass": 2
+    },
+    "2": {
+     "polygons": 5,
+     "vertices": 1866,
+     "geojsonBytes": 37535,
+     "geojsonGzip": 10866,
+     "deltaInt_q0_25": {
+      "bytes": 4090,
+      "gzip": 3213
+     },
+     "deltaInt_q1": {
+      "bytes": 3817,
+      "gzip": 2654
+     },
+     "svgPathsMergedByClass": 2
+    }
+   },
+   "fullBuilding": {
+    "classes": [
+     "water",
+     "hinterland",
+     "building",
+     "tree",
+     "field"
+    ],
+    "0": {
+     "polygons": 27773,
+     "vertices": 522703,
+     "geojsonBytes": 13534953,
+     "geojsonGzip": 2008149,
+     "deltaInt_q0_25": {
+      "bytes": 1158386,
+      "gzip": 393447
+     },
+     "deltaInt_q1": {
+      "bytes": 1149723,
+      "gzip": 375924
+     },
+     "svgPathsMergedByClass": 5
+    },
+    "0.5": {
+     "polygons": 27767,
+     "vertices": 301273,
+     "geojsonBytes": 9168772,
+     "geojsonGzip": 1330058,
+     "deltaInt_q0_25": {
+      "bytes": 715283,
+      "gzip": 365433
+     },
+     "deltaInt_q1": {
+      "bytes": 706501,
+      "gzip": 319365
+     },
+     "svgPathsMergedByClass": 5
+    },
+    "1": {
+     "polygons": 27763,
+     "vertices": 177225,
+     "geojsonBytes": 6724925,
+     "geojsonGzip": 903456,
+     "deltaInt_q0_25": {
+      "bytes": 468577,
+      "gzip": 284872
+     },
+     "deltaInt_q1": {
+      "bytes": 458469,
+      "gzip": 248000
+     },
+     "svgPathsMergedByClass": 5
+    },
+    "2": {
+     "polygons": 25434,
+     "vertices": 110173,
+     "geojsonBytes": 5131491,
+     "geojsonGzip": 626881,
+     "deltaInt_q0_25": {
+      "bytes": 324595,
+      "gzip": 207784
+     },
+     "deltaInt_q1": {
+      "bytes": 316105,
+      "gzip": 183549
+     },
+     "svgPathsMergedByClass": 5
+    }
+   },
+   "fullBuildingPlusGroundNegativeSpace": {
+    "classes": [
+     "water",
+     "hinterland",
+     "building",
+     "tree",
+     "field",
+     "ground"
+    ],
+    "0": {
+     "polygons": 32862,
+     "vertices": 931617,
+     "geojsonBytes": 22204385,
+     "geojsonGzip": 3561272,
+     "deltaInt_q0_25": {
+      "bytes": 2004597,
+      "gzip": 646018
+     },
+     "deltaInt_q1": {
+      "bytes": 1991441,
+      "gzip": 621637
+     },
+     "svgPathsMergedByClass": 6
+    },
+    "0.5": {
+     "polygons": 32853,
+     "vertices": 516989,
+     "geojsonBytes": 14033627,
+     "geojsonGzip": 2273050,
+     "deltaInt_q0_25": {
+      "bytes": 1175730,
+      "gzip": 606385
+     },
+     "deltaInt_q1": {
+      "bytes": 1161764,
+      "gzip": 531878
+     },
+     "svgPathsMergedByClass": 6
+    },
+    "1": {
+     "polygons": 32842,
+     "vertices": 282881,
+     "geojsonBytes": 9422131,
+     "geojsonGzip": 1437193,
+     "deltaInt_q0_25": {
+      "bytes": 713161,
+      "gzip": 457441
+     },
+     "deltaInt_q1": {
+      "bytes": 693763,
+      "gzip": 395886
+     },
+     "svgPathsMergedByClass": 6
+    },
+    "2": {
+     "polygons": 30181,
+     "vertices": 179053,
+     "geojsonBytes": 7063621,
+     "geojsonGzip": 999037,
+     "deltaInt_q0_25": {
+      "bytes": 495940,
+      "gzip": 336595
+     },
+     "deltaInt_q1": {
+      "bytes": 476250,
+      "gzip": 293394
+     },
+     "svgPathsMergedByClass": 6
+    }
+   }
+  },
+  "Summarch": {
+   "skeleton": {
+    "classes": [
+     "water",
+     "wall"
+    ],
+    "0": {
+     "polygons": 23,
+     "vertices": 11774,
+     "geojsonBytes": 200194,
+     "geojsonGzip": 45126,
+     "deltaInt_q0_25": {
+      "bytes": 23848,
+      "gzip": 4487
+     },
+     "deltaInt_q1": {
+      "bytes": 23673,
+      "gzip": 4434
+     },
+     "svgPathsMergedByClass": 2
+    },
+    "0.5": {
+     "polygons": 23,
+     "vertices": 6667,
+     "geojsonBytes": 114495,
+     "geojsonGzip": 28221,
+     "deltaInt_q0_25": {
+      "bytes": 13749,
+      "gzip": 4884
+     },
+     "deltaInt_q1": {
+      "bytes": 13458,
+      "gzip": 4660
+     },
+     "svgPathsMergedByClass": 2
+    },
+    "1": {
+     "polygons": 23,
+     "vertices": 931,
+     "geojsonBytes": 18229,
+     "geojsonGzip": 5326,
+     "deltaInt_q0_25": {
+      "bytes": 2584,
+      "gzip": 2133
+     },
+     "deltaInt_q1": {
+      "bytes": 2127,
+      "gzip": 1782
+     },
+     "svgPathsMergedByClass": 2
+    },
+    "2": {
+     "polygons": 23,
+     "vertices": 634,
+     "geojsonBytes": 13249,
+     "geojsonGzip": 3889,
+     "deltaInt_q0_25": {
+      "bytes": 1887,
+      "gzip": 1637
+     },
+     "deltaInt_q1": {
+      "bytes": 1568,
+      "gzip": 1385
+     },
+     "svgPathsMergedByClass": 2
+    }
+   },
+   "fullBuilding": {
+    "classes": [
+     "water",
+     "wall",
+     "building",
+     "field"
+    ],
+    "0": {
+     "polygons": 4352,
+     "vertices": 226185,
+     "geojsonBytes": 4289483,
+     "geojsonGzip": 825669,
+     "deltaInt_q0_25": {
+      "bytes": 472233,
+      "gzip": 124371
+     },
+     "deltaInt_q1": {
+      "bytes": 469658,
+      "gzip": 120630
+     },
+     "svgPathsMergedByClass": 4
+    },
+    "0.5": {
+     "polygons": 4327,
+     "vertices": 113482,
+     "geojsonBytes": 2395180,
+     "geojsonGzip": 473703,
+     "deltaInt_q0_25": {
+      "bytes": 247602,
+      "gzip": 118585
+     },
+     "deltaInt_q1": {
+      "bytes": 243964,
+      "gzip": 106519
+     },
+     "svgPathsMergedByClass": 4
+    },
+    "1": {
+     "polygons": 4325,
+     "vertices": 39461,
+     "geojsonBytes": 1152672,
+     "geojsonGzip": 200373,
+     "deltaInt_q0_25": {
+      "bytes": 103517,
+      "gzip": 74086
+     },
+     "deltaInt_q1": {
+      "bytes": 96972,
+      "gzip": 63556
+     },
+     "svgPathsMergedByClass": 4
+    },
+    "2": {
+     "polygons": 4318,
+     "vertices": 23201,
+     "geojsonBytes": 879057,
+     "geojsonGzip": 133468,
+     "deltaInt_q0_25": {
+      "bytes": 73038,
+      "gzip": 53195
+     },
+     "deltaInt_q1": {
+      "bytes": 64587,
+      "gzip": 46002
+     },
+     "svgPathsMergedByClass": 4
+    }
+   },
+   "fullBuildingPlusGroundNegativeSpace": {
+    "classes": [
+     "water",
+     "wall",
+     "building",
+     "field",
+     "ground"
+    ],
+    "0": {
+     "polygons": 5101,
+     "vertices": 383307,
+     "geojsonBytes": 7021944,
+     "geojsonGzip": 1411217,
+     "deltaInt_q0_25": {
+      "bytes": 793677,
+      "gzip": 195060
+     },
+     "deltaInt_q1": {
+      "bytes": 788763,
+      "gzip": 189418
+     },
+     "svgPathsMergedByClass": 5
+    },
+    "0.5": {
+     "polygons": 5076,
+     "vertices": 188470,
+     "geojsonBytes": 3749613,
+     "geojsonGzip": 793880,
+     "deltaInt_q0_25": {
+      "bytes": 405749,
+      "gzip": 188246
+     },
+     "deltaInt_q1": {
+      "bytes": 398619,
+      "gzip": 170150
+     },
+     "svgPathsMergedByClass": 5
+    },
+    "1": {
+     "polygons": 5074,
+     "vertices": 59325,
+     "geojsonBytes": 1581999,
+     "geojsonGzip": 304644,
+     "deltaInt_q0_25": {
+      "bytes": 154515,
+      "gzip": 113188
+     },
+     "deltaInt_q1": {
+      "bytes": 142523,
+      "gzip": 96698
+     },
+     "svgPathsMergedByClass": 5
+    },
+    "2": {
+     "polygons": 5030,
+     "vertices": 36088,
+     "geojsonBytes": 1187128,
+     "geojsonGzip": 206189,
+     "deltaInt_q0_25": {
+      "bytes": 110105,
+      "gzip": 82929
+     },
+     "deltaInt_q1": {
+      "bytes": 96220,
+      "gzip": 71019
+     },
+     "svgPathsMergedByClass": 5
+    }
+   }
+  },
+  "definitions": {
+   "skeleton": "coast/water + walls + main streets (+ Epēshu hinterland edge). Main streets: none extractable (see streetsAndWalls). Epēshu: water + hinterland; Summarch: water + wall.",
+   "fullBuilding": "skeleton + buildings + trees + fields",
+   "fullBuildingPlusGroundNegativeSpace": "fullBuilding + the cream ground traced as polygons (the only colour-derived street form)"
+  }
+ },
+ "screenScale": {
+  "formula": "screen px per chart px = (2*FOOT_R/max(w,h)) * 2^(z-4); cityMaxZ = NZ + log2(max(overlay w,h)/(2*FOOT_R)) per function cityMaxZ, overlay 3072 px long side, FOOT_R capital 26 / town 14",
+  "Epēshu": {
+   "fadeTop_overlayOpacity_7.8": 0.172,
+   "Epeshu_cityMaxZ_9.885": 0.731,
+   "Summarch_cityMaxZ_10.778": 1.358,
+   "Z_STREET_11.5": 2.241
+  },
+  "Summarch": {
+   "fadeTop_overlayOpacity_7.8": 0.092,
+   "Epeshu_cityMaxZ_9.885": 0.39,
+   "Summarch_cityMaxZ_10.778": 0.724,
+   "Z_STREET_11.5": 1.194
+  },
+  "reading": "At the live Epēshu ceiling 9.885 one chart px is 0.73 screen px, so DP 1 = 0.73 px and DP 2 = 1.46 px on screen, and the median Epēshu roof (6.1 chart px) is 4.5 screen px; at Z_STREET 11.5 DP 2 = 4.5 screen px on a 13.6 px building. Summarch at its own ceiling 10.778: 1 chart px = 0.72 screen px. In the overlay fade band (z7.8) an Epēshu roof is ~1 screen px. Chart mode (enterChart) shows the pyramid at 1-2 screen px per chart px (atZoom = maxz 3, maxZoom maxz+1)."
+ },
+ "budgetComparison": {
+  "liveBudget_gap_vecbudget_C3": {
+   "source": "out/findings.json gap-vecbudget:C3 + out/generated-plan-vector-budget.json",
+   "text": "one city on screen; 500-2,100 features, 1.9k-8.5k vertices per city; 11-30 merged paths",
+   "capitalCounterfactual": {
+    "features": 2065,
+    "vertices": 8462,
+    "geojsonGzip": 59862,
+    "deltaInt_q0_25_gzip": 21535
+   }
+  },
+  "Epēshu": {
+   "skeleton@DP0.5": {
+    "features": 5,
+    "vertices": 8181,
+    "xVertexCeiling8500": 0.962,
+    "xFeatureCeiling2065": 0.002,
+    "geojsonGzip": 38370,
+    "xCapitalGeojsonGzip": 0.641,
+    "deltaInt_q0_25_gzip": 8122,
+    "xCapitalDeltaGzip": 0.377,
+    "mergedPaths": 2,
+    "buildingIoU": null
+   },
+   "skeleton@DP1": {
+    "features": 5,
+    "vertices": 4624,
+    "xVertexCeiling8500": 0.544,
+    "xFeatureCeiling2065": 0.002,
+    "geojsonGzip": 24015,
+    "xCapitalGeojsonGzip": 0.401,
+    "deltaInt_q0_25_gzip": 5824,
+    "xCapitalDeltaGzip": 0.27,
+    "mergedPaths": 2,
+    "buildingIoU": null
+   },
+   "skeleton@DP2": {
+    "features": 5,
+    "vertices": 1866,
+    "xVertexCeiling8500": 0.22,
+    "xFeatureCeiling2065": 0.002,
+    "geojsonGzip": 10866,
+    "xCapitalGeojsonGzip": 0.182,
+    "deltaInt_q0_25_gzip": 3213,
+    "xCapitalDeltaGzip": 0.149,
+    "mergedPaths": 2,
+    "buildingIoU": null
+   },
+   "fullBuilding@DP0.5": {
+    "features": 27767,
+    "vertices": 301273,
+    "xVertexCeiling8500": 35.4,
+    "xFeatureCeiling2065": 13.4,
+    "geojsonGzip": 1330058,
+    "xCapitalGeojsonGzip": 22.2,
+    "deltaInt_q0_25_gzip": 365433,
+    "xCapitalDeltaGzip": 17.0,
+    "mergedPaths": 5,
+    "buildingIoU": 0.9661
+   },
+   "fullBuilding@DP1": {
+    "features": 27763,
+    "vertices": 177225,
+    "xVertexCeiling8500": 20.9,
+    "xFeatureCeiling2065": 13.4,
+    "geojsonGzip": 903456,
+    "xCapitalGeojsonGzip": 15.1,
+    "deltaInt_q0_25_gzip": 284872,
+    "xCapitalDeltaGzip": 13.2,
+    "mergedPaths": 5,
+    "buildingIoU": 0.8833
+   },
+   "fullBuilding@DP2": {
+    "features": 25434,
+    "vertices": 110173,
+    "xVertexCeiling8500": 13.0,
+    "xFeatureCeiling2065": 12.3,
+    "geojsonGzip": 626881,
+    "xCapitalGeojsonGzip": 10.5,
+    "deltaInt_q0_25_gzip": 207784,
+    "xCapitalDeltaGzip": 9.6,
+    "mergedPaths": 5,
+    "buildingIoU": 0.749
+   },
+   "fullBuildingPlusGroundNegativeSpace@DP0.5": {
+    "features": 32853,
+    "vertices": 516989,
+    "xVertexCeiling8500": 60.8,
+    "xFeatureCeiling2065": 15.9,
+    "geojsonGzip": 2273050,
+    "xCapitalGeojsonGzip": 38.0,
+    "deltaInt_q0_25_gzip": 606385,
+    "xCapitalDeltaGzip": 28.2,
+    "mergedPaths": 6,
+    "buildingIoU": 0.9661
+   },
+   "fullBuildingPlusGroundNegativeSpace@DP1": {
+    "features": 32842,
+    "vertices": 282881,
+    "xVertexCeiling8500": 33.3,
+    "xFeatureCeiling2065": 15.9,
+    "geojsonGzip": 1437193,
+    "xCapitalGeojsonGzip": 24.0,
+    "deltaInt_q0_25_gzip": 457441,
+    "xCapitalDeltaGzip": 21.2,
+    "mergedPaths": 6,
+    "buildingIoU": 0.8833
+   },
+   "fullBuildingPlusGroundNegativeSpace@DP2": {
+    "features": 30181,
+    "vertices": 179053,
+    "xVertexCeiling8500": 21.1,
+    "xFeatureCeiling2065": 14.6,
+    "geojsonGzip": 999037,
+    "xCapitalGeojsonGzip": 16.7,
+    "deltaInt_q0_25_gzip": 336595,
+    "xCapitalDeltaGzip": 15.6,
+    "mergedPaths": 6,
+    "buildingIoU": 0.749
+   }
+  },
+  "Summarch": {
+   "skeleton@DP0.5": {
+    "features": 23,
+    "vertices": 6667,
+    "xVertexCeiling8500": 0.784,
+    "xFeatureCeiling2065": 0.011,
+    "geojsonGzip": 28221,
+    "xCapitalGeojsonGzip": 0.471,
+    "deltaInt_q0_25_gzip": 4884,
+    "xCapitalDeltaGzip": 0.227,
+    "mergedPaths": 2,
+    "buildingIoU": null
+   },
+   "skeleton@DP1": {
+    "features": 23,
+    "vertices": 931,
+    "xVertexCeiling8500": 0.11,
+    "xFeatureCeiling2065": 0.011,
+    "geojsonGzip": 5326,
+    "xCapitalGeojsonGzip": 0.089,
+    "deltaInt_q0_25_gzip": 2133,
+    "xCapitalDeltaGzip": 0.099,
+    "mergedPaths": 2,
+    "buildingIoU": null
+   },
+   "skeleton@DP2": {
+    "features": 23,
+    "vertices": 634,
+    "xVertexCeiling8500": 0.075,
+    "xFeatureCeiling2065": 0.011,
+    "geojsonGzip": 3889,
+    "xCapitalGeojsonGzip": 0.065,
+    "deltaInt_q0_25_gzip": 1637,
+    "xCapitalDeltaGzip": 0.076,
+    "mergedPaths": 2,
+    "buildingIoU": null
+   },
+   "fullBuilding@DP0.5": {
+    "features": 4327,
+    "vertices": 113482,
+    "xVertexCeiling8500": 13.4,
+    "xFeatureCeiling2065": 2.1,
+    "geojsonGzip": 473703,
+    "xCapitalGeojsonGzip": 7.9,
+    "deltaInt_q0_25_gzip": 118585,
+    "xCapitalDeltaGzip": 5.5,
+    "mergedPaths": 4,
+    "buildingIoU": 0.9878
+   },
+   "fullBuilding@DP1": {
+    "features": 4325,
+    "vertices": 39461,
+    "xVertexCeiling8500": 4.6,
+    "xFeatureCeiling2065": 2.1,
+    "geojsonGzip": 200373,
+    "xCapitalGeojsonGzip": 3.3,
+    "deltaInt_q0_25_gzip": 74086,
+    "xCapitalDeltaGzip": 3.4,
+    "mergedPaths": 4,
+    "buildingIoU": 0.9594
+   },
+   "fullBuilding@DP2": {
+    "features": 4318,
+    "vertices": 23201,
+    "xVertexCeiling8500": 2.7,
+    "xFeatureCeiling2065": 2.1,
+    "geojsonGzip": 133468,
+    "xCapitalGeojsonGzip": 2.2,
+    "deltaInt_q0_25_gzip": 53195,
+    "xCapitalDeltaGzip": 2.5,
+    "mergedPaths": 4,
+    "buildingIoU": 0.9235
+   },
+   "fullBuildingPlusGroundNegativeSpace@DP0.5": {
+    "features": 5076,
+    "vertices": 188470,
+    "xVertexCeiling8500": 22.2,
+    "xFeatureCeiling2065": 2.5,
+    "geojsonGzip": 793880,
+    "xCapitalGeojsonGzip": 13.3,
+    "deltaInt_q0_25_gzip": 188246,
+    "xCapitalDeltaGzip": 8.7,
+    "mergedPaths": 5,
+    "buildingIoU": 0.9878
+   },
+   "fullBuildingPlusGroundNegativeSpace@DP1": {
+    "features": 5074,
+    "vertices": 59325,
+    "xVertexCeiling8500": 7.0,
+    "xFeatureCeiling2065": 2.5,
+    "geojsonGzip": 304644,
+    "xCapitalGeojsonGzip": 5.1,
+    "deltaInt_q0_25_gzip": 113188,
+    "xCapitalDeltaGzip": 5.3,
+    "mergedPaths": 5,
+    "buildingIoU": 0.9594
+   },
+   "fullBuildingPlusGroundNegativeSpace@DP2": {
+    "features": 5030,
+    "vertices": 36088,
+    "xVertexCeiling8500": 4.2,
+    "xFeatureCeiling2065": 2.4,
+    "geojsonGzip": 206189,
+    "xCapitalGeojsonGzip": 3.4,
+    "deltaInt_q0_25_gzip": 82929,
+    "xCapitalDeltaGzip": 3.9,
+    "mergedPaths": 5,
+    "buildingIoU": 0.9235
+   }
+  },
+  "tierForTier": {
+   "note": "Sibling tiers: core = building + laneStreet + laneAlley + road + wallRun; vectorWorthy = core + trees, fields, sea, etc. Mapping: traced building (+ wall) ~ core; fullBuilding (adds tree, field, water, hinterland) ~ vectorWorthy. Counterfactual generated capital: core 7969 vertices / 1846 features (all-land), 8232 core vertices (half-sea headline); vectorWorthy 8462.",
+   "rows": {
+    "Epēshu core-equivalent (building) @DP0.5": {
+     "features": 25368,
+     "vertices": 234121,
+     "xCapitalCoreVertices_8232": 28.4,
+     "buildingIoU": 0.9661
+    },
+    "Epēshu core-equivalent (building) @DP1": {
+     "features": 25365,
+     "vertices": 146334,
+     "xCapitalCoreVertices_8232": 17.8,
+     "buildingIoU": 0.8833
+    },
+    "Epēshu core-equivalent (building) @DP2": {
+     "features": 23539,
+     "vertices": 95212,
+     "xCapitalCoreVertices_8232": 11.6,
+     "buildingIoU": 0.749
+    },
+    "Summarch core-equivalent (building + wall) @DP0.5": {
+     "features": 3790,
+     "vertices": 83956,
+     "xCapitalCoreVertices_8232": 10.2,
+     "buildingIoU": 0.9878
+    },
+    "Summarch core-equivalent (building + wall) @DP1": {
+     "features": 3790,
+     "vertices": 35164,
+     "xCapitalCoreVertices_8232": 4.3,
+     "buildingIoU": 0.9594
+    },
+    "Summarch core-equivalent (building + wall) @DP2": {
+     "features": 3788,
+     "vertices": 20465,
+     "xCapitalCoreVertices_8232": 2.5,
+     "buildingIoU": 0.9235
+    }
+   }
+  },
+  "P11": {
+   "constraint": "P11 sweeps N = 300 / 1,000 / 3,000 features, 1.9k-8.5k vertices, merged (~30 paths) vs L.canvas (sibling p11Inputs: \"P11 sweep values N = 300 / 1,000 / 3,000 bracket the measured single-city range\")",
+   "verdict": "The skeleton variants (Epēshu 5 polygons / 4.6k vertices at DP 1, Summarch 23 / 0.9k) sit inside the swept range. A full-building trace does not: Summarch needs N ~4,300 features / 23-39k vertices, Epēshu N ~25,000-28,000 features / 110-177k vertices (merged into 4-5 paths). P11 would have to add N = 5,000 and 30,000 and vertex cases of ~40k and ~180k before a full-building chart trace could be judged; no frame time was measured here."
+  },
+  "svgCssScaleBloom": {
+   "constraint": "svg-css-scale-bloom (disputed 1/2, medium-dependent): stock Leaflet SVG/Canvas renderers CSS-scale the pane during flyTo/pinch and re-project only at zoomend/moveend; its cheap_fix for a future vector city: \"a custom canvas/WebGL layer redrawn every 'zoom' frame with stroke widths in screen px, never stock L.svg/L.Canvas paths\".",
+   "verdict": "Independent of vertex count for stock renderers: a traced chart in L.svg blooms during flyIntoCity exactly like the stubs. The only non-blooming form (per-frame canvas redraw on 'zoom') makes the per-frame cost proportional to vertices, so it is plausible for a skeleton (0.6-4.6k vertices) and doubtful for a full Epēshu trace (110-177k vertices per frame on phones; inference, not measured; Mobile-lane budgets apply)."
+  },
+  "R4_R7": {
+   "note": "R4 (never label blocks) and R7 (nothing at rest; halos on hover only) mean the traced buildings need no per-feature hit target, so merging by class (4-6 paths) is allowed by the same reading as C3; C3 itself marks whether R4/R7 \"allow\" the merge as not established."
+  }
+ },
+ "labelContamination": {
+  "Epēshu": {
+   "buildingComponentsIntersectingLegendBox": 0,
+   "roofPxInLegendBox": 0,
+   "badgeDiscs": 19,
+   "badgeDiscPx": 105517,
+   "badgeHaloDilationPx": 12,
+   "buildingComponentsTouchingBadgeHalo": 162,
+   "buildingPxTouchingBadgeHalo": 4586,
+   "badgeHaloPxInsideBuiltArea": 118290,
+   "roofDensityWithin40pxOfRoofs": 0.169,
+   "badgeHaloPxInsideBuiltArea_asBuildingEquivalents": 539,
+   "legendFrame": {
+    "navyFramePx": 34668,
+    "bboxXYWH": [
+     [
+      3048,
+      2797,
+      832,
+      1351
+     ]
+    ],
+    "note": "the legend panel frame is badge-navy; excluded from badge discs (area 2000-20000 px rule); it sits over the hinterland, so it punches a hole in the hinterland polygon, not in buildings"
+   }
+  },
+  "Summarch": {
+   "buildingComponentsIntersectingLegendBox": 0,
+   "roofPxInLegendBox": 1,
+   "badgeDiscs": 9,
+   "badgeDiscPx": 93434,
+   "badgeHaloDilationPx": 6,
+   "buildingComponentsTouchingBadgeHalo": 39,
+   "buildingPxTouchingBadgeHalo": 24966,
+   "badgeHaloPxInsideBuiltArea": 84223,
+   "roofDensityWithin40pxOfRoofs": 0.344,
+   "badgeHaloPxInsideBuiltArea_asBuildingEquivalents": 74
+  },
+  "verdict": "Label ink does not ADD false area to building blobs in either chart: roofs are a separate tan class, legend panels hold 0 roof components (Epēshu legend over the hinterland, Summarch legend over open ground), and badge numerals are cream. It REMOVES area: the 19 Epēshu badges (navy, separable by colour) plus their 12 px cream halo cover ~118k px of built-up city (~540 building-equivalents) and truncate 162 roof components; the 9 Summarch badges cover ~84k px (~74 building-equivalents) and touch 39 roofs. A trace that drops the badges (R4/R7: POIs on hover) leaves badge-shaped voids that need infill. The ink class itself is contaminated for walls: in Summarch the badges, the title \"Sun's March\" (15 components, 7,501 px) and the compass rose (10 components, 59,241 px) are the same ink as the wall and survive the width opening; they were removed here only by position/shape rules (legend box, compass box, EDT >= 20 discs). In Epēshu the badges are a distinct navy, so the wall/road problem there is width, not text."
+ },
+ "verdict": {
+  "medium": "This is a rendering-medium cost only; none of it moves the city relative to the atlas.",
+  "skeleton": "A skeleton trace (coast/water + Summarch wall + Epēshu hinterland edge) is a data job of hours: Epēshu 4,624 vertices / 24 KB GeoJSON gzip / 5.8 KB deltaInt gzip at DP 1 (IoU >= 0.998 per class); Summarch 931 vertices / 5.3 KB / 2.1 KB (wall IoU 0.967, water 0.986). It fits the C3 live budget (<= 8.5k vertices, 2 merged paths). But it lacks main streets in both charts (unpainted ground) and walls in Epēshu (same width as outlines), so the \"skeleton\" is coast + water + one wall ring, not a street network.",
+  "fullBuilding": "Summarch full-building is feasible but over budget: 4,325 features / 39.5k vertices at DP 1 (4.6x the 8.5k vertex ceiling, building IoU 0.959), 23.2k at DP 2 (2.7x, IoU 0.924); 200 KB / 133 KB GeoJSON gzip. Epēshu full-building is far over: 27,763 features / 177k vertices at DP 1 (20.8x; building IoU 0.883), 110k at DP 2 (13.0x, IoU 0.749 with 1,832 buildings collapsed); 903 KB / 627 KB GeoJSON gzip, 285 KB / 208 KB deltaInt gzip. Only DP 0.5 keeps Epēshu buildings at IoU 0.966, at 301k vertices (35x). Epēshu's 6 px buildings are too small relative to any useful tolerance, so a vector Epēshu with buildings is not a cheap trace; it is a per-building data project with a renderer (P11, bloom) still unproven at 25k features.",
+  "determinismAndPins": "A traced chart is a static data asset made offline from canon art: it enters no generation code, so xmur3 / mulberry32 / genCityCanvas / washMake / sampleCityMask (UG3 atlas_fn_sha) and cityCanvasSha are untouched unless a later change consumes it inside those functions. Epēshu and Summarch are prov:'canon' overlays that ensureCityGen never generates, so a trace replaces or sits under a raster, not a seeded canvas. It does add a download (gzip figures above) that the Mobile lane delivery budget would have to admit.",
+  "ownership": "Inference: a skeleton trace (coast/water/wall registration targets) belongs with the anchoring/registration item or a small data item, because its value is as hit/registration geometry, not look. A full-building trace exceeds filigree slice C's scope (\"painted city, pooled edges\", functions registerCityOverlay, genCityCanvas, washMake, sampleCityMask) and the live budget; it should be its own item gated on owner question 1 (replace / sit under / past 9.885) and on the canon-art-source question (a vector master from the DM would replace tracing).",
+  "ownerQuestions": "Q1 (replace, sit under, appear past 9.885): at 9.885 the existing raster already shows 1 overlay px per screen px; a traced layer adds crispness only above it, where Epēshu buildings are 4.5-13.6 screen px. Q18 (trace footprints or keep the art): footprints trace cleanly for Summarch (3,772 buildings, IoU 0.96 at DP 1) and poorly for Epēshu at budget tolerances; keeping the art for Epēshu and tracing only its skeleton is the measured cheap path."
+ },
+ "caveats": [
+  "JPEG tiles, not the DM masters: chroma subsampling makes 14.2% (Epēshu) / 5.9% (Summarch) of pixels > dE10 from every class centroid; all IoU figures are against the classified JPEG, not the true drawing.",
+  "Building = roof interior only; the drawn footprint includes ~1 px of outline on each side (Epēshu buildings would grow ~2 px in each dimension if buffered).",
+  "Class centroids and the legend/compass boxes were picked by eye; a different centroid set moves blend pixels between classes (not the building counts at >= 6 px by more than the sweep shows).",
+  "Douglas-Peucker does not check self-intersection or ring-to-ring overlap; topology-preserving simplification would cost more vertices.",
+  "Field class (Summarch hatching, thin roads; Epēshu parks) is a poor polygon class: low IoU at DP >= 1 and many dropped rings; it belongs in a texture, not a trace.",
+  "Epēshu badge building-equivalents use roof density 0.169 within 40 px of roofs and a median 37 px roof: an order-of-magnitude figure.",
+  "Inference, not verified: both charts look like Watabou Medieval Fantasy City Generator output (legend, compass, hatching style). If the DM holds the generator seed or its GeoJSON/SVG export, exact vector geometry exists and tracing is unnecessary (open owner question on canon art source).",
+  "No browser, no frame times: renderer viability is P11's to measure."
+ ],
+ "scripts": {
+  "mosaic.py": "import sys,os\nfrom PIL import Image\nroot,name,w,h,out=sys.argv[1],sys.argv[2],int(sys.argv[3]),int(sys.argv[4]),sys.argv[5]\nM=Image.new('RGB',((w+255)//256*256,(h+255)//256*256),(255,0,255))\nd=os.path.join(root,'charts',name,'3')\nfor x in os.listdir(d):\n  for f in os.listdir(os.path.join(d,x)):\n    y=int(f.split('.')[0]); M.paste(Image.open(os.path.join(d,x,f)).convert('RGB'),(int(x)*256,y*256))\nM=M.crop((0,0,w,h)); M.save(out); print(name,M.size)\nM.resize((w//8,h//8),Image.LANCZOS).save(out.replace('.png','_s8.png'))\n",
+  "cls.py": "import sys,json,numpy as np\nfrom PIL import Image\nfrom scipy import ndimage as ndi\ndef lab(rgb):\n  c=rgb/255.0; c=np.where(c>0.04045,((c+0.055)/1.055)**2.4,c/12.92)\n  M=np.array([[0.4124,0.3576,0.1805],[0.2126,0.7152,0.0722],[0.0193,0.1192,0.9505]])\n  xyz=c@M.T/np.array([0.95047,1.0,1.08883])\n  f=np.where(xyz>0.008856,np.cbrt(xyz),7.787*xyz+16/116)\n  return np.stack([116*f[...,1]-16,500*(f[...,0]-f[...,1]),200*(f[...,1]-f[...,2])],-1)\nPAL={\n 'ep':{'sea':[119,152,135],'olive':[102,118,85],'field':[214,212,176],'ground':[253,243,202],\n       'roof':[223,175,124],'ink':[60,62,44],'badge':[41,58,68]},\n 'su':{'ground':[255,241,200],'roof':[211,163,112],'ink':[78,89,77],'river':[120,151,135],'field':[205,201,166]},\n}\nkey=sys.argv[1]; im=np.asarray(Image.open(sys.argv[2]).convert('RGB')).astype(np.float32)\nnames=list(PAL[key]); C=lab(np.array([PAL[key][n] for n in names],np.float32))\nL=np.empty(im.shape[:2],np.uint8); D=np.empty(im.shape[:2],np.float32)\nfor y in range(0,im.shape[0],256):\n  l=lab(im[y:y+256]); d=np.sqrt(((l[...,None,:]-C)**2).sum(-1)); L[y:y+256]=d.argmin(-1); D[y:y+256]=d.min(-1)\nnp.save(sys.argv[3]+'_cls.npy',L); np.save(sys.argv[3]+'_de.npy',D)\nfr={n:round(float((L==i).mean())*100,3) for i,n in enumerate(names)}\namb={t:round(float((D>t).mean())*100,2) for t in (5,10,20)}\nprint(key,names,fr,'pct pixels with dE76 to nearest class centroid >5/10/20:',amb)\njson.dump({'names':names,'pal':PAL[key],'fracPct':fr,'ambigPct_dE_gt':amb},open(sys.argv[3]+'_cls.json','w'))\n",
+  "trace.py": "import sys,json,gzip,numpy as np\nfrom PIL import Image,ImageDraw\nfrom scipy import ndimage as ndi\n\ndef label4(m): return ndi.label(m,structure=[[0,1,0],[1,1,1],[0,1,0]])\n\ndef crack_rings(lab,mode='ms'):\n  \"\"\"Pixel-edge boundary rings of a 4-connected label image. Returns list of (label, ring Nx2 corner coords x,y).\"\"\"\n  H,W=lab.shape; P=np.zeros((H+2,W+2),lab.dtype); P[1:-1,1:-1]=lab\n  S=[];E=[];O=[]\n  def add(mask,sx,sy,ex,ey):\n    r,c=np.nonzero(mask); S.append(np.stack([c+sx,r+sy],1)); E.append(np.stack([c+ex,r+ey],1)); O.append(lab[r,c])\n  core=P[1:-1,1:-1]; fg=core>0\n  add(fg&(P[:-2,1:-1]!=core),0,0,1,0)   # top edge, rightwards\n  add(fg&(P[1:-1,2:]!=core),1,0,1,1)    # right edge, down\n  add(fg&(P[2:,1:-1]!=core),1,1,0,1)    # bottom edge, left\n  add(fg&(P[1:-1,:-2]!=core),0,1,0,0)   # left edge, up\n  S=np.concatenate(S);E=np.concatenate(E);O=np.concatenate(O)\n  n=len(S); W1=W+1\n  sid=S[:,1].astype(np.int64)*W1+S[:,0]; eid=E[:,1].astype(np.int64)*W1+E[:,0]\n  # same vertex may start edges of different labels; key by (label,vertex) so labels never mix\n  sk=O.astype(np.int64)*((H+1)*W1)+sid; ek=O.astype(np.int64)*((H+1)*W1)+eid\n  order=np.argsort(sk,kind='stable'); sks=sk[order]\n  lo=np.searchsorted(sks,ek,'left'); hi=np.searchsorted(sks,ek,'right')\n  cnt=hi-lo\n  nxt=order[np.minimum(lo,n-1)].copy()\n  # saddle within one label: 2 outgoing; continue along the edge owned by the same pixel\n  amb=np.nonzero(cnt==2)[0]\n  if len(amb):\n    # owner pixel of an edge: recover from start/end geometry\n    def owner(i):\n      sx,sy=S[i];ex,ey=E[i]\n      if ey==sy and ex>sx: return (sy,sx)        # top edge\n      if ex==sx and ey>sy: return (sy,sx-1)      # right edge\n      if ey==sy and ex<sx: return (sy-1,ex)      # bottom edge\n      return (ey,sx)                             # left edge\n    for i in amb:\n      a,b=order[lo[i]],order[lo[i]+1]\n      nxt[i]=a if owner(a)==owner(i) else b\n  assert (cnt>=1).all()\n  seen=np.zeros(n,bool); rings=[]\n  for i0 in range(n):\n    if seen[i0]: continue\n    idx=[];i=i0\n    while not seen[i]:\n      seen[i]=True; idx.append(i); i=nxt[i]\n    pts=S[idx] if mode=='crack' else (S[idx]+E[idx])/2.0\n    # drop collinear vertices\n    d=np.diff(np.vstack([pts[-1:],pts,pts[:1]]),axis=0)\n    turn=(d[:-1,0]*d[1:,1]-d[:-1,1]*d[1:,0])!=0\n    rings.append((int(O[i0]),pts[turn].astype(np.float64)))\n  return rings\n\ndef area(r):\n  x,y=r[:,0],r[:,1]; return 0.5*float(np.dot(x,np.roll(y,-1))-np.dot(y,np.roll(x,-1)))\n\ndef dp(pts,eps):\n  n=len(pts)\n  if n<3: return pts\n  keep=np.zeros(n,bool); keep[0]=keep[-1]=True; st=[(0,n-1)]\n  while st:\n    a,b=st.pop()\n    if b<=a+1: continue\n    p=pts[a];q=pts[b];seg=pts[a+1:b]\n    v=q-p;L=np.hypot(*v)\n    if L==0: d=np.hypot(seg[:,0]-p[0],seg[:,1]-p[1])\n    else: d=np.abs(v[0]*(seg[:,1]-p[1])-v[1]*(seg[:,0]-p[0]))/L\n    k=int(d.argmax())\n    if d[k]>eps: m=a+1+k; keep[m]=True; st+=[(a,m),(m,b)]\n  return pts[keep]\n\ndef dp_ring(r,eps):\n  if eps<=0 or len(r)<4: return r\n  j=int(np.argmax(((r-r[0])**2).sum(1)))\n  A=dp(np.vstack([r[:j+1]]),eps); B=dp(np.vstack([r[j:],r[:1]]),eps)\n  return np.vstack([A,B[1:-1]])\n\ndef features(lab,rings,eps):\n  \"\"\"group rings by label: outer = largest |area|; returns dict label->[outer,holes...], dropped count\"\"\"\n  F={};drop=0\n  for l,r in rings:\n    s=dp_ring(r,eps)\n    if len(s)<3 or abs(area(s))<1e-9: drop+=1; continue\n    F.setdefault(l,[]).append(s)\n  for l in F: F[l].sort(key=lambda r:-abs(area(r)))\n  return F,drop\n\ndef raster(F,shape,ss=4):\n  H,W=shape; out=np.zeros(shape,bool)\n  for l,rs in F.items():\n    o=rs[0]; x0=int(np.floor(o[:,0].min()));y0=int(np.floor(o[:,1].min()));x1=int(np.ceil(o[:,0].max()));y1=int(np.ceil(o[:,1].max()))\n    x0=max(x0,0);y0=max(y0,0);x1=min(x1,W);y1=min(y1,H)\n    if x1<=x0 or y1<=y0: continue\n    im=Image.new('1',((x1-x0)*ss,(y1-y0)*ss),0); dr=ImageDraw.Draw(im)\n    for k,r in enumerate(rs):\n      xy=[((x-x0)*ss-0.5,(y-y0)*ss-0.5) for x,y in r]\n      if len(xy)>=3: dr.polygon(xy,fill=0 if k else 1)\n    a=np.asarray(im,dtype=np.uint8).reshape(y1-y0,ss,x1-x0,ss).sum((1,3))>=(ss*ss)//2\n    out[y0:y1,x0:x1]|=a\n  return out\n\ndef iou(a,b):\n  u=(a|b).sum(); return float((a&b).sum()/u) if u else 1.0\n\ndef uvar(v,buf):\n  while True:\n    b=v&127; v>>=7\n    if v: buf.append(b|128)\n    else: buf.append(b); return\ndef zz(v): return (v<<1)^(v>>63) if v<0 else v<<1\n\ndef encode(feats,amap,q):\n  \"\"\"feats: list of (cls,[rings]) in chart px; amap: chart px->atlas px\"\"\"\n  fs=[]; buf=bytearray(); px=py=0; cid={}\n  for c,rs in feats:\n    cc=[[[round(amap[0]+x*amap[2],3),round(amap[1]+y*amap[2],3)] for x,y in np.vstack([r,r[:1]])] for r in rs]\n    fs.append({\"type\":\"Feature\",\"properties\":{\"c\":c},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":cc}})\n    buf.append(cid.setdefault(c,len(cid))); uvar(len(rs),buf)\n    for r in rs:\n      uvar(len(r),buf)\n      for x,y in r:\n        qx=int(round(x/q));qy=int(round(y/q)); uvar(zz(qx-px),buf);uvar(zz(qy-py),buf); px,py=qx,qy\n  gj=json.dumps({\"type\":\"FeatureCollection\",\"features\":fs},separators=(',',':')).encode()\n  return {\"geojsonBytes\":len(gj),\"geojsonGzip\":len(gzip.compress(gj,9)),\"deltaIntBytes\":len(buf),\"deltaIntGzip\":len(gzip.compress(bytes(buf),9))}\n\nif __name__=='__main__':\n  # self-test: shapes incl. hole, saddle, island-in-hole\n  m=np.zeros((20,20),np.int32); m[2:10,2:10]=1; m[4:8,4:8]=0; m[5:7,5:7]=2; m[12,12]=3;m[13,13]=3; m[12:15,15:18]=4; m[13,16]=0\n  lab,_=label4(m>0)\n  R=crack_rings(lab); F,d=features(lab,R,0)\n  print('rings',len(R),'feats',len(F),'iou',iou(raster(F,m.shape),lab>0))\n",
+  "run.py": "import sys,json,gzip,time,numpy as np\nsys.path.insert(0,sys.argv[1]); from trace import *\nfrom scipy import ndimage as ndi\nW=sys.argv[1]; key=sys.argv[2]\nL=np.load(W+'/'+key+'_cls.npy'); meta=json.load(open(W+'/'+key+'_cls.json')); N=meta['names']; ci={n:i for i,n in enumerate(N)}\nH_,W_=L.shape\nEIGHT=np.ones((3,3))\ndef comps(m,minA=1,maxA=None,conn4=True):\n  lab,n=label4(m) if conn4 else ndi.label(m,structure=EIGHT)\n  if n==0: return lab,0\n  a=np.bincount(lab.ravel())[1:]; ok=a>=minA\n  if maxA: ok&=a<maxA\n  keep=np.zeros(n+1,bool); keep[1:]=ok\n  return label4(keep[lab])\ndef fillsmall(m,maxA):\n  lab,n=label4(~m); a=np.bincount(lab.ravel()); small=a<maxA; small[0]=False\n  # never fill background touching border\n  bl=np.unique(np.concatenate([lab[0],lab[-1],lab[:,0],lab[:,-1]])); small[bl]=False\n  return m|small[lab]\nif key=='ep':\n  chart=dict(name='Epēshu',w=3914,h=4200,anchor=(1236.1,1415),kind='capital',r=26,overlay=(2863,3072))\n  legend=(3024,2776,3914,4200); compass=None\n  raw={'building':L==ci['roof'],'water':L==ci['sea'],'field':L==ci['field'],'ground':L==ci['ground']}\n  ol=L==ci['olive']; olab,on=label4(ol); oa=np.bincount(olab.ravel()); big=oa>=50000; big[0]=False\n  raw['hinterland']=big[olab]; raw['tree']=ol&~big[olab]\n  badge_raw=L==ci['badge']\n  bl,bn=comps(badge_raw,2000,20000); badge=bl>0  # discs only; the navy legend frame (34,668 px) is excluded\n  inkname='ink'\nelse:\n  chart=dict(name='Summarch',w=4245,h=3951,anchor=(523,58),kind='town',r=14,overlay=(3072,2859))\n  legend=(40,40,1165,1645); compass=(3400,3100,4245,3951)\n  raw={'building':L==ci['roof'],'water':L==ci['river'],'field':L==ci['field'],'ground':L==ci['ground']}\n  ink=L==ci['ink']; e=ndi.distance_transform_edt(ink)\n  t=4.0; op=(ndi.distance_transform_edt(~(e>=t))<t+0.01)&ink\n  lab,n=ndi.label(op,structure=EIGHT); idx=np.arange(1,n+1)\n  ar=ndi.sum(op,lab,idx); mx=ndi.maximum(e,lab,idx); sl=ndi.find_objects(lab)\n  def inbox(s,b): return s[1].start>=b[0] and s[0].start>=b[1] and s[1].stop<=b[2] and s[0].stop<=b[3]\n  kinds={}\n  for k in range(n):\n    s=sl[k]\n    if ar[k]<150: kd='speck'\n    elif inbox(s,legend): kd='legendTitleText'\n    elif inbox(s,compass): kd='compassRose'\n    elif mx[k]>=20: kd='badgeDisc'\n    else: kd='wall'\n    kinds[k+1]=kd\n  kk=np.array(['none']+[kinds[i] for i in range(1,n+1)])\n  thick_stats={kd:{'components':int(sum(1 for v in kinds.values() if v==kd)),'px':int(sum(ar[i-1] for i,v in kinds.items() if v==kd))} for kd in set(kinds.values())}\n  raw['wall']=kk[lab]=='wall'; badge=kk[lab]=='badgeDisc'\n  ink_thick=op\namap=(chart['anchor'][0]-chart['r']*chart['w']/max(chart['w'],chart['h']), chart['anchor'][1]-chart['r']*chart['h']/max(chart['w'],chart['h']), 2*chart['r']/max(chart['w'],chart['h']))\nres={'chart':chart,'nominalAtlasMap':{'x0':amap[0],'y0':amap[1],'atlasPxPerChartPx':amap[2],'chartPxPerAtlasPx':1/amap[2]},'classPalette':meta}\n# building sweep\nrl,rn=label4(raw['building']); ra=np.bincount(rl.ravel())[1:]\nres['buildingSweep']={'conn4':{str(m):int((ra>=m).sum()) for m in (1,6,12,25,50)},\n  'conn8_minA6':int((np.bincount(ndi.label(raw['building'],structure=EIGHT)[0].ravel())[1:]>=6).sum()),\n  'medianSqrtAreaPx_minA6':round(float(np.median(np.sqrt(ra[ra>=6]))),2),\n  'p10_p90_SqrtAreaPx_minA6':[round(float(np.percentile(np.sqrt(ra[ra>=6]),q)),2) for q in (10,90)],\n  'roofPxInComponentsBelow6':int(ra[ra<6].sum()),'roofPxTotal':int(ra.sum())}\n# cleaned masks\nMINA={'building':6,'water':5000,'field':50,'hinterland':50000,'tree':20,'wall':150,'ground':20}\nclean={}\nfor c,m in raw.items():\n  if c=='water': m=fillsmall(m,500)\n  lab,n=comps(m,MINA[c]); clean[c]=lab\n# contamination\ncont={}\nx0,y0,x1,y1=legend\nbl=clean['building']\ninleg=np.unique(bl[y0:y1,x0:x1]); inleg=inleg[inleg>0]\nfullin=[l for l in inleg if True]\ncont['buildingComponentsIntersectingLegendBox']=int(len(inleg))\ncont['roofPxInLegendBox']=int(raw['building'][y0:y1,x0:x1].sum())\nbd=ndi.binary_dilation(badge,iterations=12 if key=='ep' else 6)\ntouch=np.unique(bl[bd]); touch=touch[touch>0]\ncont['badgeDiscs']=int(label4(badge)[1]); cont['badgeDiscPx']=int(badge.sum())\ncont['badgeHaloDilationPx']=12 if key=='ep' else 6\ncont['buildingComponentsTouchingBadgeHalo']=int(len(touch))\nba=np.bincount(bl.ravel()); cont['buildingPxTouchingBadgeHalo']=int(ba[touch].sum()) if len(touch) else 0\n# area of badge+halo that lies inside the built city (convex-ish: pixels within 40 px of a roof) = occluded city area\nnear=ndi.distance_transform_edt(~raw['building'])<=40\ncont['badgeHaloPxInsideBuiltArea']=int((bd&near).sum())\ncont['roofDensityWithin40pxOfRoofs']=round(float(raw['building'][near].mean()),3); cont['badgeHaloPxInsideBuiltArea_asBuildingEquivalents']=int(round(cont['badgeHaloPxInsideBuiltArea']*float(raw['building'][near].mean())/float(np.median(ra[ra>=6]))))\nif key=='ep':\n  fl,fn=comps(badge_raw,20000); sl=ndi.find_objects(fl)\n  cont['legendFrame']={'navyFramePx':int((fl>0).sum()),'bboxXYWH':[[s[1].start,s[0].start,s[1].stop-s[1].start,s[0].stop-s[0].start] for s in sl],'note':'the legend panel frame is badge-navy; excluded from badge discs (area 2000-20000 px rule); it sits over the hinterland, so it punches a hole in the hinterland polygon, not in buildings'}\nif key=='su': cont['thickInkOpening']={'edtThresholdPx':4.0,'components':thick_stats}\nres['labelContamination']=cont\n# trace\nEPS=[0,0.5,1,2]\nper={}; featsBy={e:{} for e in EPS}\nfor c,lab in clean.items():\n  t0=time.time(); R=crack_rings(lab); per[c]={}\n  for e in EPS:\n    F,drop=features(lab,R,e)\n    rr=raster(F,lab.shape)\n    nv=sum(len(r) for rs in F.values() for r in rs); nr=sum(len(rs) for rs in F.values())\n    fl=[(c,rs) for l,rs in sorted(F.items())]; featsBy[e][c]=fl\n    enc1=encode(fl,amap,0.25); enc2=encode(fl,amap,1.0)\n    per[c][str(e)]={'polygons':len(F),'rings':nr,'vertices':nv,'ringsDroppedBelow3Vertices':drop,\n      'geojsonBytes':enc1['geojsonBytes'],'geojsonGzip':enc1['geojsonGzip'],\n      'deltaInt_q0_25':{'bytes':enc1['deltaIntBytes'],'gzip':enc1['deltaIntGzip']},\n      'deltaInt_q1':{'bytes':enc2['deltaIntBytes'],'gzip':enc2['deltaIntGzip']},\n      'iouVsTracedMask':round(iou(rr,lab>0),4),'iouVsRawClassMask':round(iou(rr,raw[c]),4)}\n  print(key,c,'%.1fs'%(time.time()-t0),{e:(per[c][str(e)]['polygons'],per[c][str(e)]['vertices'],per[c][str(e)]['iouVsTracedMask']) for e in EPS},flush=True)\nres['perClass']=per\n# variants\nSK=['water','wall','hinterland'] ; FULL=SK+['building','tree','field']\nvar={}\nfor e in EPS:\n  for vn,cl in (('skeleton',SK),('fullBuilding',FULL),('fullBuildingPlusGroundNegativeSpace',FULL+['ground'])):\n    fl=[f for c in cl if c in featsBy[e] for f in featsBy[e][c]]\n    enc1=encode(fl,amap,0.25); enc2=encode(fl,amap,1.0)\n    var.setdefault(vn,{'classes':[c for c in cl if c in featsBy[e]]})[str(e)]={'polygons':len(fl),'vertices':sum(len(r) for _,rs in fl for r in rs),\n      'geojsonBytes':enc1['geojsonBytes'],'geojsonGzip':enc1['geojsonGzip'],'deltaInt_q0_25':{'bytes':enc1['deltaIntBytes'],'gzip':enc1['deltaIntGzip']},\n      'deltaInt_q1':{'bytes':enc2['deltaIntBytes'],'gzip':enc2['deltaIntGzip']},'svgPathsMergedByClass':len([c for c in cl if c in featsBy[e]])}\nres['variants']=var\njson.dump(res,open(W+'/'+key+'_res.json','w'),indent=1,ensure_ascii=False)\nprint(json.dumps({k:res[k] for k in ('buildingSweep','labelContamination')},indent=1,ensure_ascii=False))\n",
+  "pal2.py": "import sys,json,numpy as np\nfrom PIL import Image\nsys.path.insert(0,sys.argv[3]); \ndef lab(rgb):\n  c=rgb/255.0; c=np.where(c>0.04045,((c+0.055)/1.055)**2.4,c/12.92)\n  M=np.array([[0.4124,0.3576,0.1805],[0.2126,0.7152,0.0722],[0.0193,0.1192,0.9505]])\n  xyz=c@M.T/np.array([0.95047,1.0,1.08883]); f=np.where(xyz>0.008856,np.cbrt(xyz),7.787*xyz+16/116)\n  return np.stack([116*f[...,1]-16,500*(f[...,0]-f[...,1]),200*(f[...,1]-f[...,2])],-1)\nim=np.asarray(Image.open(sys.argv[1]).convert('RGB')).astype(np.int32)\nq=im>>3; key=(q[...,0]<<10)|(q[...,1]<<5)|q[...,2]\ncnt=np.bincount(key.ravel(),minlength=1<<15); idx=np.nonzero(cnt)[0]; c=cnt[idx]; o=np.argsort(-c); idx=idx[o]; c=c[o]\nrgb=np.stack([(idx>>10)&31,(idx>>5)&31,idx&31],1)*8+4; L=lab(rgb.astype(float)); tot=c.sum()\nout={'pixels':int(tot),'distinct5bitBins':int(len(idx)),'distinctExact24bit':int(len(np.unique((im[...,0]<<16)|(im[...,1]<<8)|im[...,2])))}\ndef greedy(X,thr):\n  pal=[];pc=[];pr=[]\n  for x,n,r in zip(X,c,rgb):\n    if pal:\n      d=np.sqrt(((np.array(pal)-x)**2).sum(1)); j=d.argmin()\n      if d[j]<=thr: pc[j]+=n; continue\n    pal.append(x); pc.append(n); pr.append(r)\n  pc=np.array(pc); oo=np.argsort(-pc); cs=np.cumsum(pc[oo])/tot\n  return {'mergedColours':len(pal),'coloursFor90_95_99pct':[int(np.searchsorted(cs,t)+1) for t in (.9,.95,.99)],\n          'top':[{'rgb':[int(v) for v in pr[k]],'pct':round(float(pc[k]/tot*100),2)} for k in oo[:12]]}\nout['rgbEuclidGreedy']={str(t):greedy(rgb.astype(float),t) for t in (20,30,40)}\nout['deltaE76Greedy']={str(t):greedy(L,t) for t in (5,10,20)}\nfor k in ('rgbEuclidGreedy','deltaE76Greedy'):\n  for t,v in out[k].items():\n    if t not in ('30','10'): v.pop('top')\njson.dump(out,open(sys.argv[2],'w'),indent=1)\nprint(json.dumps({k:(v if not isinstance(v,dict) else {t:(x['mergedColours'],x['coloursFor90_95_99pct']) for t,x in v.items()}) for k,v in out.items()}))\n"
+ }
+}

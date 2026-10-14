@@ -1,0 +1,4075 @@
+{
+ "id": "epeshu-scale-vs-sim",
+ "gap": "G6-sim-extent-scale-criterion",
+ "date": "2026-10-07",
+ "static_only": true,
+ "browser_run": false,
+ "baseline": "Same baseline as gap-coasts:tc-4 (out/three-coasts-epeshu.json dm_art_placements boxes used verbatim; print water mask rebuilt by the identical buildCityMask port). These numbers are NOT comparable with, and must NOT be averaged with, the tie-table (reg) figures.",
+ "key_distinction": "REGISTRATION: every number here is about where the chart sits (placement scale and centre) relative to the sim's hand-placed labels, the sim disc and the print coast. RENDERING MEDIUM: a vector chart placed in the same box gives identical numbers. Only extent and hand-placed labels are compared; the sim's invented streets (planStreetsFor) are not inputs and are not to be dragged along.",
+ "method": {
+  "sim_frame": "index.html buildEpeshuMapData: Epēshu gridX 169 gridZ 168, cityLabels as metre offsets dx,dz from s.x,s.z (genSettlements custom branch: x=gridToWorld(gridX)); extraLandmarks via gridToWorld(gridX/gridZ). gridToWorld(i)=(i/(N-1)-0.5)*W_SIZE, N=768, W_SIZE=9000. World to atlas by sim:S1 (vertex convention): atlasX=1060+gx*800/768, gx=(x/9000+0.5)*767. m per atlas px = 9000/(767*800/768) = 11.2647 (S8 used 11.25; differences <=0.2%).",
+  "sim_centre_atlas": [
+   1236.04,
+   1415.0
+  ],
+  "sim_disc": "genSettlements custom branch: rad = 265 m for capital -> R = 23.52 atlas px. buildTownWall: wallR = clamp(maxD+18, s.R*0.5, s.R*1.08) -> wall band 11.76..25.41 atlas px (runtime value not measured; static only).",
+  "chart_projection": "worldPOICoord: x0+(p.x/poiRef.w)*fw, y0+(p.y/poiRef.h)*fh with poiRef = detail-charts.json Epēshu 3914x4200; box per placement = tc-4 box verbatim (scale about the anchor 1236.1,1415 then +dx E). Overlay 2863x3072 vs poiRef aspect differ by 0.007% (~0.2 art px), ignored.",
+  "name_match": "13 pairs by name with the S7 drift folded by hand: the Marble Quarter=Marble Quarter, Fairy Arch=The Fairy Arch, the Thūkīn Amphitheater=Thūkīn Amphitheatre, rest identical. Excluded: sim templeName 'the Blue Temple of Thobrauk' (placed at runtime by the generator, not hand-placed) and 6 chart-only POIs (Temple of Thobrauk Tegendes, Temple of the Ēkromatkar, The Māmban, The Relkhonak, Black Barghest Inn, Road That Walks with the Sun).",
+  "chart_extent": "overlay-Epeshu.jpg colour classes: sea = L1 to RGB(119,153,136) <36 and nearer than olive (tc dm_art rule), largest component; countryside = olive RGB(102,119,85) L1<40, opened 3x, components >=200k art px (in-town trees are the same olive but small); legend panel x2230-2837 y2046-3033 (detected by its navy border) excluded; urban footprint = the rest, opened, largest component, holes filled (it is cut by the frame on all four sides, so a lower bound). Built-up = urban pixels whose cream-ground fraction (RGB>=(230,220,170), R-B<70) in a 61 art px window, number badges masked, is <= 0.4/0.5/0.6; opened 3x, largest component, holes filled; touches no frame edge. Wall: the chart draws no wall circuit (visual inspection of the full overlay and two 800 px crops), so no wall radius exists to measure. r_eq = sqrt(area/pi). Art px to atlas px = box width/2863.",
+  "print_water": "three-coasts-epeshu.json stores only r60 coast points, not the mask, so the mask was rebuilt by the same numpy port of buildCityMask on PIL-decoded z5 tiles over atlas [1040,1880)x[1220,2060); its coast reproduces the stored print_mask_edge to 0.15 px rms (869 vs 878 points within 60 px; max 1.58 tc->mine, 4.03 mine->tc). Signed distance: + inside print water, - on land (atlas px).",
+  "dem": "EPESHU_HF_URI decoded with h=(R*256+G)/32-300 (decodeEpeshuHF), bilinear at the label grid position; raw decode (no genHydrology carving; Bangeph Rock's spike lift is applied at runtime by genTerrain and is not in these values).",
+  "scripts": "throwaway numpy/scipy/PIL scripts in a mktemp dir; nothing under the repo was written."
+ },
+ "sim_labels": [
+  {
+   "name": "Epēshīn Forum",
+   "src": "cityLabels (dx,dz m)",
+   "dx_m": 0,
+   "dz_m": -15,
+   "atlas": [
+    1236.04,
+    1413.67
+   ],
+   "grid": [
+    169.0,
+    166.72
+   ],
+   "dem_h_m": 70.4,
+   "print_water": false,
+   "print_signed_dist_px": -8.67,
+   "offset_from_sim_centre_px": [
+    -0.0,
+    -1.33
+   ]
+  },
+  {
+   "name": "the Marble Quarter",
+   "src": "cityLabels (dx,dz m)",
+   "dx_m": 120,
+   "dz_m": -105,
+   "atlas": [
+    1246.69,
+    1405.68
+   ],
+   "grid": [
+    179.23,
+    159.05
+   ],
+   "dem_h_m": 70.3,
+   "print_water": false,
+   "print_signed_dist_px": -6.92,
+   "offset_from_sim_centre_px": [
+    10.65,
+    -9.32
+   ]
+  },
+  {
+   "name": "Wood Quay",
+   "src": "cityLabels (dx,dz m)",
+   "dx_m": -95,
+   "dz_m": -150,
+   "atlas": [
+    1227.61,
+    1401.68
+   ],
+   "grid": [
+    160.9,
+    155.22
+   ],
+   "dem_h_m": -5.4,
+   "print_water": true,
+   "print_signed_dist_px": 4.62,
+   "offset_from_sim_centre_px": [
+    -8.43,
+    -13.32
+   ]
+  },
+  {
+   "name": "Whitestreet",
+   "src": "cityLabels (dx,dz m)",
+   "dx_m": -70,
+   "dz_m": -45,
+   "atlas": [
+    1229.83,
+    1411.01
+   ],
+   "grid": [
+    163.03,
+    164.16
+   ],
+   "dem_h_m": 51.8,
+   "print_water": false,
+   "print_signed_dist_px": -4.03,
+   "offset_from_sim_centre_px": [
+    -6.21,
+    -3.99
+   ]
+  },
+  {
+   "name": "Necropolis of the Founders",
+   "src": "cityLabels (dx,dz m)",
+   "dx_m": -120,
+   "dz_m": -95,
+   "atlas": [
+    1225.39,
+    1406.57
+   ],
+   "grid": [
+    158.77,
+    159.9
+   ],
+   "dem_h_m": 2.7,
+   "print_water": true,
+   "print_signed_dist_px": 1.98,
+   "offset_from_sim_centre_px": [
+    -10.65,
+    -8.43
+   ]
+  },
+  {
+   "name": "Outwall",
+   "src": "cityLabels (dx,dz m)",
+   "dx_m": 25,
+   "dz_m": 200,
+   "atlas": [
+    1238.26,
+    1432.75
+   ],
+   "grid": [
+    171.13,
+    185.04
+   ],
+   "dem_h_m": 87.1,
+   "print_water": false,
+   "print_signed_dist_px": -6.22,
+   "offset_from_sim_centre_px": [
+    2.22,
+    17.75
+   ]
+  },
+  {
+   "name": "Eelwynd",
+   "src": "cityLabels (dx,dz m)",
+   "dx_m": -190,
+   "dz_m": 150,
+   "atlas": [
+    1219.17,
+    1428.32
+   ],
+   "grid": [
+    152.81,
+    180.78
+   ],
+   "dem_h_m": -2.6,
+   "print_water": true,
+   "print_signed_dist_px": 3.55,
+   "offset_from_sim_centre_px": [
+    -16.87,
+    13.32
+   ]
+  },
+  {
+   "name": "Kohabron",
+   "src": "cityLabels (dx,dz m)",
+   "dx_m": 210,
+   "dz_m": 25,
+   "atlas": [
+    1254.68,
+    1417.22
+   ],
+   "grid": [
+    186.9,
+    170.13
+   ],
+   "dem_h_m": 85.3,
+   "print_water": false,
+   "print_signed_dist_px": -11.68,
+   "offset_from_sim_centre_px": [
+    18.64,
+    2.22
+   ]
+  },
+  {
+   "name": "Old Quarry Lot",
+   "src": "cityLabels (dx,dz m)",
+   "dx_m": 180,
+   "dz_m": -175,
+   "atlas": [
+    1252.02,
+    1399.46
+   ],
+   "grid": [
+    184.34,
+    153.09
+   ],
+   "dem_h_m": 58.1,
+   "print_water": false,
+   "print_signed_dist_px": -5.46,
+   "offset_from_sim_centre_px": [
+    15.98,
+    -15.54
+   ]
+  },
+  {
+   "name": "Mount Mastery",
+   "src": "extraLandmarks (gridX,gridZ)",
+   "grid": [
+    169,
+    150
+   ],
+   "atlas": [
+    1236.04,
+    1396.25
+   ],
+   "dem_h_m": -7.0,
+   "print_water": true,
+   "print_signed_dist_px": 6.0,
+   "offset_from_sim_centre_px": [
+    -0.0,
+    -18.75
+   ]
+  },
+  {
+   "name": "Fairy Arch",
+   "src": "extraLandmarks (gridX,gridZ)",
+   "grid": [
+    205,
+    185
+   ],
+   "atlas": [
+    1273.54,
+    1432.71
+   ],
+   "dem_h_m": 85.3,
+   "print_water": false,
+   "print_signed_dist_px": -10.24,
+   "offset_from_sim_centre_px": [
+    37.5,
+    17.71
+   ]
+  },
+  {
+   "name": "the Thūkīn Amphitheater",
+   "src": "extraLandmarks (gridX,gridZ)",
+   "grid": [
+    186,
+    184
+   ],
+   "atlas": [
+    1253.75,
+    1431.67
+   ],
+   "dem_h_m": 104.8,
+   "print_water": false,
+   "print_signed_dist_px": -19.64,
+   "offset_from_sim_centre_px": [
+    17.71,
+    16.67
+   ]
+  },
+  {
+   "name": "Bangeph Rock",
+   "src": "extraLandmarks (gridX,gridZ)",
+   "grid": [
+    163,
+    154
+   ],
+   "atlas": [
+    1229.79,
+    1400.42
+   ],
+   "dem_h_m": -5.8,
+   "print_water": true,
+   "print_signed_dist_px": 4.98,
+   "offset_from_sim_centre_px": [
+    -6.25,
+    -14.58
+   ]
+  }
+ ],
+ "sim_label_rms_radius_px": 20.07,
+ "chart_extent_art_px": {
+  "urban_footprint_frame_cut": {
+   "area_art_px": 4672222.0,
+   "r_eq_art_px": 1219.5140233082204,
+   "centroid_art": [
+    1297.2301168480435,
+    1522.3152504311654
+   ],
+   "bbox_art": [
+    0,
+    0,
+    2862,
+    3071
+   ],
+   "touches_frame": {
+    "N": true,
+    "S": true,
+    "W": true,
+    "E": true
+   }
+  },
+  "built_up_by_max_cream_fraction_win61": {
+   "0.4": {
+    "area_art_px": 2296918.0,
+    "r_eq_art_px": 855.0623995671311,
+    "centroid_art": [
+     1132.3395767720049,
+     1560.8566161264791
+    ],
+    "bbox_art": [
+     84,
+     187,
+     2494,
+     2856
+    ],
+    "second_component_area": 185624.0,
+    "touches_frame": {
+     "N": false,
+     "S": false,
+     "W": false,
+     "E": false
+    }
+   },
+   "0.5": {
+    "area_art_px": 2423426.0,
+    "r_eq_art_px": 878.2940590911674,
+    "centroid_art": [
+     1145.9658545381621,
+     1546.066711341712
+    ],
+    "bbox_art": [
+     77,
+     181,
+     2510,
+     2873
+    ],
+    "second_component_area": 195639.0,
+    "touches_frame": {
+     "N": false,
+     "S": false,
+     "W": false,
+     "E": false
+    }
+   },
+   "0.6": {
+    "area_art_px": 2583490.0,
+    "r_eq_art_px": 906.8353807924354,
+    "centroid_art": [
+     1175.8473448706982,
+     1526.873917452748
+    ],
+    "bbox_art": [
+     71,
+     173,
+     2628,
+     2898
+    ],
+    "second_component_area": 206559.0,
+    "touches_frame": {
+     "N": false,
+     "S": false,
+     "W": false,
+     "E": false
+    }
+   }
+  },
+  "wall": "not drawn on the chart"
+ },
+ "placements": [
+  {
+   "placement": "1.0x +0 (today)",
+   "tc4_key": "today_cityBox",
+   "scale_vs_today": 1.0,
+   "centre_dx_E_atlas_px": 0,
+   "box_tc4_x0y0x1y1": [
+    1211.87,
+    1389.0,
+    1260.33,
+    1441.0
+   ],
+   "poi_vs_sim_label": {
+    "n_pairs": 13,
+    "rms_atlas_px": 23.57,
+    "rms_m": 265.5,
+    "median_m": 190.6,
+    "min_m": 102.6,
+    "max_m": 488.6,
+    "rms_m_excluding_OldQuarryLot_and_Eelwynd": 217.9,
+    "labels_over_10_atlas_px": [
+     "the Marble Quarter",
+     "Whitestreet",
+     "Outwall",
+     "Eelwynd",
+     "Kohabron",
+     "Old Quarry Lot",
+     "Mount Mastery",
+     "Fairy Arch",
+     "the Thūkīn Amphitheater"
+    ],
+    "labels_over_20_atlas_px": [
+     "Outwall",
+     "Eelwynd",
+     "Old Quarry Lot",
+     "Mount Mastery",
+     "Fairy Arch",
+     "the Thūkīn Amphitheater"
+    ],
+    "pairs": [
+     {
+      "sim": "Epēshīn Forum",
+      "chart": "Epēshīn Forum",
+      "chart_n": 7,
+      "chart_atlas": [
+       1226.62,
+       1415.58
+      ],
+      "d_px": 9.62,
+      "d_m": 108.3,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -1.26
+     },
+     {
+      "sim": "the Marble Quarter",
+      "chart": "Marble Quarter",
+      "chart_n": 4,
+      "chart_atlas": [
+       1229.84,
+       1407.13
+      ],
+      "d_px": 16.92,
+      "d_m": 190.6,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -1.13
+     },
+     {
+      "sim": "Wood Quay",
+      "chart": "Wood Quay",
+      "chart_n": 2,
+      "chart_atlas": [
+       1224.36,
+       1411.12
+      ],
+      "d_px": 9.99,
+      "d_m": 112.5,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 0.19
+     },
+     {
+      "sim": "Whitestreet",
+      "chart": "Whitestreet",
+      "chart_n": 3,
+      "chart_atlas": [
+       1220.61,
+       1420.87
+      ],
+      "d_px": 13.5,
+      "d_m": 152.0,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 5.44
+     },
+     {
+      "sim": "Necropolis of the Founders",
+      "chart": "Necropolis of the Founders",
+      "chart_n": 1,
+      "chart_atlas": [
+       1221.63,
+       1414.94
+      ],
+      "d_px": 9.18,
+      "d_m": 103.4,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 2.88
+     },
+     {
+      "sim": "Outwall",
+      "chart": "Outwall",
+      "chart_n": 11,
+      "chart_atlas": [
+       1237.21,
+       1406.16
+      ],
+      "d_px": 26.61,
+      "d_m": 299.8,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -1.25
+     },
+     {
+      "sim": "Eelwynd",
+      "chart": "Eelwynd",
+      "chart_n": 12,
+      "chart_atlas": [
+       1229.3,
+       1394.79
+      ],
+      "d_px": 35.02,
+      "d_m": 394.5,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 10.5
+     },
+     {
+      "sim": "Kohabron",
+      "chart": "Kohabron",
+      "chart_n": 13,
+      "chart_atlas": [
+       1251.3,
+       1405.45
+      ],
+      "d_px": 12.24,
+      "d_m": 137.9,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -10.95
+     },
+     {
+      "sim": "Old Quarry Lot",
+      "chart": "Old Quarry Lot",
+      "chart_n": 16,
+      "chart_atlas": [
+       1229.41,
+       1436.48
+      ],
+      "d_px": 43.38,
+      "d_m": 488.6,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -0.17
+     },
+     {
+      "sim": "Mount Mastery",
+      "chart": "Mount Mastery",
+      "chart_n": 17,
+      "chart_atlas": [
+       1214.92,
+       1390.5
+      ],
+      "d_px": 21.89,
+      "d_m": 246.6,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 20.83
+     },
+     {
+      "sim": "Fairy Arch",
+      "chart": "The Fairy Arch",
+      "chart_n": 19,
+      "chart_atlas": [
+       1247.18,
+       1421.52
+      ],
+      "d_px": 28.63,
+      "d_m": 322.6,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -13.7
+     },
+     {
+      "sim": "the Thūkīn Amphitheater",
+      "chart": "Thūkīn Amphitheatre",
+      "chart_n": 10,
+      "chart_atlas": [
+       1220.59,
+       1426.13
+      ],
+      "d_px": 33.62,
+      "d_m": 378.8,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 3.6
+     },
+     {
+      "sim": "Bangeph Rock",
+      "chart": "Bangeph Rock",
+      "chart_n": 18,
+      "chart_atlas": [
+       1220.9,
+       1402.4
+      ],
+      "d_px": 9.11,
+      "d_m": 102.6,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 8.1
+     }
+    ]
+   },
+   "chart_poi_rms_radius_from_box_centre_px": 17.89,
+   "extent_vs_sim_disc": {
+    "built_up_cream_le_0.4": {
+     "r_eq_atlas_px": 14.47,
+     "ratio_to_sim_R": 0.61,
+     "centroid_atlas": [
+      1231.04,
+      1415.42
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      -5.01,
+      0.42
+     ],
+     "iou_with_sim_disc": 0.36,
+     "frac_sim_disc_covered": 0.37,
+     "frac_extent_inside_sim_disc": 0.97,
+     "frac_extent_on_print_water": 0.41
+    },
+    "built_up_cream_le_0.5": {
+     "r_eq_atlas_px": 14.87,
+     "ratio_to_sim_R": 0.63,
+     "centroid_atlas": [
+      1231.27,
+      1415.17
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      -4.77,
+      0.17
+     ],
+     "iou_with_sim_disc": 0.38,
+     "frac_sim_disc_covered": 0.39,
+     "frac_extent_inside_sim_disc": 0.97,
+     "frac_extent_on_print_water": 0.41
+    },
+    "built_up_cream_le_0.6": {
+     "r_eq_atlas_px": 15.35,
+     "ratio_to_sim_R": 0.65,
+     "centroid_atlas": [
+      1231.77,
+      1414.85
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      -4.27,
+      -0.15
+     ],
+     "iou_with_sim_disc": 0.4,
+     "frac_sim_disc_covered": 0.41,
+     "frac_extent_inside_sim_disc": 0.96,
+     "frac_extent_on_print_water": 0.4
+    },
+    "urban_footprint_frame_cut": {
+     "r_eq_atlas_px": 20.64,
+     "ratio_to_sim_R": 0.88,
+     "centroid_atlas": [
+      1233.83,
+      1414.77
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      -2.21,
+      -0.23
+     ],
+     "iou_with_sim_disc": 0.54,
+     "frac_sim_disc_covered": 0.62,
+     "frac_extent_inside_sim_disc": 0.81,
+     "frac_extent_on_print_water": 0.42
+    }
+   },
+   "chart_pois_in_print_water": [
+    {
+     "n": 1,
+     "name": "Necropolis of the Founders",
+     "depth_px": 2.88
+    },
+    {
+     "n": 2,
+     "name": "Wood Quay",
+     "depth_px": 0.19
+    },
+    {
+     "n": 3,
+     "name": "Whitestreet",
+     "depth_px": 5.44
+    },
+    {
+     "n": 5,
+     "name": "Temple of Thobrauk Tegendes",
+     "depth_px": 3.0
+    },
+    {
+     "n": 8,
+     "name": "The Māmban",
+     "depth_px": 1.27
+    },
+    {
+     "n": 9,
+     "name": "The Relkhonak",
+     "depth_px": 2.01
+    },
+    {
+     "n": 10,
+     "name": "Thūkīn Amphitheatre",
+     "depth_px": 3.6
+    },
+    {
+     "n": 12,
+     "name": "Eelwynd",
+     "depth_px": 10.5
+    },
+    {
+     "n": 17,
+     "name": "Mount Mastery",
+     "depth_px": 20.83
+    },
+    {
+     "n": 18,
+     "name": "Bangeph Rock",
+     "depth_px": 8.1
+    }
+   ],
+   "all19_vs_print_water": [
+    {
+     "n": 1,
+     "name": "Necropolis of the Founders",
+     "atlas": [
+      1221.63,
+      1414.94
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 2.88
+    },
+    {
+     "n": 2,
+     "name": "Wood Quay",
+     "atlas": [
+      1224.36,
+      1411.12
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 0.19
+    },
+    {
+     "n": 3,
+     "name": "Whitestreet",
+     "atlas": [
+      1220.61,
+      1420.87
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 5.44
+    },
+    {
+     "n": 4,
+     "name": "Marble Quarter",
+     "atlas": [
+      1229.84,
+      1407.13
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -1.13
+    },
+    {
+     "n": 5,
+     "name": "Temple of Thobrauk Tegendes",
+     "atlas": [
+      1224.91,
+      1405.6
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 3.0
+    },
+    {
+     "n": 6,
+     "name": "Temple of the Ēkromatkar",
+     "atlas": [
+      1230.79,
+      1414.95
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -4.87
+    },
+    {
+     "n": 7,
+     "name": "Epēshīn Forum",
+     "atlas": [
+      1226.62,
+      1415.58
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -1.26
+    },
+    {
+     "n": 8,
+     "name": "The Māmban",
+     "atlas": [
+      1223.87,
+      1416.32
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 1.27
+    },
+    {
+     "n": 9,
+     "name": "The Relkhonak",
+     "atlas": [
+      1224.51,
+      1418.11
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 2.01
+    },
+    {
+     "n": 10,
+     "name": "Thūkīn Amphitheatre",
+     "atlas": [
+      1220.59,
+      1426.13
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 3.6
+    },
+    {
+     "n": 11,
+     "name": "Outwall",
+     "atlas": [
+      1237.21,
+      1406.16
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -1.25
+    },
+    {
+     "n": 12,
+     "name": "Eelwynd",
+     "atlas": [
+      1229.3,
+      1394.79
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 10.5
+    },
+    {
+     "n": 13,
+     "name": "Kohabron",
+     "atlas": [
+      1251.3,
+      1405.45
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -10.95
+    },
+    {
+     "n": 14,
+     "name": "Black Barghest Inn",
+     "atlas": [
+      1227.66,
+      1427.79
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -1.79
+    },
+    {
+     "n": 15,
+     "name": "Road That Walks with the Sun",
+     "atlas": [
+      1258.7,
+      1410.52
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -6.31
+    },
+    {
+     "n": 16,
+     "name": "Old Quarry Lot",
+     "atlas": [
+      1229.41,
+      1436.48
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -0.17
+    },
+    {
+     "n": 17,
+     "name": "Mount Mastery",
+     "atlas": [
+      1214.92,
+      1390.5
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 20.83
+    },
+    {
+     "n": 18,
+     "name": "Bangeph Rock",
+     "atlas": [
+      1220.9,
+      1402.4
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 8.1
+    },
+    {
+     "n": 19,
+     "name": "The Fairy Arch",
+     "atlas": [
+      1247.18,
+      1421.52
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -13.7
+    }
+   ]
+  },
+  {
+   "placement": "1.0x +3E",
+   "tc4_key": "scale1.0_E3",
+   "scale_vs_today": 1.0,
+   "centre_dx_E_atlas_px": 3,
+   "box_tc4_x0y0x1y1": [
+    1214.87,
+    1389.0,
+    1263.33,
+    1441.0
+   ],
+   "poi_vs_sim_label": {
+    "n_pairs": 13,
+    "rms_atlas_px": 22.27,
+    "rms_m": 250.9,
+    "median_m": 156.9,
+    "min_m": 70.0,
+    "max_m": 471.9,
+    "rms_m_excluding_OldQuarryLot_and_Eelwynd": 197.9,
+    "labels_over_10_atlas_px": [
+     "the Marble Quarter",
+     "Whitestreet",
+     "Outwall",
+     "Eelwynd",
+     "Kohabron",
+     "Old Quarry Lot",
+     "Mount Mastery",
+     "Fairy Arch",
+     "the Thūkīn Amphitheater"
+    ],
+    "labels_over_20_atlas_px": [
+     "Outwall",
+     "Eelwynd",
+     "Old Quarry Lot",
+     "Fairy Arch",
+     "the Thūkīn Amphitheater"
+    ],
+    "pairs": [
+     {
+      "sim": "Epēshīn Forum",
+      "chart": "Epēshīn Forum",
+      "chart_n": 7,
+      "chart_atlas": [
+       1229.62,
+       1415.58
+      ],
+      "d_px": 6.7,
+      "d_m": 75.5,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -3.53
+     },
+     {
+      "sim": "the Marble Quarter",
+      "chart": "Marble Quarter",
+      "chart_n": 4,
+      "chart_atlas": [
+       1232.84,
+       1407.13
+      ],
+      "d_px": 13.93,
+      "d_m": 156.9,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -2.13
+     },
+     {
+      "sim": "Wood Quay",
+      "chart": "Wood Quay",
+      "chart_n": 2,
+      "chart_atlas": [
+       1227.36,
+       1411.12
+      ],
+      "d_px": 9.45,
+      "d_m": 106.4,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -1.94
+     },
+     {
+      "sim": "Whitestreet",
+      "chart": "Whitestreet",
+      "chart_n": 3,
+      "chart_atlas": [
+       1223.61,
+       1420.87
+      ],
+      "d_px": 11.66,
+      "d_m": 131.3,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 2.76
+     },
+     {
+      "sim": "Necropolis of the Founders",
+      "chart": "Necropolis of the Founders",
+      "chart_n": 1,
+      "chart_atlas": [
+       1224.63,
+       1414.94
+      ],
+      "d_px": 8.4,
+      "d_m": 94.7,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -0.14
+     },
+     {
+      "sim": "Outwall",
+      "chart": "Outwall",
+      "chart_n": 11,
+      "chart_atlas": [
+       1240.21,
+       1406.16
+      ],
+      "d_px": 26.66,
+      "d_m": 300.3,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -2.37
+     },
+     {
+      "sim": "Eelwynd",
+      "chart": "Eelwynd",
+      "chart_n": 12,
+      "chart_atlas": [
+       1232.3,
+       1394.79
+      ],
+      "d_px": 36.01,
+      "d_m": 405.6,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 8.93
+     },
+     {
+      "sim": "Kohabron",
+      "chart": "Kohabron",
+      "chart_n": 13,
+      "chart_atlas": [
+       1254.3,
+       1405.45
+      ],
+      "d_px": 11.77,
+      "d_m": 132.6,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -8.78
+     },
+     {
+      "sim": "Old Quarry Lot",
+      "chart": "Old Quarry Lot",
+      "chart_n": 16,
+      "chart_atlas": [
+       1232.41,
+       1436.48
+      ],
+      "d_px": 41.89,
+      "d_m": 471.9,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -2.53
+     },
+     {
+      "sim": "Mount Mastery",
+      "chart": "Mount Mastery",
+      "chart_n": 17,
+      "chart_atlas": [
+       1217.92,
+       1390.5
+      ],
+      "d_px": 19.02,
+      "d_m": 214.2,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 19.05
+     },
+     {
+      "sim": "Fairy Arch",
+      "chart": "The Fairy Arch",
+      "chart_n": 19,
+      "chart_atlas": [
+       1250.18,
+       1421.52
+      ],
+      "d_px": 25.9,
+      "d_m": 291.7,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -16.53
+     },
+     {
+      "sim": "the Thūkīn Amphitheater",
+      "chart": "Thūkīn Amphitheatre",
+      "chart_n": 10,
+      "chart_atlas": [
+       1223.59,
+       1426.13
+      ],
+      "d_px": 30.67,
+      "d_m": 345.5,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 1.52
+     },
+     {
+      "sim": "Bangeph Rock",
+      "chart": "Bangeph Rock",
+      "chart_n": 18,
+      "chart_atlas": [
+       1223.9,
+       1402.4
+      ],
+      "d_px": 6.22,
+      "d_m": 70.0,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 5.98
+     }
+    ]
+   },
+   "chart_poi_rms_radius_from_box_centre_px": 17.89,
+   "extent_vs_sim_disc": {
+    "built_up_cream_le_0.4": {
+     "r_eq_atlas_px": 14.47,
+     "ratio_to_sim_R": 0.61,
+     "centroid_atlas": [
+      1234.04,
+      1415.42
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      -2.01,
+      0.42
+     ],
+     "iou_with_sim_disc": 0.37,
+     "frac_sim_disc_covered": 0.38,
+     "frac_extent_inside_sim_disc": 0.99,
+     "frac_extent_on_print_water": 0.28
+    },
+    "built_up_cream_le_0.5": {
+     "r_eq_atlas_px": 14.87,
+     "ratio_to_sim_R": 0.63,
+     "centroid_atlas": [
+      1234.27,
+      1415.17
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      -1.77,
+      0.17
+     ],
+     "iou_with_sim_disc": 0.39,
+     "frac_sim_disc_covered": 0.4,
+     "frac_extent_inside_sim_disc": 0.99,
+     "frac_extent_on_print_water": 0.29
+    },
+    "built_up_cream_le_0.6": {
+     "r_eq_atlas_px": 15.35,
+     "ratio_to_sim_R": 0.65,
+     "centroid_atlas": [
+      1234.77,
+      1414.85
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      -1.27,
+      -0.15
+     ],
+     "iou_with_sim_disc": 0.41,
+     "frac_sim_disc_covered": 0.42,
+     "frac_extent_inside_sim_disc": 0.98,
+     "frac_extent_on_print_water": 0.29
+    },
+    "urban_footprint_frame_cut": {
+     "r_eq_atlas_px": 20.64,
+     "ratio_to_sim_R": 0.88,
+     "centroid_atlas": [
+      1236.83,
+      1414.77
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      0.79,
+      -0.23
+     ],
+     "iou_with_sim_disc": 0.54,
+     "frac_sim_disc_covered": 0.62,
+     "frac_extent_inside_sim_disc": 0.8,
+     "frac_extent_on_print_water": 0.32
+    }
+   },
+   "chart_pois_in_print_water": [
+    {
+     "n": 3,
+     "name": "Whitestreet",
+     "depth_px": 2.76
+    },
+    {
+     "n": 5,
+     "name": "Temple of Thobrauk Tegendes",
+     "depth_px": 0.96
+    },
+    {
+     "n": 10,
+     "name": "Thūkīn Amphitheatre",
+     "depth_px": 1.52
+    },
+    {
+     "n": 12,
+     "name": "Eelwynd",
+     "depth_px": 8.93
+    },
+    {
+     "n": 17,
+     "name": "Mount Mastery",
+     "depth_px": 19.05
+    },
+    {
+     "n": 18,
+     "name": "Bangeph Rock",
+     "depth_px": 5.98
+    }
+   ],
+   "all19_vs_print_water": [
+    {
+     "n": 1,
+     "name": "Necropolis of the Founders",
+     "atlas": [
+      1224.63,
+      1414.94
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -0.14
+    },
+    {
+     "n": 2,
+     "name": "Wood Quay",
+     "atlas": [
+      1227.36,
+      1411.12
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -1.94
+    },
+    {
+     "n": 3,
+     "name": "Whitestreet",
+     "atlas": [
+      1223.61,
+      1420.87
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 2.76
+    },
+    {
+     "n": 4,
+     "name": "Marble Quarter",
+     "atlas": [
+      1232.84,
+      1407.13
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -2.13
+    },
+    {
+     "n": 5,
+     "name": "Temple of Thobrauk Tegendes",
+     "atlas": [
+      1227.91,
+      1405.6
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 0.96
+    },
+    {
+     "n": 6,
+     "name": "Temple of the Ēkromatkar",
+     "atlas": [
+      1233.79,
+      1414.95
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -7.35
+    },
+    {
+     "n": 7,
+     "name": "Epēshīn Forum",
+     "atlas": [
+      1229.62,
+      1415.58
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -3.53
+    },
+    {
+     "n": 8,
+     "name": "The Māmban",
+     "atlas": [
+      1226.87,
+      1416.32
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -0.91
+    },
+    {
+     "n": 9,
+     "name": "The Relkhonak",
+     "atlas": [
+      1227.51,
+      1418.11
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -0.47
+    },
+    {
+     "n": 10,
+     "name": "Thūkīn Amphitheatre",
+     "atlas": [
+      1223.59,
+      1426.13
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 1.52
+    },
+    {
+     "n": 11,
+     "name": "Outwall",
+     "atlas": [
+      1240.21,
+      1406.16
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -2.37
+    },
+    {
+     "n": 12,
+     "name": "Eelwynd",
+     "atlas": [
+      1232.3,
+      1394.79
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 8.93
+    },
+    {
+     "n": 13,
+     "name": "Kohabron",
+     "atlas": [
+      1254.3,
+      1405.45
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -8.78
+    },
+    {
+     "n": 14,
+     "name": "Black Barghest Inn",
+     "atlas": [
+      1230.66,
+      1427.79
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -0.64
+    },
+    {
+     "n": 15,
+     "name": "Road That Walks with the Sun",
+     "atlas": [
+      1261.7,
+      1410.52
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -3.31
+    },
+    {
+     "n": 16,
+     "name": "Old Quarry Lot",
+     "atlas": [
+      1232.41,
+      1436.48
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -2.53
+    },
+    {
+     "n": 17,
+     "name": "Mount Mastery",
+     "atlas": [
+      1217.92,
+      1390.5
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 19.05
+    },
+    {
+     "n": 18,
+     "name": "Bangeph Rock",
+     "atlas": [
+      1223.9,
+      1402.4
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 5.98
+    },
+    {
+     "n": 19,
+     "name": "The Fairy Arch",
+     "atlas": [
+      1250.18,
+      1421.52
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -16.53
+    }
+   ]
+  },
+  {
+   "placement": "1.0x +8E",
+   "tc4_key": "scale1.0_E8",
+   "scale_vs_today": 1.0,
+   "centre_dx_E_atlas_px": 8,
+   "box_tc4_x0y0x1y1": [
+    1219.87,
+    1389.0,
+    1268.33,
+    1441.0
+   ],
+   "poi_vs_sim_label": {
+    "n_pairs": 13,
+    "rms_atlas_px": 20.89,
+    "rms_m": 235.3,
+    "median_m": 142.4,
+    "min_m": 24.4,
+    "max_m": 448.3,
+    "rms_m_excluding_OldQuarryLot_and_Eelwynd": 174.4,
+    "labels_over_10_atlas_px": [
+     "Wood Quay",
+     "Outwall",
+     "Eelwynd",
+     "Kohabron",
+     "Old Quarry Lot",
+     "Mount Mastery",
+     "Fairy Arch",
+     "the Thūkīn Amphitheater"
+    ],
+    "labels_over_20_atlas_px": [
+     "Outwall",
+     "Eelwynd",
+     "Old Quarry Lot",
+     "Fairy Arch",
+     "the Thūkīn Amphitheater"
+    ],
+    "pairs": [
+     {
+      "sim": "Epēshīn Forum",
+      "chart": "Epēshīn Forum",
+      "chart_n": 7,
+      "chart_atlas": [
+       1234.62,
+       1415.58
+      ],
+      "d_px": 2.38,
+      "d_m": 26.9,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -7.63
+     },
+     {
+      "sim": "the Marble Quarter",
+      "chart": "Marble Quarter",
+      "chart_n": 4,
+      "chart_atlas": [
+       1237.84,
+       1407.13
+      ],
+      "d_px": 8.97,
+      "d_m": 101.1,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -2.39
+     },
+     {
+      "sim": "Wood Quay",
+      "chart": "Wood Quay",
+      "chart_n": 2,
+      "chart_atlas": [
+       1232.36,
+       1411.12
+      ],
+      "d_px": 10.57,
+      "d_m": 119.1,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -5.54
+     },
+     {
+      "sim": "Whitestreet",
+      "chart": "Whitestreet",
+      "chart_n": 3,
+      "chart_atlas": [
+       1228.61,
+       1420.87
+      ],
+      "d_px": 9.93,
+      "d_m": 111.9,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 0.39
+     },
+     {
+      "sim": "Necropolis of the Founders",
+      "chart": "Necropolis of the Founders",
+      "chart_n": 1,
+      "chart_atlas": [
+       1229.63,
+       1414.94
+      ],
+      "d_px": 9.38,
+      "d_m": 105.7,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -3.89
+     },
+     {
+      "sim": "Outwall",
+      "chart": "Outwall",
+      "chart_n": 11,
+      "chart_atlas": [
+       1245.21,
+       1406.16
+      ],
+      "d_px": 27.48,
+      "d_m": 309.6,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -6.1
+     },
+     {
+      "sim": "Eelwynd",
+      "chart": "Eelwynd",
+      "chart_n": 12,
+      "chart_atlas": [
+       1237.3,
+       1394.79
+      ],
+      "d_px": 38.12,
+      "d_m": 429.4,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 4.22
+     },
+     {
+      "sim": "Kohabron",
+      "chart": "Kohabron",
+      "chart_n": 13,
+      "chart_atlas": [
+       1259.3,
+       1405.45
+      ],
+      "d_px": 12.64,
+      "d_m": 142.4,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -6.52
+     },
+     {
+      "sim": "Old Quarry Lot",
+      "chart": "Old Quarry Lot",
+      "chart_n": 16,
+      "chart_atlas": [
+       1237.41,
+       1436.48
+      ],
+      "d_px": 39.8,
+      "d_m": 448.3,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -7.45
+     },
+     {
+      "sim": "Mount Mastery",
+      "chart": "Mount Mastery",
+      "chart_n": 17,
+      "chart_atlas": [
+       1222.92,
+       1390.5
+      ],
+      "d_px": 14.33,
+      "d_m": 161.4,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 16.75
+     },
+     {
+      "sim": "Fairy Arch",
+      "chart": "The Fairy Arch",
+      "chart_n": 19,
+      "chart_atlas": [
+       1255.18,
+       1421.52
+      ],
+      "d_px": 21.5,
+      "d_m": 242.2,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -13.85
+     },
+     {
+      "sim": "the Thūkīn Amphitheater",
+      "chart": "Thūkīn Amphitheatre",
+      "chart_n": 10,
+      "chart_atlas": [
+       1228.59,
+       1426.13
+      ],
+      "d_px": 25.77,
+      "d_m": 290.2,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -0.21
+     },
+     {
+      "sim": "Bangeph Rock",
+      "chart": "Bangeph Rock",
+      "chart_n": 18,
+      "chart_atlas": [
+       1228.9,
+       1402.4
+      ],
+      "d_px": 2.17,
+      "d_m": 24.4,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 3.62
+     }
+    ]
+   },
+   "chart_poi_rms_radius_from_box_centre_px": 17.89,
+   "extent_vs_sim_disc": {
+    "built_up_cream_le_0.4": {
+     "r_eq_atlas_px": 14.47,
+     "ratio_to_sim_R": 0.61,
+     "centroid_atlas": [
+      1239.04,
+      1415.42
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      2.99,
+      0.42
+     ],
+     "iou_with_sim_disc": 0.37,
+     "frac_sim_disc_covered": 0.37,
+     "frac_extent_inside_sim_disc": 0.98,
+     "frac_extent_on_print_water": 0.14
+    },
+    "built_up_cream_le_0.5": {
+     "r_eq_atlas_px": 14.87,
+     "ratio_to_sim_R": 0.63,
+     "centroid_atlas": [
+      1239.27,
+      1415.17
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      3.23,
+      0.17
+     ],
+     "iou_with_sim_disc": 0.38,
+     "frac_sim_disc_covered": 0.39,
+     "frac_extent_inside_sim_disc": 0.97,
+     "frac_extent_on_print_water": 0.14
+    },
+    "built_up_cream_le_0.6": {
+     "r_eq_atlas_px": 15.35,
+     "ratio_to_sim_R": 0.65,
+     "centroid_atlas": [
+      1239.77,
+      1414.85
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      3.73,
+      -0.15
+     ],
+     "iou_with_sim_disc": 0.4,
+     "frac_sim_disc_covered": 0.41,
+     "frac_extent_inside_sim_disc": 0.95,
+     "frac_extent_on_print_water": 0.15
+    },
+    "urban_footprint_frame_cut": {
+     "r_eq_atlas_px": 20.64,
+     "ratio_to_sim_R": 0.88,
+     "centroid_atlas": [
+      1241.83,
+      1414.77
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      5.79,
+      -0.23
+     ],
+     "iou_with_sim_disc": 0.51,
+     "frac_sim_disc_covered": 0.6,
+     "frac_extent_inside_sim_disc": 0.78,
+     "frac_extent_on_print_water": 0.2
+    }
+   },
+   "chart_pois_in_print_water": [
+    {
+     "n": 3,
+     "name": "Whitestreet",
+     "depth_px": 0.39
+    },
+    {
+     "n": 12,
+     "name": "Eelwynd",
+     "depth_px": 4.22
+    },
+    {
+     "n": 15,
+     "name": "Road That Walks with the Sun",
+     "depth_px": 1.55
+    },
+    {
+     "n": 17,
+     "name": "Mount Mastery",
+     "depth_px": 16.75
+    },
+    {
+     "n": 18,
+     "name": "Bangeph Rock",
+     "depth_px": 3.62
+    }
+   ],
+   "all19_vs_print_water": [
+    {
+     "n": 1,
+     "name": "Necropolis of the Founders",
+     "atlas": [
+      1229.63,
+      1414.94
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -3.89
+    },
+    {
+     "n": 2,
+     "name": "Wood Quay",
+     "atlas": [
+      1232.36,
+      1411.12
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -5.54
+    },
+    {
+     "n": 3,
+     "name": "Whitestreet",
+     "atlas": [
+      1228.61,
+      1420.87
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 0.39
+    },
+    {
+     "n": 4,
+     "name": "Marble Quarter",
+     "atlas": [
+      1237.84,
+      1407.13
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -2.39
+    },
+    {
+     "n": 5,
+     "name": "Temple of Thobrauk Tegendes",
+     "atlas": [
+      1232.91,
+      1405.6
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -0.62
+    },
+    {
+     "n": 6,
+     "name": "Temple of the Ēkromatkar",
+     "atlas": [
+      1238.79,
+      1414.95
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -10.16
+    },
+    {
+     "n": 7,
+     "name": "Epēshīn Forum",
+     "atlas": [
+      1234.62,
+      1415.58
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -7.63
+    },
+    {
+     "n": 8,
+     "name": "The Māmban",
+     "atlas": [
+      1231.87,
+      1416.32
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -5.0
+    },
+    {
+     "n": 9,
+     "name": "The Relkhonak",
+     "atlas": [
+      1232.51,
+      1418.11
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -4.35
+    },
+    {
+     "n": 10,
+     "name": "Thūkīn Amphitheatre",
+     "atlas": [
+      1228.59,
+      1426.13
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -0.21
+    },
+    {
+     "n": 11,
+     "name": "Outwall",
+     "atlas": [
+      1245.21,
+      1406.16
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -6.1
+    },
+    {
+     "n": 12,
+     "name": "Eelwynd",
+     "atlas": [
+      1237.3,
+      1394.79
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 4.22
+    },
+    {
+     "n": 13,
+     "name": "Kohabron",
+     "atlas": [
+      1259.3,
+      1405.45
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -6.52
+    },
+    {
+     "n": 14,
+     "name": "Black Barghest Inn",
+     "atlas": [
+      1235.66,
+      1427.79
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -1.16
+    },
+    {
+     "n": 15,
+     "name": "Road That Walks with the Sun",
+     "atlas": [
+      1266.7,
+      1410.52
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 1.55
+    },
+    {
+     "n": 16,
+     "name": "Old Quarry Lot",
+     "atlas": [
+      1237.41,
+      1436.48
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -7.45
+    },
+    {
+     "n": 17,
+     "name": "Mount Mastery",
+     "atlas": [
+      1222.92,
+      1390.5
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 16.75
+    },
+    {
+     "n": 18,
+     "name": "Bangeph Rock",
+     "atlas": [
+      1228.9,
+      1402.4
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 3.62
+    },
+    {
+     "n": 19,
+     "name": "The Fairy Arch",
+     "atlas": [
+      1255.18,
+      1421.52
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -13.85
+    }
+   ]
+  },
+  {
+   "placement": "0.8x +3E",
+   "tc4_key": "scale0.8_E3",
+   "scale_vs_today": 0.8,
+   "centre_dx_E_atlas_px": 3,
+   "box_tc4_x0y0x1y1": [
+    1219.72,
+    1394.2,
+    1258.48,
+    1435.8
+   ],
+   "poi_vs_sim_label": {
+    "n_pairs": 13,
+    "rms_atlas_px": 20.56,
+    "rms_m": 231.6,
+    "median_m": 146.0,
+    "min_m": 54.8,
+    "max_m": 422.2,
+    "rms_m_excluding_OldQuarryLot_and_Eelwynd": 186.4,
+    "labels_over_10_atlas_px": [
+     "the Marble Quarter",
+     "Wood Quay",
+     "Outwall",
+     "Eelwynd",
+     "Kohabron",
+     "Old Quarry Lot",
+     "Mount Mastery",
+     "Fairy Arch",
+     "the Thūkīn Amphitheater"
+    ],
+    "labels_over_20_atlas_px": [
+     "Outwall",
+     "Eelwynd",
+     "Old Quarry Lot",
+     "Fairy Arch",
+     "the Thūkīn Amphitheater"
+    ],
+    "pairs": [
+     {
+      "sim": "Epēshīn Forum",
+      "chart": "Epēshīn Forum",
+      "chart_n": 7,
+      "chart_atlas": [
+       1231.51,
+       1415.47
+      ],
+      "d_px": 4.87,
+      "d_m": 54.8,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -5.19
+     },
+     {
+      "sim": "the Marble Quarter",
+      "chart": "Marble Quarter",
+      "chart_n": 4,
+      "chart_atlas": [
+       1234.09,
+       1408.7
+      ],
+      "d_px": 12.96,
+      "d_m": 146.0,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -3.7
+     },
+     {
+      "sim": "Wood Quay",
+      "chart": "Wood Quay",
+      "chart_n": 2,
+      "chart_atlas": [
+       1229.71,
+       1411.9
+      ],
+      "d_px": 10.43,
+      "d_m": 117.5,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -4.29
+     },
+     {
+      "sim": "Whitestreet",
+      "chart": "Whitestreet",
+      "chart_n": 3,
+      "chart_atlas": [
+       1226.71,
+       1419.69
+      ],
+      "d_px": 9.23,
+      "d_m": 103.9,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 0.91
+     },
+     {
+      "sim": "Necropolis of the Founders",
+      "chart": "Necropolis of the Founders",
+      "chart_n": 1,
+      "chart_atlas": [
+       1227.52,
+       1414.95
+      ],
+      "d_px": 8.65,
+      "d_m": 97.4,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -2.36
+     },
+     {
+      "sim": "Outwall",
+      "chart": "Outwall",
+      "chart_n": 11,
+      "chart_atlas": [
+       1239.99,
+       1407.93
+      ],
+      "d_px": 24.88,
+      "d_m": 280.3,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -3.84
+     },
+     {
+      "sim": "Eelwynd",
+      "chart": "Eelwynd",
+      "chart_n": 12,
+      "chart_atlas": [
+       1233.66,
+       1398.84
+      ],
+      "d_px": 32.85,
+      "d_m": 370.1,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 6.17
+     },
+     {
+      "sim": "Kohabron",
+      "chart": "Kohabron",
+      "chart_n": 13,
+      "chart_atlas": [
+       1251.26,
+       1407.36
+      ],
+      "d_px": 10.43,
+      "d_m": 117.5,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -11.7
+     },
+     {
+      "sim": "Old Quarry Lot",
+      "chart": "Old Quarry Lot",
+      "chart_n": 16,
+      "chart_atlas": [
+       1233.75,
+       1432.18
+      ],
+      "d_px": 37.48,
+      "d_m": 422.2,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -4.18
+     },
+     {
+      "sim": "Mount Mastery",
+      "chart": "Mount Mastery",
+      "chart_n": 17,
+      "chart_atlas": [
+       1222.16,
+       1395.4
+      ],
+      "d_px": 13.91,
+      "d_m": 156.7,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 12.66
+     },
+     {
+      "sim": "Fairy Arch",
+      "chart": "The Fairy Arch",
+      "chart_n": 19,
+      "chart_atlas": [
+       1247.96,
+       1420.22
+      ],
+      "d_px": 28.46,
+      "d_m": 320.6,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -14.84
+     },
+     {
+      "sim": "the Thūkīn Amphitheater",
+      "chart": "Thūkīn Amphitheatre",
+      "chart_n": 10,
+      "chart_atlas": [
+       1226.69,
+       1423.9
+      ],
+      "d_px": 28.15,
+      "d_m": 317.1,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -0.34
+     },
+     {
+      "sim": "Bangeph Rock",
+      "chart": "Bangeph Rock",
+      "chart_n": 18,
+      "chart_atlas": [
+       1226.94,
+       1404.92
+      ],
+      "d_px": 5.32,
+      "d_m": 60.0,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 2.06
+     }
+    ]
+   },
+   "chart_poi_rms_radius_from_box_centre_px": 14.31,
+   "extent_vs_sim_disc": {
+    "built_up_cream_le_0.4": {
+     "r_eq_atlas_px": 11.58,
+     "ratio_to_sim_R": 0.49,
+     "centroid_atlas": [
+      1235.05,
+      1415.34
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      -0.99,
+      0.34
+     ],
+     "iou_with_sim_disc": 0.24,
+     "frac_sim_disc_covered": 0.24,
+     "frac_extent_inside_sim_disc": 1.0,
+     "frac_extent_on_print_water": 0.21
+    },
+    "built_up_cream_le_0.5": {
+     "r_eq_atlas_px": 11.89,
+     "ratio_to_sim_R": 0.51,
+     "centroid_atlas": [
+      1235.23,
+      1415.14
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      -0.81,
+      0.14
+     ],
+     "iou_with_sim_disc": 0.26,
+     "frac_sim_disc_covered": 0.26,
+     "frac_extent_inside_sim_disc": 1.0,
+     "frac_extent_on_print_water": 0.21
+    },
+    "built_up_cream_le_0.6": {
+     "r_eq_atlas_px": 12.28,
+     "ratio_to_sim_R": 0.52,
+     "centroid_atlas": [
+      1235.64,
+      1414.88
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      -0.4,
+      -0.12
+     ],
+     "iou_with_sim_disc": 0.27,
+     "frac_sim_disc_covered": 0.27,
+     "frac_extent_inside_sim_disc": 1.0,
+     "frac_extent_on_print_water": 0.21
+    },
+    "urban_footprint_frame_cut": {
+     "r_eq_atlas_px": 16.51,
+     "ratio_to_sim_R": 0.7,
+     "centroid_atlas": [
+      1237.28,
+      1414.81
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      1.24,
+      -0.19
+     ],
+     "iou_with_sim_disc": 0.48,
+     "frac_sim_disc_covered": 0.49,
+     "frac_extent_inside_sim_disc": 0.99,
+     "frac_extent_on_print_water": 0.22
+    }
+   },
+   "chart_pois_in_print_water": [
+    {
+     "n": 3,
+     "name": "Whitestreet",
+     "depth_px": 0.91
+    },
+    {
+     "n": 12,
+     "name": "Eelwynd",
+     "depth_px": 6.17
+    },
+    {
+     "n": 14,
+     "name": "Black Barghest Inn",
+     "depth_px": 1.16
+    },
+    {
+     "n": 17,
+     "name": "Mount Mastery",
+     "depth_px": 12.66
+    },
+    {
+     "n": 18,
+     "name": "Bangeph Rock",
+     "depth_px": 2.06
+    }
+   ],
+   "all19_vs_print_water": [
+    {
+     "n": 1,
+     "name": "Necropolis of the Founders",
+     "atlas": [
+      1227.52,
+      1414.95
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -2.36
+    },
+    {
+     "n": 2,
+     "name": "Wood Quay",
+     "atlas": [
+      1229.71,
+      1411.9
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -4.29
+    },
+    {
+     "n": 3,
+     "name": "Whitestreet",
+     "atlas": [
+      1226.71,
+      1419.69
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 0.91
+    },
+    {
+     "n": 4,
+     "name": "Marble Quarter",
+     "atlas": [
+      1234.09,
+      1408.7
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -3.7
+    },
+    {
+     "n": 5,
+     "name": "Temple of Thobrauk Tegendes",
+     "atlas": [
+      1230.15,
+      1407.48
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -1.49
+    },
+    {
+     "n": 6,
+     "name": "Temple of the Ēkromatkar",
+     "atlas": [
+      1234.85,
+      1414.96
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -8.23
+    },
+    {
+     "n": 7,
+     "name": "Epēshīn Forum",
+     "atlas": [
+      1231.51,
+      1415.47
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -5.19
+    },
+    {
+     "n": 8,
+     "name": "The Māmban",
+     "atlas": [
+      1229.32,
+      1416.06
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -3.06
+    },
+    {
+     "n": 9,
+     "name": "The Relkhonak",
+     "atlas": [
+      1229.83,
+      1417.49
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -2.65
+    },
+    {
+     "n": 10,
+     "name": "Thūkīn Amphitheatre",
+     "atlas": [
+      1226.69,
+      1423.9
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -0.34
+    },
+    {
+     "n": 11,
+     "name": "Outwall",
+     "atlas": [
+      1239.99,
+      1407.93
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -3.84
+    },
+    {
+     "n": 12,
+     "name": "Eelwynd",
+     "atlas": [
+      1233.66,
+      1398.84
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 6.17
+    },
+    {
+     "n": 13,
+     "name": "Kohabron",
+     "atlas": [
+      1251.26,
+      1407.36
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -11.7
+    },
+    {
+     "n": 14,
+     "name": "Black Barghest Inn",
+     "atlas": [
+      1232.35,
+      1425.23
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 1.16
+    },
+    {
+     "n": 15,
+     "name": "Road That Walks with the Sun",
+     "atlas": [
+      1257.17,
+      1411.41
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -7.83
+    },
+    {
+     "n": 16,
+     "name": "Old Quarry Lot",
+     "atlas": [
+      1233.75,
+      1432.18
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -4.18
+    },
+    {
+     "n": 17,
+     "name": "Mount Mastery",
+     "atlas": [
+      1222.16,
+      1395.4
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 12.66
+    },
+    {
+     "n": 18,
+     "name": "Bangeph Rock",
+     "atlas": [
+      1226.94,
+      1404.92
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 2.06
+    },
+    {
+     "n": 19,
+     "name": "The Fairy Arch",
+     "atlas": [
+      1247.96,
+      1420.22
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -14.84
+    }
+   ]
+  },
+  {
+   "placement": "0.8x +8E",
+   "tc4_key": "scale0.8_E8",
+   "scale_vs_today": 0.8,
+   "centre_dx_E_atlas_px": 8,
+   "box_tc4_x0y0x1y1": [
+    1224.72,
+    1394.2,
+    1263.48,
+    1435.8
+   ],
+   "poi_vs_sim_label": {
+    "n_pairs": 13,
+    "rms_atlas_px": 19.44,
+    "rms_m": 219.0,
+    "median_m": 124.0,
+    "min_m": 20.9,
+    "max_m": 398.2,
+    "rms_m_excluding_OldQuarryLot_and_Eelwynd": 167.0,
+    "labels_over_10_atlas_px": [
+     "Wood Quay",
+     "Necropolis of the Founders",
+     "Outwall",
+     "Eelwynd",
+     "Old Quarry Lot",
+     "Fairy Arch",
+     "the Thūkīn Amphitheater"
+    ],
+    "labels_over_20_atlas_px": [
+     "Outwall",
+     "Eelwynd",
+     "Old Quarry Lot",
+     "Fairy Arch",
+     "the Thūkīn Amphitheater"
+    ],
+    "pairs": [
+     {
+      "sim": "Epēshīn Forum",
+      "chart": "Epēshīn Forum",
+      "chart_n": 7,
+      "chart_atlas": [
+       1236.51,
+       1415.47
+      ],
+      "d_px": 1.86,
+      "d_m": 20.9,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -8.79
+     },
+     {
+      "sim": "the Marble Quarter",
+      "chart": "Marble Quarter",
+      "chart_n": 4,
+      "chart_atlas": [
+       1239.09,
+       1408.7
+      ],
+      "d_px": 8.18,
+      "d_m": 92.1,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -4.28
+     },
+     {
+      "sim": "Wood Quay",
+      "chart": "Wood Quay",
+      "chart_n": 2,
+      "chart_atlas": [
+       1234.71,
+       1411.9
+      ],
+      "d_px": 12.45,
+      "d_m": 140.2,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -6.9
+     },
+     {
+      "sim": "Whitestreet",
+      "chart": "Whitestreet",
+      "chart_n": 3,
+      "chart_atlas": [
+       1231.71,
+       1419.69
+      ],
+      "d_px": 8.89,
+      "d_m": 100.1,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -2.67
+     },
+     {
+      "sim": "Necropolis of the Founders",
+      "chart": "Necropolis of the Founders",
+      "chart_n": 1,
+      "chart_atlas": [
+       1232.52,
+       1414.95
+      ],
+      "d_px": 11.01,
+      "d_m": 124.0,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -6.3
+     },
+     {
+      "sim": "Outwall",
+      "chart": "Outwall",
+      "chart_n": 11,
+      "chart_atlas": [
+       1244.99,
+       1407.93
+      ],
+      "d_px": 25.72,
+      "d_m": 289.7,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -6.9
+     },
+     {
+      "sim": "Eelwynd",
+      "chart": "Eelwynd",
+      "chart_n": 12,
+      "chart_atlas": [
+       1238.66,
+       1398.84
+      ],
+      "d_px": 35.35,
+      "d_m": 398.2,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 2.87
+     },
+     {
+      "sim": "Kohabron",
+      "chart": "Kohabron",
+      "chart_n": 13,
+      "chart_atlas": [
+       1256.26,
+       1407.36
+      ],
+      "d_px": 9.98,
+      "d_m": 112.4,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -8.94
+     },
+     {
+      "sim": "Old Quarry Lot",
+      "chart": "Old Quarry Lot",
+      "chart_n": 16,
+      "chart_atlas": [
+       1238.75,
+       1432.18
+      ],
+      "d_px": 35.31,
+      "d_m": 397.8,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -6.14
+     },
+     {
+      "sim": "Mount Mastery",
+      "chart": "Mount Mastery",
+      "chart_n": 17,
+      "chart_atlas": [
+       1227.16,
+       1395.4
+      ],
+      "d_px": 8.92,
+      "d_m": 100.5,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 10.64
+     },
+     {
+      "sim": "Fairy Arch",
+      "chart": "The Fairy Arch",
+      "chart_n": 19,
+      "chart_atlas": [
+       1252.96,
+       1420.22
+      ],
+      "d_px": 24.07,
+      "d_m": 271.2,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -14.72
+     },
+     {
+      "sim": "the Thūkīn Amphitheater",
+      "chart": "Thūkīn Amphitheatre",
+      "chart_n": 10,
+      "chart_atlas": [
+       1231.69,
+       1423.9
+      ],
+      "d_px": 23.39,
+      "d_m": 263.4,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 0.69
+     },
+     {
+      "sim": "Bangeph Rock",
+      "chart": "Bangeph Rock",
+      "chart_n": 18,
+      "chart_atlas": [
+       1231.94,
+       1404.92
+      ],
+      "d_px": 4.98,
+      "d_m": 56.1,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 0.21
+     }
+    ]
+   },
+   "chart_poi_rms_radius_from_box_centre_px": 14.31,
+   "extent_vs_sim_disc": {
+    "built_up_cream_le_0.4": {
+     "r_eq_atlas_px": 11.58,
+     "ratio_to_sim_R": 0.49,
+     "centroid_atlas": [
+      1240.05,
+      1415.34
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      4.01,
+      0.34
+     ],
+     "iou_with_sim_disc": 0.24,
+     "frac_sim_disc_covered": 0.24,
+     "frac_extent_inside_sim_disc": 1.0,
+     "frac_extent_on_print_water": 0.11
+    },
+    "built_up_cream_le_0.5": {
+     "r_eq_atlas_px": 11.89,
+     "ratio_to_sim_R": 0.51,
+     "centroid_atlas": [
+      1240.23,
+      1415.14
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      4.19,
+      0.14
+     ],
+     "iou_with_sim_disc": 0.26,
+     "frac_sim_disc_covered": 0.26,
+     "frac_extent_inside_sim_disc": 1.0,
+     "frac_extent_on_print_water": 0.11
+    },
+    "built_up_cream_le_0.6": {
+     "r_eq_atlas_px": 12.28,
+     "ratio_to_sim_R": 0.52,
+     "centroid_atlas": [
+      1240.64,
+      1414.88
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      4.6,
+      -0.12
+     ],
+     "iou_with_sim_disc": 0.27,
+     "frac_sim_disc_covered": 0.27,
+     "frac_extent_inside_sim_disc": 0.99,
+     "frac_extent_on_print_water": 0.12
+    },
+    "urban_footprint_frame_cut": {
+     "r_eq_atlas_px": 16.51,
+     "ratio_to_sim_R": 0.7,
+     "centroid_atlas": [
+      1242.28,
+      1414.81
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      6.24,
+      -0.19
+     ],
+     "iou_with_sim_disc": 0.44,
+     "frac_sim_disc_covered": 0.46,
+     "frac_extent_inside_sim_disc": 0.93,
+     "frac_extent_on_print_water": 0.11
+    }
+   },
+   "chart_pois_in_print_water": [
+    {
+     "n": 10,
+     "name": "Thūkīn Amphitheatre",
+     "depth_px": 0.69
+    },
+    {
+     "n": 12,
+     "name": "Eelwynd",
+     "depth_px": 2.87
+    },
+    {
+     "n": 17,
+     "name": "Mount Mastery",
+     "depth_px": 10.64
+    },
+    {
+     "n": 18,
+     "name": "Bangeph Rock",
+     "depth_px": 0.21
+    }
+   ],
+   "all19_vs_print_water": [
+    {
+     "n": 1,
+     "name": "Necropolis of the Founders",
+     "atlas": [
+      1232.52,
+      1414.95
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -6.3
+    },
+    {
+     "n": 2,
+     "name": "Wood Quay",
+     "atlas": [
+      1234.71,
+      1411.9
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -6.9
+    },
+    {
+     "n": 3,
+     "name": "Whitestreet",
+     "atlas": [
+      1231.71,
+      1419.69
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -2.67
+    },
+    {
+     "n": 4,
+     "name": "Marble Quarter",
+     "atlas": [
+      1239.09,
+      1408.7
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -4.28
+    },
+    {
+     "n": 5,
+     "name": "Temple of Thobrauk Tegendes",
+     "atlas": [
+      1235.15,
+      1407.48
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -2.48
+    },
+    {
+     "n": 6,
+     "name": "Temple of the Ēkromatkar",
+     "atlas": [
+      1239.85,
+      1414.96
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -10.43
+    },
+    {
+     "n": 7,
+     "name": "Epēshīn Forum",
+     "atlas": [
+      1236.51,
+      1415.47
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -8.79
+    },
+    {
+     "n": 8,
+     "name": "The Māmban",
+     "atlas": [
+      1234.32,
+      1416.06
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -7.08
+    },
+    {
+     "n": 9,
+     "name": "The Relkhonak",
+     "atlas": [
+      1234.83,
+      1417.49
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -6.16
+    },
+    {
+     "n": 10,
+     "name": "Thūkīn Amphitheatre",
+     "atlas": [
+      1231.69,
+      1423.9
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 0.69
+    },
+    {
+     "n": 11,
+     "name": "Outwall",
+     "atlas": [
+      1244.99,
+      1407.93
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -6.9
+    },
+    {
+     "n": 12,
+     "name": "Eelwynd",
+     "atlas": [
+      1238.66,
+      1398.84
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 2.87
+    },
+    {
+     "n": 13,
+     "name": "Kohabron",
+     "atlas": [
+      1256.26,
+      1407.36
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -8.94
+    },
+    {
+     "n": 14,
+     "name": "Black Barghest Inn",
+     "atlas": [
+      1237.35,
+      1425.23
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -3.23
+    },
+    {
+     "n": 15,
+     "name": "Road That Walks with the Sun",
+     "atlas": [
+      1262.17,
+      1411.41
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -2.83
+    },
+    {
+     "n": 16,
+     "name": "Old Quarry Lot",
+     "atlas": [
+      1238.75,
+      1432.18
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -6.14
+    },
+    {
+     "n": 17,
+     "name": "Mount Mastery",
+     "atlas": [
+      1227.16,
+      1395.4
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 10.64
+    },
+    {
+     "n": 18,
+     "name": "Bangeph Rock",
+     "atlas": [
+      1231.94,
+      1404.92
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 0.21
+    },
+    {
+     "n": 19,
+     "name": "The Fairy Arch",
+     "atlas": [
+      1252.96,
+      1420.22
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -14.72
+    }
+   ]
+  },
+  {
+   "placement": "0.6x +3E",
+   "tc4_key": "scale0.6_E3",
+   "scale_vs_today": 0.6,
+   "centre_dx_E_atlas_px": 3,
+   "box_tc4_x0y0x1y1": [
+    1224.56,
+    1399.4,
+    1253.64,
+    1430.6
+   ],
+   "poi_vs_sim_label": {
+    "n_pairs": 13,
+    "rms_atlas_px": 19.37,
+    "rms_m": 218.2,
+    "median_m": 133.6,
+    "min_m": 35.2,
+    "max_m": 372.7,
+    "rms_m_excluding_OldQuarryLot_and_Eelwynd": 182.5,
+    "labels_over_10_atlas_px": [
+     "the Marble Quarter",
+     "Wood Quay",
+     "Outwall",
+     "Eelwynd",
+     "Kohabron",
+     "Old Quarry Lot",
+     "Mount Mastery",
+     "Fairy Arch",
+     "the Thūkīn Amphitheater"
+    ],
+    "labels_over_20_atlas_px": [
+     "Outwall",
+     "Eelwynd",
+     "Old Quarry Lot",
+     "Fairy Arch",
+     "the Thūkīn Amphitheater"
+    ],
+    "pairs": [
+     {
+      "sim": "Epēshīn Forum",
+      "chart": "Epēshīn Forum",
+      "chart_n": 7,
+      "chart_atlas": [
+       1233.41,
+       1415.35
+      ],
+      "d_px": 3.12,
+      "d_m": 35.2,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -6.82
+     },
+     {
+      "sim": "the Marble Quarter",
+      "chart": "Marble Quarter",
+      "chart_n": 4,
+      "chart_atlas": [
+       1235.34,
+       1410.28
+      ],
+      "d_px": 12.24,
+      "d_m": 137.9,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -5.28
+     },
+     {
+      "sim": "Wood Quay",
+      "chart": "Wood Quay",
+      "chart_n": 2,
+      "chart_atlas": [
+       1232.06,
+       1412.67
+      ],
+      "d_px": 11.86,
+      "d_m": 133.6,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -6.73
+     },
+     {
+      "sim": "Whitestreet",
+      "chart": "Whitestreet",
+      "chart_n": 3,
+      "chart_atlas": [
+       1229.81,
+       1418.52
+      ],
+      "d_px": 7.51,
+      "d_m": 84.6,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -2.15
+     },
+     {
+      "sim": "Necropolis of the Founders",
+      "chart": "Necropolis of the Founders",
+      "chart_n": 1,
+      "chart_atlas": [
+       1230.41,
+       1414.96
+      ],
+      "d_px": 9.78,
+      "d_m": 110.2,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -4.53
+     },
+     {
+      "sim": "Outwall",
+      "chart": "Outwall",
+      "chart_n": 11,
+      "chart_atlas": [
+       1239.77,
+       1409.7
+      ],
+      "d_px": 23.1,
+      "d_m": 260.3,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -5.41
+     },
+     {
+      "sim": "Eelwynd",
+      "chart": "Eelwynd",
+      "chart_n": 12,
+      "chart_atlas": [
+       1235.02,
+       1402.88
+      ],
+      "d_px": 29.98,
+      "d_m": 337.7,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 2.14
+     },
+     {
+      "sim": "Kohabron",
+      "chart": "Kohabron",
+      "chart_n": 13,
+      "chart_atlas": [
+       1248.22,
+       1409.27
+      ],
+      "d_px": 10.24,
+      "d_m": 115.3,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -10.32
+     },
+     {
+      "sim": "Old Quarry Lot",
+      "chart": "Old Quarry Lot",
+      "chart_n": 16,
+      "chart_atlas": [
+       1235.09,
+       1427.89
+      ],
+      "d_px": 33.09,
+      "d_m": 372.7,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -0.6
+     },
+     {
+      "sim": "Mount Mastery",
+      "chart": "Mount Mastery",
+      "chart_n": 17,
+      "chart_atlas": [
+       1226.39,
+       1400.3
+      ],
+      "d_px": 10.47,
+      "d_m": 117.9,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 6.38
+     },
+     {
+      "sim": "Fairy Arch",
+      "chart": "The Fairy Arch",
+      "chart_n": 19,
+      "chart_atlas": [
+       1245.75,
+       1418.91
+      ],
+      "d_px": 31.03,
+      "d_m": 349.5,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -13.35
+     },
+     {
+      "sim": "the Thūkīn Amphitheater",
+      "chart": "Thūkīn Amphitheatre",
+      "chart_n": 10,
+      "chart_atlas": [
+       1229.79,
+       1421.68
+      ],
+      "d_px": 25.96,
+      "d_m": 292.4,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 0.18
+     },
+     {
+      "sim": "Bangeph Rock",
+      "chart": "Bangeph Rock",
+      "chart_n": 18,
+      "chart_atlas": [
+       1229.98,
+       1407.44
+      ],
+      "d_px": 7.02,
+      "d_m": 79.1,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -1.46
+     }
+    ]
+   },
+   "chart_poi_rms_radius_from_box_centre_px": 10.73,
+   "extent_vs_sim_disc": {
+    "built_up_cream_le_0.4": {
+     "r_eq_atlas_px": 8.69,
+     "ratio_to_sim_R": 0.37,
+     "centroid_atlas": [
+      1236.06,
+      1415.25
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      0.02,
+      0.25
+     ],
+     "iou_with_sim_disc": 0.14,
+     "frac_sim_disc_covered": 0.14,
+     "frac_extent_inside_sim_disc": 1.0,
+     "frac_extent_on_print_water": 0.14
+    },
+    "built_up_cream_le_0.5": {
+     "r_eq_atlas_px": 8.92,
+     "ratio_to_sim_R": 0.38,
+     "centroid_atlas": [
+      1236.2,
+      1415.1
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      0.16,
+      0.1
+     ],
+     "iou_with_sim_disc": 0.14,
+     "frac_sim_disc_covered": 0.14,
+     "frac_extent_inside_sim_disc": 1.0,
+     "frac_extent_on_print_water": 0.14
+    },
+    "built_up_cream_le_0.6": {
+     "r_eq_atlas_px": 9.21,
+     "ratio_to_sim_R": 0.39,
+     "centroid_atlas": [
+      1236.5,
+      1414.91
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      0.46,
+      -0.09
+     ],
+     "iou_with_sim_disc": 0.15,
+     "frac_sim_disc_covered": 0.15,
+     "frac_extent_inside_sim_disc": 1.0,
+     "frac_extent_on_print_water": 0.15
+    },
+    "urban_footprint_frame_cut": {
+     "r_eq_atlas_px": 12.39,
+     "ratio_to_sim_R": 0.53,
+     "centroid_atlas": [
+      1237.74,
+      1414.86
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      1.69,
+      -0.14
+     ],
+     "iou_with_sim_disc": 0.28,
+     "frac_sim_disc_covered": 0.28,
+     "frac_extent_inside_sim_disc": 1.0,
+     "frac_extent_on_print_water": 0.16
+    }
+   },
+   "chart_pois_in_print_water": [
+    {
+     "n": 10,
+     "name": "Thūkīn Amphitheatre",
+     "depth_px": 0.18
+    },
+    {
+     "n": 12,
+     "name": "Eelwynd",
+     "depth_px": 2.14
+    },
+    {
+     "n": 17,
+     "name": "Mount Mastery",
+     "depth_px": 6.38
+    }
+   ],
+   "all19_vs_print_water": [
+    {
+     "n": 1,
+     "name": "Necropolis of the Founders",
+     "atlas": [
+      1230.41,
+      1414.96
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -4.53
+    },
+    {
+     "n": 2,
+     "name": "Wood Quay",
+     "atlas": [
+      1232.06,
+      1412.67
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -6.73
+    },
+    {
+     "n": 3,
+     "name": "Whitestreet",
+     "atlas": [
+      1229.81,
+      1418.52
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -2.15
+    },
+    {
+     "n": 4,
+     "name": "Marble Quarter",
+     "atlas": [
+      1235.34,
+      1410.28
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -5.28
+    },
+    {
+     "n": 5,
+     "name": "Temple of Thobrauk Tegendes",
+     "atlas": [
+      1232.38,
+      1409.36
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -3.98
+    },
+    {
+     "n": 6,
+     "name": "Temple of the Ēkromatkar",
+     "atlas": [
+      1235.91,
+      1414.97
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -8.86
+    },
+    {
+     "n": 7,
+     "name": "Epēshīn Forum",
+     "atlas": [
+      1233.41,
+      1415.35
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -6.82
+    },
+    {
+     "n": 8,
+     "name": "The Māmban",
+     "atlas": [
+      1231.76,
+      1415.79
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -5.18
+    },
+    {
+     "n": 9,
+     "name": "The Relkhonak",
+     "atlas": [
+      1232.15,
+      1416.86
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -4.97
+    },
+    {
+     "n": 10,
+     "name": "Thūkīn Amphitheatre",
+     "atlas": [
+      1229.79,
+      1421.68
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 0.18
+    },
+    {
+     "n": 11,
+     "name": "Outwall",
+     "atlas": [
+      1239.77,
+      1409.7
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -5.41
+    },
+    {
+     "n": 12,
+     "name": "Eelwynd",
+     "atlas": [
+      1235.02,
+      1402.88
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 2.14
+    },
+    {
+     "n": 13,
+     "name": "Kohabron",
+     "atlas": [
+      1248.22,
+      1409.27
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -10.32
+    },
+    {
+     "n": 14,
+     "name": "Black Barghest Inn",
+     "atlas": [
+      1234.03,
+      1422.67
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -1.85
+    },
+    {
+     "n": 15,
+     "name": "Road That Walks with the Sun",
+     "atlas": [
+      1252.66,
+      1412.31
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -12.35
+    },
+    {
+     "n": 16,
+     "name": "Old Quarry Lot",
+     "atlas": [
+      1235.09,
+      1427.89
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -0.6
+    },
+    {
+     "n": 17,
+     "name": "Mount Mastery",
+     "atlas": [
+      1226.39,
+      1400.3
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 6.38
+    },
+    {
+     "n": 18,
+     "name": "Bangeph Rock",
+     "atlas": [
+      1229.98,
+      1407.44
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -1.46
+    },
+    {
+     "n": 19,
+     "name": "The Fairy Arch",
+     "atlas": [
+      1245.75,
+      1418.91
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -13.35
+    }
+   ]
+  },
+  {
+   "placement": "0.6x +8E",
+   "tc4_key": "scale0.6_E8",
+   "scale_vs_today": 0.6,
+   "centre_dx_E_atlas_px": 8,
+   "box_tc4_x0y0x1y1": [
+    1229.56,
+    1399.4,
+    1258.64,
+    1430.6
+   ],
+   "poi_vs_sim_label": {
+    "n_pairs": 13,
+    "rms_atlas_px": 18.58,
+    "rms_m": 209.3,
+    "median_m": 147.3,
+    "min_m": 32.7,
+    "max_m": 370.6,
+    "rms_m_excluding_OldQuarryLot_and_Eelwynd": 168.3,
+    "labels_over_10_atlas_px": [
+     "Wood Quay",
+     "Necropolis of the Founders",
+     "Outwall",
+     "Eelwynd",
+     "Old Quarry Lot",
+     "Fairy Arch",
+     "the Thūkīn Amphitheater"
+    ],
+    "labels_over_20_atlas_px": [
+     "Outwall",
+     "Eelwynd",
+     "Old Quarry Lot",
+     "Fairy Arch",
+     "the Thūkīn Amphitheater"
+    ],
+    "pairs": [
+     {
+      "sim": "Epēshīn Forum",
+      "chart": "Epēshīn Forum",
+      "chart_n": 7,
+      "chart_atlas": [
+       1238.41,
+       1415.35
+      ],
+      "d_px": 2.9,
+      "d_m": 32.7,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -10.12
+     },
+     {
+      "sim": "the Marble Quarter",
+      "chart": "Marble Quarter",
+      "chart_n": 4,
+      "chart_atlas": [
+       1240.34,
+       1410.28
+      ],
+      "d_px": 7.84,
+      "d_m": 88.3,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -6.14
+     },
+     {
+      "sim": "Wood Quay",
+      "chart": "Wood Quay",
+      "chart_n": 2,
+      "chart_atlas": [
+       1237.06,
+       1412.67
+      ],
+      "d_px": 14.5,
+      "d_m": 163.3,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -7.68
+     },
+     {
+      "sim": "Whitestreet",
+      "chart": "Whitestreet",
+      "chart_n": 3,
+      "chart_atlas": [
+       1234.81,
+       1418.52
+      ],
+      "d_px": 9.01,
+      "d_m": 101.5,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -5.34
+     },
+     {
+      "sim": "Necropolis of the Founders",
+      "chart": "Necropolis of the Founders",
+      "chart_n": 1,
+      "chart_atlas": [
+       1235.41,
+       1414.96
+      ],
+      "d_px": 13.07,
+      "d_m": 147.3,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -8.61
+     },
+     {
+      "sim": "Outwall",
+      "chart": "Outwall",
+      "chart_n": 11,
+      "chart_atlas": [
+       1244.77,
+       1409.7
+      ],
+      "d_px": 23.96,
+      "d_m": 269.8,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -7.93
+     },
+     {
+      "sim": "Eelwynd",
+      "chart": "Eelwynd",
+      "chart_n": 12,
+      "chart_atlas": [
+       1240.02,
+       1402.88
+      ],
+      "d_px": 32.9,
+      "d_m": 370.6,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -0.13
+     },
+     {
+      "sim": "Kohabron",
+      "chart": "Kohabron",
+      "chart_n": 13,
+      "chart_atlas": [
+       1253.22,
+       1409.27
+      ],
+      "d_px": 8.08,
+      "d_m": 91.0,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -11.78
+     },
+     {
+      "sim": "Old Quarry Lot",
+      "chart": "Old Quarry Lot",
+      "chart_n": 16,
+      "chart_atlas": [
+       1240.09,
+       1427.89
+      ],
+      "d_px": 30.83,
+      "d_m": 347.3,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -5.59
+     },
+     {
+      "sim": "Mount Mastery",
+      "chart": "Mount Mastery",
+      "chart_n": 17,
+      "chart_atlas": [
+       1231.39,
+       1400.3
+      ],
+      "d_px": 6.17,
+      "d_m": 69.5,
+      "chart_in_print_water": true,
+      "chart_print_signed_dist_px": 4.72
+     },
+     {
+      "sim": "Fairy Arch",
+      "chart": "The Fairy Arch",
+      "chart_n": 19,
+      "chart_atlas": [
+       1250.75,
+       1418.91
+      ],
+      "d_px": 26.64,
+      "d_m": 300.1,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -15.95
+     },
+     {
+      "sim": "the Thūkīn Amphitheater",
+      "chart": "Thūkīn Amphitheatre",
+      "chart_n": 10,
+      "chart_atlas": [
+       1234.79,
+       1421.68
+      ],
+      "d_px": 21.43,
+      "d_m": 241.4,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -3.09
+     },
+     {
+      "sim": "Bangeph Rock",
+      "chart": "Bangeph Rock",
+      "chart_n": 18,
+      "chart_atlas": [
+       1234.98,
+       1407.44
+      ],
+      "d_px": 8.73,
+      "d_m": 98.3,
+      "chart_in_print_water": false,
+      "chart_print_signed_dist_px": -2.45
+     }
+    ]
+   },
+   "chart_poi_rms_radius_from_box_centre_px": 10.73,
+   "extent_vs_sim_disc": {
+    "built_up_cream_le_0.4": {
+     "r_eq_atlas_px": 8.69,
+     "ratio_to_sim_R": 0.37,
+     "centroid_atlas": [
+      1241.06,
+      1415.25
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      5.02,
+      0.25
+     ],
+     "iou_with_sim_disc": 0.14,
+     "frac_sim_disc_covered": 0.14,
+     "frac_extent_inside_sim_disc": 1.0,
+     "frac_extent_on_print_water": 0.03
+    },
+    "built_up_cream_le_0.5": {
+     "r_eq_atlas_px": 8.92,
+     "ratio_to_sim_R": 0.38,
+     "centroid_atlas": [
+      1241.2,
+      1415.1
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      5.16,
+      0.1
+     ],
+     "iou_with_sim_disc": 0.14,
+     "frac_sim_disc_covered": 0.14,
+     "frac_extent_inside_sim_disc": 1.0,
+     "frac_extent_on_print_water": 0.04
+    },
+    "built_up_cream_le_0.6": {
+     "r_eq_atlas_px": 9.21,
+     "ratio_to_sim_R": 0.39,
+     "centroid_atlas": [
+      1241.5,
+      1414.91
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      5.46,
+      -0.09
+     ],
+     "iou_with_sim_disc": 0.15,
+     "frac_sim_disc_covered": 0.15,
+     "frac_extent_inside_sim_disc": 1.0,
+     "frac_extent_on_print_water": 0.04
+    },
+    "urban_footprint_frame_cut": {
+     "r_eq_atlas_px": 12.39,
+     "ratio_to_sim_R": 0.53,
+     "centroid_atlas": [
+      1242.74,
+      1414.86
+     ],
+     "centroid_offset_from_sim_centre_px": [
+      6.69,
+      -0.14
+     ],
+     "iou_with_sim_disc": 0.28,
+     "frac_sim_disc_covered": 0.28,
+     "frac_extent_inside_sim_disc": 1.0,
+     "frac_extent_on_print_water": 0.08
+    }
+   },
+   "chart_pois_in_print_water": [
+    {
+     "n": 17,
+     "name": "Mount Mastery",
+     "depth_px": 4.72
+    }
+   ],
+   "all19_vs_print_water": [
+    {
+     "n": 1,
+     "name": "Necropolis of the Founders",
+     "atlas": [
+      1235.41,
+      1414.96
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -8.61
+    },
+    {
+     "n": 2,
+     "name": "Wood Quay",
+     "atlas": [
+      1237.06,
+      1412.67
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -7.68
+    },
+    {
+     "n": 3,
+     "name": "Whitestreet",
+     "atlas": [
+      1234.81,
+      1418.52
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -5.34
+    },
+    {
+     "n": 4,
+     "name": "Marble Quarter",
+     "atlas": [
+      1240.34,
+      1410.28
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -6.14
+    },
+    {
+     "n": 5,
+     "name": "Temple of Thobrauk Tegendes",
+     "atlas": [
+      1237.38,
+      1409.36
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -4.41
+    },
+    {
+     "n": 6,
+     "name": "Temple of the Ēkromatkar",
+     "atlas": [
+      1240.91,
+      1414.97
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -10.8
+    },
+    {
+     "n": 7,
+     "name": "Epēshīn Forum",
+     "atlas": [
+      1238.41,
+      1415.35
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -10.12
+    },
+    {
+     "n": 8,
+     "name": "The Māmban",
+     "atlas": [
+      1236.76,
+      1415.79
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -8.68
+    },
+    {
+     "n": 9,
+     "name": "The Relkhonak",
+     "atlas": [
+      1237.15,
+      1416.86
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -8.16
+    },
+    {
+     "n": 10,
+     "name": "Thūkīn Amphitheatre",
+     "atlas": [
+      1234.79,
+      1421.68
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -3.09
+    },
+    {
+     "n": 11,
+     "name": "Outwall",
+     "atlas": [
+      1244.77,
+      1409.7
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -7.93
+    },
+    {
+     "n": 12,
+     "name": "Eelwynd",
+     "atlas": [
+      1240.02,
+      1402.88
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -0.13
+    },
+    {
+     "n": 13,
+     "name": "Kohabron",
+     "atlas": [
+      1253.22,
+      1409.27
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -11.78
+    },
+    {
+     "n": 14,
+     "name": "Black Barghest Inn",
+     "atlas": [
+      1239.03,
+      1422.67
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -5.65
+    },
+    {
+     "n": 15,
+     "name": "Road That Walks with the Sun",
+     "atlas": [
+      1257.66,
+      1412.31
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -7.36
+    },
+    {
+     "n": 16,
+     "name": "Old Quarry Lot",
+     "atlas": [
+      1240.09,
+      1427.89
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -5.59
+    },
+    {
+     "n": 17,
+     "name": "Mount Mastery",
+     "atlas": [
+      1231.39,
+      1400.3
+     ],
+     "in_print_water": true,
+     "signed_dist_px": 4.72
+    },
+    {
+     "n": 18,
+     "name": "Bangeph Rock",
+     "atlas": [
+      1234.98,
+      1407.44
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -2.45
+    },
+    {
+     "n": 19,
+     "name": "The Fairy Arch",
+     "atlas": [
+      1250.75,
+      1418.91
+     ],
+     "in_print_water": false,
+     "signed_dist_px": -15.95
+    }
+   ]
+  }
+ ],
+ "direction_agreement_today": {
+  "note": "bearing (deg from N, clockwise) of each label from its own centre: sim from the sim centre, chart from the box centre at 1.0x. Scale and centre shift do not change chart bearings much, so this is near placement-independent.",
+  "pairs": [
+   {
+    "name": "Epēshīn Forum",
+    "sim_bearing_deg": 0,
+    "chart_bearing_deg": 266,
+    "abs_diff_deg": 94,
+    "sim_r_px": 1.33,
+    "chart_r_px_at_1.0x": 9.5
+   },
+   {
+    "name": "the Marble Quarter",
+    "sim_bearing_deg": 49,
+    "chart_bearing_deg": 322,
+    "abs_diff_deg": 87,
+    "sim_r_px": 14.15,
+    "chart_r_px_at_1.0x": 10.06
+   },
+   {
+    "name": "Wood Quay",
+    "sim_bearing_deg": 328,
+    "chart_bearing_deg": 288,
+    "abs_diff_deg": 39,
+    "sim_r_px": 15.76,
+    "chart_r_px_at_1.0x": 12.36
+   },
+   {
+    "name": "Whitestreet",
+    "sim_bearing_deg": 303,
+    "chart_bearing_deg": 249,
+    "abs_diff_deg": 53,
+    "sim_r_px": 7.38,
+    "chart_r_px_at_1.0x": 16.56
+   },
+   {
+    "name": "Necropolis of the Founders",
+    "sim_bearing_deg": 308,
+    "chart_bearing_deg": 270,
+    "abs_diff_deg": 38,
+    "sim_r_px": 13.58,
+    "chart_r_px_at_1.0x": 14.47
+   },
+   {
+    "name": "Outwall",
+    "sim_bearing_deg": 173,
+    "chart_bearing_deg": 7,
+    "abs_diff_deg": 166,
+    "sim_r_px": 17.89,
+    "chart_r_px_at_1.0x": 8.91
+   },
+   {
+    "name": "Eelwynd",
+    "sim_bearing_deg": 232,
+    "chart_bearing_deg": 341,
+    "abs_diff_deg": 110,
+    "sim_r_px": 21.49,
+    "chart_r_px_at_1.0x": 21.32
+   },
+   {
+    "name": "Kohabron",
+    "sim_bearing_deg": 97,
+    "chart_bearing_deg": 58,
+    "abs_diff_deg": 39,
+    "sim_r_px": 18.77,
+    "chart_r_px_at_1.0x": 17.95
+   },
+   {
+    "name": "Old Quarry Lot",
+    "sim_bearing_deg": 46,
+    "chart_bearing_deg": 197,
+    "abs_diff_deg": 151,
+    "sim_r_px": 22.29,
+    "chart_r_px_at_1.0x": 22.5
+   },
+   {
+    "name": "Mount Mastery",
+    "sim_bearing_deg": 0,
+    "chart_bearing_deg": 319,
+    "abs_diff_deg": 41,
+    "sim_r_px": 18.75,
+    "chart_r_px_at_1.0x": 32.39
+   },
+   {
+    "name": "Fairy Arch",
+    "sim_bearing_deg": 115,
+    "chart_bearing_deg": 120,
+    "abs_diff_deg": 5,
+    "sim_r_px": 41.47,
+    "chart_r_px_at_1.0x": 12.86
+   },
+   {
+    "name": "the Thūkīn Amphitheater",
+    "sim_bearing_deg": 133,
+    "chart_bearing_deg": 234,
+    "abs_diff_deg": 101,
+    "sim_r_px": 24.32,
+    "chart_r_px_at_1.0x": 19.09
+   },
+   {
+    "name": "Bangeph Rock",
+    "sim_bearing_deg": 337,
+    "chart_bearing_deg": 310,
+    "abs_diff_deg": 27,
+    "sim_r_px": 15.86,
+    "chart_r_px_at_1.0x": 19.74
+   }
+  ],
+  "median_abs_diff_deg": 53.0,
+  "n_over_90deg": 5,
+  "n_over_90deg_meaningful": [
+   "Outwall",
+   "Old Quarry Lot",
+   "Eelwynd",
+   "the Thūkīn Amphitheater"
+  ],
+  "caveat": "Epēshīn Forum (94 deg) is noise: its sim offset is 1.33 px."
+ },
+ "scale_criteria": {
+  "labels_rms_radius": {
+   "sim_rms_radius_px": 20.07,
+   "chart_rms_radius_px_at_1.0x": 17.89,
+   "implied_scale": 1.12,
+   "note": "scale-only and immune to direction errors: ~1.0x (1.12 with all 13; 0.94 without Fairy Arch, which sits 41.5 px out in the sim vs 12.9 on the chart; median per-pair ratio 1.01)",
+   "implied_scale_without_Fairy_Arch": 0.94,
+   "median_per_pair_ratio_sim_r_over_chart_r": 1.01,
+   "per_pair_ratios_sorted": [
+    [
+     "Epēshīn Forum",
+     0.14
+    ],
+    [
+     "Whitestreet",
+     0.45
+    ],
+    [
+     "Mount Mastery",
+     0.58
+    ],
+    [
+     "Bangeph Rock",
+     0.8
+    ],
+    [
+     "Necropolis of the Founders",
+     0.94
+    ],
+    [
+     "Old Quarry Lot",
+     0.99
+    ],
+    [
+     "Eelwynd",
+     1.01
+    ],
+    [
+     "Kohabron",
+     1.05
+    ],
+    [
+     "the Thūkīn Amphitheater",
+     1.27
+    ],
+    [
+     "Wood Quay",
+     1.28
+    ],
+    [
+     "the Marble Quarter",
+     1.41
+    ],
+    [
+     "Outwall",
+     2.01
+    ],
+    [
+     "Fairy Arch",
+     3.22
+    ]
+   ]
+  },
+  "extent": {
+   "built_up_r_eq_px_at_1.0x": [
+    14.47,
+    14.87,
+    15.35
+   ],
+   "implied_scale_for_built_up_r_eq_eq_R": [
+    1.63,
+    1.58,
+    1.53
+   ],
+   "implied_scale_for_urban_footprint_r_eq_eq_R": 1.14,
+   "implied_scale_for_built_up_r_eq_eq_wall_min_0.5R": [
+    0.81,
+    0.79,
+    0.77
+   ]
+  },
+  "lsq_context_only": {
+   "fixed_centre_lsq_scale": {
+    "dx0E": {
+     "lsq_scale": 0.26,
+     "rms_m_at_lsq_scale": 219.8
+    },
+    "dx3E": {
+     "lsq_scale": 0.329,
+     "rms_m_at_lsq_scale": 211.3
+    },
+    "dx8E": {
+     "lsq_scale": 0.444,
+     "rms_m_at_lsq_scale": 206.9
+    }
+   },
+   "collapse_baseline_rms_m": {
+    "dx0E": 225.9,
+    "dx3E": 221.5,
+    "dx8E": 225.4
+   },
+   "note": "all 13 chart POIs collapsed onto one point at the (shifted) anchor score 221-226 m rms; the per-name rms falls with smaller scale only because the two layouts disagree in direction, so least squares shrinks the chart toward a point (s 0.26-0.44). Not a policy signal."
+  },
+  "coast_tc4": "0.6x+3E best (3.58 rms to print), from gap-coasts:tc-4; quoted, not recomputed, not averaged"
+ },
+ "verdicts": {
+  "labels": "Per-name POI-to-sim-label rms is 265.5 m today (reproduces own-sim:S8: 103-489 m, median 190) and falls only to 209-235 m at the other six placements; collapsing all 13 chart POIs onto the anchor already scores 221-226 m. 4 meaningful pairs disagree in bearing by >90 deg (Outwall 166, Old Quarry Lot 151, Eelwynd 110, Thūkīn 101; Forum 94 is noise on a 1.3 px offset; median 53 deg). The sim labels do not share the chart layout, so no policy scale makes them line up: every placement leaves 5-6 labels >20 atlas px (~225 m) off. Per-name rms cannot choose the scale.",
+  "labels_spread": "Scale-only, direction-immune: the sim labels spread like the chart at ~1.0x today (rms-radius ratio 1.12 with all 13, 0.94 without Fairy Arch; median per-pair ratio 1.01), i.e. at the 1.0x end of the policy range.",
+  "extent": "The chart draws no wall. Its built-up area (r_eq 855-907 art px) is 14.5-15.4 atlas px at 1.0x = 0.62-0.65 of the sim disc R (23.52 px); 0.49-0.52 at 0.8x; 0.37-0.39 at 0.6x. The frame-cut urban footprint is 0.88/0.70/0.53. Built-up = R needs ~1.53-1.63x; built-up = the sim wall minimum 0.5R needs ~0.77-0.81x. At 0.6x the whole built-up chart fits inside the smallest wall circuit buildTownWall can draw.",
+  "coast_vs_extent": "Coast (tc-4) favours 0.6x+3E; sim extent and label spread favour >=1.0x. No single tc-4 placement satisfies both. Matching the chart built-up r_eq would need the sim capital R at ~167 m (1.0x), ~134 m (0.8x) or ~100 m (0.6x) instead of 265 m, plus the hand-placed labels pulled in by roughly the same factor; a 1.0x pick keeps the sim closest but carries the coast error tc-4 measured (8.48 -> 5.88-7.21 rms). Any pick therefore implies a later sim edit (rad, cityLabels, extraLandmarks: data-only, no RNG), cheapest before Street 1 freezes SV1-SV9; the sim streets are not dragged along.",
+  "water": "Projected chart POIs in print water: 10 of 19 today, 6 at 1.0x+3E, 5 at 1.0x+8E and 0.8x+3E, 4 at 0.8x+8E, 3 at 0.6x+3E, 1 at 0.6x+8E (Mount Mastery, a land hill, wet at every placement, 4.7-20.8 px). Shore-coded POIs cut the other way at 0.6x: Wood Quay lands 6.7-7.7 px inland (stronger signal); Bangeph Rock (a sea stack, chart sea) falls 1.5-2.5 px on print land, but that is inside tc-4's own 3.58 px residual and the print cannot show a stack at symbol scale (low confidence). Chart built-up on print water: 41% today, 29/14% at 1.0x+3E/+8E, 21/11% at 0.8x, 14/4% at 0.6x.",
+  "sim_side_water": "Independent of any placement, 5 sim labels sit in print water and 4 on DEM h<0: Mount Mastery (DEM -7.0 m, 6.0 px into print sea), Wood Quay (-5.4 m, 4.6 px), Eelwynd (-2.6 m, 3.6 px), Bangeph Rock (-5.8 m before its runtime spike, intended), Necropolis of the Founders (DEM +2.7 m but 2.0 px into print water)."
+ }
+}

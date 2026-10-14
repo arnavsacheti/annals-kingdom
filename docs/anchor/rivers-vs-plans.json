@@ -1,0 +1,3715 @@
+{
+ "id": "rivers-vs-plans",
+ "date": "2026-10-07",
+ "static_only": true,
+ "browser_run": false,
+ "key_distinction": "REGISTRATION, not rendering medium. Every number here is about where a printed river (solid black line, by the cartographic key) sits relative to a city's cityBox footprint and approach circle. Plans are placed by cityBox around the anchor, and genCityCanvas draws a river only from traits.river (seeded bearing). A vector plan placed through the same cityBox with the same RV block would miss the printed river in exactly the same way. Only atlas-frame river geometry fed into the plan (registration) closes the gap; vector rendering only makes the mismatch crisper.",
+ "question": "For every generated anchor: does a printed river stroke cross the 1.0*FOOT_R box and the 2.5*FOOT_R approach circle, and at which bearings? For Kolens and Ion Ephel, what can genCityCanvas's RV block draw? Which planned item would supply river polylines, and is its done-when precise enough to drive plan rivers? Is a fix hash-changing?",
+ "method": {
+  "mosaic": "maps-site/tiles/5 (35x18 tiles) pasted into an 8960x4608 RGB array, PIL JPEG decode (not the browser's); atlas px = z5 px / 2, no y flip. Throwaway numpy/scipy scripts in a mktemp -d dir; no browser.",
+  "ink": "luminance (0.299,0.587,0.114) < 110.",
+  "dots": "the dot detector behind out/vector-overlays-vs-print.json: 8-connected ink components with bbox 4-11 z5 px, fill > 0.55, aspect <= 1.6, chained to another dot within 16 z5 px; 2,514 candidates, 2,351 chained (the same 2,351 that file reports); dilated 2 px and removed.",
+  "coast": "union of two coast bands, each = ink within 9 z5 px (4.5 atlas px) of both water and land. (a) the numpy buildCityMask port behind out/three-coasts-epeshu.json (lum >= 110 and r-b <= 54, separable radius-2 box blur, ratio >= 0.5), applied sheet-wide with water components >= 2000 z5 px kept. (b) DEVIATION, added because (a) alone fails under realm tints: a colour-distance sea mask (non-ink colour, 9x9 mean, within L2 9 of the sea tone RGB 175,167,128; opened; components >= 20000 z5 px; closed). Evidence: under the Pheropic/Eastern Patrin tint the land samples RGB 165,153,127 (r-b 36) and Emphēros land 154,152,106 (r-b 38), both under the r-b <= 54 water test, so (a) reads the tinted land as water and kept every Garnatos/Pheropic coastline (Graes, Sember, Kezren, Azrīnet, Gārmīt, Pel, Darā, Malau, Nīs Garnata...) as a 'river'. With (a)|(b) those all drop out.",
+  "lettering": "text-component mask in the spirit of POLISH 'Traced road network' ('mask text components first'): letter cores = connected regions of distance-transform >= 2.6 z5 px with core area >= 20, core max DT >= 3.5 and bbox <= 60 z5 px (bold label stems; river cores measured <= 16 px area, the thick Tungril core is long, so neither is masked); cores dilated by 6 px and removed. Then any remaining component shorter than a 60 z5 px bbox diagonal (30 atlas px) is dropped: italic and small letters, ring-dots, dot remnants.",
+  "graticule": "local Hough over ink minus dots in a 440x440 z5 px window per anchor: a line with >= 85% support along a chord >= 300 z5 px is a graticule line; ink within 2.5 px of it is removed. (A shorter chord first removed the straight Iet Ford river; 300 px fixed it.)",
+  "tests": "box = square +-FOOT_R atlas px (capital 26, town 14, village 9, ruin 8) centred on the city-anchors.json anchor; ink_px_z5 = river pixels inside it; perimeter_bearings = runs of river ink (1 px dilation) along the box edge. Circle = radius 2.5*FOOT_R sampled every 0.25 deg; runs of river ink give crossing bearings, runs of the same component under 6 deg apart merged. Bearings are compass degrees from the anchor to the crossing point (0 = atlas up/N, clockwise; atlas y is top-origin). printed_axis_in_circle = principal axis (PCA) of river ink inside the circle, mod 180. within_wash_1_7x = nearest river ink <= 1.7*FOOT_R, the half-size of the washMake overlay bounds (washMake: var box=cityBox(a,reg.w,reg.h),f=1.7).",
+  "adjudication": "Every automatic flag was checked by eye on a montage (red = river candidate, blue = dropped ink, cyan = coast band, green = road dots, box and circle drawn) and, where unsure, on a raw context crop; verdicts and per-row notes record the outcome. A no-coast variant (coast band off) was run for recall: 86 extra anchors flagged, nearly all coasts; the 7 whose crossing point lay outside the coast band and 11 more were reviewed by eye; it recovered Heron's House (and gives the cleaner trace for Sau Taran). Rows marked variant 'nocoast' come from that run.",
+  "limits": "Rivers cut by labels or by the coast band near a mouth may be missed or shortened (mouths inside 4.5 px of the coast always are). Lake shores (Five Fingers) are not separable from rivers by colour and were rejected by eye. Not every one of the 86 no-coast extras was viewed; the outside-the-coast-band filter is the recall screen. PIL decode, not browser decode."
+ },
+ "summary": {
+  "generated_anchors": 135,
+  "canon_art_anchors": 1,
+  "summarch": "Summarch (the other canon DM chart) has no city-anchors.json entry, so it has no cityBox, no row here and was not tested.",
+  "generated_with_printed_river_within_2_5x": 18,
+  "generated_box_1x": {
+   "crossed": 13,
+   "graze_le_5px": 2,
+   "approach_only": 3
+  },
+  "generated_with_traits_river": "1 of the 18 (Ion Ephel). Kolens, the other traits.river city, has no printed river within 2.5*FOOT_R.",
+  "riverless_plans_over_printed_rivers": 17,
+  "canon": "Epēshu (DM chart, capital): the Lamor river crosses its 2.5*FOOT_R circle at 178.1 deg; its nearest ink is 37.7 px away, outside the 26 px box but inside the 44.2 px wash bounds.",
+  "all_18_plus_epeshu_within_wash": "Every one of the 19 printed rivers comes within 1.7*FOOT_R of its anchor, so each runs into the washMake overlay (alpha per shift_sources wash-ring-over-sea: 50-94% between the plan vignette and the wash fade-out) as well as the plan.",
+  "in_dem_window_generated": [
+   "Aldorūs",
+   "Rēketis",
+   "Drāmūz",
+   "Medem",
+   "Kardunash"
+  ],
+  "outside_dem_window_generated": [
+   "Ion Ephel",
+   "Feldspar",
+   "Iorundo",
+   "Aldrakhar",
+   "Iet Ford",
+   "Bash Dargis",
+   "Palagnon",
+   "Sau Taran",
+   "Lokri",
+   "Nāron",
+   "Mhēlzi",
+   "Nagash",
+   "Heron's House"
+  ]
+ },
+ "counts_by_kind": {
+  "anchors_total": {
+   "capital": 1,
+   "town": 17,
+   "village": 115,
+   "ruin": 3
+  },
+  "generated_printed_river": {
+   "village": {
+    "box_yes": 12,
+    "box_graze": 0,
+    "approach_only": 1,
+    "with_traits_river": 0
+   },
+   "town": {
+    "box_yes": 1,
+    "box_graze": 1,
+    "approach_only": 2,
+    "with_traits_river": 0
+   },
+   "ruin": {
+    "box_yes": 0,
+    "box_graze": 1,
+    "approach_only": 0,
+    "with_traits_river": 1
+   }
+  },
+  "canon_art_printed_river": {
+   "capital": {
+    "box_yes": 0,
+    "approach_only": 1
+   }
+  },
+  "note": "box_yes = river ink inside the 1.0*FOOT_R box; box_graze = 4-5 z5 px only (Bash Dargis, Ion Ephel); approach_only = river crosses only the 2.5*FOOT_R circle (Drāmūz, Aldrakhar town; Iet Ford village, whose river touches the box edge within the 1 px dilation). By kind: villages 13 of 115 (11%), towns 4 of 17 (24%), ruins 1 of 3, the capital (canon art) 1 of 1."
+ },
+ "per_city": [
+  {
+   "name": "Epēshu",
+   "kind": "capital",
+   "plan": "canon-art",
+   "foot_r": 26,
+   "anchor": [
+    1236.1,
+    1415
+   ],
+   "marker_offset_px": 2.0,
+   "traits_river": null,
+   "in_dem_window": true,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "high",
+   "box_1x": {
+    "crossed": "no",
+    "ink_px_z5": 0,
+    "perimeter_bearings_deg": []
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     178.1
+    ]
+   },
+   "nearest_river_atlas_px": 37.7,
+   "nearest_bearing_deg": 199.5,
+   "printed_axis_in_circle_deg_mod180": 123.9,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "n/a (DM chart)",
+   "note": "Lamor river (q10 P1) leaves the coast SSW of the anchor; mouth eaten by the coast band; canon DM chart, not a generated plan."
+  },
+  {
+   "name": "Sokundo",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    1477.7,
+    1444.2
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Kanae",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1521.5,
+    1482.7
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Tamaron",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    1657.9,
+    1548.3
+   ],
+   "marker_offset_px": 7.8,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: AURA HOTH lettering"
+  },
+  {
+   "name": "Mago",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1691.3,
+    1581.7
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: lettering"
+  },
+  {
+   "name": "Aldorūs",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1448.6,
+    1527.5
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "high",
+   "box_1x": {
+    "crossed": "yes",
+    "ink_px_z5": 45,
+    "perimeter_bearings_deg": [
+     288.4,
+     346.0
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     12.9,
+     297.2,
+     304.8
+    ]
+   },
+   "nearest_river_atlas_px": 6.9,
+   "nearest_bearing_deg": 323.3,
+   "printed_axis_in_circle_deg_mod180": 50.7,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "Aldorus river (q10 P2) passes NW/W of the ring; agrees with q10-c11 (7.5 px NW)."
+  },
+  {
+   "name": "Rēketis",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1279.8,
+    1551.5
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "high",
+   "box_1x": {
+    "crossed": "yes",
+    "ink_px_z5": 120,
+    "perimeter_bearings_deg": [
+     215.8,
+     225.0,
+     281.0,
+     325.2
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     22.4,
+     29.2
+    ]
+   },
+   "nearest_river_atlas_px": 5.5,
+   "nearest_bearing_deg": 230.9,
+   "printed_axis_in_circle_deg_mod180": 35.6,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "Lamor second reach (q10 P1) runs through the box and on to the Marble Gulf coast SW (mouth inside the circle, in the coast band)."
+  },
+  {
+   "name": "Āglaz",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1234,
+    1554.6
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: Marble Gulf coast (Lamor second reach ends 39 px E, outside the circle)"
+  },
+  {
+   "name": "Mīth Mirdānak",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1164.2,
+    1509.8
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Pharzeban",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1306.9,
+    1621.3
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Sardil",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    1484,
+    1636.9
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Perōna",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1647.5,
+    1631.7
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Tarap",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1251.7,
+    1671.3
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Thalbaen",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1275.6,
+    1702.5
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Drāmūz",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    1335,
+    1733.8
+   ],
+   "marker_offset_px": 36.3,
+   "traits_river": null,
+   "in_dem_window": true,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "medium",
+   "box_1x": {
+    "crossed": "no",
+    "ink_px_z5": 0,
+    "perimeter_bearings_deg": []
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     63.6
+    ]
+   },
+   "nearest_river_atlas_px": 19.1,
+   "nearest_bearing_deg": 83.1,
+   "printed_axis_in_circle_deg_mod180": 29.2,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "Medem river (q10 P3) reaches the coast ENE of the anchor; the river ink merges with the z of the label; anchor is 36 px from its marker dot.",
+   "at_marker_dot": {
+    "box_ink_px_z5": 0,
+    "approach_bearings_deg": [],
+    "nearest_px": 38.8
+   }
+  },
+  {
+   "name": "Medem",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1396.5,
+    1711.9
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "high",
+   "box_1x": {
+    "crossed": "yes",
+    "ink_px_z5": 116,
+    "perimeter_bearings_deg": [
+     62.2,
+     303.7
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     66.6,
+     299.8,
+     318.2,
+     342.5
+    ]
+   },
+   "nearest_river_atlas_px": 6.4,
+   "nearest_bearing_deg": 32.9,
+   "printed_axis_in_circle_deg_mod180": 103.4,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "Medem river (q10 P3) runs W-E across the top of the box; 318.2/342.5 are the NW tributary/wiggle of the same component."
+  },
+  {
+   "name": "Shengo",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1453,
+    1735
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Kardunash",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    1524.6,
+    1820.2
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "high",
+   "box_1x": {
+    "crossed": "yes",
+    "ink_px_z5": 175,
+    "perimeter_bearings_deg": [
+     108.7
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     111.5
+    ]
+   },
+   "nearest_river_atlas_px": 4.8,
+   "nearest_bearing_deg": 181.2,
+   "printed_axis_in_circle_deg_mod180": 104.2,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "Kardunash river (q10 P4) runs from the coast W through the box and out ESE."
+  },
+  {
+   "name": "Rhup",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1566,
+    1539
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Lepon the Old",
+   "kind": "ruin",
+   "plan": "generated",
+   "foot_r": 8,
+   "anchor": [
+    1146.5,
+    1420.2
+   ],
+   "marker_offset_px": null,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: meridian (removed once the Hough test ran on all ink)"
+  },
+  {
+   "name": "Sjefenhold",
+   "kind": "ruin",
+   "plan": "generated",
+   "foot_r": 8,
+   "anchor": [
+    2050,
+    30
+   ],
+   "marker_offset_px": 0.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Kolens",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    2162,
+    54
+   ],
+   "marker_offset_px": 0.0,
+   "traits_river": "through",
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "No printed river within 2.5*FOOT_R (35 px). Nearest solid line after the graticule test (meridian removed) is the ...er R. about 54 px WSW running N-S (crosses a 65 px test circle at 231.8 and 305.6). No ring dot is printed at Kolens; city-traits.json says its country is uncharted and its place approximate.",
+   "nearest_river_atlas_px": 53.8,
+   "nearest_bearing_deg": 247.0,
+   "printed_axis_near_deg_mod180": 169.2,
+   "plan_draws_river": "seeded through-river, axis 278.3 deg"
+  },
+  {
+   "name": "Hordon",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    1139,
+    1730
+   ],
+   "marker_offset_px": 42.7,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: AZ lettering / coast"
+  },
+  {
+   "name": "Clickerhall-by-Goblin-Hole",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    2577,
+    255
+   ],
+   "marker_offset_px": 32.9,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Ion Ephel",
+   "kind": "ruin",
+   "plan": "generated",
+   "foot_r": 8,
+   "anchor": [
+    1339,
+    2116
+   ],
+   "marker_offset_px": 31.3,
+   "traits_river": "beside",
+   "in_dem_window": false,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "high",
+   "box_1x": {
+    "crossed": "graze",
+    "ink_px_z5": 4,
+    "perimeter_bearings_deg": [
+     222.2
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     98.5,
+     112.6,
+     142.2,
+     239.0
+    ]
+   },
+   "nearest_river_atlas_px": 10.1,
+   "nearest_bearing_deg": 206.6,
+   "printed_axis_in_circle_deg_mod180": 94.3,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "seeded beside-river (see kolens_ion_ephel)",
+   "note": "Tungril R. (thick stroke, canon name printed) runs E-W about 10 px S of the anchor (anchor sits on its label); mouth at the ring dot (1311,2130) into the estuary W/SW; grazes the box (4 z5 px). 98.5/112.6/142.2 are one wiggly reach along the E arc.",
+   "at_marker_dot": {
+    "box_ink_px_z5": 0,
+    "approach_bearings_deg": [
+     76.8
+    ],
+    "nearest_px": 10.1
+   }
+  },
+  {
+   "name": "Māmīth Māgrīn (Kingly Mickleburg)",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    734,
+    17
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Feldspar",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1103,
+    113
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "medium",
+   "box_1x": {
+    "crossed": "yes",
+    "ink_px_z5": 110,
+    "perimeter_bearings_deg": [
+     88.4,
+     164.5
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     49.8,
+     255.8
+    ]
+   },
+   "nearest_river_atlas_px": 7.5,
+   "nearest_bearing_deg": 126.9,
+   "printed_axis_in_circle_deg_mod180": 54.6,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "Solid line along the Regimen wash edge, through the box NE-WSW; read as a river per the cartographic key (realm edges are washes only)."
+  },
+  {
+   "name": "Stony Ford",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    591,
+    183
+   ],
+   "marker_offset_px": 22.8,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null,
+   "at_marker_dot": {
+    "box_ink_px_z5": 49,
+    "approach_bearings_deg": [
+     7.9,
+     73.9
+    ],
+    "nearest_px": 8.5
+   }
+  },
+  {
+   "name": "Harney",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    522,
+    195
+   ],
+   "marker_offset_px": 18.4,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Bard's Hollow",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    784,
+    200
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast + graticule"
+  },
+  {
+   "name": "Heron's House",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2456,
+    301
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "verdict": "printed-river",
+   "variant": "nocoast",
+   "confidence": "medium",
+   "box_1x": {
+    "crossed": "yes",
+    "ink_px_z5": 85,
+    "perimeter_bearings_deg": [
+     60.9,
+     97.9,
+     164.5
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     185.1
+    ]
+   },
+   "nearest_river_atlas_px": 6.7,
+   "nearest_bearing_deg": 132.0,
+   "printed_axis_in_circle_deg_mod180": 24.1,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "Thin river from the S ends at the ring dot; 60.9/97.9 box crossings are the short stroke under the label House (likely the same river continuing NE). Dark Kgd-under-the-Wall tint: both coast bands deleted it in the main variant."
+  },
+  {
+   "name": "Iimak-nūs-Ion",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1165,
+    335
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Karkōgael",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1117,
+    365
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Bash Phaug",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1378,
+    485
+   ],
+   "marker_offset_px": 34.5,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Mākor",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    984,
+    487
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Iorundo",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1178,
+    504
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "high",
+   "box_1x": {
+    "crossed": "yes",
+    "ink_px_z5": 54,
+    "perimeter_bearings_deg": [
+     11.0,
+     67.4
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     77.1
+    ]
+   },
+   "nearest_river_atlas_px": 7.1,
+   "nearest_bearing_deg": 45.0,
+   "printed_axis_in_circle_deg_mod180": 105.7,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "Thin river leaves the coast at the ring and runs E."
+  },
+  {
+   "name": "Damoklir",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    348,
+    513
+   ],
+   "marker_offset_px": 69.1,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Kamīdo",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    974,
+    516
+   ],
+   "marker_offset_px": 2.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: Ka lettering + coast"
+  },
+  {
+   "name": "Zor Barāndo",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    819,
+    519
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Phumkha",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    836,
+    570
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Lendānak",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    837,
+    594
+   ],
+   "marker_offset_px": 15.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Mīthrabash",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1288,
+    595
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Zhomphek",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    982,
+    602
+   ],
+   "marker_offset_px": 64.5,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: A lettering"
+  },
+  {
+   "name": "Permūr",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    311,
+    602
+   ],
+   "marker_offset_px": 53.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Eldae",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    550,
+    605
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Dargan",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    785,
+    611
+   ],
+   "marker_offset_px": 42.4,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Aldrakhar",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    1492,
+    631
+   ],
+   "marker_offset_px": 14.1,
+   "traits_river": null,
+   "in_dem_window": false,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "high",
+   "box_1x": {
+    "crossed": "no",
+    "ink_px_z5": 0,
+    "perimeter_bearings_deg": []
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     207.1,
+     330.8
+    ]
+   },
+   "nearest_river_atlas_px": 19.0,
+   "nearest_bearing_deg": 268.5,
+   "printed_axis_in_circle_deg_mod180": 168.5,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "River runs N-S about 19 px W of the anchor, right past the ring dot (anchor sits on its label 14 px E of the dot); joins the ...ir R. at Iet Ford.",
+   "at_marker_dot": {
+    "box_ink_px_z5": 261,
+    "approach_bearings_deg": [
+     195.0,
+     357.5
+    ],
+    "nearest_px": 5.0
+   }
+  },
+  {
+   "name": "Ītor Hāspira",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    579,
+    634
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Līrider Hana",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    663,
+    688
+   ],
+   "marker_offset_px": 13.9,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Hemdok Laego",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    1855,
+    688
+   ],
+   "marker_offset_px": 20.8,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "false-positive",
+   "raw_main_flags": {
+    "box_ink_px_z5": 0,
+    "circle_bearings_deg": [
+     168.4
+    ]
+   },
+   "why": "Five Fingers lake shore plus the H of the region lettering",
+   "at_marker_dot": {
+    "box_ink_px_z5": 0,
+    "approach_bearings_deg": [
+     124.6,
+     144.0,
+     188.2
+    ],
+    "nearest_px": 17.5
+   }
+  },
+  {
+   "name": "Kash Ītor",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3022,
+    691
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Atauk",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1084,
+    697
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Ilongazoro",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    839,
+    707
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Pomos",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    481,
+    725
+   ],
+   "marker_offset_px": 0.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Iet Ford",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1419,
+    725
+   ],
+   "marker_offset_px": 27.7,
+   "traits_river": null,
+   "in_dem_window": false,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "high",
+   "box_1x": {
+    "crossed": "edge",
+    "ink_px_z5": 0,
+    "perimeter_bearings_deg": [
+     337.4
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     58.4,
+     303.8
+    ]
+   },
+   "nearest_river_atlas_px": 9.5,
+   "nearest_bearing_deg": 0.0,
+   "printed_axis_in_circle_deg_mod180": 86.0,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "The ...ir R. (Rodzir?) runs W-E through the circle north of the anchor and through the ring dot (the ford); anchor sits on its label 28 px from the dot.",
+   "at_marker_dot": {
+    "box_ink_px_z5": 377,
+    "approach_bearings_deg": [
+     98.5,
+     107.0,
+     272.8
+    ],
+    "nearest_px": 1.1
+   }
+  },
+  {
+   "name": "Bash Dargis",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    2154,
+    727
+   ],
+   "marker_offset_px": 23.4,
+   "traits_river": null,
+   "in_dem_window": false,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "high",
+   "box_1x": {
+    "crossed": "graze",
+    "ink_px_z5": 5,
+    "perimeter_bearings_deg": [
+     207.4
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     130.6,
+     218.8
+    ]
+   },
+   "nearest_river_atlas_px": 15.2,
+   "nearest_bearing_deg": 203.2,
+   "printed_axis_in_circle_deg_mod180": 90.3,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "Gruma R. (printed name) runs SW-SE below the anchor through the ring dot; grazes the box (5 z5 px); anchor 23 px from the dot.",
+   "at_marker_dot": {
+    "box_ink_px_z5": 235,
+    "approach_bearings_deg": [
+     82.9,
+     258.5
+    ],
+    "nearest_px": 5.0
+   }
+  },
+  {
+   "name": "Paril",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    889,
+    735
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Ishin",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1015,
+    746
+   ],
+   "marker_offset_px": 0.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Pish",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    864,
+    750
+   ],
+   "marker_offset_px": 0.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Tobit",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3211,
+    756
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Palagnon",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1528,
+    764
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "high",
+   "box_1x": {
+    "crossed": "yes",
+    "ink_px_z5": 29,
+    "perimeter_bearings_deg": [
+     145.2,
+     295.1
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     136.0,
+     329.8
+    ]
+   },
+   "nearest_river_atlas_px": 8.0,
+   "nearest_bearing_deg": 270.0,
+   "printed_axis_in_circle_deg_mod180": 141.2,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "Little Ro... R. (printed name) passes the ring dot NW-SE."
+  },
+  {
+   "name": "Paga",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2014,
+    767
+   ],
+   "marker_offset_px": 68.6,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "false-positive",
+   "raw_main_flags": {
+    "box_ink_px_z5": 0,
+    "circle_bearings_deg": [
+     191.8
+    ]
+   },
+   "why": "graticule (meridian partly inside the coast band, so the Hough test missed it); anchor sits on the Penthelon label"
+  },
+  {
+   "name": "Ghōdar",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    892,
+    773
+   ],
+   "marker_offset_px": 26.4,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Rūbril",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    704,
+    793
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Sau Taran",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    191,
+    812
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "verdict": "printed-river",
+   "variant": "nocoast",
+   "confidence": "medium",
+   "box_1x": {
+    "crossed": "yes",
+    "ink_px_z5": 97,
+    "perimeter_bearings_deg": [
+     164.5,
+     266.8
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     0.6,
+     153.8,
+     160.4,
+     167.0,
+     283.6,
+     294.5,
+     303.2,
+     325.5
+    ]
+   },
+   "nearest_river_atlas_px": 5.6,
+   "nearest_bearing_deg": 243.4,
+   "printed_axis_in_circle_deg_mod180": 152.8,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "Thin river from the N coast through the town to the S coast (Alensic tint: both coast bands misread parts of it); many circle runs are one meandering line."
+  },
+  {
+   "name": "Lek Zagrok",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1366,
+    835
+   ],
+   "marker_offset_px": 38.3,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Hordon Mopher",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    549,
+    840
+   ],
+   "marker_offset_px": 32.2,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: meridian + label"
+  },
+  {
+   "name": "Nembros",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    931,
+    847
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Lōt",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1967,
+    861
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: Five Fingers lake shore"
+  },
+  {
+   "name": "Leprekhōr",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    362,
+    871
+   ],
+   "marker_offset_px": 12.2,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Karaphon",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1875,
+    876
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: Five Fingers lake shore"
+  },
+  {
+   "name": "Abila",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1211,
+    883
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Ion Semthen",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    757,
+    901
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Mishimbril",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1659,
+    904
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Philider",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    188,
+    916
+   ],
+   "marker_offset_px": 58.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Taemon",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2828,
+    929
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Zōr Iket",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1282,
+    945
+   ],
+   "marker_offset_px": 18.4,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Pandikaba",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2936,
+    979
+   ],
+   "marker_offset_px": 10.2,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Bēgroth Amar",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    4066,
+    996
+   ],
+   "marker_offset_px": 21.3,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Gel",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    376,
+    999
+   ],
+   "marker_offset_px": 12.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Thūkhon",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1310,
+    1011
+   ],
+   "marker_offset_px": 2.2,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Bash Nena",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1950,
+    1011
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Hazad",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1406,
+    1082
+   ],
+   "marker_offset_px": 1.4,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Sember",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3428,
+    1114
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Īngomes",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1792,
+    1164
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Gehon Iepīr",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1466,
+    1186
+   ],
+   "marker_offset_px": 35.4,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Kezren",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2212,
+    1226
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Azrīnet",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3357,
+    1241
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Gehon Or",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1512,
+    1247
+   ],
+   "marker_offset_px": 31.3,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Rohodakos",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3157,
+    1257
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Graes",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3617,
+    1264
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast (Pheropic tint)"
+  },
+  {
+   "name": "Lokri",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3834,
+    1272
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "medium",
+   "box_1x": {
+    "crossed": "yes",
+    "ink_px_z5": 72,
+    "perimeter_bearings_deg": [
+     288.4
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     328.4
+    ]
+   },
+   "nearest_river_atlas_px": 5.7,
+   "nearest_bearing_deg": 225.0,
+   "printed_axis_in_circle_deg_mod180": 146.3,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "Thin river from the N (Therel side) ends at the town: 328.4 is the river; 224.0 is the graticule and 304.2 the I of MENDIKA (excluded); box ink count 72 includes graticule and the Lokri label; box river entry 288.4 only."
+  },
+  {
+   "name": "Ierem",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3458,
+    1279
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Gārmīt",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3366,
+    1285
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Malagnon",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1631,
+    1287
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Ludo",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3552,
+    1287
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast + graticule"
+  },
+  {
+   "name": "Pel",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3306,
+    1298
+   ],
+   "marker_offset_px": 11.2,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Tamaron Mopher",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1774,
+    1306
+   ],
+   "marker_offset_px": 2.0,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast + label"
+  },
+  {
+   "name": "Leshes",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1687,
+    1321
+   ],
+   "marker_offset_px": 1.4,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Darā",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3819,
+    1329
+   ],
+   "marker_offset_px": 11.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Aenid",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3312,
+    1340
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Aegban",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2606,
+    1343
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Pontoron",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3668,
+    1351
+   ],
+   "marker_offset_px": 67.5,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Authīr",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3554,
+    1394
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "false-positive",
+   "raw_main_flags": {
+    "box_ink_px_z5": 142,
+    "circle_bearings_deg": [
+     19.5,
+     35.4,
+     45.0,
+     46.8,
+     48.6,
+     50.4,
+     52.2,
+     96.4,
+     343.1
+    ]
+   },
+   "why": "Pheropic Gulf coast (gulf shade just outside the colour sea tolerance)"
+  },
+  {
+   "name": "Nūmeron",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2555,
+    1424
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Nāron",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3367,
+    1427
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "medium",
+   "box_1x": {
+    "crossed": "yes",
+    "ink_px_z5": 140,
+    "perimeter_bearings_deg": [
+     27.8,
+     274.8
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     281.6,
+     355.0
+    ]
+   },
+   "nearest_river_atlas_px": 4.7,
+   "nearest_bearing_deg": 328.0,
+   "printed_axis_in_circle_deg_mod180": 58.5,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "River from the W (281.6) and a small lake outline N of the dot (component 2511, which carries the 140 box px and 355.0)."
+  },
+  {
+   "name": "Mhēlzi",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3442,
+    1439
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "high",
+   "box_1x": {
+    "crossed": "yes",
+    "ink_px_z5": 78,
+    "perimeter_bearings_deg": [
+     186.3,
+     274.8
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     177.5,
+     266.1
+    ]
+   },
+   "nearest_river_atlas_px": 5.1,
+   "nearest_bearing_deg": 258.7,
+   "printed_axis_in_circle_deg_mod180": 136.2,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "River from the W turns S through the box (East Makagos tint)."
+  },
+  {
+   "name": "Sārūmeron",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3257,
+    1442
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "false-positive",
+   "raw_main_flags": {
+    "box_ink_px_z5": 91,
+    "circle_bearings_deg": [
+     240.9
+    ]
+   },
+   "why": "label letters merged into one thin component"
+  },
+  {
+   "name": "Haedi",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3038,
+    1444
+   ],
+   "marker_offset_px": 0.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Urip",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3005,
+    1504
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Daeskhon",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2962,
+    1536
+   ],
+   "marker_offset_px": 1.4,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Ion Nenīn",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3084,
+    1547
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Gakapē",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2209,
+    1606
+   ],
+   "marker_offset_px": 17.7,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Arbezmara",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2288,
+    1609
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Sāzhram",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2105,
+    1612
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Azrūmil",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2415,
+    1629
+   ],
+   "marker_offset_px": 0.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Malau",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    2843,
+    1631
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Istīron",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1071,
+    1632
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast + meridian"
+  },
+  {
+   "name": "Bēgil",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1170,
+    1635
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Nhagi",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1868,
+    1650
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Laem",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    2722,
+    1653
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Cyrikon",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    2573,
+    1671
+   ],
+   "marker_offset_px": 9.4,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Thārban",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2175,
+    1674
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Sūl",
+   "kind": "town",
+   "plan": "generated",
+   "foot_r": 14,
+   "anchor": [
+    1986,
+    1691
+   ],
+   "marker_offset_px": 26.2,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "false-positive",
+   "raw_main_flags": {
+    "box_ink_px_z5": 0,
+    "circle_bearings_deg": [
+     133.1,
+     150.8
+    ]
+   },
+   "why": "the R of RUBEA"
+  },
+  {
+   "name": "Līrider",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    943,
+    1722
+   ],
+   "marker_offset_px": 42.7,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Ghirīs",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2086,
+    1723
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Nhin",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2632,
+    1729
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Maeges",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1139,
+    1730
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Gīr",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2398,
+    1745
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Molider",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1209,
+    1769
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": true,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Nagash",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2769,
+    1816
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "verdict": "printed-river",
+   "variant": "main",
+   "confidence": "high",
+   "box_1x": {
+    "crossed": "yes",
+    "ink_px_z5": 100,
+    "perimeter_bearings_deg": [
+     102.5,
+     161.6
+    ]
+   },
+   "approach_2_5x": {
+    "crossed": true,
+    "bearings_deg": [
+     29.5,
+     47.0,
+     155.0,
+     341.1
+    ]
+   },
+   "nearest_river_atlas_px": 7.4,
+   "nearest_bearing_deg": 151.7,
+   "printed_axis_in_circle_deg_mod180": 173.7,
+   "within_wash_1_7x": true,
+   "plan_draws_river": "no (traits.river absent: riverless plan)",
+   "note": "Rhurnar (printed name, canon wiki river) from Manus loops NE and runs S through the box; the meridian beside it was removed by the graticule test."
+  },
+  {
+   "name": "Mhikel Or",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2227,
+    1834
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Netho",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2896,
+    987
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Nīs Garnata",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    3333,
+    1146
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": "flagged only by an earlier filter pass or the no-coast variant; reviewed by eye: coast"
+  },
+  {
+   "name": "Ūmak-nūs-Ion",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    1126,
+    323
+   ],
+   "marker_offset_px": 0.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  },
+  {
+   "name": "Nhandar Khezīn",
+   "kind": "village",
+   "plan": "generated",
+   "foot_r": 9,
+   "anchor": [
+    2516,
+    1631
+   ],
+   "marker_offset_px": 1.0,
+   "traits_river": null,
+   "in_dem_window": false,
+   "box_1x": {
+    "crossed": "no"
+   },
+   "approach_2_5x": {
+    "crossed": false,
+    "bearings_deg": []
+   },
+   "verdict": "none",
+   "raw_main_flags": null,
+   "why": null
+  }
+ ],
+ "kolens_ion_ephel": {
+  "rv_block": "genCityCanvas: var rvFa=(rvBeside&&sv)?Math.atan2(sv.y,sv.x)+rr(-.35,.35):R()*Math.PI*2; // beside a coast: flow meets the sea. Through: any bearing, uniform. Beside: the sea vector sv +-0.35 rad (+-20.1 deg). The river axis is rvAx=(cos rvFa, sin rvFa) on a canvas mapped to the atlas without rotation (scl=S/(2*footR(a.kind))), so compass axis = rvFa in degrees + 90. The RV draw sequence was replayed in node with xmur3/mulberry32 taken from the HEAD source: draws before the RV block are only pick(Object.keys(COMPASS)) for a harbor with no sea.side and the 12 lobe draws.",
+  "Kolens": {
+   "traits_river": "through (prov canon: 'A bustling riverside city — the river is canon; its course through the plan is conjecture.')",
+   "kind": "town",
+   "harbor": false,
+   "sea": null,
+   "drawn": {
+    "axis_compass_deg": 278.3,
+    "axis_mod180": 98.3,
+    "side": 1,
+    "offset_atlas_px": "river centre line about 1.5 px N of the plan centre (offset S*rr(.05,.1) = 110 canvas px)",
+    "reachable_range": "any axis 0-360 (R()*2*pi); never registered"
+   },
+   "printed": {
+    "within_box": false,
+    "within_2_5x": false,
+    "nearest_river_atlas_px": 53.8,
+    "nearest_bearing_deg": 247.0,
+    "axis_mod180": "169-179 (N-S)",
+    "name": "...er R. (partial printed name)",
+    "note": "The meridian next to it is removed by the graticule test; both run N-S, so the conclusion does not depend on which is which."
+   },
+   "mismatch": "The print shows no river in Kolens's footprint or approach circle; the plan draws a river across the whole plan at axis 98.3 deg, about 70-81 deg off the nearest printed river, which lies 54 px away. This is a placement question, not a registration one: city-traits.json says Kolens lies in 'a country the atlas does not chart — its place here is approximate', and no ring-dot is printed at its anchor (2162,54)."
+  },
+  "Ion Ephel": {
+   "traits_river": "beside (prov canon: 'At the mouth of the Tungril into the White Sea.')",
+   "kind": "ruin",
+   "harbor": true,
+   "sea": null,
+   "mask_port": {
+    "patch": "sampleCityMask patch n=43 z5 px at ox 2656, oy 4210 (atlas 1328-1349.5 x 2105-2126.5), numpy port of buildCityMask, PIL decode, not browser-run",
+    "frac": 0.098,
+    "water": true,
+    "bear": [
+     -0.017,
+     -1.0
+    ],
+    "cause": "The kept 'water' is the cream halo printed round the letters of the label 'Ion Ephel', which passes the r-b <= 54 water test and touches the patch border; the anchor sits on that label, 31 px from the ring dot (1311,2130). The real estuary lies about 28 px WSW, outside the +-10.8 px patch."
+   },
+   "sv_path": "traits.sea is null, so sea=pick(Object.keys(COMPASS)) = 'NW' (first draw). Then if(t.harbor&&!(t.sea&&t.sea.side)&&mask&&mask.water&&mask.bear){sv=mask.bear;...} replaces it with the halo bearing, i.e. due N.",
+   "drawn": {
+    "melded_plan_axis_compass_deg": 8.8,
+    "deep_link_fallback_axis_compass_deg": 324.8,
+    "note": "ensureCityGenNow registers a plan with the mask still null (axis 324.8, toward the picked NW sea); when the tiles land, ensureCityGen hot-swaps the melded plan (axis 8.8, toward the label halo). The river turns 44 deg on screen during the swap (an instance of shift_sources synthetic-to-melded-swap). Beside offset: coreR*rr(1.05,1.3) = 575 canvas px = 4.5 atlas px to one side (centre about 4.4 px W of the anchor with the mask).",
+    "reachable_range_with_mask": "axis 339.0-19.1 deg (halo bearing 359.0 +-20.1)",
+    "reachable_range_fallback": "axis 295.0-335.0 deg (NW 315 +-20.1)"
+   },
+   "printed": {
+    "name": "Tūngril R. (printed)",
+    "axis_mod180": "91.5 (PCA of ink within 30 px of the nearest point); 94.3 over the whole approach circle",
+    "flow_to_mouth_deg": "about 270 (E to W, mouth at the ring dot 1311,2130, sea W/SW)",
+    "nearest_river_atlas_px": 10.1,
+    "nearest_bearing_deg": 206.6,
+    "box": "grazes the S edge (4 z5 px, perimeter crossing 222.2)",
+    "approach_bearings_deg": [
+     98.5,
+     112.6,
+     142.2,
+     239.0
+    ]
+   },
+   "mismatch": "The printed river runs E-W along the south edge of the box; the plan draws a N-S river through its west half. Axis difference 82.7 deg with the mask (53.3 deg in the fallback); flow difference about 99 deg. With the halo mask no reachable axis comes within 67 deg of the printed axis; the fallback range comes within 23.5 deg at best (axis 295), and the drawn fallback is 53.3 deg off. The printed river's nearest ink is 10 px S of the anchor, while the plan's river runs N-S about 4.4 px W of it. Every atlas px of mismatch is 2^(z-4) screen px: x9.85 at z7.3, x128 at the ruin's cityMaxZ 11.0.",
+   "consequence_inferred": "With MK set from the halo mask, the plan's own coast is drawn from the label halos (water to the N) rather than the estuary; this is inferred from the MK branch of genCityCanvas, not observed in a browser."
+  }
+ },
+ "verifier_text": [
+  {
+   "where": "out/findings.json claims[113] own-atlas:b2 (status disputed) votes[1].corrected",
+   "quote": "Rivers are not registered at all."
+  },
+  {
+   "where": "out/findings.json claims[113] own-atlas:b2 votes[1].reason",
+   "quote": "(2) Rivers are seeded: R()*2π, or the sea-vector bearing for 'beside' mode. Nothing fits them to the atlas's black river lines."
+  },
+  {
+   "where": "out/findings.json claims[230] gap-vecbudget:C7 (status disputed) votes[1].reason",
+   "quote": "Rivers, however, are pure seeded geometry (rvFa from R()), so they really are unregistered."
+  },
+  {
+   "where": "out/findings.json claims[230] gap-vecbudget:C7 votes[1].corrected",
+   "quote": "Rivers (traits.river) get a seeded random axis and bends with no atlas registration."
+  },
+  {
+   "where": "out/findings.json claims[52] reg:R16 (status survived) votes[1].corrected",
+   "quote": "(3) traits.river draws a synthetic watercourse that is not sampled from the atlas river."
+  },
+  {
+   "where": "out/findings.json claims[52] reg:R16 votes[1].reason",
+   "quote": "Roads match by bearing only (cityApproaches), rivers are synthetic, and the deep-link fallback starts with no mask."
+  },
+  {
+   "where": "out/findings.json claims[71] vec:V1 (status REFUTED; kept for the record) votes[1].reason",
+   "quote": "River placement is seeded (rvFa = R()*2π for 'through'), so the plan's river is not taken from the atlas."
+  }
+ ],
+ "shift_audit_coverage": "None of the 57 shift_sources in out/findings.json is about a printed river meeting a plan. River words occur only incidentally: summarch-anchor-literal (the solid line under the Summarch box is a river by the key), stubs-unramped-and-gap (the river walk rotates gates), trait-sea-side-vs-atlas (no city there has a 'beside' river), synthetic-to-melded-swap (the river RD does not depend on the mask). This file is the first measurement.",
+ "supplier": {
+  "filigree_B13": {
+   "item": "Filigree 3 slice A (density-bible B-13 'print-led rivers', must; sheets 'country, region, valley, city')",
+   "file": "maps-site/data/rivers.json (workflow-3-build.md: 'rivers_ready = maps-site/data/rivers.json exists')",
+   "frame": "Not stated in the B-13 text. The q10 trace it builds on is in top-origin atlas px (e.g. Lamor 'from the north coast just south-west of Epeshu at about 1221,1446'); vertices carry z from EPESHU_HF and a dem_supported flag.",
+   "scope": "DEM window [1060,1240]..[1860,2040] only (B-03/R22: 'The sheets cover the window only'). Covers 5 of the 18 generated river cities (Aldorūs, Rēketis, Drāmūz, Medem, Kardunash) plus Epēshu.",
+   "gate": "spec check A.rivers_overlap: rivers.json >= 90% within 3 px of print river-ink (q10-c17: 'every vertex within 3 atlas px of river-ink').",
+   "second_appearance": "B-13 lists the city sheet, so once Filigree 3 lands, the print-led river line is drawn at city zoom inside the window whatever the plan shows. For those 5 cities the mismatch then shows twice: Filigree's river against a riverless plan. (Whether it composites above or below pCity is not specified here.)"
+  },
+  "living_trace": {
+   "item": "POLISH 'Living later · trace the rivers (data, tool)'",
+   "file": "maps-site/living/rivers.json via tools/living-rivers.js",
+   "frame": "stated: 'every polyline has >= 8 vertices in top-origin atlas px', the same frame as city-anchors.json atlasX/atlasY, so a plan can take it through its existing linear map (canvas = (atlas - anchor)*S/(2*FOOT_R) + S/2) with no new transform.",
+   "scope": "sheet-wide; the only planned source for the 13 river cities outside the window.",
+   "consumer": "'It feeds only \"Living later · river flow and barges\"' and its done-when requires '`maps-site/index.html` sha unchanged', so wiring polylines into genCityCanvas is new work that no item holds.",
+   "blocked_by": "'Traced road network' checked; Filigree 4 passed; Mobile 9 and Mobile 14 checked."
+  },
+  "done_when_precise_enough": false,
+  "why_not": [
+   "Byte-identical twin runs settle determinism only; they say nothing about where a river lies.",
+   "'within 3 px of Filigree's rivers.json over >= 90% of its length' checks against another trace, not the print, and only inside the window. For the 13 out-of-window river cities nothing checks geometry against the ink at all; the remaining gates (canon names within 40 px, <= 20% within 6 px of a traced road, no vertex in F08) do not test position.",
+   "3 atlas px is 1/6 of a village box (2*9 px), about 341 canvas px of a 2048 village plan, which is about 341 screen px at a village's cityMaxZ 10.83 (where 1 plan px is about 1 screen px). And the 10% of length left unconstrained can be exactly the stretch inside a footprint.",
+   "No recall gate: nothing requires each printed reach to be traced, so a river at a town can be missing and still pass.",
+   "The text-component mask it reuses cuts rivers exactly where town labels sit on them (Ion Ephel, Aldrakhar 'Al', Lokri, Drāmūz 'z'; q10 had to bridge P1 under the L of LEPONIA by hand, 36.5 px), so the gap would fall inside the footprint. B-13 records bridges under lettering; the Living item says nothing about bridging.",
+   "Nothing ties a polyline to a settlement or to a mode (through or beside)."
+  ],
+  "proposed_acceptance": "For each of the 19 anchors in per_city with verdict printed-river (20 if the anchor-on-label fix lands and Stony Ford is added): the traced polyline crosses the 2.5*FOOT_R circle within 5 deg of every bearing listed here, crosses the 1.0*FOOT_R box edge at the listed perimeter bearings, and lies within 1 atlas px of river-ink inside the box (gaps under lettering bridged and listed); and for the anchors marked none, no traced vertex lies inside the box. Run the same check at the marker dots if anchors move."
+ },
+ "hash": {
+  "is_a_river_fix_hash_changing": "Yes for the genCityCanvas source pin; no for cityCanvasSha if the change is RV-guarded. This corrects the brief's 'any fix changes cityCanvasSha'.",
+  "atlas_fn_sha": "tools/mobile-capture.js pins the source of each of: for (const n of ['xmur3', 'mulberry32', 'genCityCanvas', 'washMake', 'sampleCityMask']). Taking river geometry from atlas data means editing the RV block (var rvFa=...), so atlas_fn_sha.genCityCanvas changes on any such fix. docs/mobile/gates.md UG3: 'Atlas: the diff touches none of `xmur3`, `mulberry32`, `genCityCanvas`, `washMake` or `sampleCityMask`, and cityCanvasSha is equal to B0 and equal across all five profiles'. So a fix cannot land inside a Mobile atlas-lane unit; it queues after Mobile 9 (MR-A), as the Living trace already does.",
+  "cityCanvasSha": "tools/mobile-capture.js hashes only for (const n of ['Tamaron', 'Sokundo', 'Kanae']). None of the three has traits.river, and none has printed river ink in its box or approach circle (Tamaron's early flags were the AURA HOTH lettering). genCityCanvas's own comment says 'Every rng draw is RV-guarded → riverless cities stay byte-identical'. A fix that only engages when a city has traits.river or an atlas polyline crosses its box leaves cityCanvasSha equal to B0. It changes the plans of the 18 river cities (and of Kolens) by design.",
+  "what_would_move_cityCanvasSha": "A change to the mask path, e.g. fixing the label-halo-as-sea effect in buildCityMask (r-b<=54 on halo cream) or feeding rivers into sampleCityMask, changes the masks of harbour plans, and all three hashed cities are harbours (Tamaron harbor true, sea E distPx 2; Sokundo harbor true, WSW distPx 2; Kanae harbor true, E distPx 5). That moves cityCanvasSha, and for sampleCityMask also its atlas_fn_sha."
+ },
+ "overlap": {
+  "anchor_on_label": "shift_sources anchor-on-label (anchors on label text or a neighbour, not the ring-dot) changes this table. Re-run at the maps_markers.json dots for the 37 anchors more than 5 px off: Aldrakhar (14.1 px off) goes from approach-only to box ink 261 (nearest river 5.0 px; bearings 195.0, 357.5); Iet Ford (27.7 px) to box ink 377 (1.1 px; 98.5, 107.0, 272.8); Bash Dargis (23.4 px) from graze to box ink 235 (5.0 px; 82.9, 258.5). Stony Ford (22.8 px off) has the '...daukhor R.' through its dot (box ink 49, 8.5 px; 7.9, 73.9) but nothing within reach of its anchor, so it is a river town that is invisible here. Ion Ephel at its dot keeps only 76.8 (its mouth falls in the coast band). Drāmūz at its dot: no crossing. Hemdok Laego at its dot: lake shore only (false). Fixing anchors first and then registering rivers is the right order; this table should be re-run after anchors move.",
+  "synthetic_to_melded_swap": "Ion Ephel's river axis turns 324.8 -> 8.8 deg when the melded plan replaces the deep-link plan.",
+  "trait_sea_side": "Ion Ephel has sea:null, so its beside river follows the picked compass sea or a mask bearing, the same mechanism shift_sources trait-sea-side-vs-atlas audits.",
+  "filigree": "Filigree B-13 (in-window rivers.json, city sheet) and slice C 'city' (painted city) overlap for the 5 in-window river cities. Any plan-river registration must take the same geometry as B-13 or the two will disagree on screen. Ruling R4 (never label blocks) is unaffected. Rivers carry printed names only where the print has them (Tūngril, Gruma, Rhurnār, Little Rō..., ...ir R.); B-13 says names elsewhere are minted, prov invented.",
+  "living": "Living later · trace the rivers produces the sheet-wide polylines but routes them only to river flow and barges. A registration consumer for plans would be a third claimant on the same file and must queue after it. Living's H2z zoom-through into the sim street view meets a fourth river system: q10-c05 says the sim's 9 peak-sourced rivers overlap the print rivers at only 4.5% of vertices.",
+  "roads": "Gate bearings come from APPR_POLYS crossing the same 2.5*FOOT_R circle (cityApproaches); river crossings measured on that same circle could feed gen through the same path."
+ },
+ "scripts": "mktemp -d /tmp/tmp.bBvDpqEnmG: mosaic.py, stage1.py (ink, dots, buildCityMask water, coast band), sea2.py/coast2.py (colour sea mask), stage2b.py (text cores, components), stage3.py/final.py (Hough graticule, box/circle tests), bcm.py (exact sampleCityMask patch port), atmarker.py, build.py; node replay of the RV draws with xmur3/mulberry32 grabbed from the HEAD maps-site/index.html."
+}

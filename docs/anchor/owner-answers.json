@@ -1,0 +1,6 @@
+{
+  "answered": "2026-10-14",
+  "mfcg_sources": "none: the owner holds no generator permalinks, seeds or GeoJSON/SVG exports for Epēshu or Summarch (dossier OQ17)",
+  "vector_city": "detail past the chart's zoom: keep the DM's painted chart as the city view; a crisp vector city takes over only past the chart's sharp limit, and it is the clickable layer (dossier OQ18 d)",
+  "auto_zoom_out": "stop it: the zoom cap never drops below the current zoom; the reader zooms out (dossier OQ13 a, ships with the registration work)"
+}
