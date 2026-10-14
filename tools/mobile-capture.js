@@ -79,7 +79,7 @@ function pinInstall(cfg) {
 
 function pageLib() {
   const mc = window.__mc = {}
-  const SEL = 'a[href], button, input, select, textarea, summary, [role=button], [tabindex]:not([tabindex="-1"]), .leaflet-control a, .leaflet-marker-icon.leaflet-interactive, #drawerHandle, [data-sheet-handle], .sheet-handle'   // the last three: handles that are divs today (metrics.md section 5 names the drawer handle a primary action)
+  const SEL = 'a[href], button, input, select, textarea, summary, [role=button], [tabindex]:not([tabindex="-1"]), .leaflet-control a, .leaflet-marker-icon.leaflet-interactive, #drawerHandle, [data-sheet-handle], .sheet-handle, .co-chip'   // handles that are divs today (metrics.md section 5 names the drawer handle a primary action), and the company chips (click divs, A-U4)
   const area = r => r.width * r.height
   const shown = el => { const cs = getComputedStyle(el); return !(cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity === 0) }
   const clip = r => { const l = Math.max(r.left, 0), t = Math.max(r.top, 0), rr = Math.min(r.right, innerWidth), b = Math.min(r.bottom, innerHeight); return rr > l && b > t ? {l, t, r: rr, b} : null }

@@ -443,7 +443,8 @@
       "marker glyph rects equal R1 (map-region shot diff <= 0.5% by the metrics.md section 7 function); chrome text >= 12 px on coarse pointers (min_font_px)",
       "tap fixture still wrong_card = 0 (pads never decide a tap)",
       "desktop and desktop2x identical (fine pointer)",
-      "byte keys this unit moves, declared per profile: atlas.<profile>.first_load.{bytes, max_asset.bytes, by_cat.html_other.bytes} on all five profiles, each an upper bound (between the reference value and reference + 1024 B, never an exact value): the coarse-pointer target and pad rules add gzipped HTML; declared_first_view_growth {bytes: 1024, requests: 0}; every request count unchanged"
+      "byte keys this unit moves, declared per profile: atlas.<profile>.first_load.{bytes, max_asset.bytes, by_cat.html_other.bytes} on all five profiles, each an upper bound (between the reference value and reference + 1024 B, never an exact value): the coarse-pointer target and pad rules add gzipped HTML; declared_first_view_growth {bytes: 1024, requests: 0}; every request count unchanged",
+      "central ruling 2026-10-14 (A-U4's first run oscillated between overlapping and under-44 chip hit boxes): on coarse pointers each company chip (.co-chip, now in the capture's control inventory) gets a 44x44 hit area that overlaps no neighbour: the 26 px disc may stay, the chip pitch grows to at least 44 px (gap >= 18 px) and the strip may wrap; the extra strip height is declared under chrome_cover and controls where it moves them. Desktop chips are unchanged. A tap anywhere on a chip's own 44 px area opens that chip, never its neighbour"
     ],
     "run": "Mobile 5"
   },
